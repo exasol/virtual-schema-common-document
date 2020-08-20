@@ -46,6 +46,11 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
+    <scm>
+        <connection>scm:git:https://github.com/exasol/virtual-schema-common-document.git</connection>
+        <developerConnection>scm:git:https://github.com/exasol/virtual-schema-common-document.git</developerConnection>
+        <url>https://github.com/exasol/virtual-schema-common-document/tree/master</url>
+    </scm>
     <repositories>
         <repository>
             <id>maven.exasol.com</id>
@@ -313,6 +318,40 @@
                         <goals>
                             <goal>display-plugin-updates</goal>
                             <goal>display-dependency-updates</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <charset>UTF-8</charset>
+                    <doclint></doclint>
+                    <serialwarn>true</serialwarn>
+                    <failOnError>true</failOnError>
+                    <failOnWarnings>true</failOnWarnings>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
                         </goals>
                     </execution>
                 </executions>
