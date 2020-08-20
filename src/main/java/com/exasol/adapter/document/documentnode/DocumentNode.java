@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * This is a simple interface for accessing document data. It is used to abstract from the value representations of
- * different document databases. It accepts a generic visitor. {@see /doc/diagrams/documentnode.puml}
+ * different document databases. It accepts a generic visitor. See /doc/diagrams/documentnode.puml.
  */
 
 @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.

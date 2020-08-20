@@ -22,5 +22,5 @@ public interface ColumnValueExtractor<DocumentVisitorType> {
      *                                       set to {@code EXCEPTION }
      */
     ValueExpression extractColumnValue(final DocumentNode<DocumentVisitorType> document,
-                                       final PathIterationStateProvider arrayAllIterationState);
+            final PathIterationStateProvider arrayAllIterationState);
 }

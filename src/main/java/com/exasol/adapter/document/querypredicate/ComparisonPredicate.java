@@ -32,7 +32,7 @@ public interface ComparisonPredicate extends QueryPredicate {
     List<ColumnMapping> getComparedColumns();
 
     /**
-     * Negates this operator. e.g. A = B --> A != B
+     * Negates this operator. e.g. {@code A = B --> A != B}
      */
     ComparisonPredicate negate();
 }

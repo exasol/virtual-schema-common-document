@@ -17,8 +17,11 @@ import com.exasol.adapter.document.querypredicate.QueryPredicate;
  */
 public class RemoteTableQuery implements SchemaMappingQuery, Serializable {
     private static final long serialVersionUID = 3383108914924893151L;
+    /** @serial */
     private final TableMapping fromTable;
+    /** @serial */
     private final List<ColumnMapping> selectList;
+    /** @serial */
     private final List<ColumnMapping> requiredColumns;
     private final transient QueryPredicate pushDownSelection; // TODO refactor; transient and non transient part
     private final transient QueryPredicate postSelection;

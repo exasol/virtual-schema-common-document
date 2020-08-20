@@ -11,6 +11,7 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class IterationIndexColumnMapping extends AbstractColumnMapping {
     private static final long serialVersionUID = -2526873217496416853L;//
+    /** @serial */
     private final DocumentPathExpression tablesPath;
 
     /**

@@ -10,7 +10,9 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = -6383134783719798072L;
+    /** @serial */
     private final int varcharColumnSize;
+    /** @serial */
     private final MappingErrorBehaviour overflowBehaviour;
 
     /**

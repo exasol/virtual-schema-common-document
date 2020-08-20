@@ -11,9 +11,13 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToDecimalColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 6021806680404016342L;//
+    /** @serial */
     private final int decimalPrecision;
+    /** @serial */
     private final int decimalScale;
+    /** @serial */
     private final MappingErrorBehaviour overflowBehaviour;
+    /** @serial */
     private final MappingErrorBehaviour notNumericBehaviour;
 
     /**
