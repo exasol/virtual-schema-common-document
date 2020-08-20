@@ -1,6 +1,8 @@
-# Virtual Schema Common Document 0.1.0, released 2020-08-XX
+# Virtual Schema Common Document 0.1.0, released 2020-08-20
 
 ## Summary
+
+Separated document code from dynamodb-virtual-schema repository
 
 ## Features / Enhancements
 
