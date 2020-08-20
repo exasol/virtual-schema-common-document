@@ -19,7 +19,7 @@ script:
 - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent org.jacoco:jacoco-maven-plugin:prepare-agent-integration
   verify sonar:sonar -Dsonar.login=${SONAR_TOKEN} -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml,target/site/jacoco-it/jacoco.xml,target/site/jacoco-udf/jacoco.xml
 after_script:
-- |- #generate documentation and push to github pages
+- |-
   if [[ "$TRAVIS_BRANCH" = "master" && "$TRAVIS_PULL_REQUEST" = "false" ]] ; then
     source .ci/setup-ssh.sh || travis_terminate 1
     .ci/generateDocumentation.sh || travis_terminate 1
@@ -27,3 +27,6 @@ after_script:
 cache:
   directories:
   - "$HOME/.m2"
+env:
+  global:
+    secure: XlHyy7kWQgwbTDwh8MK60WcHyxKr31bWLCTLGuGNqJlD/bD6OUD1XRQvuDvUlN11Z7LudrB9D6XUHl33esfvYJmVPfNCzPUNo9m/Dvc48lElY/RpM1aGHrXkZv2bRjgryNPdZBDKL9oD/3NcDNUq6KnsxxKEKUOjn/m8cJ1FZjO3CIRsVBfxDKQ7N59PbAvUkOqlpjVnuSHh+p2MTJ6kYYLxRPVnq8BdGsTZXV+N5o08uGs9sjKBQ2oe3ZpyZo1vrWW9+eSS+9+KVdc1CXRKJT4Gx26Z5O9fa4k7k/yRaE49aeNo0Fb7JRRaCVa4K/fUTH1cePFOiPfcDTlrD5NNHKU/djpEe0a4DUZd2SUqMnCRw0uGr17TKoW546ABxoBghqykcRpAKmoBYX+XqnBI/GHHGlF5sb4RGc8JY6/Cmc9pscDdixGbmCF07SJ06OLrsHlYGymtKnnsZURAEfDjhwqxeZAdokMMrJu5xZjZI8Xp1y1V6eSHL1rer/Y4pbioq08dJiAuk2RPGhj4u7nypECDECjVC/WnpSPjKtpiY9PZ7FDzcU8hXN0WgoSaABnCwyenDnfFsaTFQND4eHTjuMlv8QIanapaiRQX7Gam3meqpve2op6gkGIzXai1Z0OTsdNc/VvjDFFhPa7VPqBFHQPMAxOQ1vuu78pIXY351WA=
