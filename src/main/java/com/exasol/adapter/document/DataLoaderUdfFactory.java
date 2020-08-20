@@ -6,6 +6,8 @@ package com.exasol.adapter.document;
 public interface DataLoaderUdfFactory {
     /**
      * Factory method for DynamoDB specific {@link DataLoaderUdf}.
+     * 
+     * @return created {@link DataLoaderUdf}
      */
     DataLoaderUdf getDataLoaderUDF();
 }

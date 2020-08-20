@@ -18,7 +18,8 @@ public class DocumentPathWalker<VisitorType> {
     /**
      * Create an instance of {@link DocumentPathWalker}.
      * 
-     * @param pathExpression path to walk
+     * @param pathExpression         path to walk
+     * @param iterationStateProvider iteration state for {@link ArrayAllPathSegment}s in the path
      */
     public DocumentPathWalker(final DocumentPathExpression pathExpression,
             final PathIterationStateProvider iterationStateProvider) {

@@ -7,7 +7,7 @@ import java.util.stream.StreamSupport;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 
 /**
- * This factory creates a fitting {@link Iterator<PathIterationStateProvider>} for a given path and document.
+ * This factory creates a fitting {@link Iterator} for a given path and document.
  */
 @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
 public class DocumentPathIteratorFactory<VisitorType> implements Iterable<PathIterationStateProvider> {

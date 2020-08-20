@@ -16,8 +16,6 @@ public interface ColumnValueExtractor<DocumentVisitorType> {
      * @param document               to extract the value from
      * @param arrayAllIterationState array all iteration state used for extracting the correct values for nested lists
      * @return {@link ValueExpression}
-     * @throws DocumentPathWalkerException   if specified property was not found and {@link MappingErrorBehaviour} is
-     *                                       set to {@code EXCEPTION }
      * @throws ColumnValueExtractorException if specified property can't be mapped and {@link MappingErrorBehaviour} is
      *                                       set to {@code EXCEPTION }
      */

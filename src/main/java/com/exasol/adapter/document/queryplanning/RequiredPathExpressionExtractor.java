@@ -18,6 +18,7 @@ public class RequiredPathExpressionExtractor {
     /**
      * Get a set of properties that must be fetched from the remote database.
      * 
+     * @param query query to extract the properties from
      * @return set of required properties
      */
     public Set<DocumentPathExpression> getRequiredProperties(final RemoteTableQuery query) {

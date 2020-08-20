@@ -42,6 +42,7 @@ public class TableMapping implements Serializable {
      * Get an instance of the Builder for {@link TableMapping}. This version of the builder is used for root tables.
      *
      * @param destinationName Name of the Exasol table
+     * @param remoteName      Name of the remote table that is mapped
      * @return {@link TableMapping.Builder}
      */
     public static Builder rootTableBuilder(final String destinationName, final String remoteName) {

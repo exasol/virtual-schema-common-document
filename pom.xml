@@ -340,6 +340,13 @@
                     <serialwarn>true</serialwarn>
                     <failOnError>true</failOnError>
                     <failOnWarnings>true</failOnWarnings>
+                    <tags>
+                        <tag>
+                            <name>implNote</name>
+                            <head>Implementation Note:</head>
+                            <placement>a</placement>
+                        </tag>
+                    </tags>
                 </configuration>
             </plugin>
             <plugin>

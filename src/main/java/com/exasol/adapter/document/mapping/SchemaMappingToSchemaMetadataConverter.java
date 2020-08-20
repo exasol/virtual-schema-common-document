@@ -125,9 +125,9 @@ public class SchemaMappingToSchemaMetadataConverter {
     }
 
     /**
-     * This class is used as a fix for the bug because of which {@link TableMetadata} can't store adapter notes.
-     * {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25}. It gets serialized in the
-     * {@link SchemaMetadata} and stores a map that gives the {@link TableMapping} for its Exasol table name.
+     * This class is used as a fix for the bug because of which {@link TableMetadata} can't store adapter notes. See:
+     * https://github.com/exasol/dynamodb-virtual-schema/issues/25. It gets serialized in the {@link SchemaMetadata} and
+     * stores a map that gives the {@link TableMapping} for its Exasol table name.
      */
     private static class TableMappings implements Serializable {
         private static final long serialVersionUID = -6920869661356098960L;

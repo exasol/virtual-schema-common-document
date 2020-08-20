@@ -32,6 +32,7 @@ public class DynamodbAdapterProperties {
     /**
      * Get mapping definition property.
      *
+     * @throws AdapterException if property was not set by the user
      * @return String path to mapping definition files in the BucketFS
      */
     public String getMappingDefinition() throws AdapterException {
@@ -49,7 +50,8 @@ public class DynamodbAdapterProperties {
 
     /**
      * Get MAX_PARALLEL_UDFS property value.
-     * 
+     *
+     * @throws AdapterException if property was not set by the user
      * @return configured maximum number of UDFs that are executed in parallel. default: -1
      */
     public int getMaxParallelUdfs() throws AdapterException {

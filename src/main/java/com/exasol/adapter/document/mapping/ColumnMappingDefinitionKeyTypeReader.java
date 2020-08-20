@@ -14,6 +14,7 @@ public class ColumnMappingDefinitionKeyTypeReader {
      * Reads the {@link KeyType} of a column mapping definition.
      *
      * @param definition the Exasol document mapping language definition of the column
+     * @return read {@link KeyType}
      */
     public KeyType readKeyType(final JsonObject definition) {
         switch (definition.getString(KEY_KEY, "")) {

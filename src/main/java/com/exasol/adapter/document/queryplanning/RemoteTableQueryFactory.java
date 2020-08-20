@@ -31,10 +31,14 @@ public class RemoteTableQueryFactory {
      * @param schemaAdapterNotes adapter notes of the schema
      * @return {@link RemoteTableQuery}
      */
-    public RemoteTableQuery build(final SqlStatement selectStatement, final String schemaAdapterNotes)
-            throws AdapterException {
+    public RemoteTableQuery build(final SqlStatement selectStatement, final String schemaAdapterNotes) {
         final Visitor visitor = new Visitor();
-        selectStatement.accept(visitor);
+        try {
+            selectStatement.accept(visitor);
+        } catch (final AdapterException exception) {
+            // Should no happen since no adapter exceptions are thrown in the visitor
+            throw new IllegalStateException("Unexpected AdapterException: " + exception.getMessage(), exception);
+        }
         final SchemaMappingToSchemaMetadataConverter converter = new SchemaMappingToSchemaMetadataConverter();
         final TableMapping tableMapping = converter.convertBackTable(visitor.tableMetadata, schemaAdapterNotes);
         final QueryPredicate selection = QueryPredicateFactory.getInstance()

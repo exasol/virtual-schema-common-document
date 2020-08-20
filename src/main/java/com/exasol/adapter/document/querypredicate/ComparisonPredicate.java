@@ -18,6 +18,8 @@ public interface ComparisonPredicate extends QueryPredicate {
 
     /**
      * Accept an {@link ComparisonPredicateVisitor}.
+     * 
+     * @param visitor to accept
      */
     void accept(ComparisonPredicateVisitor visitor);
 
@@ -28,11 +30,15 @@ public interface ComparisonPredicate extends QueryPredicate {
 
     /**
      * Get a list of {@link ColumnMapping}s involved in the comparison.
+     * 
+     * @return list of {@link ColumnMapping}s involved in the comparison
      */
     List<ColumnMapping> getComparedColumns();
 
     /**
      * Negates this operator. e.g. {@code A = B --> A != B}
+     * 
+     * @return negated operator
      */
     ComparisonPredicate negate();
 }
