@@ -183,11 +183,6 @@
                     <includes>
                         <include>**IT.java</include>
                     </includes>
-                    <excludes>
-                        <exclude>DynamodbAdapterPerformanceIT
-                        </exclude><!-- automatic run makes no sense as cloud setup is needed -->
-                        <exclude>TestCdataConnectorIT</exclude>
-                    </excludes>
                     <failIfNoTests>true</failIfNoTests>
                 </configuration>
                 <executions>
@@ -250,7 +245,7 @@
                     <descriptors>
                         <descriptor>assembly/all-dependencies.xml</descriptor>
                     </descriptors>
-                    <finalName>dynamodb-virtual-schemas-adapter-dist-${product.version}</finalName>
+                    <finalName>virtual-schema-common-document-dist-${product.version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
