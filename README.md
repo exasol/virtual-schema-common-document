@@ -64,7 +64,6 @@
  | [ssh-agent GitHub Action](https://github.com/webfactory/ssh-agent)                  | Deploying [EDML documentation][edml-doc] to github pages | MIT License                      |
  | [Github Checkout Action](https://github.com/actions/checkout)                       | Github actions                                           | MIT License                      |
  | [GitHub Releases API Action](https://github.com/actions/upload-release-asset)       | Automated release                                        | MIT License                      |
- | [shellcheck](https://www.shellcheck.net/)                                           | Detecting code smells in shell scripts                   | GPL v3                           |
  
  ### Maven Plug-ins
  
