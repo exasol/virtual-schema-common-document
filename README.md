@@ -1,6 +1,7 @@
  # Common module of Exasol Virtual Schema Adapters for Document Data Sources
  
  [![Build Status](https://travis-ci.com/exasol/virtual-schema-common-document.svg?branch=master)](https://travis-ci.com/exasol/virtual-schema-common-document)
+ [![Maven Central](https://img.shields.io/maven-central/v/com.exasol/virtual-schema-common-document)](https://search.maven.org/artifact/com.exasol/virtual-schema-common-document)
  
  [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Avirtual-schema-common-document&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.exasol%3Avirtual-schema-common-document)
  

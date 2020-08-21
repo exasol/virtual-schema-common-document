@@ -4,12 +4,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>${product.version}</version>
+    <version>0.1.0</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document</url>
     <properties>
-        <product.version>0.1.0</product.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
@@ -245,7 +244,7 @@
                     <descriptors>
                         <descriptor>assembly/all-dependencies.xml</descriptor>
                     </descriptors>
-                    <finalName>virtual-schema-common-document-dist-${product.version}</finalName>
+                    <finalName>virtual-schema-common-document-dist-${version}</finalName>
                     <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
