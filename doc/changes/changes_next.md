@@ -4,4 +4,4 @@
 
 ## Dependency updates
 
-* #6: Updated Logic-NG dependency to version 1.0.0
+* #6: Updated Logic-NG dependency to version 2.0.0
