@@ -33,14 +33,23 @@ public class ExaOperationInterface {
         setTrustAllCerts();
     }
 
-    public void setBucketfsPort(final int port) throws XmlRpcException {
-        final Object[] result = (Object[]) this.client.execute("bfsdefault.editBucketFS",
-                new Object[] { Map.of("http_port", port) });
+    public void setBucketfsPort(final int port) {
+        try {
+            this.client.execute("bfsdefault.editBucketFS", new Object[] { Map.of("http_port", port) });
+        } catch (final XmlRpcException exception) {
+            throw new IllegalStateException(
+                    "Failed to set BucketFS port in ExaOperation. Cause: " + exception.getMessage(), exception);
+        }
     }
 
-    public void setBucketPasswords(final String readPassword, final String writePassword) throws XmlRpcException {
-        final Object[] result = (Object[]) this.client.execute("bfsdefault.default.editBucketFSBucket",
-                new Object[] { Map.of("read_password", readPassword, "write_password", writePassword) });
+    public void setBucketPasswords(final String readPassword, final String writePassword) {
+        try {
+            this.client.execute("bfsdefault.default.editBucketFSBucket",
+                    new Object[] { Map.of("read_password", readPassword, "write_password", writePassword) });
+        } catch (final XmlRpcException exception) {
+            throw new IllegalStateException(
+                    "Failed to set BucketFS password in ExaOperation. Cause: " + exception.getMessage(), exception);
+        }
     }
 
     public void createAndUploadJdbcDriver(final String name, final String jdbcMainClass, final String prefix,
@@ -51,16 +60,24 @@ public class ExaOperationInterface {
 
     private String addJdbcDriver(final String name, final String jdbcMainClass, final String prefix,
             final boolean disableSecurityManager) throws XmlRpcException {
-        return (String) this.client.execute("addJDBCDriver", new Object[] { Map.of("jdbc_main", jdbcMainClass,
-                "jdbc_name", name, "jdbc_prefix", prefix, "disable_security_manager", disableSecurityManager) });
+        try {
+            return (String) this.client.execute("addJDBCDriver", new Object[] { Map.of("jdbc_main", jdbcMainClass,
+                    "jdbc_name", name, "jdbc_prefix", prefix, "disable_security_manager", disableSecurityManager) });
+        } catch (final XmlRpcException exception) {
+            throw new IllegalStateException(
+                    "Failed add JDBC driver using ExaOperation. Cause: " + exception.getMessage(), exception);
+        }
     }
 
-    private void uploadJdbcDriver(final String jdbcDriverId, final File file) throws IOException, XmlRpcException {
+    private void uploadJdbcDriver(final String jdbcDriverId, final File file) throws IOException {
         try (final InputStream inputStream = new FileInputStream(file)) {
             final byte[] driverBytes = IOUtils.toByteArray(inputStream);
             this.client.execute(jdbcDriverId + ".uploadFile", new Object[] { driverBytes, file.getName() });
         } catch (final XmlRpcClientException exception) {
             // This exception happens always. I don't know why but it still works...
+        } catch (final XmlRpcException exception) {
+            throw new IllegalStateException(
+                    "Failed upload JDBC driver using ExaOperation. Cause: " + exception.getMessage(), exception);
         }
     }
 
