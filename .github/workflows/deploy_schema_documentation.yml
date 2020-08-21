@@ -1,7 +1,7 @@
 name: Deploy Schema Documentation
 on: [push]
 jobs:
-  build-and-deploy:
+  create-and-deploy-schema-doc:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -12,7 +12,7 @@ jobs:
       - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
         run: |
           sudo npm install -g bootprint bootprint-json-schema
-          bootprint json-schema src/main/resources/schemas/edml/v1.json doc/edml/
+          bootprint json-schema src/main/resources/schemas/edml/v1.json doc/gp_pages/schema_doc
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.2.0
@@ -24,5 +24,4 @@ jobs:
         with:
           ssh: true
           BRANCH: gh-pages
-          FOLDER: doc/edml/
-          TARGET_FOLDER: schema_doc
+          FOLDER: doc/gp_pages/
