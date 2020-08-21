@@ -15,6 +15,14 @@ import com.exasol.adapter.document.querypredicate.*;
  * This class converts a {@link QueryPredicate} structure into a LogicNG {@link Formula}.
  */
 class QueryPredicateToLogicngConverter {
+    private final FormulaFactory formulaFactory;
+
+    /**
+     * Get an instance of {@link QueryPredicateToLogicngConverter}.
+     */
+    public QueryPredicateToLogicngConverter() {
+        this.formulaFactory = new FormulaFactory();
+    }
 
     /**
      * Converts a {@link QueryPredicate} structure into a LogicNG {@link Formula}.
@@ -23,18 +31,20 @@ class QueryPredicateToLogicngConverter {
      * @return {@link Result} containing LogicNG {@link Formula} and variables mapping
      */
     public Result convert(final QueryPredicate predicate) {
-        final VariablesMappingBuilder variablesMappingBuilder = new VariablesMappingBuilder();
-        final Visitor visitor = new Visitor(variablesMappingBuilder);
+        final VariablesMappingBuilder variablesMappingBuilder = new VariablesMappingBuilder(this.formulaFactory);
+        final Visitor visitor = new Visitor(variablesMappingBuilder, this.formulaFactory);
         predicate.accept(visitor);
         return new Result(visitor.getFormula(), variablesMappingBuilder.getVariablesMapping());
     }
 
     private static class Visitor implements QueryPredicateVisitor {
         private final VariablesMappingBuilder variablesMappingBuilder;
+        private final FormulaFactory formulaFactory;
         private Formula formula;
 
-        private Visitor(final VariablesMappingBuilder variablesMappingBuilder) {
+        private Visitor(final VariablesMappingBuilder variablesMappingBuilder, final FormulaFactory formulaFactory) {
             this.variablesMappingBuilder = variablesMappingBuilder;
+            this.formulaFactory = formulaFactory;
         }
 
         @Override
@@ -44,28 +54,27 @@ class QueryPredicateToLogicngConverter {
 
         @Override
         public void visit(final LogicalOperator logicalOperator) {
-            final FormulaFactory formulaFactory = new FormulaFactory();
             final List<Formula> operandsFormulas = logicalOperator.getOperands().stream().map(this::callRecursive)
                     .collect(Collectors.toList());
             if (logicalOperator.getOperator() == LogicalOperator.Operator.AND) {
-                this.formula = formulaFactory.and(operandsFormulas);
+                this.formula = this.formulaFactory.and(operandsFormulas);
             } else {
-                this.formula = formulaFactory.or(operandsFormulas);
+                this.formula = this.formulaFactory.or(operandsFormulas);
             }
         }
 
         @Override
         public void visit(final NoPredicate noPredicate) {
-            this.formula = new FormulaFactory().constant(true);
+            this.formula = this.formulaFactory.constant(true);
         }
 
         @Override
         public void visit(final NotPredicate notPredicate) {
-            this.formula = new FormulaFactory().not(callRecursive(notPredicate.getPredicate()));
+            this.formula = this.formulaFactory.not(callRecursive(notPredicate.getPredicate()));
         }
 
         private Formula callRecursive(final QueryPredicate predicate) {
-            final Visitor visitor = new Visitor(this.variablesMappingBuilder);
+            final Visitor visitor = new Visitor(this.variablesMappingBuilder, this.formulaFactory);
             predicate.accept(visitor);
             return visitor.getFormula();
         }
@@ -81,10 +90,10 @@ class QueryPredicateToLogicngConverter {
         private final FormulaFactory formulaFactory;
         private int uniqueVariableNameCounter = 0;
 
-        public VariablesMappingBuilder() {
+        public VariablesMappingBuilder(final FormulaFactory formulaFactory) {
             this.variablesMapping = new HashMap<>();
             this.inverseVariablesMapping = new HashMap<>();
-            this.formulaFactory = new FormulaFactory();
+            this.formulaFactory = formulaFactory;
         }
 
         public Variable add(final QueryPredicate predicateToAdd) {
@@ -117,7 +126,7 @@ class QueryPredicateToLogicngConverter {
 
         /**
          * Get the formula in the representation of the LogicNG library.
-         * 
+         *
          * @return LogicNg formula
          */
         public Formula getLogicngFormula() {
@@ -126,7 +135,7 @@ class QueryPredicateToLogicngConverter {
 
         /**
          * Get a map that maps the Variables in the formla to {@link QueryPredicate}s.
-         * 
+         *
          * @return variable map
          */
         public Map<Variable, QueryPredicate> getVariablesMapping() {
