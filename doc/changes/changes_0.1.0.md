@@ -7,3 +7,4 @@ Separated document code from dynamodb-virtual-schema repository
 ## Features / Enhancements
 
 * #1: Created initial repository structure
+* #3: Fixed schema generation by switching from travis ci to  github actions

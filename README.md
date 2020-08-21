@@ -56,11 +56,15 @@
  | [Apache XMLRPC](https://mvnrepository.com/artifact/org.apache.xmlrpc)               | Connecting to ExaOperation XMLRPC interface            | Apache License 2.0               |
  
  ### CI Dependencies
- | Dependency                                                                          | Purpose                                                | License                          |
- |-------------------------------------------------------------------------------------|--------------------------------------------------------|----------------------------------|
- | [bootprint](https://www.npmjs.com/package/bootprint)                                | Generating [EDML documentation][edml-doc]              | MIT License                      |
- | [bootprint-json-schema](https://www.npmjs.com/package/bootprint-json-schema)        | Generating [EDML documentation][edml-doc]              | MIT License                      |
- | [shellcheck](https://www.shellcheck.net/)                                           | Detecting code smells in shell scripts                 | GPL v3                           |
+ | Dependency                                                                          | Purpose                                                  | License                          |
+ |-------------------------------------------------------------------------------------|----------------------------------------------------------|----------------------------------|
+ | [bootprint](https://www.npmjs.com/package/bootprint)                                | Generating [EDML documentation][edml-doc]                | MIT License                      |
+ | [bootprint-json-schema](https://www.npmjs.com/package/bootprint-json-schema)        | Generating [EDML documentation][edml-doc]                | MIT License                      |
+ | [GitHub Pages Deploy Action][github-pages-deploy-action]                            | Deploying [EDML documentation][edml-doc] to github pages | MIT License                      |
+ | [ssh-agent GitHub Action](https://github.com/webfactory/ssh-agent)                  | Deploying [EDML documentation][edml-doc] to github pages | MIT License                      |
+ | [Github Checkout Action](https://github.com/actions/checkout)                       | Github actions                                           | MIT License                      |
+ | [GitHub Releases API Action](https://github.com/actions/upload-release-asset)       | Automated release                                        | MIT License                      |
+ | [shellcheck](https://www.shellcheck.net/)                                           | Detecting code smells in shell scripts                   | GPL v3                           |
  
  ### Maven Plug-ins
  
@@ -88,4 +92,4 @@
  [versions-maven-plugin]: https://www.mojohaus.org/versions-maven-plugin/
  [exasol-virtual-schema-common-java]: https://github.com/exasol/virtual-schema-common-java
  [edml-doc]: https://exasol.github.io/virtual-schema-common-ducument/schema_doc/index.html
- 
+ [github-pages-deploy-action]: https://github.com/JamesIves/github-pages-deploy-action

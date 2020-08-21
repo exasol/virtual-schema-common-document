@@ -1,5 +1,8 @@
 name: Deploy Schema Documentation
-on: [push]
+on:
+  push:
+    branches:
+      - master
 jobs:
   create-and-deploy-schema-doc:
     runs-on: ubuntu-latest
