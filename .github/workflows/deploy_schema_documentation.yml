@@ -25,3 +25,4 @@ jobs:
           ssh: true
           BRANCH: gh-pages
           FOLDER: doc/gp_pages/
+          SINGLE_COMMIT: true
