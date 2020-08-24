@@ -7,8 +7,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-import org.apache.xmlrpc.XmlRpcException;
-
 import com.exasol.ExaOperationInterface;
 import com.exasol.TerraformInterface;
 
@@ -24,7 +22,7 @@ public class AwsExasolTestInterface extends AbstractExasolTestInterface {
     private final ExaOperationInterface exaOperationInterface;
 
     public AwsExasolTestInterface()
-            throws IOException, NoSuchAlgorithmException, KeyManagementException, XmlRpcException {
+            throws IOException, NoSuchAlgorithmException, KeyManagementException {
         final TerraformInterface terraformInterface = new TerraformInterface();
         this.exasolIp = terraformInterface.getExasolDataNodeIp();
         this.exaOperationInterface = new ExaOperationInterface(terraformInterface.getExasolManagementNodeIp(), "admin",
@@ -34,7 +32,7 @@ public class AwsExasolTestInterface extends AbstractExasolTestInterface {
     }
 
     public static Connection getConnection(final String exasolIpAddress, final String sysUserPw)
-            throws SQLException, IOException {
+            throws SQLException {
         return DriverManager.getConnection("jdbc:exa:" + exasolIpAddress + ":8563;schema=SYS", "sys", sysUserPw);
     }
 

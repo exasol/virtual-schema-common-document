@@ -53,9 +53,14 @@ public class ExaOperationInterface {
     }
 
     public void createAndUploadJdbcDriver(final String name, final String jdbcMainClass, final String prefix,
-            final boolean disableSecurityManager, final File driverJar) throws XmlRpcException, IOException {
-        final String driverId = addJdbcDriver(name, jdbcMainClass, prefix, disableSecurityManager);
-        uploadJdbcDriver(driverId, driverJar);
+            final boolean disableSecurityManager, final File driverJar) throws IOException {
+        try {
+            final String driverId = addJdbcDriver(name, jdbcMainClass, prefix, disableSecurityManager);
+            uploadJdbcDriver(driverId, driverJar);
+        } catch (final XmlRpcException exception) {
+            throw new IllegalStateException("Failed create or upload JDBC driver. Cause: " + exception.getMessage(),
+                    exception);
+        }
     }
 
     private String addJdbcDriver(final String name, final String jdbcMainClass, final String prefix,
