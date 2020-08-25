@@ -54,23 +54,18 @@ public class ExaOperationInterface {
 
     public void createAndUploadJdbcDriver(final String name, final String jdbcMainClass, final String prefix,
             final boolean disableSecurityManager, final File driverJar) throws IOException {
-        try {
-            final String driverId = addJdbcDriver(name, jdbcMainClass, prefix, disableSecurityManager);
-            uploadJdbcDriver(driverId, driverJar);
-        } catch (final XmlRpcException exception) {
-            throw new IllegalStateException("Failed create or upload JDBC driver. Cause: " + exception.getMessage(),
-                    exception);
-        }
+        final String driverId = addJdbcDriver(name, jdbcMainClass, prefix, disableSecurityManager);
+        uploadJdbcDriver(driverId, driverJar);
     }
 
     private String addJdbcDriver(final String name, final String jdbcMainClass, final String prefix,
-            final boolean disableSecurityManager) throws XmlRpcException {
+            final boolean disableSecurityManager) {
         try {
             return (String) this.client.execute("addJDBCDriver", new Object[] { Map.of("jdbc_main", jdbcMainClass,
                     "jdbc_name", name, "jdbc_prefix", prefix, "disable_security_manager", disableSecurityManager) });
         } catch (final XmlRpcException exception) {
             throw new IllegalStateException(
-                    "Failed add JDBC driver using ExaOperation. Cause: " + exception.getMessage(), exception);
+                    "Failed to add JDBC driver using ExaOperation. Cause: " + exception.getMessage(), exception);
         }
     }
 
@@ -82,7 +77,7 @@ public class ExaOperationInterface {
             // This exception happens always. I don't know why but it still works...
         } catch (final XmlRpcException exception) {
             throw new IllegalStateException(
-                    "Failed upload JDBC driver using ExaOperation. Cause: " + exception.getMessage(), exception);
+                    "Failed to upload JDBC driver using ExaOperation. Cause: " + exception.getMessage(), exception);
         }
     }
 
