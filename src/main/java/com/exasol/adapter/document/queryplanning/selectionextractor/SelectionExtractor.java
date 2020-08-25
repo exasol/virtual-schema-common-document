@@ -17,16 +17,16 @@ import com.exasol.adapter.document.querypredicate.normalizer.DnfOr;
  */
 public class SelectionExtractor {
     private final DnfNormalizer dnfNormalizer;
-    private final List<SelectionMatcher> matcher;
+    private final List<SelectionMatcher> matchers;
 
     /**
      * Create an instance of {@link SelectionExtractor}
      *
-     * @param matcher on or more matcher that matches the comparison to be extracted
+     * @param matchers on or more matcher that matches the comparison to be extracted
      */
-    public SelectionExtractor(final SelectionMatcher... matcher) {
+    public SelectionExtractor(final SelectionMatcher... matchers) {
         this.dnfNormalizer = new DnfNormalizer();
-        this.matcher = Arrays.asList(matcher);
+        this.matchers = Arrays.asList(matchers);
     }
 
     /**
@@ -75,7 +75,7 @@ public class SelectionExtractor {
     }
 
     private boolean anyMatchesComparison(final DnfComparison comparison) {
-        return this.matcher.stream()
+        return this.matchers.stream()
                 .anyMatch(eachMatcher -> eachMatcher.matchComparison(comparison.getComparisonPredicate()));
     }
 

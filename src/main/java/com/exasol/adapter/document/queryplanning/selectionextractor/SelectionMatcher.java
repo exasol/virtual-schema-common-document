@@ -3,7 +3,7 @@ package com.exasol.adapter.document.queryplanning.selectionextractor;
 import com.exasol.adapter.document.querypredicate.ComparisonPredicate;
 
 /**
- * This is an interface for matchers the match comparisons in selections. It is used by the {@link SelectionExtractor}
+ * This is an interface for matchers that match comparisons in selections. It is used by the {@link SelectionExtractor}
  * for splitting up queries.
  */
 public interface SelectionMatcher {
@@ -14,5 +14,5 @@ public interface SelectionMatcher {
      * @param comparison comparison to test
      * @return {@code true} if comparison should be included in the selectedSelection
      */
-    public boolean matchComparison(ComparisonPredicate comparison);
+    boolean matchComparison(ComparisonPredicate comparison);
 }
