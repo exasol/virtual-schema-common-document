@@ -4,7 +4,8 @@
 
 ## Features / Enhancements
 
-* #5 Removed xmlrpc dependency from test API
+* #9: Selection on columns of nested lists
+* #5: Removed xmlrpc dependency from test API
 
 ## Dependency updates
 
