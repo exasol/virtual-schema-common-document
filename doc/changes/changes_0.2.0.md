@@ -1,6 +1,7 @@
-# Virtual Schema Common Document 0.X.X, released 2020-XX-XX
+# Virtual Schema Common Document 0.2.0, released 2020-08-25
 
 ## Summary
+Small features + dependency update
 
 ## Features / Enhancements
 
