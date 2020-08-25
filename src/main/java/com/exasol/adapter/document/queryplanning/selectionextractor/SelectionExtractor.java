@@ -1,9 +1,6 @@
-package com.exasol.adapter.document.queryplanning;
+package com.exasol.adapter.document.queryplanning.selectionextractor;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.mapping.IterationIndexColumnMapping;
@@ -14,18 +11,22 @@ import com.exasol.adapter.document.querypredicate.normalizer.DnfNormalizer;
 import com.exasol.adapter.document.querypredicate.normalizer.DnfOr;
 
 /**
- * This class provides the abstract basis for splitting up a selection into two selections that can be combined with an
- * AND. The decision which comparison belongs to which selection is delegated to the concrete implementation by the
- * abstract {@link #matchComparison(DnfComparison)} method.
+ * This class can split up a selection into two selections that can be combined with an AND. The decision which
+ * comparison belongs to the {@link SelectionMatcher}. If multiple matchers are passed, the comparison is extracted if
+ * one or more matchers match the comparison.
  */
-public abstract class AbstractSelectionExtractor {
-    protected final DnfNormalizer dnfNormalizer;
+public class SelectionExtractor {
+    private final DnfNormalizer dnfNormalizer;
+    private final List<SelectionMatcher> matcher;
 
     /**
-     * Create an instance of {@link AbstractSelectionExtractor}
+     * Create an instance of {@link SelectionExtractor}
+     *
+     * @param matcher on or more matcher that matches the comparison to be extracted
      */
-    public AbstractSelectionExtractor() {
+    public SelectionExtractor(final SelectionMatcher... matcher) {
         this.dnfNormalizer = new DnfNormalizer();
+        this.matcher = Arrays.asList(matcher);
     }
 
     /**
@@ -64,7 +65,7 @@ public abstract class AbstractSelectionExtractor {
     private SplitDnfAnd splitUpDnfAnd(final DnfAnd dnfAnd) {
         final SplitDnfAnd result = new SplitDnfAnd();
         for (final DnfComparison comparison : dnfAnd.getOperands()) {
-            if (matchComparison(comparison)) {
+            if (anyMatchesComparison(comparison)) {
                 result.matchedComparisons.add(comparison);
             } else {
                 result.notMatchedComparisons.add(comparison);
@@ -73,13 +74,10 @@ public abstract class AbstractSelectionExtractor {
         return result;
     }
 
-    /**
-     * Separate the comparisons in two groups: matched and unmatched groups.
-     * 
-     * @param comparison comparison to test
-     * @return {@code true} if comparison should be included in the {@link Result#selectedSelection}.
-     */
-    protected abstract boolean matchComparison(DnfComparison comparison);
+    private boolean anyMatchesComparison(final DnfComparison comparison) {
+        return this.matcher.stream()
+                .anyMatch(eachMatcher -> eachMatcher.matchComparison(comparison.getComparisonPredicate()));
+    }
 
     /**
      * This class stores the result of {@link #extractIndexColumnSelection(QueryPredicate)}.
