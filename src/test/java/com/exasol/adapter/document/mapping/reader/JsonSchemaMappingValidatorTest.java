@@ -7,19 +7,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.function.Function;
 
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exasol.adapter.document.mapping.MappingTestFiles;
-
 class JsonSchemaMappingValidatorTest {
+    @TempDir
+    Path tempDir;
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonSchemaMappingValidatorTest.class);
-    private final MappingTestFiles mappingTestFiles = new MappingTestFiles();
 
     void runValidation(final File file) throws IOException {
         final JsonSchemaMappingValidator jsonSchemaMappingValidator = new JsonSchemaMappingValidator();
@@ -31,39 +31,34 @@ class JsonSchemaMappingValidatorTest {
         }
     }
 
-    @AfterEach
-    void afterEach() {
-        this.mappingTestFiles.deleteAllTempFiles();
-    }
-
     @Test
     void testValidBasicMapping() throws IOException {
-        runValidation(getMappingAsFile(BASIC_MAPPING));
+        runValidation(getMappingAsFile(BASIC_MAPPING, this.tempDir));
     }
 
     @Test
     void testValidToJsonMapping() throws IOException {
-        runValidation(getMappingAsFile(TO_JSON_MAPPING));
+        runValidation(getMappingAsFile(TO_JSON_MAPPING, this.tempDir));
     }
 
     @Test
     void testValidSingleColumnToTableMapping() throws IOException {
-        runValidation(getMappingAsFile(SINGLE_COLUMN_TO_TABLE_MAPPING));
+        runValidation(getMappingAsFile(SINGLE_COLUMN_TO_TABLE_MAPPING, this.tempDir));
     }
 
     @Test
     void testValidMultiColumnToTableMapping() throws IOException {
-        runValidation(getMappingAsFile(MULTI_COLUMN_TO_TABLE_MAPPING));
+        runValidation(getMappingAsFile(MULTI_COLUMN_TO_TABLE_MAPPING, this.tempDir));
     }
 
     @Test
     void testValidWholeTableToJsonMapping() throws IOException {
-        runValidation(getMappingAsFile(WHOLE_TABLE_TO_TABLE_MAPPING));
+        runValidation(getMappingAsFile(WHOLE_TABLE_TO_TABLE_MAPPING, this.tempDir));
     }
 
     private void testInvalid(final String base, final Function<JSONObject, JSONObject> invalidator,
             final String expectedMessage) throws IOException {
-        final File invalidFile = this.mappingTestFiles.generateInvalidFile(base, invalidator);
+        final File invalidFile = generateInvalidFile(base, invalidator, this.tempDir);
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> runValidation(invalidFile));
         assertThat(exception.getMessage(),
