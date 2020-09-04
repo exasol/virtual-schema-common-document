@@ -9,3 +9,4 @@ Bug fixes
 ## Bug Fixes
 
 * #12: Access to test mappings from dialects tests
+* #13: Moved dynamodb specific test code to dynamodb dialect
