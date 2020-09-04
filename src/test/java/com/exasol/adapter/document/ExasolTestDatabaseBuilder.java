@@ -27,15 +27,13 @@ public class ExasolTestDatabaseBuilder {
     public static final String ADAPTER_SCHEMA = "ADAPTER";
     public static final String DYNAMODB_ADAPTER = "DYNAMODB_ADAPTER";
     public static final String PROFILING_AGENT_FILE_NAME = "liblagent.so";
-    private static final Logger LOGGER = LoggerFactory.getLogger(TestcontainerExasolTestInterface.class);
-    private static final String VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION = "dynamodb-virtual-schemas-adapter-dist-0.4.0.jar";
-    private static final Path PATH_TO_VIRTUAL_SCHEMAS_JAR = Path.of("target", VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
+    protected static final Logger LOGGER = LoggerFactory.getLogger(TestcontainerExasolTestInterface.class);
     private static final String JACOCO_JAR_NAME = "org.jacoco.agent-runtime.jar";
     private static final Path PATH_TO_JACOCO_JAR = Path.of("target", "jacoco-agent", JACOCO_JAR_NAME);
     private static final String LOGGER_PORT = "3000";
     private static final int SCRIPT_OUTPUT_PORT = 3001;
     private static final String DEBUGGER_PORT = "8000";
-    private final ExasolTestInterface testInterface;
+    protected final ExasolTestInterface testInterface;
     private final Statement statement;
 
     public ExasolTestDatabaseBuilder(final ExasolTestInterface testInterface) throws SQLException, IOException {
@@ -89,29 +87,8 @@ public class ExasolTestDatabaseBuilder {
         this.getStatement().execute("DROP CONNECTION IF EXISTS " + name);
     }
 
-    /**
-     * Runs {@code CREATE OR REPLACE JAVA ADAPTER SCRIPT} on the Exasol test container with the DynamoDB Virtual Schema
-     * adapter jar.
-     *
-     * @throws SQLException on SQL error
-     */
-    public void createAdapterScript() throws SQLException {
-        setScriptOutputAddress();
-        dropSchema(ADAPTER_SCHEMA);
-        createSchema(ADAPTER_SCHEMA);
-        final StringBuilder statementBuilder = new StringBuilder(
-                "CREATE OR REPLACE JAVA ADAPTER SCRIPT " + ADAPTER_SCHEMA + "." + DYNAMODB_ADAPTER + " AS\n");
-        addDebuggerOptions(statementBuilder, false);
-        // noinspection SpellCheckingInspection
-        statementBuilder.append("    %scriptclass com.exasol.adapter.RequestDispatcher;\n");
-        statementBuilder.append("    %jar /buckets/bfsdefault/default/" + VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION + ";\n");
-        statementBuilder.append("/");
-        final String sql = statementBuilder.toString();
-        LOGGER.info(sql);
-        this.statement.execute(sql);
-    }
 
-    private void addDebuggerOptions(final StringBuilder statementBuilder, final boolean isUdf) {
+    protected void addDebuggerOptions(final StringBuilder statementBuilder, final boolean isUdf) {
         final String hostIp = this.testInterface.getTestHostIpAddress();
         final StringBuilder jvmOptions = new StringBuilder();
         if (hostIp != null) {
@@ -132,28 +109,26 @@ public class ExasolTestDatabaseBuilder {
         }
     }
 
-    public void createUdf() throws SQLException {// TODO make DynamoDB independent
-        final StringBuilder statementBuilder = new StringBuilder("CREATE OR REPLACE JAVA SET SCRIPT ")
-                .append(ADAPTER_SCHEMA).append(".").append(UdfRequestDispatcher.UDF_PREFIX + "DYNAMO_DB").append("(")
-                .append(AbstractDataLoaderUdf.PARAMETER_DOCUMENT_FETCHER).append(" VARCHAR(2000000), ")
-                .append(AbstractDataLoaderUdf.PARAMETER_REMOTE_TABLE_QUERY).append(" VARCHAR(2000000), ")
-                .append(AbstractDataLoaderUdf.PARAMETER_CONNECTION_NAME).append(" VARCHAR(500)) EMITS(...) AS\n");
-        addDebuggerOptions(statementBuilder, true);
-        statementBuilder.append("    %scriptclass ").append(UdfRequestDispatcher.class.getName()).append(";\n");
-        statementBuilder.append("    %jar /buckets/bfsdefault/default/").append(VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION)
-                .append(";\n");
-        statementBuilder.append("/");
-        final String sql = statementBuilder.toString();
-        LOGGER.info(sql);
-        this.getStatement().execute(sql);
-    }
-
-    private void setScriptOutputAddress() throws SQLException {
+    protected void setScriptOutputAddress() throws SQLException {
         final String hostIp = this.testInterface.getTestHostIpAddress();
         if (hostIp != null) {
             final String sql = "ALTER SESSION SET SCRIPT_OUTPUT_ADDRESS='" + hostIp + ":" + SCRIPT_OUTPUT_PORT + "';";
             LOGGER.info(sql);
             this.getStatement().execute(sql);
+        }
+    }
+
+    protected void uploadJacocoAgent() throws InterruptedException, BucketAccessException, TimeoutException {
+        this.testInterface.uploadFileToBucketfs(PATH_TO_JACOCO_JAR, JACOCO_JAR_NAME);
+        if (isProfilingEnabled()) {
+            final Path agentPath = Path.of("../", PROFILING_AGENT_FILE_NAME);
+            if (!agentPath.toFile().exists()) {
+                throw new IllegalStateException(
+                        "Profiling was turned on using -Dtests.profiling=true but no profiling agent was provided. \n"
+                                + "Please download the honest-profiler form https://github.com/jvm-profiling-tools/honest-profiler/ and place the "
+                                + PROFILING_AGENT_FILE_NAME + " in thew directory above this project.");
+            }
+            this.testInterface.uploadFileToBucketfs(agentPath, PROFILING_AGENT_FILE_NAME);
         }
     }
 
@@ -265,23 +240,6 @@ public class ExasolTestDatabaseBuilder {
         this.getStatement().execute("DROP VIRTUAL SCHEMA IF EXISTS " + schemaName + " CASCADE;");
     }
 
-    /**
-     * Uploads the dynamodb adapter jar to the exasol test container.
-     */
-    public void uploadDynamodbAdapterJar() throws InterruptedException, BucketAccessException, TimeoutException {
-        this.testInterface.uploadFileToBucketfs(PATH_TO_VIRTUAL_SCHEMAS_JAR, VIRTUAL_SCHEMAS_JAR_NAME_AND_VERSION);
-        this.testInterface.uploadFileToBucketfs(PATH_TO_JACOCO_JAR, JACOCO_JAR_NAME);
-        if (isProfilingEnabled()) {
-            final Path agentPath = Path.of("../", PROFILING_AGENT_FILE_NAME);
-            if (!agentPath.toFile().exists()) {
-                throw new IllegalStateException(
-                        "Profiling was turned on using -Dtests.profiling=true but no profiling agent was provided. \n"
-                                + "Please download the honest-profiler form https://github.com/jvm-profiling-tools/honest-profiler/ and place the "
-                                + PROFILING_AGENT_FILE_NAME + " in thew directory above this project.");
-            }
-            this.testInterface.uploadFileToBucketfs(agentPath, PROFILING_AGENT_FILE_NAME);
-        }
-    }
 
     private void uploadMapping(final String name, final String destinationName)
             throws InterruptedException, BucketAccessException, TimeoutException {
