@@ -1,5 +1,7 @@
 package com.exasol.adapter.document.mapping.reader;
 
+import static com.exasol.adapter.document.mapping.MappingTestFiles.generateInvalidFile;
+import static com.exasol.adapter.document.mapping.MappingTestFiles.getMappingAsFile;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -7,14 +9,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.json.JSONObject;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.document.mapping.*;
@@ -22,7 +25,8 @@ import com.exasol.adapter.document.mapping.*;
 @Tag("integration")
 @Tag("quick")
 class JsonSchemaMappingReaderIT {
-    private final MappingTestFiles mappingTestFiles = new MappingTestFiles();
+    @TempDir
+    Path tempDir;
 
     private SchemaMapping getMappingDefinitionForFile(final File mappingFile) throws IOException, AdapterException {
         final SchemaMappingReader mappingFactory = new JsonSchemaMappingReader(mappingFile,
@@ -37,18 +41,13 @@ class JsonSchemaMappingReaderIT {
         return mappingFactory.getSchemaMapping();
     }
 
-    @AfterEach
-    void afterEach() {
-        this.mappingTestFiles.deleteAllTempFiles();
-    }
-
     /**
      * Tests schema load from basicMapping.json.
      */
     @Test
     void testBasicMapping() throws IOException, AdapterException {
         final SchemaMapping schemaMapping = getMappingDefinitionForFile(
-                MappingTestFiles.getMappingAsFile(MappingTestFiles.BASIC_MAPPING));
+                getMappingAsFile(MappingTestFiles.BASIC_MAPPING, this.tempDir));
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping table = tables.get(0);
         final List<ColumnMapping> columns = table.getColumns();
@@ -74,7 +73,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testToJsonMapping() throws IOException, AdapterException {
         final SchemaMapping schemaMapping = getMappingDefinitionForFile(
-                MappingTestFiles.getMappingAsFile(MappingTestFiles.TO_JSON_MAPPING));
+                getMappingAsFile(MappingTestFiles.TO_JSON_MAPPING, this.tempDir));
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping table = tables.get(0);
         final List<ColumnMapping> columns = table.getColumns();
@@ -96,7 +95,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testToSingleColumnTableMapping() throws IOException, AdapterException {
         final SchemaMapping schemaMapping = getMappingDefinitionForFile(
-                MappingTestFiles.getMappingAsFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING));
+                getMappingAsFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, this.tempDir));
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping nestedTable = tables.stream().filter(table -> !table.isRootTable()).findAny().orElseThrow();
         final PropertyToVarcharColumnMapping column = (PropertyToVarcharColumnMapping) getColumnByExasolName(
@@ -111,12 +110,12 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testToStringMappingAtRootLevelException() throws IOException {
-        final File invalidFile = this.mappingTestFiles.generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
+        final File invalidFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
             final JSONObject newMappings = new JSONObject();
             newMappings.put("toVarcharMapping", new JSONObject());
             base.put("mapping", newMappings);
             return base;
-        });
+        }, this.tempDir);
 
         final ExasolDocumentMappingLanguageException exception = assertThrows(
                 ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
@@ -126,11 +125,11 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testDifferentKeysException() throws IOException {
-        final File invalidFile = this.mappingTestFiles.generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
+        final File invalidFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
             base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("name")
                     .getJSONObject("toVarcharMapping").put("key", "local");
             return base;
-        });
+        }, this.tempDir);
         final ExasolDocumentMappingLanguageException exception = assertThrows(
                 ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
         assertThat(exception.getMessage(), startsWith(
@@ -139,12 +138,11 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testLocalKeyAtRootLevelException() throws IOException {
-        final File invalidFile = this.mappingTestFiles
-                .generateInvalidFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-                    base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("isbn")
-                            .getJSONObject("toVarcharMapping").put("key", "local");
-                    return base;
-                });
+        final File invalidFile = generateInvalidFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
+            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("isbn")
+                    .getJSONObject("toVarcharMapping").put("key", "local");
+            return base;
+        }, this.tempDir);
         final ExasolDocumentMappingLanguageException exception = assertThrows(
                 ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
         assertThat(exception.getMessage(),
@@ -153,12 +151,11 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testNestedTableRootKeyGeneration() throws IOException, AdapterException {
-        final File mappingFile = this.mappingTestFiles
-                .generateInvalidFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-                    base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("isbn")
-                            .getJSONObject("toVarcharMapping").remove("key");
-                    return base;
-                });
+        final File mappingFile = generateInvalidFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
+            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("isbn")
+                    .getJSONObject("toVarcharMapping").remove("key");
+            return base;
+        }, this.tempDir);
         final SchemaMapping schemaMapping = getMappingDefinitionForFile(mappingFile);
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping nestedTable = tables.stream().filter(table -> !table.isRootTable()).findAny().orElseThrow();
@@ -167,11 +164,10 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testNestedTableRootKeyGenerationException() throws IOException, AdapterException {
-        final File mappingFile = this.mappingTestFiles
-                .generateInvalidFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-                    base.getJSONObject("mapping").getJSONObject("fields").remove("isbn");
-                    return base;
-                });
+        final File mappingFile = generateInvalidFile(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
+            base.getJSONObject("mapping").getJSONObject("fields").remove("isbn");
+            return base;
+        }, this.tempDir);
         final ExasolDocumentMappingLanguageException exception = assertThrows(
                 ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(mappingFile));
         assertThat(exception.getMessage(), startsWith(
@@ -181,7 +177,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testDoubleNestedToTableMapping() throws IOException, AdapterException {
         final SchemaMapping schemaMapping = getMappingDefinitionForFile(
-                MappingTestFiles.getMappingAsFile(MappingTestFiles.DOUBLE_NESTED_TO_TABLE_MAPPING));
+                getMappingAsFile(MappingTestFiles.DOUBLE_NESTED_TO_TABLE_MAPPING, this.tempDir));
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping doubleNestedTable = tables.stream()
                 .filter(table -> table.getExasolName().equals("BOOKS_CHAPTERS_FIGURES")).findAny().orElseThrow();

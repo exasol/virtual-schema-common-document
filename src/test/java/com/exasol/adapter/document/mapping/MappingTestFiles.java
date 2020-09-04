@@ -4,14 +4,16 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.function.Function;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 public class MappingTestFiles {
+
     public static final String BASIC_MAPPING = "basicMapping.json";
     public static final String TO_JSON_MAPPING = "toJsonMapping.json";
     public static final String SINGLE_COLUMN_TO_TABLE_MAPPING = "singleColumnToTableMapping.json";
@@ -23,14 +25,36 @@ public class MappingTestFiles {
     public static final String DATA_TYPE_TEST_SRC_TABLE_NAME = "DATA_TYPE_TEST";
     public static final String DATA_TYPE_TEST_EXASOL_TABLE_NAME = "TEST";
 
-    private final List<File> tempFiles = new ArrayList<>();
-
     public static InputStream getMappingAsStream(final String fileName) {
         return MappingTestFiles.class.getClassLoader().getResourceAsStream(fileName);
     }
 
-    public static File getMappingAsFile(final String fileName) {
-        return new File(MappingTestFiles.class.getClassLoader().getResource(fileName).getFile());
+    /**
+     * Private constructor to hide the public default.
+     */
+    private MappingTestFiles() {
+        // empty on purpose
+    }
+
+    /**
+     * Get a mapping from resources as file.
+     *
+     * @implNote This method does not use the resource directly as file, since the this method only works if the jar is
+     *           unpacked. For that reason this method writes the content of the file to a temporary directory.
+     *
+     * @param fileName name of the mapping. Use one of the constants of this class.
+     * @param tempDir  temporary directory for the file. Use @TempDir to create this directory in the test case.
+     * @return temporary file with the content of the specified mapping file.
+     * @throws IOException if resource was not found
+     */
+    public static File getMappingAsFile(final String fileName, final Path tempDir) throws IOException {
+        final File tempFile = File.createTempFile("schemaTmp", ".json", tempDir.toFile());
+        try (final InputStream stream = MappingTestFiles.class.getClassLoader().getResourceAsStream(fileName)) {
+            Files.copy(stream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (final IOException e) {
+            e.printStackTrace();
+        }
+        return tempFile;
     }
 
     /**
@@ -39,13 +63,14 @@ public class MappingTestFiles {
      *
      * @param baseMappingName Definition to use as basis
      * @param invalidator     Function that modifies / invalidates the definition.
+     * @param tempDir         temporary directory for the modified file. use @TempDir to create this directory in the
+     *                        test case.
      * @return File containing modified definition.
      * @throws IOException on read or write error.
      */
-    public File generateInvalidFile(final String baseMappingName, final Function<JSONObject, JSONObject> invalidator)
-            throws IOException {
-        final File tempFile = File.createTempFile("schemaTmp", ".json");
-        this.tempFiles.add(tempFile);
+    public static File generateInvalidFile(final String baseMappingName,
+            final Function<JSONObject, JSONObject> invalidator, final Path tempDir) throws IOException {
+        final File tempFile = File.createTempFile("schemaTmp", ".json", tempDir.toFile());
         try (final InputStream inputStream = getMappingAsStream(baseMappingName);
                 final FileWriter fileWriter = new FileWriter(tempFile)) {
             final JSONObject baseObject = new JSONObject(new JSONTokener(inputStream));
@@ -54,12 +79,5 @@ public class MappingTestFiles {
             fileWriter.close();
             return tempFile;
         }
-    }
-
-    public void deleteAllTempFiles() {
-        for (final File tempFile : this.tempFiles) {
-            tempFile.delete();
-        }
-        this.tempFiles.clear();
     }
 }
