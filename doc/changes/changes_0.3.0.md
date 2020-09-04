@@ -1,9 +1,11 @@
 # Virtual Schema Common Document 0.3.0, released 2020-09-04
 
+Code name: Bug fixes
+
 ## Summary
 
-Fixed bug #12
+Bug fixes
 
-## Bugs
+## Bug Fixes
 
 * #12: Access to test mappings from dialects tests
