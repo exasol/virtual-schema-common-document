@@ -1,5 +1,5 @@
 {
-  "$schema": "../../main/resources/schemas/edml/v1.json",
+  "$schema": "../../main/resources/schemas/edml/v1.0.0.json",
   "source": "DATA_TYPE_TEST",
   "destinationTable": "TEST",
   "mapping": {

@@ -25,15 +25,15 @@ public class MappingTestFiles {
     public static final String DATA_TYPE_TEST_SRC_TABLE_NAME = "DATA_TYPE_TEST";
     public static final String DATA_TYPE_TEST_EXASOL_TABLE_NAME = "TEST";
 
-    public static InputStream getMappingAsStream(final String fileName) {
-        return MappingTestFiles.class.getClassLoader().getResourceAsStream(fileName);
-    }
-
     /**
      * Private constructor to hide the public default.
      */
     private MappingTestFiles() {
         // empty on purpose
+    }
+
+    public static InputStream getMappingAsStream(final String fileName) {
+        return MappingTestFiles.class.getClassLoader().getResourceAsStream(fileName);
     }
 
     /**

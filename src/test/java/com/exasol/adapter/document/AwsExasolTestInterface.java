@@ -21,8 +21,7 @@ public class AwsExasolTestInterface extends AbstractExasolTestInterface {
     private final String exasolIp;
     private final ExaOperationInterface exaOperationInterface;
 
-    public AwsExasolTestInterface()
-            throws IOException, NoSuchAlgorithmException, KeyManagementException {
+    public AwsExasolTestInterface() throws IOException, NoSuchAlgorithmException, KeyManagementException {
         final TerraformInterface terraformInterface = new TerraformInterface();
         this.exasolIp = terraformInterface.getExasolDataNodeIp();
         this.exaOperationInterface = new ExaOperationInterface(terraformInterface.getExasolManagementNodeIp(), "admin",
@@ -31,8 +30,7 @@ public class AwsExasolTestInterface extends AbstractExasolTestInterface {
         this.exaOperationInterface.setBucketfsPort(BUCKETFS_PORT);
     }
 
-    public static Connection getConnection(final String exasolIpAddress, final String sysUserPw)
-            throws SQLException {
+    public static Connection getConnection(final String exasolIpAddress, final String sysUserPw) throws SQLException {
         return DriverManager.getConnection("jdbc:exa:" + exasolIpAddress + ":8563;schema=SYS", "sys", sysUserPw);
     }
 

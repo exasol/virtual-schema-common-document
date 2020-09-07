@@ -87,7 +87,6 @@ public class ExasolTestDatabaseBuilder {
         this.getStatement().execute("DROP CONNECTION IF EXISTS " + name);
     }
 
-
     protected void addDebuggerOptions(final StringBuilder statementBuilder, final boolean isUdf) {
         final String hostIp = this.testInterface.getTestHostIpAddress();
         final StringBuilder jvmOptions = new StringBuilder();
@@ -239,7 +238,6 @@ public class ExasolTestDatabaseBuilder {
     public void dropVirtualSchema(final String schemaName) throws SQLException {
         this.getStatement().execute("DROP VIRTUAL SCHEMA IF EXISTS " + schemaName + " CASCADE;");
     }
-
 
     private void uploadMapping(final String name, final String destinationName)
             throws InterruptedException, BucketAccessException, TimeoutException {
