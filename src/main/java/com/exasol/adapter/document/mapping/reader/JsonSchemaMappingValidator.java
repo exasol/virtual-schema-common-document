@@ -22,7 +22,7 @@ import org.json.JSONTokener;
  * </p>
  */
 class JsonSchemaMappingValidator {
-    private static final String MAPPING_LANGUAGE_SCHEMA = "schemas/v1.0.0.json";
+    private static final String MAPPING_LANGUAGE_SCHEMA = "schemas/edml-1.0.0.json";
     private final Schema schema;
 
     /**
