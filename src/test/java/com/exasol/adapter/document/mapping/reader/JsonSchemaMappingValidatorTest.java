@@ -86,7 +86,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.put("$schema", "wrongSchema");
             return base;
-        }, "#/$schema $schema must be set  to https://raw.githubusercontent.com/exasol/virtual-schema-common-document/master/src/main/resources/schemas/edml/v1.0.0.json");
+        }, "#/$schema $schema must be set  to https://schemas.exasol.com/edml-1.0.0.json");
     }
 
     @Test
