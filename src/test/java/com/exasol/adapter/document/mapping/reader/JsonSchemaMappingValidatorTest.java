@@ -17,9 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class JsonSchemaMappingValidatorTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonSchemaMappingValidatorTest.class);
     @TempDir
     Path tempDir;
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonSchemaMappingValidatorTest.class);
 
     void runValidation(final File file) throws IOException {
         final JsonSchemaMappingValidator jsonSchemaMappingValidator = new JsonSchemaMappingValidator();
@@ -86,7 +86,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.put("$schema", "wrongSchema");
             return base;
-        }, "#/$schema $schema must be set  to https://raw.githubusercontent.com/exasol/virtual-schema-common-document/master/src/main/resources/schemas/edml/v1.json");
+        }, "#/$schema $schema must be set  to https://schemas.exasol.com/edml-1.0.0.json");
     }
 
     @Test

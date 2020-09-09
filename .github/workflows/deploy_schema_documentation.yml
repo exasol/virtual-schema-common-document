@@ -15,7 +15,7 @@ jobs:
       - name: Install and Build
         run: |
           sudo npm install -g bootprint bootprint-json-schema
-          bootprint json-schema src/main/resources/schemas/edml/v1.json doc/gp_pages/schema_doc
+          bootprint json-schema src/main/resources/schemas/edml-1.0.0.json doc/gp_pages/schema_doc
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.2.0
