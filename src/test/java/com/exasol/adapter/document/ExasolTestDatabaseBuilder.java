@@ -87,24 +87,27 @@ public class ExasolTestDatabaseBuilder {
         this.getStatement().execute("DROP CONNECTION IF EXISTS " + name);
     }
 
-    protected void addDebuggerOptions(final StringBuilder statementBuilder, final boolean isUdf) {
+    protected String getDebuggerOptions(final boolean isUdf) {
         final String hostIp = this.testInterface.getTestHostIpAddress();
-        final StringBuilder jvmOptions = new StringBuilder();
+        final StringBuilder jvmOptionsBuilder = new StringBuilder();
         if (hostIp != null) {
-            jvmOptions.append("-javaagent:/buckets/bfsdefault/default/").append(JACOCO_JAR_NAME)
-                    .append("=output=tcpclient,address=").append(hostIp).append(",port=3002");
+            jvmOptionsBuilder.append("-javaagent:/buckets/bfsdefault/default/" + JACOCO_JAR_NAME
+                    + "=output=tcpclient,address=" + hostIp + ",port=3002");
             if ((isUdf && isUdfDebuggingEnabled()) || (!isUdf && isVirtualSchemaDebuggingEnabled())) {
                 // noinspection SpellCheckingInspection
-                jvmOptions.append(" -agentlib:jdwp=transport=dt_socket,server=n,address=").append(hostIp).append(":")
-                        .append(DEBUGGER_PORT).append(",suspend=y");
+                jvmOptionsBuilder.append(" -agentlib:jdwp=transport=dt_socket,server=n,address=" + hostIp + ":"
+                        + DEBUGGER_PORT + ",suspend=y");
             }
         }
         if (isProfilingEnabled()) {
-            jvmOptions.append(" -agentpath:/buckets/bfsdefault/default/" + PROFILING_AGENT_FILE_NAME
+            jvmOptionsBuilder.append(" -agentpath:/buckets/bfsdefault/default/" + PROFILING_AGENT_FILE_NAME
                     + "=interval=7,logPath=/tmp/profile.hpl");
         }
-        if (!jvmOptions.toString().isEmpty()) {
-            statementBuilder.append("  %jvmoption ").append(jvmOptions).append(";\n");
+        final String jvmOptions = jvmOptionsBuilder.toString();
+        if (!jvmOptions.isEmpty()) {
+            return "  %jvmoption " + jvmOptions + ";\n";
+        } else {
+            return "";
         }
     }
 
