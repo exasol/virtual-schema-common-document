@@ -12,8 +12,6 @@ import com.exasol.sql.expression.ValueExpression;
 
 /**
  * Abstract basis for dialect specific {@link DataLoader}s.
- * 
- * @param <DocumentVisitorType>
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public abstract class AbstractDataLoader<DocumentVisitorType> implements DataLoader {

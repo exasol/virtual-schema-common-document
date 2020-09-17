@@ -19,6 +19,7 @@ public interface DataLoader extends Serializable {
      * Run the data loading.
      * 
      * @param connectionInformation connection definition
+     * @param remoteTableQuery      query
      *
      * @return Stream of Exasol rows.
      */
