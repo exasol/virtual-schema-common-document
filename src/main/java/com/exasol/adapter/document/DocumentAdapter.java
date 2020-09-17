@@ -10,8 +10,6 @@ import com.exasol.ExaMetadata;
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.VirtualSchemaAdapter;
-import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
-import com.exasol.adapter.document.documentfetcher.DocumentFetcherFactory;
 import com.exasol.adapter.document.mapping.SchemaMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
@@ -24,8 +22,10 @@ import com.exasol.adapter.request.*;
 import com.exasol.adapter.response.*;
 import com.exasol.bucketfs.BucketfsFileFactory;
 
-@java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public abstract class DocumentAdapter<DocumentVisitorType> implements VirtualSchemaAdapter, DataLoaderUdfFactory {
+/**
+ * This class is the abstract basis for Virtual Schema adapter for document data.
+ */
+public abstract class DocumentAdapter implements VirtualSchemaAdapter {
 
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
@@ -129,27 +129,26 @@ public abstract class DocumentAdapter<DocumentVisitorType> implements VirtualSch
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
             final RemoteTableQuery remoteTableQuery)
             throws ExaConnectionAccessException, IOException, AdapterException {
-        final DocumentFetcherFactory<DocumentVisitorType> documentFetcherFactory = getDocumentFetcherFactory(
+        final DataLoaderFactory dataLoaderFactory = getDataLoaderFactory(
                 getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
         final int availableClusterCores = getMaxCoreNumber(exaMetadata, adapterProperties);
-        final List<DocumentFetcher<DocumentVisitorType>> documentFetchers = documentFetcherFactory
-                .buildDocumentFetcherForQuery(remoteTableQuery, availableClusterCores);
+        final List<DataLoader> dataLoaders = dataLoaderFactory.buildDataLoaderForQuery(remoteTableQuery,
+                availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
-        return new UdfCallBuilder<DocumentVisitorType>(connectionName, getAdapterName()).getUdfCallSql(documentFetchers,
-                remoteTableQuery);
+        return new UdfCallBuilder(connectionName).getUdfCallSql(dataLoaders, remoteTableQuery);
     }
 
     /**
-     * Get an data source specific {@link DocumentFetcherFactory}.
+     * Get an data source specific {@link DataLoaderFactory}.
      * 
      * @param connectionInformation connection details
-     * @return source specific {@link DocumentFetcherFactory}
+     * @return source specific {@link DataLoaderFactory}
      * @throws AdapterException if connecting fails
      */
-    protected abstract DocumentFetcherFactory<DocumentVisitorType> getDocumentFetcherFactory(
-            ExaConnectionInformation connectionInformation) throws AdapterException;
+    protected abstract DataLoaderFactory getDataLoaderFactory(ExaConnectionInformation connectionInformation)
+            throws AdapterException;
 
     /**
      * Get the number of cores that can be used by a query. This methods calculates the number of available cores and
