@@ -31,7 +31,7 @@ public class TestcontainerExasolTestInterface implements ExasolTestInterface {
     public TestcontainerExasolTestInterface() throws IOException {
 
         this.container = new ExasolContainer<>().withNetwork(TestcontainerNetworkProvider.getNetwork())
-                .withExposedPorts(8888).withLogConsumer(new Slf4jLogConsumer(LOGGER));
+                .withExposedPorts(8888).withLogConsumer(new Slf4jLogConsumer(LOGGER)).withReuse(true);
         JacocoServer.startIfNotRunning();
         LogProxy.startIfNotRunning();
         this.container.start();
