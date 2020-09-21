@@ -41,14 +41,20 @@ public class UdfCallBuilder {
     private static final String CONNECTION_NAME_COLUMN = "CONNECTION_NAME";
     private static final String FRAGMENT_ID_COLUMN = "FRAGMENT_ID";
     private final String connectionName;
+    private final String adapterSchema;
+    private final String adapterName;
 
     /**
      * Create an instance of {@link UdfCallBuilder}.
-     * 
+     *
      * @param connectionName connectionName that is passed to the UDF
+     * @param adapterSchema  schema of the adapter
+     * @param adapterName    name of the adapter
      */
-    public UdfCallBuilder(final String connectionName) {
+    public UdfCallBuilder(final String connectionName, final String adapterSchema, final String adapterName) {
         this.connectionName = connectionName;
+        this.adapterSchema = adapterSchema;
+        this.adapterName = adapterName;
     }
 
     /**
@@ -94,7 +100,8 @@ public class UdfCallBuilder {
             throws IOException {
         final Select udfCallSelect = StatementFactory.getInstance().select();
         final List<Column> emitsColumns = buildRequiredColumns(query, udfCallSelect);
-        udfCallSelect.udf("Adapter." + UdfEntryPoint.UDF_NAME, new ColumnsDefinition(emitsColumns),
+        udfCallSelect.udf("\"" + this.adapterSchema + "\"." + UdfEntryPoint.UDF_PREFIX + this.adapterName,
+                new ColumnsDefinition(emitsColumns),
                 column(DATA_LOADER_COLUMN), column(REMOTE_TABLE_QUERY_COLUMN), column(CONNECTION_NAME_COLUMN));
         final ValueTable valueTable = buildValueTable(dataLoaders, query, udfCallSelect);
         udfCallSelect.from().valueTableAs(valueTable, "T", DATA_LOADER_COLUMN, REMOTE_TABLE_QUERY_COLUMN,

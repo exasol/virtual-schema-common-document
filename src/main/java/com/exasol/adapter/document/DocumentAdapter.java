@@ -137,7 +137,8 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
         final List<DataLoader> dataLoaders = dataLoaderFactory.buildDataLoaderForQuery(remoteTableQuery,
                 availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
-        return new UdfCallBuilder(connectionName).getUdfCallSql(dataLoaders, remoteTableQuery);
+        return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), getAdapterName())
+                .getUdfCallSql(dataLoaders, remoteTableQuery);
     }
 
     /**
