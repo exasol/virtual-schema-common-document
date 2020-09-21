@@ -13,7 +13,7 @@ import com.exasol.utils.StringSerializer;
  * Main UDF entry point.
  */
 public class UdfEntryPoint {
-    public static final String UDF_NAME = "IMPORT_FROM_DOCUMENT";
+    public static final String UDF_PREFIX = "IMPORT_FROM_";
     public static final String PARAMETER_DATA_LOADER = "DATA_LOADER";
     public static final String PARAMETER_REMOTE_TABLE_QUERY = "REMOTE_TABLE_QUERY";
     public static final String PARAMETER_CONNECTION_NAME = "CONNECTION_NAME";
