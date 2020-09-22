@@ -70,7 +70,9 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
     protected abstract Result mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
 
     private String handleOverflowIfNecessary(final String sourceString) {
-        if (sourceString.length() > this.column.getVarcharColumnSize()) {
+        if (sourceString == null) {
+            return null;
+        } else if (sourceString.length() > this.column.getVarcharColumnSize()) {
             return handleOverflow(sourceString);
         } else {
             return sourceString;
