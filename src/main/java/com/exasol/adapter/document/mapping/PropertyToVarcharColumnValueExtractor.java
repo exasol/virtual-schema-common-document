@@ -46,7 +46,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         if (stringValue.wasConverted()
                 && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
             throw new ColumnValueExtractorException(
-                    "An input value is not a string. This adapter could convert it to string, but you disabled this by setting nonStringBehaviour to ABORT.",
+                    "An input value is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.",
                     this.column);
         } else if (stringValue.wasConverted()
                 && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {

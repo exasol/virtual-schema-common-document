@@ -164,6 +164,6 @@ class ColumnMappingReader {
         private static final int DEFAULT_DECIMAL_SCALE = 0;
         private static final int DEFAULT_DECIMAL_PRECISION = 18;
         private static final String NOT_NUMERIC_BEHAVIOUR = "notNumericBehaviour";
-        private static final String NOT_A_STRING_BEHAVIOUR = "nonStringBehaviour";
+        private static final String NON_STRING_BEHAVIOUR = "nonStringBehaviour";
     }
 }
