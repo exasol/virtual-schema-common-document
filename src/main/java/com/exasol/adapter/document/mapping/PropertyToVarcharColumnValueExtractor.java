@@ -25,18 +25,54 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
 
     @Override
     protected final ValueExpression mapValue(final DocumentNode<DocumentVisitorType> documentValue) {
-        final String stringValue = mapStringValue(documentValue);
-        if (stringValue == null) {
+        final MappedStringResult result = mapStringValue(documentValue);
+        final String stringResult = handleResult(result);
+        if (stringResult == null) {
             return NullLiteral.nullLiteral();
         } else {
-            return StringLiteral.of(handleOverflowIfNecessary(stringValue));
+            return StringLiteral.of(stringResult);
         }
     }
 
-    protected abstract String mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
+    private String handleResult(final MappedStringResult result) {
+        if (result == null) {
+            return handleNotConvertedResult();
+        } else {
+            return handleConvertedResult(result);
+        }
+    }
+
+    private String handleConvertedResult(final MappedStringResult stringValue) {
+        if (stringValue.isConverted()
+                && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
+            throw new ColumnValueExtractorException(
+                    "An input value is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.",
+                    this.column);
+        } else if (stringValue.isConverted()
+                && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {
+            return null;
+        } else {
+            return handleOverflowIfNecessary(stringValue.getValue());
+        }
+    }
+
+    private String handleNotConvertedResult() {
+        if (this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT
+                || this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
+            throw new ColumnValueExtractorException("An input value could not be converted to string. "
+                    + "You can either change the value in your input data, or change the nonStringBehaviour of column "
+                    + this.column.getExasolColumnName() + " to NULL or CONVERT_OR_NULL.", this.column);
+        } else {
+            return null;
+        }
+    }
+
+    protected abstract MappedStringResult mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
 
     private String handleOverflowIfNecessary(final String sourceString) {
-        if (sourceString.length() > this.column.getVarcharColumnSize()) {
+        if (sourceString == null) {
+            return null;
+        } else if (sourceString.length() > this.column.getVarcharColumnSize()) {
             return handleOverflow(sourceString);
         } else {
             return sourceString;
@@ -53,4 +89,27 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
+    /**
+     * This class is used to pass the result of {@link #mapStringValue(DocumentNode)} from the concrete implementation
+     * to this abstract class.
+     * 
+     * @implNote public so that it is accessible from test code
+     */
+    public static class MappedStringResult {
+        private final String value;
+        private final boolean isConverted;
+
+        public MappedStringResult(final String value, final boolean isConverted) {
+            this.value = value;
+            this.isConverted = isConverted;
+        }
+
+        public String getValue() {
+            return this.value;
+        }
+
+        public boolean isConverted() {
+            return this.isConverted;
+        }
+    }
 }
