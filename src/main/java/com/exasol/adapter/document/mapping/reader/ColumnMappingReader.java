@@ -55,7 +55,8 @@ class ColumnMappingReader {
         final PropertyToVarcharColumnMapping.Builder builder = PropertyToVarcharColumnMapping.builder();
         readLookupFailBehaviour(definition);
         return builder.overflowBehaviour(readStringOverflowBehaviour(definition))//
-                .varcharColumnSize(readVarcharColumnSize(definition));
+                .varcharColumnSize(readVarcharColumnSize(definition))
+                .notAStringBehaviour(readConvertableMappingErrorBehaviour(definition));
     }
 
     private PropertyToJsonColumnMapping.Builder readToJsonColumn(final JsonObject definition) {
@@ -84,6 +85,21 @@ class ColumnMappingReader {
             return MappingErrorBehaviour.NULL;
         default:
             return defaultValue;
+        }
+    }
+
+    private ConvertableMappingErrorBehaviour readConvertableMappingErrorBehaviour(final JsonObject definition) {
+        switch (definition.getString(EDML.NOT_A_STRING_BEHAVIOUR, "").toUpperCase()) {
+        case EDML.ABORT_KEY:
+            return ConvertableMappingErrorBehaviour.ABORT;
+        case EDML.NULL_KEY:
+            return ConvertableMappingErrorBehaviour.NULL;
+        case EDML.CONVERT_OR_ABORT_KEY:
+            return ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
+        case EDML.CONVERT_OR_NULL_KEY:
+            return ConvertableMappingErrorBehaviour.CONVERT_OR_NULL;
+        default:
+            return ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
         }
     }
 
@@ -134,6 +150,8 @@ class ColumnMappingReader {
         private static final String OVERFLOW_BEHAVIOUR_KEY = "overflowBehaviour";
         private static final String ABORT_KEY = "ABORT";
         private static final String NULL_KEY = "NULL";
+        private static final String CONVERT_OR_ABORT_KEY = "CONVERT_OR_ABORT";
+        private static final String CONVERT_OR_NULL_KEY = "CONVERT_OR_NULL";
         private static final String DEST_NAME_KEY = "destinationName";
         private static final String REQUIRED_KEY = "required";
         private static final String TO_VARCHAR_MAPPING_KEY = "toVarcharMapping";
@@ -146,5 +164,6 @@ class ColumnMappingReader {
         private static final int DEFAULT_DECIMAL_SCALE = 0;
         private static final int DEFAULT_DECIMAL_PRECISION = 18;
         private static final String NOT_NUMERIC_BEHAVIOUR = "notNumericBehaviour";
+        private static final String NOT_A_STRING_BEHAVIOUR = "notAStringBehaviour";
     }
 }

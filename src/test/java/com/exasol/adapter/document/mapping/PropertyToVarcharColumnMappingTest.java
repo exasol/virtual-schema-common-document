@@ -2,7 +2,10 @@ package com.exasol.adapter.document.mapping;
 
 import static com.exasol.EqualityMatchers.assertSymmetricEqualWithHashAndEquals;
 import static com.exasol.EqualityMatchers.assertSymmetricNotEqualWithHashAndEquals;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.NULL;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
+import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -15,15 +18,17 @@ class PropertyToVarcharColumnMappingTest {
     private static PropertyToVarcharColumnMapping.Builder getDefaultTestObjectBuilder() {
         return configureExampleMapping(PropertyToVarcharColumnMapping.builder())//
                 .varcharColumnSize(STRING_LENGTH)//
-                .overflowBehaviour(TruncateableMappingErrorBehaviour.TRUNCATE);
+                .overflowBehaviour(TRUNCATE).notAStringBehaviour(NULL);
     }
 
     @Test
     void testGetters() {
         final PropertyToVarcharColumnMapping testObject = getDefaultTestObjectBuilder().build();
-        assertAll(() -> assertThat(testObject.getExasolDataType().toString(), equalTo("VARCHAR(10) UTF8")),
+        assertAll(//
+                () -> assertThat(testObject.getExasolDataType().toString(), equalTo("VARCHAR(10) UTF8")),
                 () -> assertThat(testObject.isExasolColumnNullable(), equalTo(true)),
-                () -> assertThat(testObject.getOverflowBehaviour(), equalTo(TruncateableMappingErrorBehaviour.TRUNCATE))//
+                () -> assertThat(testObject.getOverflowBehaviour(), equalTo(TRUNCATE)),
+                () -> assertThat(testObject.getNotAStringBehaviour(), equalTo(NULL))//
         );
     }
 
@@ -58,6 +63,14 @@ class PropertyToVarcharColumnMappingTest {
     void testNotEqualByDifferentStringSize() {
         final PropertyToVarcharColumnMapping testObject = getDefaultTestObjectBuilder().build();
         final PropertyToVarcharColumnMapping other = getDefaultTestObjectBuilder().varcharColumnSize(12).build();
+        assertSymmetricNotEqualWithHashAndEquals(testObject, other);
+    }
+
+    @Test
+    void testNotEqualByDifferentNotAStringBehaviours() {
+        final PropertyToVarcharColumnMapping testObject = getDefaultTestObjectBuilder().build();
+        final PropertyToVarcharColumnMapping other = getDefaultTestObjectBuilder().notAStringBehaviour(CONVERT_OR_ABORT)
+                .build();
         assertSymmetricNotEqualWithHashAndEquals(testObject, other);
     }
 

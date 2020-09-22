@@ -1,7 +1,7 @@
 package com.exasol.adapter.document.mapping.reader;
 
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
 import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.ABORT;
-import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.NULL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -32,7 +32,9 @@ class ColumnMappingReaderTest {
                 .add("varcharColumnSize", 254)//
                 .add("overflowBehaviour", "TRUNCATE")//
                 .add("destinationName", "test")//
-                .add("required", false).build();
+                .add("required", false)//
+                .add("notAStringBehaviour", "CONVERT_OR_ABORT")//
+                .build();
         assertToVarcharDefinitionDefaultValues(definition);
     }
 
@@ -46,17 +48,20 @@ class ColumnMappingReaderTest {
                         equalTo(TruncateableMappingErrorBehaviour.TRUNCATE)),
                 () -> assertThat(columnMapping.getExasolColumnName(), equalTo("TEST")),
                 () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(MappingErrorBehaviour.NULL)),
-                () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("VARCHAR(254) UTF8"))//
+                () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("VARCHAR(254) UTF8")),
+                () -> assertThat(columnMapping.getNotAStringBehaviour(), equalTo(CONVERT_OR_ABORT))//
         );
     }
 
     @Test
-    void testToStringColumnExplicitNonDefaultValues() {
+    void testToVarcharColumnExplicitNonDefaultValues() {
         final JsonObject definition = Json.createObjectBuilder()//
                 .add("varcharColumnSize", 123)//
                 .add("overflowBehaviour", "ABORT")//
                 .add("destinationName", "my_column")//
-                .add("required", true).build();
+                .add("required", true)//
+                .add("notAStringBehaviour", "NULL")//
+                .build();
         final PropertyToVarcharColumnMapping columnMapping = (PropertyToVarcharColumnMapping) ColumnMappingReader
                 .getInstance()
                 .readColumnMapping("toVarcharMapping", definition, DocumentPathExpression.builder(), "test", false);
@@ -66,7 +71,8 @@ class ColumnMappingReaderTest {
                         equalTo(TruncateableMappingErrorBehaviour.ABORT)),
                 () -> assertThat(columnMapping.getExasolColumnName(), equalTo("MY_COLUMN")),
                 () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(MappingErrorBehaviour.ABORT)),
-                () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("VARCHAR(123) UTF8"))//
+                () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("VARCHAR(123) UTF8")), //
+                () -> assertThat(columnMapping.getNotAStringBehaviour(), equalTo(ConvertableMappingErrorBehaviour.NULL))//
         );
     }
 
@@ -152,7 +158,7 @@ class ColumnMappingReaderTest {
                 () -> assertThat(columnMapping.getOverflowBehaviour(), equalTo(ABORT)),
                 () -> assertThat(columnMapping.getNotNumericBehaviour(), equalTo(ABORT)),
                 () -> assertThat(columnMapping.getExasolColumnName(), equalTo("TEST")),
-                () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(NULL)),
+                () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(MappingErrorBehaviour.NULL)),
                 () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("DECIMAL(18, 0)"))//
         );
     }
@@ -170,8 +176,8 @@ class ColumnMappingReaderTest {
                 .getInstance()
                 .readColumnMapping("toDecimalMapping", definition, DocumentPathExpression.builder(), "test", false);
         assertAll(//
-                () -> assertThat(columnMapping.getOverflowBehaviour(), equalTo(NULL)),
-                () -> assertThat(columnMapping.getNotNumericBehaviour(), equalTo(NULL)),
+                () -> assertThat(columnMapping.getOverflowBehaviour(), equalTo(MappingErrorBehaviour.NULL)),
+                () -> assertThat(columnMapping.getNotNumericBehaviour(), equalTo(MappingErrorBehaviour.NULL)),
                 () -> assertThat(columnMapping.getExasolColumnName(), equalTo("MY_COLUMN")),
                 () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(MappingErrorBehaviour.ABORT)),
                 () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("DECIMAL(10, 5)"))//
