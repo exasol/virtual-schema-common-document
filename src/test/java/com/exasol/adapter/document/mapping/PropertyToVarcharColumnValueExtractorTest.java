@@ -110,7 +110,7 @@ class PropertyToVarcharColumnValueExtractorTest {
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
                 () -> valueMapper.mapValue(null));
         assertThat(exception.getMessage(), equalTo(
-                "An input value is not a string. This adapter could convert it to string, but you disabled this by setting nonStringBehaviour to ABORT."));
+                "An input value is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT."));
     }
 
     private static class ToVarcharValueMapperStub extends PropertyToVarcharColumnValueExtractor<Void> {

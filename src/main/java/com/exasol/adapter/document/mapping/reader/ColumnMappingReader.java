@@ -89,7 +89,7 @@ class ColumnMappingReader {
     }
 
     private ConvertableMappingErrorBehaviour readConvertableMappingErrorBehaviour(final JsonObject definition) {
-        switch (definition.getString(EDML.NOT_A_STRING_BEHAVIOUR, "").toUpperCase()) {
+        switch (definition.getString(EDML.NON_STRING_BEHAVIOUR, "").toUpperCase()) {
         case EDML.ABORT_KEY:
             return ConvertableMappingErrorBehaviour.ABORT;
         case EDML.NULL_KEY:
