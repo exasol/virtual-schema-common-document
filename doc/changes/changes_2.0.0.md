@@ -21,6 +21,10 @@ Breaking API Changes:
 
 * #24 Removed hardcoded UDF schema (#26)
 
+## Documentation
+
+* #28 Added generic EDML user guide
+
 ## Dependency updates
 
 * Updated `com.exasol:exasol-testcontainers` from 0.2.1 to 3.0.0

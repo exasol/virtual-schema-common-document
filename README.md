@@ -20,6 +20,7 @@
  
  ## Information for Users
  
+ * [EDML User Guide](doc/user_guide/edml_user_guide.md)
  * [Changelog](doc/changes/changelog.md)
  
 ### Dialects:
