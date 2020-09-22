@@ -25,7 +25,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
 
     @Override
     protected final ValueExpression mapValue(final DocumentNode<DocumentVisitorType> documentValue) {
-        final Result result = mapStringValue(documentValue);
+        final MappedStringResult result = mapStringValue(documentValue);
         final String stringResult = handleResult(result);
         if (stringResult == null) {
             return NullLiteral.nullLiteral();
@@ -34,40 +34,40 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    private String handleResult(final Result result) {
+    private String handleResult(final MappedStringResult result) {
         if (result == null) {
-            return handleCouldNotConvert();
+            return handleNotConvertedResult();
         } else {
             return handleConvertedResult(result);
         }
     }
 
-    private String handleConvertedResult(final Result stringValue) {
+    private String handleConvertedResult(final MappedStringResult stringValue) {
         if (stringValue.wasConverted()
-                && this.column.getNotAStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
+                && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
             throw new ColumnValueExtractorException(
-                    "An input value was not a string. This adapter could convert it to string, but you disabled this by setting notAStringBehaviour to ABORT.",
+                    "An input value is not a string. This adapter could convert it to string, but you disabled this by setting nonStringBehaviour to ABORT.",
                     this.column);
         } else if (stringValue.wasConverted()
-                && this.column.getNotAStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {
+                && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {
             return null;
         } else {
             return handleOverflowIfNecessary(stringValue.getValue());
         }
     }
 
-    private String handleCouldNotConvert() {
-        if (this.column.getNotAStringBehaviour() == ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT
-                || this.column.getNotAStringBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
+    private String handleNotConvertedResult() {
+        if (this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT
+                || this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
             throw new ColumnValueExtractorException("An input value could not be converted to string. "
-                    + "You can either change the value in your input data, or change the notAStringBehaviour of column "
+                    + "You can either change the value in your input data, or change the nonStringBehaviour of column "
                     + this.column.getExasolColumnName() + " to NULL or CONVERT_OR_NULL.", this.column);
         } else {
             return null;
         }
     }
 
-    protected abstract Result mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
+    protected abstract MappedStringResult mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
 
     private String handleOverflowIfNecessary(final String sourceString) {
         if (sourceString == null) {
@@ -95,13 +95,13 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
      * 
      * @implNote public so that it is accessible from test code
      */
-    public static class Result {
+    public static class MappedStringResult {
         private final String value;
-        private final boolean wasConverted;
+        private final boolean isConverted;
 
-        public Result(final String value, final boolean wasConverted) {
+        public MappedStringResult(final String value, final boolean isConverted) {
             this.value = value;
-            this.wasConverted = wasConverted;
+            this.isConverted = isConverted;
         }
 
         public String getValue() {
@@ -109,7 +109,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
 
         public boolean wasConverted() {
-            return this.wasConverted;
+            return this.isConverted;
         }
     }
 }

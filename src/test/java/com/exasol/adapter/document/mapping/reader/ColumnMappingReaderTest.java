@@ -33,7 +33,7 @@ class ColumnMappingReaderTest {
                 .add("overflowBehaviour", "TRUNCATE")//
                 .add("destinationName", "test")//
                 .add("required", false)//
-                .add("notAStringBehaviour", "CONVERT_OR_ABORT")//
+                .add("nonStringBehaviour", "CONVERT_OR_ABORT")//
                 .build();
         assertToVarcharDefinitionDefaultValues(definition);
     }
@@ -49,7 +49,7 @@ class ColumnMappingReaderTest {
                 () -> assertThat(columnMapping.getExasolColumnName(), equalTo("TEST")),
                 () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(MappingErrorBehaviour.NULL)),
                 () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("VARCHAR(254) UTF8")),
-                () -> assertThat(columnMapping.getNotAStringBehaviour(), equalTo(CONVERT_OR_ABORT))//
+                () -> assertThat(columnMapping.getNonStringBehaviour(), equalTo(CONVERT_OR_ABORT))//
         );
     }
 
@@ -60,7 +60,7 @@ class ColumnMappingReaderTest {
                 .add("overflowBehaviour", "ABORT")//
                 .add("destinationName", "my_column")//
                 .add("required", true)//
-                .add("notAStringBehaviour", "NULL")//
+                .add("nonStringBehaviour", "NULL")//
                 .build();
         final PropertyToVarcharColumnMapping columnMapping = (PropertyToVarcharColumnMapping) ColumnMappingReader
                 .getInstance()
@@ -72,7 +72,7 @@ class ColumnMappingReaderTest {
                 () -> assertThat(columnMapping.getExasolColumnName(), equalTo("MY_COLUMN")),
                 () -> assertThat(columnMapping.getLookupFailBehaviour(), equalTo(MappingErrorBehaviour.ABORT)),
                 () -> assertThat(columnMapping.getExasolDataType().toString(), equalTo("VARCHAR(123) UTF8")), //
-                () -> assertThat(columnMapping.getNotAStringBehaviour(), equalTo(ConvertableMappingErrorBehaviour.NULL))//
+                () -> assertThat(columnMapping.getNonStringBehaviour(), equalTo(ConvertableMappingErrorBehaviour.NULL))//
         );
     }
 

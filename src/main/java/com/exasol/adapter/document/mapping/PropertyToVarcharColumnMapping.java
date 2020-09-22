@@ -9,13 +9,13 @@ import com.exasol.adapter.metadata.DataType;
  * This class defines a mapping that extracts a string from the remote document and maps it to an Exasol VARCHAR column.
  */
 public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = -5267440896076306664L;//
+    private static final long serialVersionUID = -8054232490251003210L;//
     /** @serial */
     private final int varcharColumnSize;
     /** @serial */
     private final TruncateableMappingErrorBehaviour overflowBehaviour;
     /** @serial */
-    private final ConvertableMappingErrorBehaviour notAStringBehaviour;
+    private final ConvertableMappingErrorBehaviour nonStringBehaviour;
 
     /**
      * Create an instance of {@link PropertyToVarcharColumnMapping}.
@@ -26,16 +26,16 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
      *                             exist
      * @param varcharColumnSize    Size of the Exasol VARCHAR column
      * @param overflowBehaviour    Behaviour if extracted string exceeds {@link #varcharColumnSize}
-     * @param notAStringBehaviour  Behaviour if extracted value is not a string
+     * @param nonStringBehaviour   Behaviour if extracted value is not a string
      */
     private PropertyToVarcharColumnMapping(final String exasolColumnName,
             final DocumentPathExpression pathToSourceProperty, final MappingErrorBehaviour lookupFailBehaviour,
             final int varcharColumnSize, final TruncateableMappingErrorBehaviour overflowBehaviour,
-            final ConvertableMappingErrorBehaviour notAStringBehaviour) {
+            final ConvertableMappingErrorBehaviour nonStringBehaviour) {
         super(exasolColumnName, pathToSourceProperty, lookupFailBehaviour);
         this.varcharColumnSize = varcharColumnSize;
         this.overflowBehaviour = overflowBehaviour;
-        this.notAStringBehaviour = notAStringBehaviour;
+        this.nonStringBehaviour = nonStringBehaviour;
     }
 
     /**
@@ -70,8 +70,8 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
      * 
      * @return behaviour to apply in case the value is not a string
      */
-    public ConvertableMappingErrorBehaviour getNotAStringBehaviour() {
-        return this.notAStringBehaviour;
+    public ConvertableMappingErrorBehaviour getNonStringBehaviour() {
+        return this.nonStringBehaviour;
     }
 
     @Override
@@ -87,7 +87,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return new PropertyToVarcharColumnMapping(newExasolName, getPathToSourceProperty(), getLookupFailBehaviour(),
-                getVarcharColumnSize(), getOverflowBehaviour(), getNotAStringBehaviour());
+                getVarcharColumnSize(), getOverflowBehaviour(), getNonStringBehaviour());
     }
 
     @Override
@@ -103,12 +103,12 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
         final PropertyToVarcharColumnMapping that = (PropertyToVarcharColumnMapping) other;
         return this.overflowBehaviour == that.overflowBehaviour && this.varcharColumnSize == that.varcharColumnSize
-                && this.notAStringBehaviour == that.notAStringBehaviour;
+                && this.nonStringBehaviour == that.nonStringBehaviour;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), this.varcharColumnSize, this.overflowBehaviour, this.notAStringBehaviour);
+        return Objects.hash(super.hashCode(), this.varcharColumnSize, this.overflowBehaviour, this.nonStringBehaviour);
     }
 
     /**
@@ -120,7 +120,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         private MappingErrorBehaviour lookupFailBehaviour;
         private int varcharColumnSize;
         private TruncateableMappingErrorBehaviour overflowBehaviour;
-        private ConvertableMappingErrorBehaviour notAStringBehaviour;
+        private ConvertableMappingErrorBehaviour nonStringBehaviour;
 
         @Override
         public Builder exasolColumnName(final String exasolColumnName) {
@@ -165,11 +165,11 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         /**
          * Set the behaviour to apply in case the value is not a string.
          * 
-         * @param notAStringBehaviour behaviour to apply in case the value is not a string
+         * @param nonStringBehaviour behaviour to apply in case the value is not a string
          * @return self
          */
-        public Builder notAStringBehaviour(final ConvertableMappingErrorBehaviour notAStringBehaviour) {
-            this.notAStringBehaviour = notAStringBehaviour;
+        public Builder nonStringBehaviour(final ConvertableMappingErrorBehaviour nonStringBehaviour) {
+            this.nonStringBehaviour = nonStringBehaviour;
             return this;
         }
 
@@ -180,7 +180,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
          */
         public PropertyToVarcharColumnMapping build() {
             return new PropertyToVarcharColumnMapping(this.exasolColumnName, this.pathToSourceProperty,
-                    this.lookupFailBehaviour, this.varcharColumnSize, this.overflowBehaviour, this.notAStringBehaviour);
+                    this.lookupFailBehaviour, this.varcharColumnSize, this.overflowBehaviour, this.nonStringBehaviour);
         }
     }
 }

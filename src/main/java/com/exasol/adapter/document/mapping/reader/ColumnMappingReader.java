@@ -56,7 +56,7 @@ class ColumnMappingReader {
         readLookupFailBehaviour(definition);
         return builder.overflowBehaviour(readStringOverflowBehaviour(definition))//
                 .varcharColumnSize(readVarcharColumnSize(definition))
-                .notAStringBehaviour(readConvertableMappingErrorBehaviour(definition));
+                .nonStringBehaviour(readConvertableMappingErrorBehaviour(definition));
     }
 
     private PropertyToJsonColumnMapping.Builder readToJsonColumn(final JsonObject definition) {
@@ -164,6 +164,6 @@ class ColumnMappingReader {
         private static final int DEFAULT_DECIMAL_SCALE = 0;
         private static final int DEFAULT_DECIMAL_PRECISION = 18;
         private static final String NOT_NUMERIC_BEHAVIOUR = "notNumericBehaviour";
-        private static final String NOT_A_STRING_BEHAVIOUR = "notAStringBehaviour";
+        private static final String NOT_A_STRING_BEHAVIOUR = "nonStringBehaviour";
     }
 }

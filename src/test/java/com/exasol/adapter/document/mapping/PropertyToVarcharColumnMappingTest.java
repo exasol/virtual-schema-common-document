@@ -18,7 +18,7 @@ class PropertyToVarcharColumnMappingTest {
     private static PropertyToVarcharColumnMapping.Builder getDefaultTestObjectBuilder() {
         return configureExampleMapping(PropertyToVarcharColumnMapping.builder())//
                 .varcharColumnSize(STRING_LENGTH)//
-                .overflowBehaviour(TRUNCATE).notAStringBehaviour(NULL);
+                .overflowBehaviour(TRUNCATE).nonStringBehaviour(NULL);
     }
 
     @Test
@@ -28,7 +28,7 @@ class PropertyToVarcharColumnMappingTest {
                 () -> assertThat(testObject.getExasolDataType().toString(), equalTo("VARCHAR(10) UTF8")),
                 () -> assertThat(testObject.isExasolColumnNullable(), equalTo(true)),
                 () -> assertThat(testObject.getOverflowBehaviour(), equalTo(TRUNCATE)),
-                () -> assertThat(testObject.getNotAStringBehaviour(), equalTo(NULL))//
+                () -> assertThat(testObject.getNonStringBehaviour(), equalTo(NULL))//
         );
     }
 
@@ -67,9 +67,9 @@ class PropertyToVarcharColumnMappingTest {
     }
 
     @Test
-    void testNotEqualByDifferentNotAStringBehaviours() {
+    void testNotEqualByDifferentNonStringBehaviours() {
         final PropertyToVarcharColumnMapping testObject = getDefaultTestObjectBuilder().build();
-        final PropertyToVarcharColumnMapping other = getDefaultTestObjectBuilder().notAStringBehaviour(CONVERT_OR_ABORT)
+        final PropertyToVarcharColumnMapping other = getDefaultTestObjectBuilder().nonStringBehaviour(CONVERT_OR_ABORT)
                 .build();
         assertSymmetricNotEqualWithHashAndEquals(testObject, other);
     }

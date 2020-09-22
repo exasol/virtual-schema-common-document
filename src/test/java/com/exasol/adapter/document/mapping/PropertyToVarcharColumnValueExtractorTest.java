@@ -14,14 +14,14 @@ import com.exasol.sql.expression.ValueExpression;
 class PropertyToVarcharColumnValueExtractorTest {
 
     private static final String TEST_STRING = "test";
-    public static final PropertyToVarcharColumnValueExtractor.Result TEST_STRING_RESULT = new PropertyToVarcharColumnValueExtractor.Result(
+    public static final PropertyToVarcharColumnValueExtractor.MappedStringResult TEST_STRING_RESULT = new PropertyToVarcharColumnValueExtractor.MappedStringResult(
             TEST_STRING, false);
 
     private static PropertyToVarcharColumnMapping.Builder getDefaultMappingBuilder() {
         return configureExampleMapping(PropertyToVarcharColumnMapping.builder())//
                 .varcharColumnSize(TEST_STRING.length())//
                 .overflowBehaviour(TruncateableMappingErrorBehaviour.ABORT)
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT);
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT);
     }
 
     @Test
@@ -56,73 +56,73 @@ class PropertyToVarcharColumnValueExtractorTest {
     }
 
     @Test
-    void testCouldNotConvertWithConvertOrNullNotAStringBehaviour() {
+    void testCouldNotConvertWithConvertOrNullNonStringBehaviour() {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build();
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping, null);
         assertThat(valueMapper.mapValue(null), equalTo(NullLiteral.nullLiteral()));
     }
 
     @Test
-    void testCouldNotConvertWithConvertOrAbortNotAStringBehaviour() {
+    void testCouldNotConvertWithConvertOrAbortNonStringBehaviour() {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT).build();
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping, null);
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
                 () -> valueMapper.mapValue(null));
         assertThat(exception.getMessage(), equalTo(
-                "An input value could not be converted to string. You can either change the value in your input data, or change the notAStringBehaviour of column EXASOL_COLUMN to NULL or CONVERT_OR_NULL."));
+                "An input value could not be converted to string. You can either change the value in your input data, or change the nonStringBehaviour of column EXASOL_COLUMN to NULL or CONVERT_OR_NULL."));
     }
 
     @Test
-    void testConvertedWithConvertOrAbortNotAStringBehaviour() {
+    void testConvertedWithConvertOrAbortNonStringBehaviour() {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT).build();
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping,
-                new PropertyToVarcharColumnValueExtractor.Result("123", true));
+                new PropertyToVarcharColumnValueExtractor.MappedStringResult("123", true));
         assertThat(valueMapper.mapValue(null).toString(), equalTo("123"));
     }
 
     @Test
-    void testConvertedWithConvertOrNullNotAStringBehaviour() {
+    void testConvertedWithConvertOrNullNonStringBehaviour() {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build();
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping,
-                new PropertyToVarcharColumnValueExtractor.Result("123", true));
+                new PropertyToVarcharColumnValueExtractor.MappedStringResult("123", true));
         assertThat(valueMapper.mapValue(null).toString(), equalTo("123"));
     }
 
     @Test
-    void testConvertedWithNullNotAStringBehaviour() {
+    void testConvertedWithNullNonStringBehaviour() {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.NULL).build();
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.NULL).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping,
-                new PropertyToVarcharColumnValueExtractor.Result("123", true));
+                new PropertyToVarcharColumnValueExtractor.MappedStringResult("123", true));
         assertThat(valueMapper.mapValue(null), equalTo(NullLiteral.nullLiteral()));
     }
 
     @Test
-    void testConvertedWithAbortNotAStringBehaviour() {
+    void testConvertedWithAbortNonStringBehaviour() {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
-                .notAStringBehaviour(ConvertableMappingErrorBehaviour.ABORT).build();
+                .nonStringBehaviour(ConvertableMappingErrorBehaviour.ABORT).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping,
-                new PropertyToVarcharColumnValueExtractor.Result("123", true));
+                new PropertyToVarcharColumnValueExtractor.MappedStringResult("123", true));
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
                 () -> valueMapper.mapValue(null));
         assertThat(exception.getMessage(), equalTo(
-                "An input value was not a string. This adapter could convert it to string, but you disabled this by setting notAStringBehaviour to ABORT."));
+                "An input value is not a string. This adapter could convert it to string, but you disabled this by setting nonStringBehaviour to ABORT."));
     }
 
     private static class ToVarcharValueMapperStub extends PropertyToVarcharColumnValueExtractor<Void> {
-        private final Result result;
+        private final MappedStringResult result;
 
-        public ToVarcharValueMapperStub(final PropertyToVarcharColumnMapping column, final Result result) {
+        public ToVarcharValueMapperStub(final PropertyToVarcharColumnMapping column, final MappedStringResult result) {
             super(column);
             this.result = result;
         }
 
         @Override
-        protected Result mapStringValue(final DocumentNode<Void> dynamodbProperty) {
+        protected MappedStringResult mapStringValue(final DocumentNode<Void> dynamodbProperty) {
             return this.result;
         }
     }
