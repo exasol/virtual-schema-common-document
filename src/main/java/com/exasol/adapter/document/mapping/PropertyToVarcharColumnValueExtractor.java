@@ -43,12 +43,12 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
     }
 
     private String handleConvertedResult(final MappedStringResult stringValue) {
-        if (stringValue.wasConverted()
+        if (stringValue.isConverted()
                 && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
             throw new ColumnValueExtractorException(
                     "An input value is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.",
                     this.column);
-        } else if (stringValue.wasConverted()
+        } else if (stringValue.isConverted()
                 && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {
             return null;
         } else {
@@ -108,7 +108,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
             return this.value;
         }
 
-        public boolean wasConverted() {
+        public boolean isConverted() {
             return this.isConverted;
         }
     }
