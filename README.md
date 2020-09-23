@@ -93,5 +93,5 @@
  [sonatype-oss-index-maven-plugin]: https://sonatype.github.io/ossindex-maven/maven-plugin/
  [versions-maven-plugin]: https://www.mojohaus.org/versions-maven-plugin/
  [exasol-virtual-schema-common-java]: https://github.com/exasol/virtual-schema-common-java
- [edml-doc]: https://exasol.github.io/virtual-schema-common-ducument/schema_doc/index.html
+ [edml-doc]: https://exasol.github.io/virtual-schema-common-ducument/schema_doc/edml_1.1.0/index.html
  [github-pages-deploy-action]: https://github.com/JamesIves/github-pages-deploy-action

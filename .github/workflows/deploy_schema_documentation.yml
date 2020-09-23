@@ -15,7 +15,10 @@ jobs:
       - name: Install and Build
         run: |
           sudo npm install -g bootprint bootprint-json-schema
-          bootprint json-schema src/main/resources/schemas/edml-1.0.0.json doc/gp_pages/schema_doc
+          mkdir doc/gh_pages/schema_doc
+          bootprint json-schema src/main/resources/schemas/edml-1.0.0.json doc/gh_pages/schema_doc/edml_1.0.0/
+          bootprint json-schema src/main/resources/schemas/edml-1.1.0.json doc/gh_pages/schema_doc/edml_1.1.0/
+          cp -r doc/gh_pages/schema_doc/edml_1.1.0/ doc/gh_pages/schema_doc/edml_latest/
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.2.0
@@ -27,5 +30,6 @@ jobs:
         with:
           ssh: true
           BRANCH: gh-pages
-          FOLDER: doc/gp_pages/
+          FOLDER: doc/gh_pages/
           SINGLE_COMMIT: true
+          CLEAN: true
