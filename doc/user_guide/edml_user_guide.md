@@ -3,7 +3,7 @@
 For creating a Virtual Schema for document data you have to define a mapping 
 from the document structure to a relational structure.
 This is done using the Exasol Document Mapping Language (EDML) 
-([reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/index.html)).
+([reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/edml_latest/index.html)).
 You have to define a mapping in a JSON document, upload it to a bucket in BucketFS and reference 
 in the `CREATE VIRTUAL SCHEMA` call.
 
@@ -236,4 +236,4 @@ So  in the example from above `DynamoDB` will receive the index 0 and `Exasol` t
 
 
 ## Reference
-[Schema mapping language reference](https://exasol.github.io/virtual-schema-common-ducument/schema_doc/index.html)
+[Schema mapping language reference](https://exasol.github.io/virtual-schema-common-ducument/schema_doc/edml_latest/index.html)

@@ -19,11 +19,12 @@ Breaking API Changes:
 
 ## Bug Fixes
 
-* #24 Removed hardcoded UDF schema (#26)
+* #24: Removed hardcoded UDF schema (#26)
 
 ## Documentation
 
-* #28 Added generic EDML user guide
+* #28: Added generic EDML user guide
+* #30: Generate documentation for EDML 1.1.0
 
 ## Dependency updates
 
