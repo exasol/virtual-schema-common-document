@@ -18,7 +18,7 @@ jobs:
           mkdir doc/gp_pages/schema_doc
           bootprint json-schema src/main/resources/schemas/edml-1.0.0.json doc/gp_pages/schema_doc/edml_1.0.0/
           bootprint json-schema src/main/resources/schemas/edml-1.1.0.json doc/gp_pages/schema_doc/edml_1.1.0/
-          ln -s doc/gp_pages/schema_doc/edml_latest/ doc/gp_pages/schema_doc/edml_1.1.0/
+          cp -r doc/gp_pages/schema_doc/edml_1.1.0/ doc/gp_pages/schema_doc/edml_latest/
 
       - name: Install SSH Client 🔑
         uses: webfactory/ssh-agent@v0.2.0
