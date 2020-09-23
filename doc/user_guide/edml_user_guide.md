@@ -48,7 +48,7 @@ In order to let this adapter create the described mapping we create the followin
   "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
-  "description": "Maps MY_BOOKS to BOOKS",
+  "description": "Example mapping",
   "mapping": {
     "fields": {
       "isbn": {
@@ -125,7 +125,7 @@ To achieve this we create the following mapping definition:
   "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
-  "description": "Maps MY_BOOKS to BOOKS with toJSON",
+  "description": "Example mapping",
   "mapping": {
     "fields": {
       "isbn": {
@@ -182,7 +182,7 @@ To achieve this we create the following mapping definition:
   "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
-  "description": "Maps MY_BOOKS to BOOKS",
+  "description": "Example mapping",
   "mapping": {
     "fields": {
       "isbn": {
