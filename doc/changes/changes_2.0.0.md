@@ -16,6 +16,7 @@ Breaking API Changes:
 
 * #23: Refactored UDF factory API
 * #22: EDML: Made behaviour for toVarchar mapping if not string configurable
+* #32: Automated dependency updates
 
 ## Bug Fixes
 
