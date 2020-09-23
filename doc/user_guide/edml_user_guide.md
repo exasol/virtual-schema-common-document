@@ -3,13 +3,13 @@
 For creating a Virtual Schema for document data you have to define a mapping 
 from the document structure to a relational structure.
 This is done using the Exasol Document Mapping Language (EDML) 
-([reference](https://exasol.github.io/virtual-schema-common-ducument/schema_doc/index.html)).
-You have to defined the mapping in a JSON document, upload it to a bucket in BucketFS and reference 
+([reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/index.html)).
+You have to define a mapping in a JSON document, upload it to a bucket in BucketFS and reference 
 in the `CREATE VIRTUAL SCHEMA` call.
 
-This guide explains you how to define mappings these mappings in general.
+This guide explains how to define these mappings in general.
 For data source specifics, check the corresponding virtual schema.
-Different data source use different data formats.
+Different data sources use different data formats.
 In this guide we use JSON.
   
 For mapping multiple document sets, you can create multiple files, 
@@ -39,7 +39,7 @@ CREATE TABLE BOOKS (
     AUTHOR_NAME  VARCHAR(20)
 );
 ```
-The nested property `author.name` shall be mapped to the column `AUTHOR_NAME`. 
+The nested property `author.name` is mapped to the column `AUTHOR_NAME`. 
 
 In order to let this adapter create the described mapping we create the following mapping definition:
 
@@ -97,6 +97,7 @@ SELECT * FROM BOOKSHOP.BOOKS;
 ### More Examples
 * [Example for toJsonMapping](exampleWithToJson.md)
 * [Example for toTableMapping](exampleWithToTable.md)
+
 
 ## Reference
 [Schema mapping language reference](https://exasol.github.io/virtual-schema-common-ducument/schema_doc/index.html)

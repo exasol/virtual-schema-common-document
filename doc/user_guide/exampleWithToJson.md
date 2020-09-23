@@ -20,7 +20,7 @@ CREATE TABLE BOOKS (
 );
 ```
  
-Where `TOPICS` is a `VARCHAR` column containing a JSON strings like `["DynamoDB", "Exasol"]`.
+Where `TOPICS` is a `VARCHAR` column containing JSON strings like `["DynamoDB", "Exasol"]`.
 
 To achieve this we create the following mapping definition:  
 
