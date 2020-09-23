@@ -1,6 +1,6 @@
-# Virtual Schema Common Document 2.0.0, released 2020-XX-XX
+# Virtual Schema Common Document 2.0.0, released 2020-09-23
 
-Code name: 
+Code name: Refactoring + Small new features
 
 ## Summary
 
