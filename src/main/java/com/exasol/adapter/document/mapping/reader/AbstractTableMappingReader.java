@@ -7,6 +7,7 @@ import javax.json.JsonObject;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.ColumnMappingDefinitionKeyTypeReader;
+import com.exasol.adapter.document.mapping.SourceReferenceColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
 
 /**
@@ -15,21 +16,21 @@ import com.exasol.adapter.document.mapping.TableMapping;
  * {@link NestedTableMappingReader}.
  */
 abstract class AbstractTableMappingReader {
-    protected static final String DEST_TABLE_NAME_KEY = "destinationTable";
-    private static final String MAPPING_KEY = "mapping";
     final List<TableMapping> tables = new ArrayList<>();
 
     protected void readMappingDefinition(final JsonObject definition) {
         final SchemaMappingDefinitionLanguageVisitor visitor = new SchemaMappingDefinitionLanguageVisitor();
-        visitor.visitMapping(definition.getJsonObject(MAPPING_KEY), getPathToTable(), null, !isNestedTable());
+        visitor.visitMapping(definition.getJsonObject(EdmlConstants.MAPPING_KEY), getPathToTable(), null,
+                !isNestedTable());
         if (visitor.hasNestedTables()) {
-            readTableWithNestedTable(visitor);
+            readTableWithNestedTable(visitor, definition);
         } else {
-            this.tables.add(createTable(visitor.getAllColumns()));
+            addTable(visitor.getAllColumns(), definition);
         }
     }
 
-    private void readTableWithNestedTable(final SchemaMappingDefinitionLanguageVisitor visitor) {
+    private void readTableWithNestedTable(final SchemaMappingDefinitionLanguageVisitor visitor,
+            final JsonObject definition) {
         final GlobalKey globalKey = buildGlobalKey(visitor);
         final List<ColumnMapping> allColumns = new ArrayList<>(globalKey.getOwnKeyColumns());
         allColumns.addAll(globalKey.getForeignKeyColumns());
@@ -38,9 +39,7 @@ abstract class AbstractTableMappingReader {
                 allColumns.add(nonKeyColumn);
             }
         }
-
-        final TableMapping rootTable = createTable(allColumns);
-        this.tables.add(rootTable);
+        final TableMapping rootTable = addTable(allColumns, definition);
         for (final NestedTableReader nestedTableReader : visitor.getNestedTableReaderQueue()) {
             this.tables.addAll(nestedTableReader.readNestedTable(rootTable, globalKey));
         }
@@ -61,6 +60,16 @@ abstract class AbstractTableMappingReader {
 
     public List<TableMapping> getTables() {
         return this.tables;
+    }
+
+    private TableMapping addTable(final List<ColumnMapping> columns, final JsonObject definition) {
+        final ArrayList<ColumnMapping> allColumns = new ArrayList<>(columns);
+        if (definition.getBoolean(EdmlConstants.ADD_SOURCE_AS_COLUMN_KEY, false)) {
+            allColumns.add(new SourceReferenceColumnMapping());
+        }
+        final TableMapping table = createTable(allColumns);
+        this.tables.add(table);
+        return table;
     }
 
     protected abstract TableMapping createTable(List<ColumnMapping> columns);

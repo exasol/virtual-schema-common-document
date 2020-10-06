@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.stream.Stream;
 
 import com.exasol.ExaConnectionInformation;
-import com.exasol.adapter.document.documentnode.DocumentNode;
 
 /**
  * This interface fetches document data from a remote database.
@@ -17,5 +16,5 @@ public interface DocumentFetcher<DocumentVisitorType> extends Serializable {
      * @param connectionInformation for creating a connection to the remote database
      * @return result of the operation.
      */
-    Stream<DocumentNode<DocumentVisitorType>> run(ExaConnectionInformation connectionInformation);
+    Stream<FetchedDocument<DocumentVisitorType>> run(ExaConnectionInformation connectionInformation);
 }

@@ -31,7 +31,7 @@ class RootTableMappingReader extends AbstractTableMappingReader {
      */
     public RootTableMappingReader(final JsonObject definition, final TableKeyFetcher tableKeyFetcher) {
         this.tableKeyFetcher = tableKeyFetcher;
-        this.exasolTableName = definition.getString(DEST_TABLE_NAME_KEY);
+        this.exasolTableName = definition.getString(EdmlConstants.DEST_TABLE_NAME_KEY);
         this.remoteTableName = definition.getString(SRC_TABLE_NAME_KEY);
         readMappingDefinition(definition);
     }

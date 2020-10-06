@@ -5,6 +5,7 @@ package com.exasol.adapter.document.mapping;
  */
 public interface ColumnMappingVisitor {
     void visit(PropertyToColumnMapping propertyToColumnMapping);
-
     void visit(IterationIndexColumnMapping iterationIndexColumnDefinition);
+
+    void visit(SourceReferenceColumnMapping sourceReferenceColumnMapping);
 }

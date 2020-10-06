@@ -1,6 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
-import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.sql.expression.ValueExpression;
 
@@ -19,6 +19,6 @@ public interface ColumnValueExtractor<DocumentVisitorType> {
      * @throws ColumnValueExtractorException if specified property can't be mapped and {@link MappingErrorBehaviour} is
      *                                       set to {@code EXCEPTION }
      */
-    ValueExpression extractColumnValue(final DocumentNode<DocumentVisitorType> document,
+    ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
             final PathIterationStateProvider arrayAllIterationState);
 }

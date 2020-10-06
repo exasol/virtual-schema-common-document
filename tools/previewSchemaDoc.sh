@@ -1,7 +1,7 @@
 #!/bin/bash
 
 readonly root_dir='virtual-schema-common-document'
-readonly schema_path='./src/main/resources/schemas/edml-1.0.0.json'
+readonly schema_path='./src/main/resources/schemas/edml-1.2.0.json'
 readonly doc_dir='/tmp/doc/'
 
 prepare() {
