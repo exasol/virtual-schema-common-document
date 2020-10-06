@@ -24,7 +24,6 @@ import com.exasol.sql.expression.IntegerLiteral;
 import com.exasol.sql.expression.StringLiteral;
 import com.exasol.sql.expression.ValueExpression;
 
-//TODO refactor
 class SchemaMapperTest {
     private static final StringLiteral STRING_LITERAL = StringLiteral.of("test");
 
