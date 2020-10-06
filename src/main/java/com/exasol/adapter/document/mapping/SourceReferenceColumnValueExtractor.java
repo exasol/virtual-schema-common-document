@@ -7,8 +7,6 @@ import com.exasol.sql.expression.ValueExpression;
 
 /**
  * {@link ColumnValueExtractor} for {@link SourceReferenceColumnMapping}s.
- * 
- * @param <DocumentVisitorType>
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public class SourceReferenceColumnValueExtractor<DocumentVisitorType>
