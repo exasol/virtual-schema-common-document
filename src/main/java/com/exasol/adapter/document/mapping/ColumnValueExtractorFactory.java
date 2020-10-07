@@ -50,6 +50,11 @@ public class ColumnValueExtractorFactory<DocumentVisitorType> {
             this.extractor = new IterationIndexColumnValueExtractor<>(iterationIndexColumnDefinition);
         }
 
+        @Override
+        public void visit(final SourceReferenceColumnMapping sourceReferenceColumnMapping) {
+            this.extractor = new SourceReferenceColumnValueExtractor<DocumentVisitorType>();
+        }
+
         public ColumnValueExtractor<DocumentVisitorType> getExtractor() {
             return this.extractor;
         }

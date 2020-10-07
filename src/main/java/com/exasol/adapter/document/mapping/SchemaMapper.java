@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.DocumentPathIteratorFactory;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
@@ -39,14 +39,14 @@ public class SchemaMapper<DocumentVisitorType> {
      * @param document document to map
      * @return stream of exasol rows
      */
-    public Stream<List<ValueExpression>> mapRow(final DocumentNode<DocumentVisitorType> document) {
+    public Stream<List<ValueExpression>> mapRow(final FetchedDocument<DocumentVisitorType> document) {
         final DocumentPathExpression pathToNestedTable = this.query.getFromTable().getPathInRemoteTable();
         final DocumentPathIteratorFactory<DocumentVisitorType> arrayAllCombinationIterable = new DocumentPathIteratorFactory<>(
-                pathToNestedTable, document);
+                pathToNestedTable, document.getRootDocumentNode());
         return arrayAllCombinationIterable.stream().map(iterationState -> mapColumns(document, iterationState));
     }
 
-    private List<ValueExpression> mapColumns(final DocumentNode<DocumentVisitorType> document,
+    private List<ValueExpression> mapColumns(final FetchedDocument<DocumentVisitorType> document,
             final PathIterationStateProvider arrayAllIterationState) {
         final List<ValueExpression> resultValues = new ArrayList<>(this.query.getRequiredColumns().size());
         for (final ColumnMapping resultColumn : this.query.getRequiredColumns()) {

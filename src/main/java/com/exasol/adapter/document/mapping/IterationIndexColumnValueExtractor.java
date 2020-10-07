@@ -1,6 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
-import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.sql.expression.IntegerLiteral;
 import com.exasol.sql.expression.ValueExpression;
@@ -23,7 +23,7 @@ public class IterationIndexColumnValueExtractor<DocumentVisitorType>
     }
 
     @Override
-    public ValueExpression extractColumnValue(final DocumentNode<DocumentVisitorType> document,
+    public ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
             final PathIterationStateProvider arrayAllIterationState) {
         final int arrayIndex = arrayAllIterationState.getIndexFor(this.column.getTablesPath());
         return IntegerLiteral.of(arrayIndex);

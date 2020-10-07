@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 
+import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.MockArrayNode;
 import com.exasol.adapter.document.documentnode.MockObjectNode;
@@ -35,8 +36,8 @@ class SchemaMapperTest {
                 new NoPredicate(), new NoPredicate());
         final SchemaMapper<Object> schemaMapper = new SchemaMapper<>(remoteTableQuery,
                 new MockPropertyToColumnValueExtractorFactory());
-        final List<List<ValueExpression>> result = schemaMapper
-                .mapRow(new MockObjectNode(Map.of("testKey", new MockValueNode("testValue"))))
+        final List<List<ValueExpression>> result = schemaMapper.mapRow(
+                new FetchedDocument<>(new MockObjectNode(Map.of("testKey", new MockValueNode("testValue"))), ""))
                 .collect(Collectors.toList());
         assertAll(//
                 () -> assertThat(result.size(), equalTo(1)),
@@ -61,8 +62,9 @@ class SchemaMapperTest {
         final SchemaMapper<Object> schemaMapper = new SchemaMapper<>(remoteTableQuery,
                 new MockPropertyToColumnValueExtractorFactory());
         final List<List<ValueExpression>> result = schemaMapper
-                .mapRow(new MockObjectNode(Map.of(nestedListKey,
-                        new MockArrayNode(List.of(new MockValueNode("testValue"), new MockValueNode("testValue"))))))
+                .mapRow(new FetchedDocument<>(new MockObjectNode(Map.of(nestedListKey,
+                        new MockArrayNode(List.of(new MockValueNode("testValue"), new MockValueNode("testValue"))))),
+                        ""))
                 .collect(Collectors.toList());
         assertAll(//
                 () -> assertThat(result.size(), equalTo(2)),

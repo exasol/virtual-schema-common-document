@@ -2,6 +2,7 @@ package com.exasol.adapter.document.mapping;
 
 import java.util.Optional;
 
+import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentpath.DocumentPathWalker;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
@@ -29,11 +30,12 @@ public abstract class AbstractPropertyToColumnValueExtractor<DocumentVisitorType
     }
 
     @Override
-    public ValueExpression extractColumnValue(final DocumentNode<DocumentVisitorType> document,
+    public ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
             final PathIterationStateProvider arrayAllIterationState) {
         final DocumentPathWalker<DocumentVisitorType> walker = new DocumentPathWalker<>(
                 this.column.getPathToSourceProperty(), arrayAllIterationState);
-        final Optional<DocumentNode<DocumentVisitorType>> dynamodbProperty = walker.walkThroughDocument(document);
+        final Optional<DocumentNode<DocumentVisitorType>> dynamodbProperty = walker
+                .walkThroughDocument(document.getRootDocumentNode());
         if (dynamodbProperty.isEmpty()) {
             if (this.column.getLookupFailBehaviour() == MappingErrorBehaviour.NULL) {
                 return NullLiteral.nullLiteral();

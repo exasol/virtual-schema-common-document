@@ -1,17 +1,19 @@
 package com.exasol.adapter.document.mapping;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 import java.util.Map;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
-import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.DocumentObject;
-import com.exasol.adapter.document.documentnode.DocumentValue;
+import com.exasol.adapter.document.documentfetcher.FetchedDocument;
+import com.exasol.adapter.document.documentnode.MockObjectNode;
+import com.exasol.adapter.document.documentnode.MockValueNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.StaticDocumentPathIterator;
 import com.exasol.sql.expression.NullLiteral;
@@ -19,17 +21,19 @@ import com.exasol.sql.expression.ValueExpression;
 
 class AbstractPropertyToColumnValueExtractorTest {
 
-    private static final StubDocumentObject STUB_DOCUMENT = new StubDocumentObject();
+    public static final String KEY = "isbn";
+    public static final MockValueNode EXPECTED_VALUE = new MockValueNode("testValue");
+    private static final FetchedDocument<Object> STUB_DOCUMENT = new FetchedDocument<>(
+            new MockObjectNode(Map.of(KEY, EXPECTED_VALUE)), "test source");
 
     @Test
     void testLookup() {
-        final DocumentPathExpression sourcePath = DocumentPathExpression.builder().addObjectLookup("isbn").build();
+        final DocumentPathExpression sourcePath = DocumentPathExpression.builder().addObjectLookup(KEY).build();
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.ABORT);
-
-        final ValueMapperStub valueMapperStub = new ValueMapperStub(columnMappingDefinition);
-        valueMapperStub.extractColumnValue(STUB_DOCUMENT, new StaticDocumentPathIterator());
-        assertThat(valueMapperStub.remoteValue, equalTo(StubDocumentObject.MAP.get("isbn")));
+        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(columnMappingDefinition);
+        extractor.extractColumnValue(STUB_DOCUMENT, new StaticDocumentPathIterator());
+        verify(extractor).mapValue(EXPECTED_VALUE);
     }
 
     @Test
@@ -38,8 +42,8 @@ class AbstractPropertyToColumnValueExtractorTest {
                 .build();
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.NULL);
-        final ValueMapperStub valueMapper = new ValueMapperStub(columnMappingDefinition);
-        final ValueExpression valueExpression = valueMapper.extractColumnValue(STUB_DOCUMENT,
+        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(columnMappingDefinition);
+        final ValueExpression valueExpression = extractor.extractColumnValue(STUB_DOCUMENT,
                 new StaticDocumentPathIterator());
         assertThat(valueExpression, instanceOf(NullLiteral.class));
     }
@@ -50,9 +54,9 @@ class AbstractPropertyToColumnValueExtractorTest {
                 .build();
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.ABORT);
-        final ValueMapperStub valueMapper = new ValueMapperStub(columnMappingDefinition);
+        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(columnMappingDefinition);
         final StaticDocumentPathIterator pathIterator = new StaticDocumentPathIterator();
-        assertThrows(SchemaMappingException.class, () -> valueMapper.extractColumnValue(STUB_DOCUMENT, pathIterator));
+        assertThrows(SchemaMappingException.class, () -> extractor.extractColumnValue(STUB_DOCUMENT, pathIterator));
     }
 
     @Test
@@ -60,77 +64,17 @@ class AbstractPropertyToColumnValueExtractorTest {
         final String columnName = "name";
         final MockPropertyToColumnMapping mappingDefinition = new MockPropertyToColumnMapping(columnName,
                 DocumentPathExpression.empty(), MappingErrorBehaviour.ABORT);
-        final ExceptionMockColumnValueMapper valueMapper = new ExceptionMockColumnValueMapper(mappingDefinition);
+        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(mappingDefinition);
+        when(extractor.mapValue(any())).thenThrow(new ColumnValueExtractorException("mocMessage", mappingDefinition));
         final StaticDocumentPathIterator pathIterator = new StaticDocumentPathIterator();
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
-                () -> valueMapper.extractColumnValue(STUB_DOCUMENT, pathIterator));
+                () -> extractor.extractColumnValue(STUB_DOCUMENT, pathIterator));
         assertThat(exception.getCausingColumn().getExasolColumnName(), equalTo(columnName));
     }
 
-    private static class DummyVisitor {
-
-    }
-
-    private static class StubDocumentObject implements DocumentObject<DummyVisitor> {
-        private static final Map<String, DocumentNode<DummyVisitor>> MAP = Map.of("isbn", new StubDocumentValue());
-        private static final long serialVersionUID = 9179578910701283315L;
-
-        @Override
-        public Map<String, DocumentNode<DummyVisitor>> getKeyValueMap() {
-            return MAP;
-        }
-
-        @Override
-        public DocumentNode<DummyVisitor> get(final String key) {
-            return MAP.get(key);
-        }
-
-        @Override
-        public boolean hasKey(final String key) {
-            return MAP.containsKey(key);
-        }
-
-        @Override
-        public void accept(final DummyVisitor visitor) {
-
-        }
-    }
-
-    private static class StubDocumentValue implements DocumentValue<DummyVisitor> {
-
-        private static final long serialVersionUID = -2835741189976407365L;//
-
-        @Override
-        public void accept(final DummyVisitor visitor) {
-
-        }
-    }
-
-    private static class ValueMapperStub extends AbstractPropertyToColumnValueExtractor<DummyVisitor> {
-        private DocumentNode<DummyVisitor> remoteValue;
-
-        public ValueMapperStub(final PropertyToColumnMapping column) {
-            super(column);
-        }
-
-        @Override
-        protected ValueExpression mapValue(final DocumentNode<DummyVisitor> documentValue) {
-            this.remoteValue = documentValue;
-            return null;
-        }
-    }
-
-    private static class ExceptionMockColumnValueMapper extends AbstractPropertyToColumnValueExtractor<DummyVisitor> {
-        private final ColumnMapping column;
-
-        public ExceptionMockColumnValueMapper(final PropertyToColumnMapping column) {
-            super(column);
-            this.column = column;
-        }
-
-        @Override
-        protected ValueExpression mapValue(final DocumentNode<DummyVisitor> documentValue) {
-            throw new ColumnValueExtractorException("mocMessage", this.column);
-        }
+    private AbstractPropertyToColumnValueExtractor<Object> getMock(
+            final MockPropertyToColumnMapping columnMappingDefinition) {
+        return mock(AbstractPropertyToColumnValueExtractor.class, Mockito.withSettings()
+                .useConstructor(columnMappingDefinition).defaultAnswer(Mockito.CALLS_REAL_METHODS));
     }
 }

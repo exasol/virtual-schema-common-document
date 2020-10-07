@@ -71,6 +71,24 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
+    void testSourcePathColumn() throws IOException, AdapterException {
+        final File mappingFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING,
+                base -> base.put("addSourceReferenceColumn", true), this.tempDir);
+        final SchemaMapping schemaMapping = getMappingDefinitionForFile(mappingFile);
+        final TableMapping table = schemaMapping.getTableMappings().get(0);
+        assertThat(table.getColumns(), hasItem(new SourceReferenceColumnMapping()));
+    }
+
+    @Test
+    void testWithoutSourcePathColumn() throws IOException, AdapterException {
+        final File mappingFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING,
+                base -> base.put("addSourceReferenceColumn", false), this.tempDir);
+        final SchemaMapping schemaMapping = getMappingDefinitionForFile(mappingFile);
+        final TableMapping table = schemaMapping.getTableMappings().get(0);
+        assertThat(table.getColumns(), not(hasItem(new SourceReferenceColumnMapping())));
+    }
+
+    @Test
     void testToJsonMapping() throws IOException, AdapterException {
         final SchemaMapping schemaMapping = getMappingDefinitionForFile(
                 getMappingAsFile(MappingTestFiles.TO_JSON_MAPPING, this.tempDir));

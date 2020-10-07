@@ -89,7 +89,7 @@ class NestedTableMappingReader extends AbstractTableMappingReader {
 
     private String getNestedTableName(final JsonObject definition, final String parentTableExasolName,
             final String propertyName) {
-        return definition.getString(DEST_TABLE_NAME_KEY,
+        return definition.getString(EdmlConstants.DEST_TABLE_NAME_KEY,
                 getNestedTableNameDefaultName(parentTableExasolName, propertyName));
     }
 
