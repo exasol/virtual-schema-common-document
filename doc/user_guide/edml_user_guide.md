@@ -242,10 +242,13 @@ In that case you may want to add the filename as a column to the Exasol table.
 That allows you to query on it and by that only read the required files.
 
 To do so, set `addSourceReferenceColumn: true` in the root object of your EDML definition.
-The adapter will then automatically add a column named `SOURCE_REFERENCE`.
+The adapter will then automatically add a column named `SOURCE_REFERENCE` to the end of the table.
 
 You can use this property for all dialects.
-Typically it will, however, only give you additional information, if you load data from multiple sources. 
+Typically it will, however, only give you additional information, if you load data from multiple sources.
+
+The `SOURCE_REFERENCE` column has a maximum size of 2000 characters.
+In case a source reference should exceed this, the adapter will throw an exception.  
 
 ## Reference
 [Schema mapping language reference](https://exasol.github.io/virtual-schema-common-ducument/schema_doc/edml_1.1.0/index.html)

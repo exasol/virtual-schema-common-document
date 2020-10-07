@@ -4,12 +4,15 @@ import com.exasol.adapter.metadata.DataType;
 
 /**
  * This class describes a column that maps the source reference. For example in the files-virtual-schemas the name of
- * the file that contained the document. The name of this column is always {@code SOURCE_REFERENCE}, except from if it
- * is is used as foreign key (not yet possible).
+ * the file that contained the document.
+ * <p>
+ * The name of this column is always {@code SOURCE_REFERENCE}, except from if it is used as foreign key (not yet
+ * possible).
+ * </p>
  */
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     public static final String DEFAULT_COLUMN_NAME = "SOURCE_REFERENCE";
-    private static final long serialVersionUID = 9137288944756144081L;
+    private static final long serialVersionUID = 9137288944756144081L;//
 
     /**
      * Create an instance of {@link SourceReferenceColumnMapping}.
