@@ -128,7 +128,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
             final RemoteTableQuery remoteTableQuery)
             throws ExaConnectionAccessException, IOException, AdapterException {
-        final QueryPlanner queryPlanner = getDataLoaderFactory(
+        final QueryPlanner queryPlanner = getQueryPlanner(
                 getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
@@ -147,7 +147,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * @return source specific {@link QueryPlanner}
      * @throws AdapterException if connecting fails
      */
-    protected abstract QueryPlanner getDataLoaderFactory(ExaConnectionInformation connectionInformation)
+    protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation)
             throws AdapterException;
 
     /**
