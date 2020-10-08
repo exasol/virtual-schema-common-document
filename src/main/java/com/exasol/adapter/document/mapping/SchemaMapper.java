@@ -5,30 +5,28 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
-import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.DocumentPathIteratorFactory;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
-import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.sql.expression.ValueExpression;
 
 /**
- * This call maps document data to Exasol rows according to {@link SchemaMappingQuery}.
+ * This class extracts Exasol the column values from document data.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public class SchemaMapper<DocumentVisitorType> {
-    private final SchemaMappingQuery query;
+    private final SchemaMappingRequest request;
     private final ColumnValueExtractorFactory<DocumentVisitorType> columnValueExtractorFactory;
 
     /**
      * Create a new {@link SchemaMapper} for the given query.
      *
-     * @param query                                 query used as plan for the schema mapping
+     * @param request                               request for the schema mapping
      * @param propertyToColumnValueExtractorFactory factory for value mapper corresponding to
      *                                              {@link DocumentVisitorType}
      */
-    public SchemaMapper(final RemoteTableQuery query,
+    public SchemaMapper(final SchemaMappingRequest request,
             final PropertyToColumnValueExtractorFactory<DocumentVisitorType> propertyToColumnValueExtractorFactory) {
-        this.query = query;
+        this.request = request;
         this.columnValueExtractorFactory = new ColumnValueExtractorFactory<>(propertyToColumnValueExtractorFactory);
     }
 
@@ -40,16 +38,15 @@ public class SchemaMapper<DocumentVisitorType> {
      * @return stream of exasol rows
      */
     public Stream<List<ValueExpression>> mapRow(final FetchedDocument<DocumentVisitorType> document) {
-        final DocumentPathExpression pathToNestedTable = this.query.getFromTable().getPathInRemoteTable();
         final DocumentPathIteratorFactory<DocumentVisitorType> arrayAllCombinationIterable = new DocumentPathIteratorFactory<>(
-                pathToNestedTable, document.getRootDocumentNode());
+                this.request.getPathInRemoteTable(), document.getRootDocumentNode());
         return arrayAllCombinationIterable.stream().map(iterationState -> mapColumns(document, iterationState));
     }
 
     private List<ValueExpression> mapColumns(final FetchedDocument<DocumentVisitorType> document,
             final PathIterationStateProvider arrayAllIterationState) {
-        final List<ValueExpression> resultValues = new ArrayList<>(this.query.getRequiredColumns().size());
-        for (final ColumnMapping resultColumn : this.query.getRequiredColumns()) {
+        final List<ValueExpression> resultValues = new ArrayList<>(this.request.getColumns().size());
+        for (final ColumnMapping resultColumn : this.request.getColumns()) {
             final ColumnValueExtractor<DocumentVisitorType> columnValueExtractor = this.columnValueExtractorFactory
                     .getValueExtractorForColumn(resultColumn);
             final ValueExpression result = columnValueExtractor.extractColumnValue(document, arrayAllIterationState);

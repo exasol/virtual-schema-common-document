@@ -52,7 +52,7 @@ public class ColumnValueExtractorFactory<DocumentVisitorType> {
 
         @Override
         public void visit(final SourceReferenceColumnMapping sourceReferenceColumnMapping) {
-            this.extractor = new SourceReferenceColumnValueExtractor<DocumentVisitorType>();
+            this.extractor = new SourceReferenceColumnValueExtractor<>();
         }
 
         public ColumnValueExtractor<DocumentVisitorType> getExtractor() {

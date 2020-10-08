@@ -2,7 +2,6 @@ package com.exasol.adapter.document;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import com.exasol.ExaConnectionAccessException;
 import com.exasol.ExaConnectionInformation;
@@ -129,26 +128,26 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
             final RemoteTableQuery remoteTableQuery)
             throws ExaConnectionAccessException, IOException, AdapterException {
-        final DataLoaderFactory dataLoaderFactory = getDataLoaderFactory(
+        final QueryPlanner queryPlanner = getDataLoaderFactory(
                 getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
         final int availableClusterCores = getMaxCoreNumber(exaMetadata, adapterProperties);
-        final List<DataLoader> dataLoaders = dataLoaderFactory.buildDataLoaderForQuery(remoteTableQuery,
+        final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery,
                 availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
         return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), getAdapterName())
-                .getUdfCallSql(dataLoaders, remoteTableQuery);
+                .getUdfCallSql(queryPlan, remoteTableQuery);
     }
 
     /**
-     * Get an data source specific {@link DataLoaderFactory}.
+     * Get an data source specific {@link QueryPlanner}.
      * 
      * @param connectionInformation connection details
-     * @return source specific {@link DataLoaderFactory}
+     * @return source specific {@link QueryPlanner}
      * @throws AdapterException if connecting fails
      */
-    protected abstract DataLoaderFactory getDataLoaderFactory(ExaConnectionInformation connectionInformation)
+    protected abstract QueryPlanner getDataLoaderFactory(ExaConnectionInformation connectionInformation)
             throws AdapterException;
 
     /**

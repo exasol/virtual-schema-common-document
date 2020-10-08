@@ -8,9 +8,6 @@ import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
 import com.exasol.adapter.document.mapping.TableMapping;
-import com.exasol.adapter.document.queryplanning.selectionextractor.IndexColumnSelectionMatcher;
-import com.exasol.adapter.document.queryplanning.selectionextractor.NestedColumnSelectionMatcher;
-import com.exasol.adapter.document.queryplanning.selectionextractor.SelectionExtractor;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicateFactory;
 import com.exasol.adapter.metadata.ColumnMetadata;
@@ -41,12 +38,7 @@ public class RemoteTableQueryFactory {
         final TableMapping tableMapping = converter.convertBackTable(visitor.tableMetadata, schemaAdapterNotes);
         final QueryPredicate selection = QueryPredicateFactory.getInstance()
                 .buildPredicateFor(visitor.getWhereClause());
-        final SelectionExtractor.Result indexColumnExtractionResult = new SelectionExtractor(
-                new IndexColumnSelectionMatcher(), new NestedColumnSelectionMatcher())
-                        .extractIndexColumnSelection(selection);
-        return new RemoteTableQuery(tableMapping, Collections.unmodifiableList(visitor.resultColumns),
-                indexColumnExtractionResult.getRemainingSelection().asQueryPredicate(),
-                indexColumnExtractionResult.getSelectedSelection().asQueryPredicate());
+        return new RemoteTableQuery(tableMapping, Collections.unmodifiableList(visitor.resultColumns), selection);
     }
 
     private static class Visitor extends VoidSqlNodeVisitor {

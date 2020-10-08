@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.exasol.*;
-import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
+import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.sql.expresion.ValueExpressionToJavaObjectConverter;
 import com.exasol.utils.StringSerializer;
 
@@ -15,7 +15,7 @@ import com.exasol.utils.StringSerializer;
 public class UdfEntryPoint {
     public static final String UDF_PREFIX = "IMPORT_FROM_";
     public static final String PARAMETER_DATA_LOADER = "DATA_LOADER";
-    public static final String PARAMETER_REMOTE_TABLE_QUERY = "REMOTE_TABLE_QUERY";
+    public static final String PARAMETER_SCHEMA_MAPPING_REQUEST = "SCHEMA_MAPPING_REQUEST";
     public static final String PARAMETER_CONNECTION_NAME = "CONNECTION_NAME";
 
     private UdfEntryPoint() {
@@ -33,11 +33,11 @@ public class UdfEntryPoint {
     public static void run(final ExaMetadata exaMetadata, final ExaIterator exaIterator) throws Exception {
         final ExaConnectionInformation connectionInformation = exaMetadata
                 .getConnection(exaIterator.getString(PARAMETER_CONNECTION_NAME));
-        final RemoteTableQuery remoteTableQuery = deserializeRemoteTableQuery(exaIterator);
+        final SchemaMappingRequest schemaMappingRequest = deserializeSchemaMappingRequest(exaIterator);
         final ValueExpressionToJavaObjectConverter valueExpressionToJavaObjectConverter = new ValueExpressionToJavaObjectConverter();
         do {
             final DataLoader dataLoader = deserializeDataLoader(exaIterator);
-            dataLoader.run(connectionInformation, remoteTableQuery).map(
+            dataLoader.run(connectionInformation, schemaMappingRequest).map(
                     row -> row.stream().map(valueExpressionToJavaObjectConverter::convert).collect(Collectors.toList()))
                     .forEach(values -> emitRow(values, exaIterator));
         } while (exaIterator.next());
@@ -49,10 +49,10 @@ public class UdfEntryPoint {
         return (DataLoader) StringSerializer.deserializeFromString(serialized);
     }
 
-    private static RemoteTableQuery deserializeRemoteTableQuery(final ExaIterator exaIterator)
+    private static SchemaMappingRequest deserializeSchemaMappingRequest(final ExaIterator exaIterator)
             throws ExaIterationException, ExaDataTypeException, IOException, ClassNotFoundException {
-        final String serialized = exaIterator.getString(PARAMETER_REMOTE_TABLE_QUERY);
-        return (RemoteTableQuery) StringSerializer.deserializeFromString(serialized);
+        final String serialized = exaIterator.getString(PARAMETER_SCHEMA_MAPPING_REQUEST);
+        return (SchemaMappingRequest) StringSerializer.deserializeFromString(serialized);
     }
 
     private static void emitRow(final List<Object> row, final ExaIterator iterator) {
