@@ -6,7 +6,7 @@ import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 /**
  * This class plans the query execution and returns it as {@link QueryPlan}.
  * <p>
- * For that it builds one ore more {@link DataLoader}s that fetch the required documents for a given
+ * For that it builds one or more {@link DataLoader}s that fetch the required documents for a given
  * {@link RemoteTableQuery}. If multiple loaders are returned, then the results must be combined by an
  * {@code UNION ALL}. This combination is implicitly implemented by the UDFs as multiple UDFs emit the value. This
  * results in an union of the values without duplicate elimination.
