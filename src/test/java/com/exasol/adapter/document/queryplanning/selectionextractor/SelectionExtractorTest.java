@@ -18,10 +18,10 @@ import com.exasol.adapter.sql.SqlLiteralString;
 
 class SelectionExtractorTest {
 
-    private static final QueryPredicate NON_INDEX_COMPARISON = buildNonIndexComparison("column1");
-    private static final QueryPredicate NON_INDEX_COMPARISON_2 = buildNonIndexComparison("column2");
-    private static final QueryPredicate INDEX_COMPARISON = buildIndexComparison("indexColumn1");
-    private static final SelectionExtractor EXTRACTOR = new SelectionExtractor(new IndexColumnSelectionMatcher());
+    private static final QueryPredicate NON_MATCHING_COMPARISON = buildNonIndexComparison("column1");
+    private static final QueryPredicate NON_MATCHING_COMPARISON_2 = buildNonIndexComparison("column2");
+    private static final QueryPredicate MATCHING_COMPARISON = buildIndexComparison("column3");
+    private static final SelectionExtractor EXTRACTOR = new SelectionExtractor(new MockSelectionMatcher());
 
     private static ColumnLiteralComparisonPredicate buildNonIndexComparison(final String columnName) {
         final ColumnMapping column = getColumnMappingExample().exasolColumnName(columnName).build();
@@ -38,29 +38,30 @@ class SelectionExtractorTest {
 
     @Test
     void testExtractWithNoIndexColumn() {
-        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(NON_INDEX_COMPARISON);
+        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(NON_MATCHING_COMPARISON);
         assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(new NoPredicate())),
-                () -> assertThat(result.getRemainingSelection().asQueryPredicate(), equalTo(NON_INDEX_COMPARISON)));
+                () -> assertThat(result.getRemainingSelection().asQueryPredicate(), equalTo(NON_MATCHING_COMPARISON)));
     }
 
     @Test
     void testExtractOnlyIndexColumn() {
-        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(INDEX_COMPARISON);
-        assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(INDEX_COMPARISON)),
+        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(MATCHING_COMPARISON);
+        assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(MATCHING_COMPARISON)),
                 () -> assertThat(result.getRemainingSelection().asQueryPredicate(), equalTo(new NoPredicate())));
     }
 
     @Test
     void testExtractIndexAndNonIndexColumnFromAnd() {
         final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(
-                new LogicalOperator(Set.of(INDEX_COMPARISON, NON_INDEX_COMPARISON), LogicalOperator.Operator.AND));
-        assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(INDEX_COMPARISON)),
-                () -> assertThat(result.getRemainingSelection().asQueryPredicate(), equalTo(NON_INDEX_COMPARISON)));
+                new LogicalOperator(Set.of(MATCHING_COMPARISON, NON_MATCHING_COMPARISON),
+                        LogicalOperator.Operator.AND));
+        assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(MATCHING_COMPARISON)),
+                () -> assertThat(result.getRemainingSelection().asQueryPredicate(), equalTo(NON_MATCHING_COMPARISON)));
     }
 
     @Test
     void testExtractIndexAndNonIndexColumnFromOr() {
-        final LogicalOperator predicate = new LogicalOperator(Set.of(INDEX_COMPARISON, NON_INDEX_COMPARISON),
+        final LogicalOperator predicate = new LogicalOperator(Set.of(MATCHING_COMPARISON, NON_MATCHING_COMPARISON),
                 LogicalOperator.Operator.OR);
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> EXTRACTOR.extractIndexColumnSelection(predicate));
@@ -72,12 +73,19 @@ class SelectionExtractorTest {
     void testExtractFromAndAndOr() {
         final SelectionExtractor.Result result = EXTRACTOR
                 .extractIndexColumnSelection(new LogicalOperator(
-                        Set.of(INDEX_COMPARISON, new LogicalOperator(
-                                Set.of(NON_INDEX_COMPARISON, NON_INDEX_COMPARISON_2), LogicalOperator.Operator.OR)),
+                        Set.of(MATCHING_COMPARISON,
+                                new LogicalOperator(Set.of(NON_MATCHING_COMPARISON, NON_MATCHING_COMPARISON_2),
+                                        LogicalOperator.Operator.OR)),
                         LogicalOperator.Operator.AND));
-        assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(INDEX_COMPARISON)),
+        assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(MATCHING_COMPARISON)),
                 () -> assertThat(result.getRemainingSelection().asQueryPredicate(),
-                        equalTo(new LogicalOperator(Set.of(NON_INDEX_COMPARISON_2, NON_INDEX_COMPARISON),
+                        equalTo(new LogicalOperator(Set.of(NON_MATCHING_COMPARISON_2, NON_MATCHING_COMPARISON),
                                 LogicalOperator.Operator.OR))));
+    }
+
+    private static class MockSelectionMatcher implements SelectionMatcher {
+        public boolean matchComparison(final ComparisonPredicate comparison) {
+            return comparison.equals(MATCHING_COMPARISON);
+        }
     }
 }

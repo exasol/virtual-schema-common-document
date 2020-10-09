@@ -3,6 +3,7 @@ package com.exasol.adapter.document.queryplanning;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.mapping.*;
@@ -16,11 +17,11 @@ public class RequiredPathExpressionExtractor {
     /**
      * Get a set of properties that must be fetched from the remote database.
      * 
-     * @param query query to extract the properties from
+     * @param requiredColumns stream of required columns
      * @return set of required properties
      */
-    public Set<DocumentPathExpression> getRequiredProperties(final RemoteTableQuery query) {
-        return query.getRequiredColumns().stream().map(this::getRequiredProperty).filter(Objects::nonNull)
+    public Set<DocumentPathExpression> getRequiredProperties(final Stream<? extends ColumnMapping> requiredColumns) {
+        return requiredColumns.map(this::getRequiredProperty).filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 

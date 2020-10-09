@@ -22,11 +22,11 @@ class RemoteTableQueryTest {
                 .withColumnMappingDefinition(columnDefinition).build();
         final QueryPredicate selection = new NoPredicate();
         final RemoteTableQuery remoteTableQuery = new RemoteTableQuery(tableDefinition, List.of(columnDefinition),
-                selection, new NoPredicate());
+                selection);
         assertAll(//
                 () -> assertThat(remoteTableQuery.getSelectList(), containsInAnyOrder(columnDefinition)),
                 () -> assertThat(remoteTableQuery.getFromTable(), equalTo(tableDefinition)),
-                () -> assertThat(remoteTableQuery.getPushDownSelection(), equalTo(selection))//
+                () -> assertThat(remoteTableQuery.getSelection(), equalTo(selection))//
         );
     }
 }

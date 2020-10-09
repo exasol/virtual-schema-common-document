@@ -18,8 +18,6 @@ import com.exasol.adapter.document.documentnode.MockArrayNode;
 import com.exasol.adapter.document.documentnode.MockObjectNode;
 import com.exasol.adapter.document.documentnode.MockValueNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
-import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
-import com.exasol.adapter.document.querypredicate.NoPredicate;
 import com.exasol.sql.expression.IntegerLiteral;
 import com.exasol.sql.expression.StringLiteral;
 import com.exasol.sql.expression.ValueExpression;
@@ -30,11 +28,9 @@ class SchemaMapperTest {
     @Test
     void testMapRow() {
         final PropertyToColumnMapping columnMapping = getColumnMappingExample().build();
-        final TableMapping tableMapping = TableMapping.rootTableBuilder("table", "table")
-                .withColumnMappingDefinition(columnMapping).build();
-        final RemoteTableQuery remoteTableQuery = new RemoteTableQuery(tableMapping, List.of(columnMapping),
-                new NoPredicate(), new NoPredicate());
-        final SchemaMapper<Object> schemaMapper = new SchemaMapper<>(remoteTableQuery,
+        final SchemaMappingRequest request = new SchemaMappingRequest(DocumentPathExpression.empty(),
+                List.of(columnMapping));
+        final SchemaMapper<Object> schemaMapper = new SchemaMapper<>(request,
                 new MockPropertyToColumnValueExtractorFactory());
         final List<List<ValueExpression>> result = schemaMapper.mapRow(
                 new FetchedDocument<>(new MockObjectNode(Map.of("testKey", new MockValueNode("testValue"))), ""))
@@ -48,24 +44,20 @@ class SchemaMapperTest {
     @Test
     void testMapNestedTable() {
         final String nestedListKey = "topics";
-
         final DocumentPathExpression pathToNestedTable = DocumentPathExpression.builder().addObjectLookup(nestedListKey)
                 .addArrayAll().build();
         final PropertyToColumnMapping columnMapping = getColumnMappingExample().pathToSourceProperty(pathToNestedTable)
                 .build();
         final ColumnMapping indexColumn = new IterationIndexColumnMapping("INDEX",
                 DocumentPathExpression.builder().addObjectLookup(nestedListKey).addArrayAll().build());
-        final TableMapping tableMapping = TableMapping.nestedTableBuilder("table", "table", pathToNestedTable)
-                .withColumnMappingDefinition(columnMapping).withColumnMappingDefinition(indexColumn).build();
-        final RemoteTableQuery remoteTableQuery = new RemoteTableQuery(tableMapping,
-                List.of(columnMapping, indexColumn), new NoPredicate(), new NoPredicate());
-        final SchemaMapper<Object> schemaMapper = new SchemaMapper<>(remoteTableQuery,
+        final SchemaMappingRequest request = new SchemaMappingRequest(pathToNestedTable,
+                List.of(indexColumn, columnMapping));
+        final SchemaMapper<Object> schemaMapper = new SchemaMapper<>(request,
                 new MockPropertyToColumnValueExtractorFactory());
-        final List<List<ValueExpression>> result = schemaMapper
-                .mapRow(new FetchedDocument<>(new MockObjectNode(Map.of(nestedListKey,
+        final List<List<ValueExpression>> result = schemaMapper.mapRow(new FetchedDocument<>(
+                new MockObjectNode(Map.of(nestedListKey,
                         new MockArrayNode(List.of(new MockValueNode("testValue"), new MockValueNode("testValue"))))),
-                        ""))
-                .collect(Collectors.toList());
+                "")).collect(Collectors.toList());
         assertAll(//
                 () -> assertThat(result.size(), equalTo(2)),
                 () -> assertThat(result.get(0).get(1), equalTo(STRING_LITERAL)), //

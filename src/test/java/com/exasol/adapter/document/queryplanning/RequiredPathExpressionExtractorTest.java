@@ -3,7 +3,8 @@ package com.exasol.adapter.document.queryplanning;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
@@ -22,25 +23,19 @@ class RequiredPathExpressionExtractorTest {
     @Test
     void testWithIterationIndexColumn() {
         final ColumnMapping column = new IterationIndexColumnMapping("", PATH);
-        final RemoteTableQuery remoteTableQuery = mock(RemoteTableQuery.class);
-        when(remoteTableQuery.getRequiredColumns()).thenReturn(List.of(column));
-        assertThat(EXTRACTOR.getRequiredProperties(remoteTableQuery), containsInAnyOrder(PATH));
+        assertThat(EXTRACTOR.getRequiredProperties(List.of(column).stream()), containsInAnyOrder(PATH));
     }
 
     @Test
     void testWithPropertyMappingColumn() {
         final PropertyToColumnMapping column = spy(PropertyToColumnMapping.class);
         when(column.getPathToSourceProperty()).thenReturn(PATH);
-        final RemoteTableQuery remoteTableQuery = mock(RemoteTableQuery.class);
-        when(remoteTableQuery.getRequiredColumns()).thenReturn(List.of(column));
-        assertThat(EXTRACTOR.getRequiredProperties(remoteTableQuery), containsInAnyOrder(PATH));
+        assertThat(EXTRACTOR.getRequiredProperties(List.of(column).stream()), containsInAnyOrder(PATH));
     }
 
     @Test
     void testWithSourcePathColumn() {
         final ColumnMapping column = new SourceReferenceColumnMapping();
-        final RemoteTableQuery remoteTableQuery = mock(RemoteTableQuery.class);
-        when(remoteTableQuery.getRequiredColumns()).thenReturn(List.of(column));
-        assertThat(EXTRACTOR.getRequiredProperties(remoteTableQuery), empty());
+        assertThat(EXTRACTOR.getRequiredProperties(List.of(column).stream()), empty());
     }
 }

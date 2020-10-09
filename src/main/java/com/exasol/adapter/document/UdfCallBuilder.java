@@ -3,11 +3,15 @@ package com.exasol.adapter.document;
 import static com.exasol.sql.expression.ExpressionTerm.column;
 
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
+import com.exasol.adapter.document.querypredicate.InvolvedColumnCollector;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicateToBooleanExpressionConverter;
 import com.exasol.adapter.metadata.DataType;
@@ -37,7 +41,7 @@ import com.exasol.utils.StringSerializer;
  */
 public class UdfCallBuilder {
     private static final String DATA_LOADER_COLUMN = "DATA_LOADER";
-    private static final String REMOTE_TABLE_QUERY_COLUMN = "REMOTE_TABLE_QUERY";
+    private static final String SCHEMA_MAPPING_REQUEST_COLUMN = "REMOTE_TABLE_QUERY";
     private static final String CONNECTION_NAME_COLUMN = "CONNECTION_NAME";
     private static final String FRAGMENT_ID_COLUMN = "FRAGMENT_ID";
     private final String connectionName;
@@ -62,15 +66,15 @@ public class UdfCallBuilder {
      * passed to a UDF. Since it is not possible to pass data to all UDF calls also the query is added to each row, even
      * though it is the same for all rows.
      * 
-     * @param dataLoaders document loaders that are passed to the UDF
-     * @param query       document query that is passed to the UDF
+     * @param queryPlan plan for the query
+     * @param query     document query that is passed to the UDF
      * @return built SQL statement
      * @throws IOException if serialization of a document fetcher or the query fails
      */
-    public String getUdfCallSql(final List<DataLoader> dataLoaders, final RemoteTableQuery query) throws IOException {
-        final Select udfCallStatement = buildUdfCallStatement(dataLoaders, query);
+    public String getUdfCallSql(final QueryPlan queryPlan, final RemoteTableQuery query) throws IOException {
+        final Select udfCallStatement = buildUdfCallStatement(query, queryPlan);
         final Select pushDownSelect = wrapStatementInStatementWithPostSelectionAndProjection(query.getSelectList(),
-                query.getPostSelection(), udfCallStatement);
+                queryPlan.getPostSelection(), udfCallStatement);
         return renderStatement(pushDownSelect);
     }
 
@@ -96,34 +100,45 @@ public class UdfCallBuilder {
      * Build the {@code SELECT} statement that contains the call to the UDF and distributes them using a GROUP BY
      * statement.
      */
-    private Select buildUdfCallStatement(final List<DataLoader> dataLoaders, final RemoteTableQuery query)
+    private Select buildUdfCallStatement(final RemoteTableQuery query, final QueryPlan queryPlan)
             throws IOException {
         final Select udfCallSelect = StatementFactory.getInstance().select();
-        final List<Column> emitsColumns = buildRequiredColumns(query, udfCallSelect);
+        final List<ColumnMapping> requiredColumns = getRequiredColumns(query, queryPlan);
+        final List<Column> emitsColumns = buildColumnDefinitions(requiredColumns, udfCallSelect);
         udfCallSelect.udf("\"" + this.adapterSchema + "\"." + UdfEntryPoint.UDF_PREFIX + this.adapterName,
-                new ColumnsDefinition(emitsColumns),
-                column(DATA_LOADER_COLUMN), column(REMOTE_TABLE_QUERY_COLUMN), column(CONNECTION_NAME_COLUMN));
-        final ValueTable valueTable = buildValueTable(dataLoaders, query, udfCallSelect);
-        udfCallSelect.from().valueTableAs(valueTable, "T", DATA_LOADER_COLUMN, REMOTE_TABLE_QUERY_COLUMN,
+                new ColumnsDefinition(emitsColumns), column(DATA_LOADER_COLUMN), column(SCHEMA_MAPPING_REQUEST_COLUMN),
+                column(CONNECTION_NAME_COLUMN));
+        final SchemaMappingRequest schemaMappingRequest = new SchemaMappingRequest(
+                query.getFromTable().getPathInRemoteTable(), requiredColumns);
+        final ValueTable valueTable = buildValueTable(queryPlan.getDataLoaders(), schemaMappingRequest, udfCallSelect);
+        udfCallSelect.from().valueTableAs(valueTable, "T", DATA_LOADER_COLUMN, SCHEMA_MAPPING_REQUEST_COLUMN,
                 CONNECTION_NAME_COLUMN, FRAGMENT_ID_COLUMN);
         udfCallSelect.groupBy(column(FRAGMENT_ID_COLUMN));
         return udfCallSelect;
     }
 
-    private List<Column> buildRequiredColumns(final RemoteTableQuery query, final Select udfCallSelect) {
-        return query.getRequiredColumns().stream().map(column -> new Column(udfCallSelect, column.getExasolColumnName(),
+    private List<ColumnMapping> getRequiredColumns(final RemoteTableQuery query, final QueryPlan queryPlan) {
+        final List<ColumnMapping> postSelectionsColumns = new InvolvedColumnCollector()
+                .collectInvolvedColumns(queryPlan.getPostSelection());
+        return Stream.concat(postSelectionsColumns.stream(), query.getSelectList().stream()).distinct()
+                .sorted(Comparator.comparing(ColumnMapping::getExasolColumnName)).collect(Collectors.toList());
+    }
+
+    private List<Column> buildColumnDefinitions(final List<ColumnMapping> requiredColumns, final Select udfCallSelect) {
+        return requiredColumns.stream().map(column -> new Column(udfCallSelect, column.getExasolColumnName(),
                 convertDataType(column.getExasolDataType()))).collect(Collectors.toList());
     }
 
-    private ValueTable buildValueTable(final List<DataLoader> dataLoaders, final RemoteTableQuery query,
+    private ValueTable buildValueTable(final List<DataLoader> dataLoaders,
+            final SchemaMappingRequest schemaMappingRequest,
             final Select select) throws IOException {
         final ValueTable valueTable = new ValueTable(select);
         int rowCounter = 0;
         for (final DataLoader dataLoader : dataLoaders) {
             final String serializedDataLoader = StringSerializer.serializeToString(dataLoader);
-            final String serializedRemoteTableQuery = StringSerializer.serializeToString(query);
+            final String serializedSchemaMappingRequest = StringSerializer.serializeToString(schemaMappingRequest);
             final ValueTableRow row = ValueTableRow.builder(select).add(serializedDataLoader)
-                    .add(serializedRemoteTableQuery) //
+                    .add(serializedSchemaMappingRequest) //
                     .add(this.connectionName) //
                     .add(rowCounter) //
                     .build();

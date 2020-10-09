@@ -8,6 +8,10 @@ import com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour;
  * /src/main/resources/schemas/edml-VERSION.json
  */
 class EdmlConstants {
+    private EdmlConstants() {
+        // empty on purpose
+    }
+
     static final String DEST_TABLE_NAME_KEY = "destinationTable";
     static final String VARCHAR_COLUMN_SIZE_KEY = "varcharColumnSize";
     static final int DEFAULT_VARCHAR_COLUMN_SIZE = 254;

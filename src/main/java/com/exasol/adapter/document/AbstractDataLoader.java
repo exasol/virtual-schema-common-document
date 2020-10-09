@@ -7,7 +7,7 @@ import com.exasol.ExaConnectionInformation;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.mapping.PropertyToColumnValueExtractorFactory;
 import com.exasol.adapter.document.mapping.SchemaMapper;
-import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
+import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.sql.expression.ValueExpression;
 
 /**
@@ -15,7 +15,7 @@ import com.exasol.sql.expression.ValueExpression;
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public abstract class AbstractDataLoader<DocumentVisitorType> implements DataLoader {
-    private static final long serialVersionUID = 8650673888516548639L;
+    private static final long serialVersionUID = 4631968154506118888L;
     /** @serial */
     private final DocumentFetcher<DocumentVisitorType> documentFetcher;
 
@@ -37,8 +37,8 @@ public abstract class AbstractDataLoader<DocumentVisitorType> implements DataLoa
 
     @Override
     public final Stream<List<ValueExpression>> run(final ExaConnectionInformation connectionInformation,
-            final RemoteTableQuery remoteTableQuery) {
-        final SchemaMapper<DocumentVisitorType> schemaMapper = new SchemaMapper<>(remoteTableQuery,
+            final SchemaMappingRequest schemaMappingRequest) {
+        final SchemaMapper<DocumentVisitorType> schemaMapper = new SchemaMapper<>(schemaMappingRequest,
                 getValueExtractorFactory());
         return this.documentFetcher.run(connectionInformation).flatMap(schemaMapper::mapRow);
     }
