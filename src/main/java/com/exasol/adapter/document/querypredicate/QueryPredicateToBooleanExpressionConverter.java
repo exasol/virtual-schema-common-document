@@ -4,6 +4,7 @@ import static com.exasol.sql.expression.BooleanTerm.not;
 import static com.exasol.sql.expression.ExpressionTerm.column;
 
 import com.exasol.adapter.document.literalconverter.SqlLiteralToValueExpressionConverter;
+import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator;
 import com.exasol.sql.expression.*;
 
 /**
@@ -51,8 +52,31 @@ public class QueryPredicateToBooleanExpressionConverter {
         public void visit(final ColumnLiteralComparisonPredicate columnLiteralComparisonPredicate) {
             final ValueExpression literal = SqlLiteralToValueExpressionConverter.getInstance()
                     .convert(columnLiteralComparisonPredicate.getLiteral());
-            this.result = new Comparison(ComparisonOperator.EQUAL,
+            this.result = new Comparison(convertOperator(columnLiteralComparisonPredicate.getOperator()),
                     column(columnLiteralComparisonPredicate.getColumn().getExasolColumnName()), literal);
+        }
+
+        private ComparisonOperator convertOperator(final Operator operator) {
+            switch (operator) {
+            case GREATER:
+                return ComparisonOperator.GREATER_THAN;
+            case GREATER_EQUAL:
+                return ComparisonOperator.GREATER_THAN_OR_EQUAL;
+            case EQUAL:
+                return ComparisonOperator.EQUAL;
+            case LESS_EQUAL:
+                return ComparisonOperator.LESS_THAN_OR_EQUAL;
+            case LESS:
+                return ComparisonOperator.LESS_THAN;
+            case NOT_EQUAL:
+                return ComparisonOperator.NOT_EQUAL;
+            case LIKE:
+                throw new UnsupportedOperationException(
+                        "LIKE is not yet supported. See https://github.com/exasol/sql-statement-builder/issues/91");// TODO
+            default:
+                throw new UnsupportedOperationException(
+                        "F-VSD-4 Converting " + operator + "is not yet implemented. Please open a ticket.");
+            }
         }
 
         private BooleanExpression callRecursive(final QueryPredicate predicate) {

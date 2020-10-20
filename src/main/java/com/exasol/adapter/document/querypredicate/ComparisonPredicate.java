@@ -34,11 +34,4 @@ public interface ComparisonPredicate extends QueryPredicate {
      * @return list of {@link ColumnMapping}s involved in the comparison
      */
     List<ColumnMapping> getComparedColumns();
-
-    /**
-     * Negates this operator. e.g. {@code A = B --> A != B}
-     * 
-     * @return negated operator
-     */
-    ComparisonPredicate negate();
 }
