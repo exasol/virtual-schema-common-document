@@ -10,5 +10,5 @@ Code name: Added optional SOURCE_REFERENCE column
 * #42: Added support for LIKE predicate
 
 ## Dependency updates
-
+ * Added `com.exasol:project-keeper-maven-plugin` 0.2.0
 
