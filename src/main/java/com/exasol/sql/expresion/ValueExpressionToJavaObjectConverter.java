@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.exasol.sql.UnnamedPlaceholder;
 import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.expression.function.exasol.ExasolFunction;
 import com.exasol.sql.expression.function.exasol.ExasolUdf;
 
@@ -110,6 +111,11 @@ public class ValueExpressionToJavaObjectConverter {
 
         @Override
         public void visit(final BooleanExpression booleanExpression) {
+            unsupported();
+        }
+
+        @Override
+        public void visit(final CastExasolFunction castFunction) {
             unsupported();
         }
 
