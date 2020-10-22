@@ -1,23 +1,25 @@
-package com.exasol.adapter.document;
+package com.exasol.adapter.document.queryplan;
 
 import java.util.List;
 
+import com.exasol.adapter.document.DataLoader;
+import com.exasol.adapter.document.UdfCallBuilder;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
 
 /**
- * This class represents a plan for executing the query. It is built by {@link QueryPlanner}s.
+ * This class describes a non-empty {@link QueryPlan} for execution of a query.
  */
-public class QueryPlan {
+public class FetchQueryPlan implements QueryPlan {
     private final List<DataLoader> dataLoaders;
     private final QueryPredicate postSelection;
 
     /**
-     * Create a new instance of {@link QueryPlan}.
+     * Create a new instance of {@link FetchQueryPlan}.
      * 
      * @param dataLoaders   {@link DataLoader}s that will be executed as UDFs
      * @param postSelection post selection that will be added to the push down SQL by the {@link UdfCallBuilder}.
      */
-    public QueryPlan(final List<DataLoader> dataLoaders, final QueryPredicate postSelection) {
+    public FetchQueryPlan(final List<DataLoader> dataLoaders, final QueryPredicate postSelection) {
         this.dataLoaders = dataLoaders;
         this.postSelection = postSelection;
     }

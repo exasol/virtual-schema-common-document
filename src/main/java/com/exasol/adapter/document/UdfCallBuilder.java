@@ -3,6 +3,7 @@ package com.exasol.adapter.document;
 import static com.exasol.sql.expression.ExpressionTerm.column;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,6 +11,9 @@ import java.util.stream.Stream;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
+import com.exasol.adapter.document.queryplan.EmptyQueryPlan;
+import com.exasol.adapter.document.queryplan.FetchQueryPlan;
+import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.InvolvedColumnCollector;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
@@ -21,6 +25,8 @@ import com.exasol.sql.*;
 import com.exasol.sql.dql.select.Select;
 import com.exasol.sql.dql.select.rendering.SelectRenderer;
 import com.exasol.sql.expression.BooleanExpression;
+import com.exasol.sql.expression.BooleanLiteral;
+import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.rendering.StringRendererConfig;
 import com.exasol.utils.StringSerializer;
 
@@ -72,10 +78,21 @@ public class UdfCallBuilder {
      * @throws IOException if serialization of a document fetcher or the query fails
      */
     public String getUdfCallSql(final QueryPlan queryPlan, final RemoteTableQuery query) throws IOException {
-        final Select udfCallStatement = buildUdfCallStatement(query, queryPlan);
-        final Select pushDownSelect = wrapStatementInStatementWithPostSelectionAndProjection(query.getSelectList(),
-                queryPlan.getPostSelection(), udfCallStatement);
-        return renderStatement(pushDownSelect);
+        final List<ColumnMapping> selectList = query.getSelectList();
+        if (queryPlan instanceof EmptyQueryPlan) {
+            final Select select = StatementFactory.getInstance().select().all();
+            final ValueTableRow.Builder valueTableRow = ValueTableRow.builder(select);
+            valueTableRow.add(Collections.nCopies(selectList.size(), NullLiteral.nullLiteral()));
+            select.from().valueTable(new ValueTable(select).appendRow(valueTableRow.build()));
+            select.where(BooleanLiteral.of(false));
+            return renderStatement(select);
+        } else {
+            final FetchQueryPlan fetchPlan = (FetchQueryPlan) queryPlan;
+            final Select udfCallStatement = buildUdfCallStatement(query, fetchPlan);
+            final Select pushDownSelect = wrapStatementInStatementWithPostSelectionAndProjection(selectList,
+                    fetchPlan.getPostSelection(), udfCallStatement);
+            return renderStatement(pushDownSelect);
+        }
     }
 
     /**
@@ -87,20 +104,24 @@ public class UdfCallBuilder {
      */
     private Select wrapStatementInStatementWithPostSelectionAndProjection(final List<ColumnMapping> selectList,
             final QueryPredicate postSelection, final Select doubleNestedSelect) {
-        final String[] selectListStrings = selectList.stream().map(ColumnMapping::getExasolColumnName)
-                .toArray(String[]::new);
-        final Select statement = StatementFactory.getInstance().select().field(selectListStrings);
+        final Select statement = getSelectForColumns(selectList);
         statement.from().select(doubleNestedSelect);
         final BooleanExpression whereClause = new QueryPredicateToBooleanExpressionConverter().convert(postSelection);
         statement.where(whereClause);
         return statement;
     }
 
+    private Select getSelectForColumns(final List<ColumnMapping> selectList) {
+        final String[] selectListStrings = selectList.stream().map(ColumnMapping::getExasolColumnName)
+                .toArray(String[]::new);
+        return StatementFactory.getInstance().select().field(selectListStrings);
+    }
+
     /**
      * Build the {@code SELECT} statement that contains the call to the UDF and distributes them using a GROUP BY
      * statement.
      */
-    private Select buildUdfCallStatement(final RemoteTableQuery query, final QueryPlan queryPlan)
+    private Select buildUdfCallStatement(final RemoteTableQuery query, final FetchQueryPlan queryPlan)
             throws IOException {
         final Select udfCallSelect = StatementFactory.getInstance().select();
         final List<ColumnMapping> requiredColumns = getRequiredColumns(query, queryPlan);
@@ -117,7 +138,7 @@ public class UdfCallBuilder {
         return udfCallSelect;
     }
 
-    private List<ColumnMapping> getRequiredColumns(final RemoteTableQuery query, final QueryPlan queryPlan) {
+    private List<ColumnMapping> getRequiredColumns(final RemoteTableQuery query, final FetchQueryPlan queryPlan) {
         final List<ColumnMapping> postSelectionsColumns = new InvolvedColumnCollector()
                 .collectInvolvedColumns(queryPlan.getPostSelection());
         return Stream.concat(postSelectionsColumns.stream(), query.getSelectList().stream()).distinct()
@@ -130,8 +151,7 @@ public class UdfCallBuilder {
     }
 
     private ValueTable buildValueTable(final List<DataLoader> dataLoaders,
-            final SchemaMappingRequest schemaMappingRequest,
-            final Select select) throws IOException {
+            final SchemaMappingRequest schemaMappingRequest, final Select select) throws IOException {
         final ValueTable valueTable = new ValueTable(select);
         int rowCounter = 0;
         for (final DataLoader dataLoader : dataLoaders) {

@@ -161,4 +161,28 @@ class QueryPredicateFactoryTest {
         assertThat(queryPredicate, instanceOf(NotPredicate.class));
 
     }
+
+    @Test
+    void testBuildColumnNotEqualPredicate() {
+        final ColumnLiteralComparisonPredicate predicate = (ColumnLiteralComparisonPredicate) FACTORY
+                .buildPredicateFor(new SqlPredicateNotEqual(new SqlColumn(0, columnMetadata), LITERAL));
+        assertAll(//
+                () -> assertThat(predicate.getLiteral(), equalTo(LITERAL)),
+                () -> assertThat(predicate.getColumn().getExasolColumnName(),
+                        equalTo(COLUMN_MAPPING.getExasolColumnName())),
+                () -> assertThat(predicate.getOperator(), equalTo(AbstractComparisonPredicate.Operator.NOT_EQUAL))//
+        );
+    }
+
+    @Test
+    void testBuildLikePredicate() {
+        final ColumnLiteralComparisonPredicate predicate = (ColumnLiteralComparisonPredicate) FACTORY
+                .buildPredicateFor(new SqlPredicateLike(new SqlColumn(0, columnMetadata), LITERAL));
+        assertAll(//
+                () -> assertThat(predicate.getLiteral(), equalTo(LITERAL)),
+                () -> assertThat(predicate.getColumn().getExasolColumnName(),
+                        equalTo(COLUMN_MAPPING.getExasolColumnName())),
+                () -> assertThat(predicate.getOperator(), equalTo(AbstractComparisonPredicate.Operator.LIKE))//
+        );
+    }
 }

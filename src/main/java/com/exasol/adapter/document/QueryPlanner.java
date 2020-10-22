@@ -1,10 +1,12 @@
 package com.exasol.adapter.document;
 
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
+import com.exasol.adapter.document.queryplan.FetchQueryPlan;
+import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 
 /**
- * This class plans the query execution and returns it as {@link QueryPlan}.
+ * This class plans the query execution and returns it as {@link FetchQueryPlan}.
  * <p>
  * For that it builds one or more {@link DataLoader}s that fetch the required documents for a given
  * {@link RemoteTableQuery}. If multiple loaders are returned, then the results must be combined by an
@@ -21,7 +23,7 @@ public interface QueryPlanner {
      *
      * @param remoteTableQuery            the document query build the {@link DocumentFetcher} for
      * @param maxNumberOfParallelFetchers the maximum amount of {@link DocumentFetcher}s that can be used in parallel
-     * @return {@link QueryPlan} generated plan
+     * @return {@link FetchQueryPlan} generated plan
      */
     public QueryPlan planQuery(final RemoteTableQuery remoteTableQuery, int maxNumberOfParallelFetchers);
 }

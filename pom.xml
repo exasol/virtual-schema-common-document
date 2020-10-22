@@ -1,5 +1,5 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
@@ -90,12 +90,12 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>sql-statement-builder</artifactId>
-            <version>4.1.0</version>
+            <version>4.2.0</version>
         </dependency>
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.2</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -124,14 +124,14 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.5.13</version>
+            <version>3.5.15</version>
             <scope>test</scope>
         </dependency>
         <!--Integration test dependencies-->
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-testcontainers</artifactId>
-            <version>3.0.0</version>
+            <version>3.2.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -169,9 +169,7 @@
                 <configuration>
                     <!-- Set the highest log level for coverage testing, so that we
                       have a chance to reach branches in the logging lambdas too. -->
-                    <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties
-                        ${argLine}
-                    </argLine>
+                    <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties ${argLine}</argLine>
                     <excludes>
                         <exclude>**IT.java</exclude>
                     </excludes>
@@ -322,7 +320,7 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <rulesUri>file:///${project.basedir}/rules.xml</rulesUri>
+                    <rulesUri>file:///${project.basedir}/versionsMavenPluginRules.xml</rulesUri>
                 </configuration>
             </plugin>
             <plugin>
@@ -352,7 +350,7 @@
                 </executions>
                 <configuration>
                     <charset>UTF-8</charset>
-                    <doclint></doclint>
+                    <doclint/>
                     <serialwarn>true</serialwarn>
                     <failOnError>true</failOnError>
                     <failOnWarnings>true</failOnWarnings>
@@ -417,6 +415,22 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.exasol</groupId>
+                <artifactId>project-keeper-maven-plugin</artifactId>
+                <version>0.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <modules>
+                    </modules>
+                </configuration>
             </plugin>
         </plugins>
         <testResources>

@@ -1,31 +1,74 @@
 package com.exasol.adapter.document.querypredicate;
 
+import static com.exasol.EqualityMatchers.assertSymmetricEqualWithHashAndEquals;
+import static com.exasol.EqualityMatchers.assertSymmetricNotEqualWithHashAndEquals;
 import static com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
 
 class AbstractComparisonPredicateTest {
 
-    @Test
-    void testNegateEquality() {
-        final List<AbstractComparisonPredicate.Operator> operators = List.of(EQUAL, LESS, LESS_EQUAL, GREATER,
-                GREATER_EQUAL, NOT_EQUAL);
-        for (final AbstractComparisonPredicate.Operator operator : operators) {
-            final StubComparisonPredicate comparisonPredicate = new StubComparisonPredicate(operator);
-            assertThat(comparisonPredicate.getOperator(), equalTo(comparisonPredicate.negate().negate().getOperator()));
-        }
+    public static final AbstractComparisonPredicate EQUAL_COMPARISON = new Stub(EQUAL);
+
+    static Stream<Arguments> expectedToStringResult() {
+        return Stream.of(//
+                Arguments.of(EQUAL, "="), //
+                Arguments.of(LESS, "<"), //
+                Arguments.of(LESS_EQUAL, "<="), //
+                Arguments.of(GREATER, ">"), //
+                Arguments.of(GREATER_EQUAL, ">="), //
+                Arguments.of(NOT_EQUAL, "!="), //
+                Arguments.of(LIKE, "LIKE")//
+        );
     }
 
-    private static class StubComparisonPredicate extends AbstractComparisonPredicate {
-        private static final long serialVersionUID = -952505391543051812L;
+    static Stream<Arguments> getOtherObjects() {
+        return Stream.of(//
+                Arguments.of(new Object()), //
+                Arguments.of(new Stub(LESS)));
+    }
 
-        public StubComparisonPredicate(final Operator operator) {
+    @ParameterizedTest
+    @MethodSource("expectedToStringResult")
+    void testToString(final AbstractComparisonPredicate.Operator operator, final String expectedString) {
+        final AbstractComparisonPredicate mock = new Stub(operator);
+        assertThat(mock.toString(), equalTo(expectedString));
+    }
+
+    @Test
+    void testGetOperator() {
+        assertThat(EQUAL_COMPARISON.getOperator(), equalTo(EQUAL));
+    }
+
+    @Test
+    void testIdentical() {
+        assertSymmetricEqualWithHashAndEquals(EQUAL_COMPARISON, EQUAL_COMPARISON);
+    }
+
+    @Test
+    void testEqual() {
+        assertSymmetricEqualWithHashAndEquals(EQUAL_COMPARISON, new Stub(EQUAL));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getOtherObjects")
+    void testNotEqual(final Object other) {
+        assertSymmetricNotEqualWithHashAndEquals(EQUAL_COMPARISON, other);
+    }
+
+    private static class Stub extends AbstractComparisonPredicate {
+
+        public Stub(final Operator operator) {
             super(operator);
         }
 
@@ -40,13 +83,13 @@ class AbstractComparisonPredicateTest {
         }
 
         @Override
-        public ComparisonPredicate negate() {
-            return new StubComparisonPredicate(negateOperator());
+        public boolean equals(final Object other) {
+            return super.equals(other);
         }
 
         @Override
-        public void accept(final QueryPredicateVisitor visitor) {
-
+        public int hashCode() {
+            return super.hashCode();
         }
     }
 }

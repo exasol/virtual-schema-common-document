@@ -2,20 +2,26 @@ package com.exasol.adapter.document;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SourceReferenceColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.queryplan.EmptyQueryPlan;
+import com.exasol.adapter.document.queryplan.FetchQueryPlan;
+import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate;
 import com.exasol.adapter.document.querypredicate.ColumnLiteralComparisonPredicate;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
+import com.exasol.adapter.metadata.DataType;
 import com.exasol.adapter.sql.SqlLiteralString;
 
 class UdfCallBuilderTest {
@@ -25,29 +31,40 @@ class UdfCallBuilderTest {
     private static final UdfCallBuilder UDF_CALL_BUILDER = new UdfCallBuilder(CONNECTION, ADAPTER_SCHEMA, TEST_ADAPTER);
 
     @Test
+    void testBuildForEmptyPlan() throws IOException {
+        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumns();
+        final QueryPlan queryPlan = new EmptyQueryPlan();
+        final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
+        assertThat(udfCallSql, equalTo("SELECT * FROM (VALUES (NULL)) WHERE FALSE"));
+    }
+
+    @Test
     void testBasicSqlBuilding() throws IOException {
-        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryForNoColumns();
-        final QueryPlan queryPlan = new QueryPlan(List.of(), new NoPredicate());
+        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumns();
+        final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
         assertThat(udfCallSql, equalTo(
-                "SELECT  FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\") EMITS  FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE"));
+                "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\") EMITS (\"TEST_COLUMN\" DECIMAL(10,2)) FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE"));
     }
 
     @Test
     void testAddPostSelection() throws IOException {
-        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryForNoColumns();
+        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumns();
         final ColumnLiteralComparisonPredicate postSelection = new ColumnLiteralComparisonPredicate(
                 AbstractComparisonPredicate.Operator.EQUAL, new SourceReferenceColumnMapping(),
                 new SqlLiteralString("testValue"));
-        final QueryPlan queryPlan = new QueryPlan(List.of(), postSelection);
+        final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), postSelection);
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
         assertThat(udfCallSql, equalTo(
-                "SELECT  FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\") EMITS (\"SOURCE_REFERENCE\" VARCHAR(2000)) FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE \"SOURCE_REFERENCE\" = 'testValue'"));
+                "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\") EMITS (\"SOURCE_REFERENCE\" VARCHAR(2000), \"TEST_COLUMN\" DECIMAL(10,2)) FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"REMOTE_TABLE_QUERY\", \"CONNECTION_NAME\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE \"SOURCE_REFERENCE\" = 'testValue'"));
     }
 
-    private RemoteTableQuery getRemoteTableQueryForNoColumns() {
-        final TableMapping tableMapping = new TableMapping("TEST", "test", Collections.emptyList(),
+    private RemoteTableQuery getRemoteTableQueryWithOneColumns() {
+        final ColumnMapping column = mock(ColumnMapping.class);
+        when(column.getExasolColumnName()).thenAnswer(interaction -> "TEST_COLUMN");
+        when(column.getExasolDataType()).thenAnswer(interaction -> DataType.createDecimal(10, 2));
+        final TableMapping tableMapping = new TableMapping("TEST", "test", List.of(column),
                 DocumentPathExpression.empty());
-        return new RemoteTableQuery(tableMapping, Collections.emptyList(), new NoPredicate());
+        return new RemoteTableQuery(tableMapping, List.of(column), new NoPredicate());
     }
 }

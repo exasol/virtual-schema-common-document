@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.querypredicate;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.sql.SqlNode;
@@ -9,7 +10,7 @@ import com.exasol.adapter.sql.SqlNode;
  * This class represents a comparison between a literal and a column of a table.
  */
 public class ColumnLiteralComparisonPredicate extends AbstractComparisonPredicate {
-    private static final long serialVersionUID = 1747022926992293431L;
+    private static final long serialVersionUID = 1747022926992293431L;//
     private final SqlNode literal;
     private final ColumnMapping column;
 
@@ -54,13 +55,12 @@ public class ColumnLiteralComparisonPredicate extends AbstractComparisonPredicat
             return false;
         }
         final ColumnLiteralComparisonPredicate that = (ColumnLiteralComparisonPredicate) other;
-        return this.literal.equals(that.literal) && this.column.equals(that.column);
+        return super.equals(other) && this.literal.equals(that.literal) && this.column.equals(that.column);
     }
 
     @Override
     public int hashCode() {
-        final int literalHash = this.literal.toString().hashCode();
-        return 31 * literalHash + this.column.hashCode();
+        return Objects.hash(this.literal.toString(), this.column.hashCode(), super.hashCode());
     }
 
     @Override
@@ -76,10 +76,5 @@ public class ColumnLiteralComparisonPredicate extends AbstractComparisonPredicat
     @Override
     public List<ColumnMapping> getComparedColumns() {
         return List.of(this.column);
-    }
-
-    @Override
-    public ColumnLiteralComparisonPredicate negate() {
-        return new ColumnLiteralComparisonPredicate(negateOperator(), this.column, this.literal);
     }
 }

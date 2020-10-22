@@ -2,6 +2,9 @@ package com.exasol.adapter.document;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.exasol.ExaConnectionAccessException;
 import com.exasol.ExaConnectionInformation;
@@ -9,11 +12,13 @@ import com.exasol.ExaMetadata;
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.VirtualSchemaAdapter;
+import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.mapping.SchemaMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
 import com.exasol.adapter.document.mapping.reader.SchemaMappingReader;
+import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.queryplanning.RemoteTableQueryFactory;
 import com.exasol.adapter.metadata.SchemaMetadata;
@@ -25,6 +30,15 @@ import com.exasol.bucketfs.BucketfsFileFactory;
  * This class is the abstract basis for Virtual Schema adapter for document data.
  */
 public abstract class DocumentAdapter implements VirtualSchemaAdapter {
+    private static final Set<MainCapability> SUPPORTED_MAIN_CAPABILITIES = Set.of(MainCapability.SELECTLIST_PROJECTION,
+            MainCapability.FILTER_EXPRESSIONS);
+    private static final Set<PredicateCapability> SUPPORTED_PREDICATE_CAPABILITIES = Set.of(PredicateCapability.EQUAL,
+            PredicateCapability.NOTEQUAL, PredicateCapability.LESS, PredicateCapability.LESSEQUAL,
+            PredicateCapability.LIKE, PredicateCapability.AND, PredicateCapability.OR, PredicateCapability.NOT);
+    private static final Set<LiteralCapability> SUPPORTED_LITERAL_CAPABILITIES = Set.of(LiteralCapability.STRING,
+            LiteralCapability.NULL, LiteralCapability.BOOL, LiteralCapability.DOUBLE, LiteralCapability.EXACTNUMERIC);
+    private static final Set<AggregateFunctionCapability> SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES = Set.of();
+    private static final Set<ScalarFunctionCapability> SUPPORTED_SCALAR_FUNCTION_CAPABILITIES = Set.of();
 
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
@@ -128,13 +142,11 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
             final RemoteTableQuery remoteTableQuery)
             throws ExaConnectionAccessException, IOException, AdapterException {
-        final QueryPlanner queryPlanner = getQueryPlanner(
-                getConnectionInformation(exaMetadata, request));
+        final QueryPlanner queryPlanner = getQueryPlanner(getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
         final int availableClusterCores = getMaxCoreNumber(exaMetadata, adapterProperties);
-        final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery,
-                availableClusterCores);
+        final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery, availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
         return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), getAdapterName())
                 .getUdfCallSql(queryPlan, remoteTableQuery);
@@ -198,4 +210,39 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * @return name of the database-specific adapter
      */
     protected abstract String getAdapterName();
+
+    protected abstract Capabilities getCapabilities();
+
+    @Override
+    public final GetCapabilitiesResponse getCapabilities(final ExaMetadata metadata,
+            final GetCapabilitiesRequest request) throws AdapterException {
+        final Capabilities capabilities = getCapabilities();
+        checkThatCapabilitiesAreSupported(capabilities.getMainCapabilities(), SUPPORTED_MAIN_CAPABILITIES, "main");
+        checkThatCapabilitiesAreSupported(capabilities.getPredicateCapabilities(), SUPPORTED_PREDICATE_CAPABILITIES,
+                "predicate");
+        checkThatCapabilitiesAreSupported(capabilities.getLiteralCapabilities(), SUPPORTED_LITERAL_CAPABILITIES,
+                "literal");
+        checkThatCapabilitiesAreSupported(capabilities.getAggregateFunctionCapabilities(),
+                SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES, "aggregate-function");
+        checkThatCapabilitiesAreSupported(capabilities.getScalarFunctionCapabilities(),
+                SUPPORTED_SCALAR_FUNCTION_CAPABILITIES, "scalar-function");
+        return GetCapabilitiesResponse.builder().capabilities(capabilities).build();
+    }
+
+    private void checkThatCapabilitiesAreSupported(final Set<? extends Enum> actualCapabilities,
+            final Set<? extends Enum> supportedCapabilities, final String capabilityType) {
+        final List<Enum> unsupportedCapabilities = actualCapabilities.stream()
+                .filter(mainCapability -> !supportedCapabilities.contains(mainCapability)).collect(Collectors.toList());
+        if (!unsupportedCapabilities.isEmpty()) {
+            final String listOfUnsupported = unsupportedCapabilities.stream().map(Enum::toString)
+                    .sorted(String::compareTo).collect(Collectors.joining(", "));
+            final String listOfSupported = supportedCapabilities.stream().map(Enum::toString).sorted(String::compareTo)
+                    .collect(Collectors.joining(", "));
+            throw new UnsupportedOperationException(
+                    "F-VSD-3: This dialect specified " + capabilityType + "-capabilities (" + listOfUnsupported
+                            + ") that are not supported by the abstract DocumentAdapter. "
+                            + "Please remove the capability from the specific adapter implementation. " + "Supported "
+                            + capabilityType + "-capabilities are [" + listOfSupported + "].");
+        }
+    }
 }

@@ -1,10 +1,12 @@
 package com.exasol.adapter.document.querypredicate;
 
+import java.util.Objects;
+
 /**
  * This class represents a comparison between two values.
  */
 public abstract class AbstractComparisonPredicate implements ComparisonPredicate {
-    private static final long serialVersionUID = 3143229347002333048L;
+    private static final long serialVersionUID = 6847361029162708199L;
     private final Operator operator;
 
     /**
@@ -36,6 +38,8 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
             return ">";
         case GREATER_EQUAL:
             return ">=";
+        case LIKE:
+            return "LIKE";
         default:
             throw new UnsupportedOperationException();// All possible operators are implemented
         }
@@ -46,29 +50,27 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
         return this;
     }
 
-    protected Operator negateOperator() {
-        switch (this.operator) {
-        case EQUAL:
-            return Operator.NOT_EQUAL;
-        case NOT_EQUAL:
-            return Operator.EQUAL;
-        case LESS:
-            return Operator.GREATER_EQUAL;
-        case LESS_EQUAL:
-            return Operator.GREATER;
-        case GREATER:
-            return Operator.LESS_EQUAL;
-        case GREATER_EQUAL:
-            return Operator.LESS;
-        default:
-            throw new UnsupportedOperationException();// All possible operators are implemented
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
         }
+        if (!(other instanceof AbstractComparisonPredicate)) {
+            return false;
+        }
+        final AbstractComparisonPredicate that = (AbstractComparisonPredicate) other;
+        return this.operator == that.operator;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.operator);
     }
 
     /**
      * Possible comparision operators.
      */
     public enum Operator {
-        NOT_EQUAL, EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL
+        NOT_EQUAL, EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, LIKE
     }
 }

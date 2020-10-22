@@ -1,11 +1,18 @@
 package com.exasol.adapter.document.querypredicate;
 
 import static com.exasol.EqualityMatchers.assertSymmetricEqualWithHashAndEquals;
+import static com.exasol.EqualityMatchers.assertSymmetricNotEqualWithHashAndEquals;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.getColumnMappingExample;
+import static com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator.NOT_EQUAL;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.sql.SqlLiteralString;
@@ -49,5 +56,21 @@ class ColumnLiteralComparisonPredicateTest {
         final ColumnLiteralComparisonPredicate otherPredicate = new ColumnLiteralComparisonPredicate(OPERATOR, COLUMN,
                 LITERAL);
         assertSymmetricEqualWithHashAndEquals(TEST_PREDICATE, otherPredicate);
+    }
+
+    static Stream<Arguments> nonEqualPredicates() {
+        return Stream.of(//
+                Arguments.of(new Object()), //
+                Arguments.of(new ColumnLiteralComparisonPredicate(OPERATOR, COLUMN, new SqlLiteralString("other"))), //
+                Arguments.of(new ColumnLiteralComparisonPredicate(OPERATOR,
+                        getColumnMappingExample().exasolColumnName("OTHER").build(), LITERAL)), //
+                Arguments.of(new ColumnLiteralComparisonPredicate(NOT_EQUAL, COLUMN, LITERAL))//
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("nonEqualPredicates")
+    void testNotEqual(final Object otherPredicate) {
+        assertSymmetricNotEqualWithHashAndEquals(TEST_PREDICATE, otherPredicate);
     }
 }
