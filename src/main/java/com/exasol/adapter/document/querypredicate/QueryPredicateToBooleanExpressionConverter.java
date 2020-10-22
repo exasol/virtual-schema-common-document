@@ -75,7 +75,7 @@ public class QueryPredicateToBooleanExpressionConverter {
                         "LIKE is not yet supported. See https://github.com/exasol/sql-statement-builder/issues/91");// TODO
             default:
                 throw new UnsupportedOperationException(
-                        "F-VSD-4 Converting " + operator + "is not yet implemented. Please open a ticket.");
+                        "F-VSD-4: Converting " + operator + "is not yet implemented. Please open a ticket.");
             }
         }
 

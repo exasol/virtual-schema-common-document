@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.regex.Pattern;
+
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.AdapterException;
@@ -24,7 +26,9 @@ class DocumentAdapterTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> documentAdapter.getCapabilities(null, null));
         assertThat(exception.getMessage(), matchesPattern(
-                "\\QF-VSD-3 This dialect specified main-capabilities (AGGREGATE_HAVING) that are not supported by the abstract DocumentAdapter. Please remove the capability from the specific adapter implementation. Supported main-capabilities are [\\E[^]]*\\]\\."));
+                Pattern.quote(
+                        "F-VSD-3: This dialect specified main-capabilities (AGGREGATE_HAVING) that are not supported by the abstract DocumentAdapter. Please remove the capability from the specific adapter implementation. Supported main-capabilities are [")
+                        + "[^]]*\\]\\."));
     }
 
     @Test

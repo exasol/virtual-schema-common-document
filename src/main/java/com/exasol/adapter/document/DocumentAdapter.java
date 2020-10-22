@@ -38,7 +38,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     private static final Set<LiteralCapability> SUPPORTED_LITERAL_CAPABILITIES = Set.of(LiteralCapability.STRING,
             LiteralCapability.NULL, LiteralCapability.BOOL, LiteralCapability.DOUBLE, LiteralCapability.EXACTNUMERIC);
     private static final Set<AggregateFunctionCapability> SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES = Set.of();
-    private static final Set<ScalarFunctionCapability> SUPPORTED_SCALA_FUNCTION_CAPABILITIES = Set.of();
+    private static final Set<ScalarFunctionCapability> SUPPORTED_SCALAR_FUNCTION_CAPABILITIES = Set.of();
 
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
@@ -225,7 +225,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
         checkThatCapabilitiesAreSupported(capabilities.getAggregateFunctionCapabilities(),
                 SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES, "aggregate-function");
         checkThatCapabilitiesAreSupported(capabilities.getScalarFunctionCapabilities(),
-                SUPPORTED_SCALA_FUNCTION_CAPABILITIES, "scala-function");
+                SUPPORTED_SCALAR_FUNCTION_CAPABILITIES, "scalar-function");
         return GetCapabilitiesResponse.builder().capabilities(capabilities).build();
     }
 
@@ -239,7 +239,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
             final String listOfSupported = supportedCapabilities.stream().map(Enum::toString).sorted(String::compareTo)
                     .collect(Collectors.joining(", "));
             throw new UnsupportedOperationException(
-                    "F-VSD-3 This dialect specified " + capabilityType + "-capabilities (" + listOfUnsupported
+                    "F-VSD-3: This dialect specified " + capabilityType + "-capabilities (" + listOfUnsupported
                             + ") that are not supported by the abstract DocumentAdapter. "
                             + "Please remove the capability from the specific adapter implementation. " + "Supported "
                             + capabilityType + "-capabilities are [" + listOfSupported + "].");

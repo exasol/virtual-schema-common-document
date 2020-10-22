@@ -22,7 +22,8 @@ class AbstractComparisonPredicateTest {
 
     static Stream<Arguments> expectedToStringResult() {
         return Stream.of(//
-                Arguments.of(EQUAL, "="), Arguments.of(LESS, "<"), //
+                Arguments.of(EQUAL, "="), //
+                Arguments.of(LESS, "<"), //
                 Arguments.of(LESS_EQUAL, "<="), //
                 Arguments.of(GREATER, ">"), //
                 Arguments.of(GREATER_EQUAL, ">="), //

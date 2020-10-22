@@ -81,7 +81,7 @@ public class QueryPredicateFactory {
             final SqlNode pattern = sqlPredicateLike.getPattern();
             if (!(left instanceof SqlColumn) || pattern instanceof SqlColumn) {
                 throw new UnsupportedOperationException(
-                        "E-VDF-1 This version of the document virtual schemas only supports LIKE operators in the form <column> LIKE <literal>. "
+                        "E-VSD-1: This version of the document virtual schemas only supports LIKE operators in the form <column> LIKE <literal>. "
                                 + "Other formats are not supported. " + "Please change your query.");
             }
             buildColumnLiteralComparision((SqlColumn) left, pattern, AbstractComparisonPredicate.Operator.LIKE);
@@ -127,7 +127,7 @@ public class QueryPredicateFactory {
             case NOT_EQUAL:
                 return AbstractComparisonPredicate.Operator.NOT_EQUAL;
             default:
-                throw new UnsupportedOperationException("F-VSD-2 This operator is not yet implemented. "
+                throw new UnsupportedOperationException("F-VSD-2: This operator is not yet implemented. "
                         + "Actually the database should not have passed this operator here, since this adapter does not have the corresponding capabilities set."
                         + "Please open an issue.");
             }
