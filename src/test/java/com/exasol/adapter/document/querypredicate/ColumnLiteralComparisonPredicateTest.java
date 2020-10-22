@@ -68,8 +68,8 @@ class ColumnLiteralComparisonPredicateTest {
         );
     }
 
-    @MethodSource("nonEqualPredicates")
     @ParameterizedTest
+    @MethodSource("nonEqualPredicates")
     void testNotEqual(final Object otherPredicate) {
         assertSymmetricNotEqualWithHashAndEquals(TEST_PREDICATE, otherPredicate);
     }

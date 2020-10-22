@@ -7,7 +7,7 @@ import com.exasol.adapter.document.UdfCallBuilder;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
 
 /**
- * This class describes a non-empty {@link QueryPlan} for execution a query.
+ * This class describes a non-empty {@link QueryPlan} for execution of a query.
  */
 public class FetchQueryPlan implements QueryPlan {
     private final List<DataLoader> dataLoaders;
