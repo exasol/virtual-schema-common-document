@@ -35,7 +35,7 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumns();
         final QueryPlan queryPlan = new EmptyQueryPlan();
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, equalTo("SELECT * FROM (VALUES (NULL)) WHERE FALSE"));
+        assertThat(udfCallSql, equalTo("SELECT * FROM (VALUES (CAST(NULL AS DECIMAL(10,2)))) WHERE FALSE"));
     }
 
     @Test

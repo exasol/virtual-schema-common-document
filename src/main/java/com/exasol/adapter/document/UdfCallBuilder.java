@@ -3,7 +3,6 @@ package com.exasol.adapter.document;
 import static com.exasol.sql.expression.ExpressionTerm.column;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,6 +26,7 @@ import com.exasol.sql.dql.select.rendering.SelectRenderer;
 import com.exasol.sql.expression.BooleanExpression;
 import com.exasol.sql.expression.BooleanLiteral;
 import com.exasol.sql.expression.NullLiteral;
+import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.rendering.StringRendererConfig;
 import com.exasol.utils.StringSerializer;
 
@@ -82,7 +82,8 @@ public class UdfCallBuilder {
         if (queryPlan instanceof EmptyQueryPlan) {
             final Select select = StatementFactory.getInstance().select().all();
             final ValueTableRow.Builder valueTableRow = ValueTableRow.builder(select);
-            valueTableRow.add(Collections.nCopies(selectList.size(), NullLiteral.nullLiteral()));
+            valueTableRow.add(selectList.stream().map(column -> CastExasolFunction.of(NullLiteral.nullLiteral(),
+                    convertDataType(column.getExasolDataType()))).collect(Collectors.toList()));
             select.from().valueTable(new ValueTable(select).appendRow(valueTableRow.build()));
             select.where(BooleanLiteral.of(false));
             return renderStatement(select);
