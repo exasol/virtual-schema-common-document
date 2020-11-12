@@ -8,6 +8,7 @@ Code name: Added optional SOURCE_REFERENCE column
   Caused new EDML version 1.2.0. See the [user-guide](../user_guide/edml_user_guide.md#source-reference-column).
 * #40: Support selection on SOURCE_REFERENCE column
 * #42: Added support for LIKE predicate
+* #49: Moved test resources to dynamodb virtual schema 
 
 ## Bugfixes
 

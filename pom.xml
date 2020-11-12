@@ -298,10 +298,12 @@
                             <goal>test-jar</goal>
                         </goals>
                         <configuration>
-                            <excludes>
-                                <exclude>**/*Test.class</exclude>
-                                <exclude>**/*IT.class</exclude>
-                            </excludes>
+                            <includes>
+                                <include>**/PropertyToColumnMappingBuilderQuickAccess.class</include>
+                                <include>**/MockValueNode.class</include>
+                                <include>**/MockArrayNode.class</include>
+                                <include>**/MockObjectNode.class</include>
+                            </includes>
                         </configuration>
                     </execution>
                 </executions>
