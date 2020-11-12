@@ -6,7 +6,6 @@ import java.util.Objects;
  * This class represents a comparison between two values.
  */
 public abstract class AbstractComparisonPredicate implements ComparisonPredicate {
-    private static final long serialVersionUID = 6847361029162708199L;
     private final Operator operator;
 
     /**
@@ -40,6 +39,8 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
             return ">=";
         case LIKE:
             return "LIKE";
+        case NOT_LIKE:
+            return "NOT LIKE";
         default:
             throw new UnsupportedOperationException();// All possible operators are implemented
         }
@@ -71,6 +72,6 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
      * Possible comparision operators.
      */
     public enum Operator {
-        NOT_EQUAL, EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, LIKE
+        NOT_EQUAL, EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, LIKE, NOT_LIKE
     }
 }

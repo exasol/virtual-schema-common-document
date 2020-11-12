@@ -71,8 +71,9 @@ public class QueryPredicateToBooleanExpressionConverter {
             case NOT_EQUAL:
                 return ComparisonOperator.NOT_EQUAL;
             case LIKE:
+            case NOT_LIKE:
                 throw new UnsupportedOperationException(
-                        "LIKE is not yet supported. See https://github.com/exasol/sql-statement-builder/issues/91");// TODO
+                        "F-VSD-5 The current version of virtual-schemas does not support LIKE and NOT LIKE as post-selection.");
             default:
                 throw new UnsupportedOperationException(
                         "F-VSD-4: Converting " + operator + "is not yet implemented. Please open a ticket.");

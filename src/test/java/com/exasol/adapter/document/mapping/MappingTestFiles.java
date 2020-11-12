@@ -20,10 +20,6 @@ public class MappingTestFiles {
     public static final String MULTI_COLUMN_TO_TABLE_MAPPING = "multiColumnToTableMapping.json";
     public static final String WHOLE_TABLE_TO_TABLE_MAPPING = "wholeTableToJsonMapping.json";
     public static final String DOUBLE_NESTED_TO_TABLE_MAPPING = "doubleNestedToTableMapping.json";
-    public static final String OPEN_LIBRARY_MAPPING = "openLibraryMapping.json";
-    public static final String DATA_TYPE_TEST_MAPPING = "dataTypeTestMapping.json";
-    public static final String DATA_TYPE_TEST_SRC_TABLE_NAME = "DATA_TYPE_TEST";
-    public static final String DATA_TYPE_TEST_EXASOL_TABLE_NAME = "TEST";
 
     /**
      * Private constructor to hide the public default.
