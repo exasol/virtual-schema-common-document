@@ -23,7 +23,8 @@ class BucketfsFileFactoryTest {
         final BucketfsFileFactory bucketfsFileFactory = new BucketfsFileFactory();
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> bucketfsFileFactory.openFile(injectionPath));
-        assertThat(exception.getMessage(), equalTo("Given path (/etc/secrets.conf) is outside of bucketfs."));
+        assertThat(exception.getMessage(), equalTo(
+                "E-VSD-10: The path '/etc/secrets.conf' is outside of BucketFS. Change the path to the mapping definition file (remove ../ s)."));
     }
 
 }

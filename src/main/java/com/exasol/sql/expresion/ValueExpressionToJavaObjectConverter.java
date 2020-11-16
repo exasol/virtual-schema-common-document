@@ -2,6 +2,7 @@ package com.exasol.sql.expresion;
 
 import java.math.BigDecimal;
 
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.UnnamedPlaceholder;
 import com.exasol.sql.expression.*;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
@@ -31,7 +32,7 @@ public class ValueExpressionToJavaObjectConverter {
 
         @Override
         public void visit(final UnnamedPlaceholder unnamedPlaceholder) {
-            unsupported();
+            unsupported("UnnamedPlaceholder");
         }
 
         @Override
@@ -71,37 +72,37 @@ public class ValueExpressionToJavaObjectConverter {
 
         @Override
         public void visit(final ColumnReference columnReference) {
-            unsupported();
+            unsupported("ColumnReference");
         }
 
         @Override
         public void visit(final DefaultValue defaultValue) {
-            unsupported();
+            unsupported("DefaultValue");
         }
 
         @Override
         public void visit(final ExasolFunction function) {
-            unsupported();
+            unsupported("ExasolFunction");
         }
 
         @Override
         public void leave(final ExasolFunction function) {
-            unsupported();
+            unsupported("ExasolFunction");
         }
 
         @Override
         public void visit(final ExasolUdf function) {
-            unsupported();
+            unsupported("ExasolUdf");
         }
 
         @Override
         public void leave(final ExasolUdf function) {
-            unsupported();
+            unsupported("ExasolUdf");
         }
 
         @Override
         public void visit(final BinaryArithmeticExpression expression) {
-            unsupported();
+            unsupported("BinaryArithmeticExpression");
         }
 
         @Override
@@ -111,16 +112,18 @@ public class ValueExpressionToJavaObjectConverter {
 
         @Override
         public void visit(final BooleanExpression booleanExpression) {
-            unsupported();
+            unsupported("boolean expression");
         }
 
         @Override
         public void visit(final CastExasolFunction castFunction) {
-            unsupported();
+            unsupported("cast function");
         }
 
-        private void unsupported() {
-            throw new UnsupportedOperationException("This ValueExpression has no Java Value equivalent.");
+        private void unsupported(final String type) {
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-70")
+                    .message("The ValueExpression {{TYPE}} has no Java Value equivalent.").parameter("TYPE", type)
+                    .ticketMitigation().toString());
         }
 
         public Object getResult() {

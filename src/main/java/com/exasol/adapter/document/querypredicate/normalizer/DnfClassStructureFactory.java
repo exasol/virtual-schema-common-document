@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.querypredicate.*;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This factory builds {@link DnfOr} class structures from {@link QueryPredicate} structures. The input predicate
@@ -65,6 +66,11 @@ class DnfClassStructureFactory {
         }
     }
 
+    private static IllegalStateException getInvalidDnfException(final String internalDescription) {
+        throw new IllegalStateException(ExaError.messageBuilder("F-VSD-12").message("{{INTERNAL_DESCRIPTION}}).")
+                .ticketMitigation().unquotedParameter("INTERNAL_DESCRIPTION", internalDescription).toString());
+    }
+
     private static class ConjunctionExtractor implements QueryPredicateVisitor {
         private DnfAnd result;
 
@@ -80,13 +86,13 @@ class DnfClassStructureFactory {
                         .collect(Collectors.toSet());
                 this.result = new DnfAnd(operands);
             } else {
-                throw new IllegalArgumentException("Invalid DNF. ORs are not allowed at the second level.");
+                throw getInvalidDnfException("Invalid DNF. ORs are not allowed at the second level.");
             }
         }
 
         @Override
         public void visit(final NoPredicate noPredicate) {
-            throw new IllegalArgumentException("Invalid DNF. NoPredicate are only allowed at the first level.");
+            throw getInvalidDnfException("Invalid DNF. NoPredicate are only allowed at the first level.");
         }
 
         @Override
@@ -116,12 +122,12 @@ class DnfClassStructureFactory {
 
         @Override
         public void visit(final LogicalOperator logicalOperator) {
-            throw new IllegalArgumentException("Invalid DNF. ANDs and ORs are not allowed at the third level.");
+            throw getInvalidDnfException("Invalid DNF. ANDs and ORs are not allowed at the third level.");
         }
 
         @Override
         public void visit(final NoPredicate noPredicate) {
-            throw new IllegalArgumentException("Invalid DNF. NoPredicate are only allowed at the first level.");
+            throw getInvalidDnfException("Invalid DNF. NoPredicate are only allowed at the first level.");
         }
 
         @Override

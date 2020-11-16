@@ -6,6 +6,7 @@ import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentpath.DocumentPathWalker;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.ValueExpression;
 
@@ -40,11 +41,27 @@ public abstract class AbstractPropertyToColumnValueExtractor<DocumentVisitorType
             if (this.column.getLookupFailBehaviour() == MappingErrorBehaviour.NULL) {
                 return NullLiteral.nullLiteral();
             } else {
-                throw new SchemaMappingException("Could not find required property ("
-                        + this.column.getPathToSourceProperty() + ") in the source document.");
+                throw new SchemaMappingException(ExaError.messageBuilder("E-VSD-7")
+                        .message("Could not find required property {{PROPERTY}} in the source document.")
+                        .parameter("PROPERTY", this.column.getPathToSourceProperty(), "The missing property")
+                        .toString());
             }
         } else {
             return mapValue(dynamodbProperty.get());
+        }
+    }
+
+    /**
+     * Get an excerpt of a string value for error reporting.
+     * 
+     * @param value string value
+     * @return excerpt if string was longer than 50 chars. Otherwise the original string.
+     */
+    protected String getExcerpt(final String value) {
+        if (value.length() > 50) {
+            return value.substring(0, 50) + "...";
+        } else {
+            return value;
         }
     }
 

@@ -127,6 +127,11 @@
             <version>3.5.15</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>error-reporting-java</artifactId>
+            <version>0.2.0</version>
+        </dependency>
         <!--Integration test dependencies-->
         <dependency>
             <groupId>com.exasol</groupId>

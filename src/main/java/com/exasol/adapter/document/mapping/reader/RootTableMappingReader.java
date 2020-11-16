@@ -9,6 +9,7 @@ import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class builds {@link TableMapping}s from Exasol document mapping language definitions. In contrast to
@@ -47,8 +48,9 @@ class RootTableMappingReader extends AbstractTableMappingReader {
             return new GlobalKey(Collections.emptyList(),
                     this.tableKeyFetcher.fetchKeyForTable(this.remoteTableName, availableColumns));
         } catch (final TableKeyFetcher.NoKeyFoundException e) {
-            throw new ExasolDocumentMappingLanguageException("Could not infer keys for table " + this.exasolTableName
-                    + ". Please define a unique key by setting key='global' for one or more columns.");
+            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-46")
+                    .message("Could not infer keys for table {{TABLE}}.").parameter("TABLE", this.exasolTableName)
+                    .mitigation("Define a unique key by setting key='global' for one or more columns.").toString());
         }
     }
 
@@ -64,7 +66,8 @@ class RootTableMappingReader extends AbstractTableMappingReader {
 
     @Override
     protected List<ColumnMapping> getForeignKey() {
-        throw new ExasolDocumentMappingLanguageException(
-                "Local keys make no sense in root table mapping definitions. Please make this key global.");
+        throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-47")
+                .message("Local keys make no sense in root table mapping definitions. Please make this key global.")
+                .toString());
     }
 }

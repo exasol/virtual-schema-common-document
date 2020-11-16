@@ -9,6 +9,7 @@ import com.exasol.adapter.document.querypredicate.normalizer.DnfAnd;
 import com.exasol.adapter.document.querypredicate.normalizer.DnfComparison;
 import com.exasol.adapter.document.querypredicate.normalizer.DnfNormalizer;
 import com.exasol.adapter.document.querypredicate.normalizer.DnfOr;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class can split up a selection into two selections that can be combined with an AND. The decision which
@@ -54,7 +55,11 @@ public class SelectionExtractor {
             return new Result(indexSelection, nonIndexSelection);
         } else {
             throw new UnsupportedOperationException(
-                    "This query combines selections on columns in a way, so that the selection can't be split up.");
+                    ExaError.messageBuilder("E-VSD-59").message(
+                            "This query combines selections on columns in a way, so that the selection can't be split up.")
+                            .mitigation(
+                                    "Change your query: Try to simplify AND and OR constructs or move parts of the selection in a wrapping SELECT statement).")
+                            .toString());
         }
     }
 

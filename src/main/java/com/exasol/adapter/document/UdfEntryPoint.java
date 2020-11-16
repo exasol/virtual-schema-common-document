@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.exasol.*;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expresion.ValueExpressionToJavaObjectConverter;
 import com.exasol.utils.StringSerializer;
 
@@ -59,7 +60,9 @@ public class UdfEntryPoint {
         try {
             iterator.emit(row.toArray());
         } catch (final ExaIterationException | ExaDataTypeException exception) {
-            throw new UnsupportedOperationException(exception);
+            throw new IllegalStateException(ExaError.messageBuilder("E-VSD-68")
+                    .message("An error occurred during processing the UDF call.").ticketMitigation().toString(),
+                    exception);
         }
     }
 }

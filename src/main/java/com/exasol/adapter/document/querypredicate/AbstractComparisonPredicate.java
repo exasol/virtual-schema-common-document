@@ -2,6 +2,8 @@ package com.exasol.adapter.document.querypredicate;
 
 import java.util.Objects;
 
+import com.exasol.errorreporting.ExaError;
+
 /**
  * This class represents a comparison between two values.
  */
@@ -42,7 +44,11 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
         case NOT_LIKE:
             return "NOT LIKE";
         default:
-            throw new UnsupportedOperationException();// All possible operators are implemented
+            throw new UnsupportedOperationException(
+                    ExaError.messageBuilder("F-VSD-6").message("Unimplemented operator {{OPERATOR}}.")
+                            .parameter("OPERATOR", this.operator).ticketMitigation().toString());// All possible
+                                                                                                 // operators
+        // are implemented
         }
     }
 

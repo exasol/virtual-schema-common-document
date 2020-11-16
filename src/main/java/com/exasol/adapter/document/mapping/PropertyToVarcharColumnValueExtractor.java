@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.StringLiteral;
 import com.exasol.sql.expression.ValueExpression;
@@ -25,7 +26,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
 
     @Override
     protected final ValueExpression mapValue(final DocumentNode<DocumentVisitorType> documentValue) {
-        final MappedStringResult result = mapStringValue(documentValue);
+        final ConversionResult result = mapStringValue(documentValue);
         final String stringResult = handleResult(result);
         if (stringResult == null) {
             return NullLiteral.nullLiteral();
@@ -34,20 +35,22 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    private String handleResult(final MappedStringResult result) {
-        if (result == null) {
-            return handleNotConvertedResult();
+    private String handleResult(final ConversionResult result) {
+        if (result instanceof MappedStringResult) {
+            return handleConvertedResult((MappedStringResult) result);
         } else {
-            return handleConvertedResult(result);
+            return handleNotConvertedResult((CouldNotConvertResult) result);
         }
     }
 
     private String handleConvertedResult(final MappedStringResult stringValue) {
         if (stringValue.isConverted()
                 && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
-            throw new ColumnValueExtractorException(
-                    "An input value is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.",
-                    this.column);
+            throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-36").message(
+                    "The input value {{VALUE}} is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.")
+                    .parameter("VALUE", getExcerpt(stringValue.getValue()), "An excerpt of the input value.")
+                    .mitigation("Set 'nonStringBehaviour' to CONVERT_OR_ABORT or CONVERT_OR_NULL.")
+                    .mitigation("Change your input data to strings.").toString(), this.column);
         } else if (stringValue.isConverted()
                 && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {
             return null;
@@ -56,18 +59,22 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    private String handleNotConvertedResult() {
+    private String handleNotConvertedResult(final CouldNotConvertResult result) {
         if (this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT
                 || this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
-            throw new ColumnValueExtractorException("An input value could not be converted to string. "
-                    + "You can either change the value in your input data, or change the nonStringBehaviour of column "
-                    + this.column.getExasolColumnName() + " to NULL or CONVERT_OR_NULL.", this.column);
+            throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-37")
+                    .message("An input value of type {{TYPE}} for column {{COLUMN}} could not be converted to string.")
+                    .parameter("TYPE", result.getTypeName())//
+                    .parameter("COLUMN", this.column.getExasolColumnName())
+                    .mitigation("Change the value in your input data")
+                    .mitigation("Change the nonStringBehaviour of the column to NULL or CONVERT_OR_NULL.").toString(),
+                    this.column);
         } else {
             return null;
         }
     }
 
-    protected abstract MappedStringResult mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
+    protected abstract ConversionResult mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
 
     private String handleOverflowIfNecessary(final String sourceString) {
         if (sourceString == null) {
@@ -84,18 +91,27 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
             return tooLongSourceString.substring(0, this.column.getVarcharColumnSize());
         } else {
             throw new OverflowException(
-                    "String overflow. You can either increase the string size if this column or set the overflow behaviour to truncate.",
+                    ExaError.messageBuilder("E-VSD-38").message(
+                            "A value for column {{COLUMN}} exceeded the configured varcharColumnSize of {{SIZE}}.")
+                            .parameter("COLUMN", this.column.getExasolColumnName())
+                            .parameter("SIZE", this.column.getVarcharColumnSize())
+                            .mitigation("Increase 'varcharColumnSize' for this column.")
+                            .mitigation("Set 'overflowBehaviour' for this column to 'ABORT' or 'NULL'.").toString(),
                     this.column);
         }
     }
 
     /**
-     * This class is used to pass the result of {@link #mapStringValue(DocumentNode)} from the concrete implementation
-     * to this abstract class.
-     * 
+     * This interface is used to pass the result of {@link #mapStringValue(DocumentNode)} from the concrete
+     * implementation to this abstract class.
+     *
      * @implNote public so that it is accessible from test code
      */
-    public static class MappedStringResult {
+    public interface ConversionResult {
+
+    }
+
+    public static class MappedStringResult implements ConversionResult {
         private final String value;
         private final boolean isConverted;
 
@@ -110,6 +126,28 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
 
         public boolean isConverted() {
             return this.isConverted;
+        }
+    }
+
+    public static class CouldNotConvertResult implements ConversionResult {
+        private final String typeName;
+
+        /**
+         * Create a new instance of {@link CouldNotConvertResult}.
+         * 
+         * @param typeName name of the unsupported type
+         */
+        protected CouldNotConvertResult(final String typeName) {
+            this.typeName = typeName;
+        }
+
+        /**
+         * Get the name of the unsupported type.
+         *
+         * @return name of the unsupported type
+         */
+        public String getTypeName() {
+            return this.typeName;
         }
     }
 }

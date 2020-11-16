@@ -13,6 +13,7 @@ import com.exasol.adapter.document.querypredicate.LogicalOperator;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 import com.exasol.adapter.document.querypredicate.NotPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class converts LogicNG {@link Formula}s to {@link QueryPredicate} structures.
@@ -46,7 +47,9 @@ class LogicngToQueryPredicateConverter {
         case LITERAL:
             return convertLiteral((Literal) formula);
         default:
-            throw new UnsupportedOperationException("This formula type has no corresponding QueryPredicate.");
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-29")
+                    .message("Internal error (the formula {{FORULA}} has no corresponding QueryPredicate).")
+                    .parameter("FORULA", formula.toString()).ticketMitigation().toString());
         }
     }
 

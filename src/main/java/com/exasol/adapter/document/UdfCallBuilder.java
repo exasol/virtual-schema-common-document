@@ -20,6 +20,7 @@ import com.exasol.adapter.document.querypredicate.QueryPredicateToBooleanExpress
 import com.exasol.adapter.metadata.DataType;
 import com.exasol.datatype.type.*;
 import com.exasol.datatype.type.Boolean;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.*;
 import com.exasol.sql.dql.select.Select;
 import com.exasol.sql.dql.select.rendering.SelectRenderer;
@@ -75,9 +76,8 @@ public class UdfCallBuilder {
      * @param queryPlan plan for the query
      * @param query     document query that is passed to the UDF
      * @return built SQL statement
-     * @throws IOException if serialization of a document fetcher or the query fails
      */
-    public String getUdfCallSql(final QueryPlan queryPlan, final RemoteTableQuery query) throws IOException {
+    public String getUdfCallSql(final QueryPlan queryPlan, final RemoteTableQuery query) {
         final List<ColumnMapping> selectList = query.getSelectList();
         if (queryPlan instanceof EmptyQueryPlan) {
             final Select select = StatementFactory.getInstance().select().all();
@@ -122,8 +122,7 @@ public class UdfCallBuilder {
      * Build the {@code SELECT} statement that contains the call to the UDF and distributes them using a GROUP BY
      * statement.
      */
-    private Select buildUdfCallStatement(final RemoteTableQuery query, final FetchQueryPlan queryPlan)
-            throws IOException {
+    private Select buildUdfCallStatement(final RemoteTableQuery query, final FetchQueryPlan queryPlan) {
         final Select udfCallSelect = StatementFactory.getInstance().select();
         final List<ColumnMapping> requiredColumns = getRequiredColumns(query, queryPlan);
         final List<Column> emitsColumns = buildColumnDefinitions(requiredColumns, udfCallSelect);
@@ -152,12 +151,12 @@ public class UdfCallBuilder {
     }
 
     private ValueTable buildValueTable(final List<DataLoader> dataLoaders,
-            final SchemaMappingRequest schemaMappingRequest, final Select select) throws IOException {
+            final SchemaMappingRequest schemaMappingRequest, final Select select) {
         final ValueTable valueTable = new ValueTable(select);
         int rowCounter = 0;
+        final String serializedSchemaMappingRequest = serializeSchemaMappingRequest(schemaMappingRequest);
         for (final DataLoader dataLoader : dataLoaders) {
-            final String serializedDataLoader = StringSerializer.serializeToString(dataLoader);
-            final String serializedSchemaMappingRequest = StringSerializer.serializeToString(schemaMappingRequest);
+            final String serializedDataLoader = serializeDataLoader(dataLoader);
             final ValueTableRow row = ValueTableRow.builder(select).add(serializedDataLoader)
                     .add(serializedSchemaMappingRequest) //
                     .add(this.connectionName) //
@@ -167,6 +166,26 @@ public class UdfCallBuilder {
             ++rowCounter;
         }
         return valueTable;
+    }
+
+    private String serializeDataLoader(final DataLoader dataLoader) {
+        try {
+            return StringSerializer.serializeToString(dataLoader);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-19")
+                    .message("Internal error (Failed to serialize DataLoader).").ticketMitigation().toString(),
+                    exception);
+        }
+    }
+
+    private String serializeSchemaMappingRequest(final SchemaMappingRequest schemaMappingRequest) {
+        try {
+            return StringSerializer.serializeToString(schemaMappingRequest);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-18")
+                    .message("Internal error (Failed to serialize SchemaMappingRequest).").ticketMitigation()
+                    .toString(), exception);
+        }
     }
 
     private com.exasol.datatype.type.DataType convertDataType(final DataType adapterDataType) {
@@ -186,7 +205,9 @@ public class UdfCallBuilder {
         case BOOLEAN:
             return new Boolean();
         default:
-            throw new UnsupportedOperationException("This DataType has no corresponding type.");
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-69")
+                    .message("Unimplemented conversion of type {{TYPE}}.")
+                    .parameter("TYPE", adapterDataType.getExaDataType().toString()).ticketMitigation().toString());
         }
     }
 

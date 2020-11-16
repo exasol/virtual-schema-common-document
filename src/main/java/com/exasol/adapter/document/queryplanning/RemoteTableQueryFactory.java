@@ -13,6 +13,7 @@ import com.exasol.adapter.document.querypredicate.QueryPredicateFactory;
 import com.exasol.adapter.metadata.ColumnMetadata;
 import com.exasol.adapter.metadata.TableMetadata;
 import com.exasol.adapter.sql.*;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * Visitor for {@link com.exasol.adapter.sql.SqlStatementSelect} building a {@link RemoteTableQuery}
@@ -31,8 +32,9 @@ public class RemoteTableQueryFactory {
         try {
             selectStatement.accept(visitor);
         } catch (final AdapterException exception) {
-            // Should no happen since no adapter exceptions are thrown in the visitor
-            throw new IllegalStateException("Unexpected AdapterException: " + exception.getMessage(), exception);
+            throw new IllegalStateException(ExaError.messageBuilder("E-VSD-42").message(
+                    "Unexpected AdapterException. This should no happen since no adapter exceptions are thrown in the visitor.")
+                    .ticketMitigation().toString(), exception);
         }
         final SchemaMappingToSchemaMetadataConverter converter = new SchemaMappingToSchemaMetadataConverter();
         final TableMapping tableMapping = converter.convertBackTable(visitor.tableMetadata, schemaAdapterNotes);
@@ -64,8 +66,9 @@ public class RemoteTableQueryFactory {
             } else {
                 for (final SqlNode selectListExpression : selectList.getExpressions()) {
                     if (!(selectListExpression instanceof SqlColumn)) {
-                        throw new UnsupportedOperationException(
-                                "The current version of Document Virtual Schema does not support SQL functions.");
+                        throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-43").message(
+                                "The current version of Document Virtual Schema does not support SQL functions. This should, however newer happen, since functions are not enabled by capabilities.")
+                                .ticketMitigation().toString());
                     }
                     final SqlColumn column = (SqlColumn) selectListExpression;
                     addColumnToSelectList(column.getMetadata());
@@ -77,8 +80,9 @@ public class RemoteTableQueryFactory {
         private void selectAnyColumn() {
             final List<ColumnMetadata> columns = this.tableMetadata.getColumns();
             if (columns.isEmpty()) {
-                throw new UnsupportedOperationException(
-                        "Selecting any column is not possible on tables without columns");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("E-VSD-44")
+                        .message("Selecting any column is not possible on tables without columns.")
+                        .mitigation("Define a least on column.").toString());
             }
             addColumnToSelectList(columns.get(0));
         }
@@ -98,8 +102,9 @@ public class RemoteTableQueryFactory {
         @Override
         public Void visit(final SqlTable sqlTable) {
             if (this.tableName != null) {
-                throw new UnsupportedOperationException(
-                        "The current version of DynamoDB Virtual Schema does only support one table per statement.");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("E-VSD-45").message(
+                        "The current version of DynamoDB Virtual Schema does only support one table per statement.")
+                        .mitigation("Change your query.").toString());
             }
             this.tableName = sqlTable.getName();
             this.tableMetadata = sqlTable.getMetadata();

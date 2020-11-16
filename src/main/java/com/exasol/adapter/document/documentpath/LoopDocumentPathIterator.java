@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import com.exasol.adapter.document.documentnode.DocumentArray;
 import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class iterates over {@link ArrayAllPathSegment}. It enumerates all combinations of arrays indexes for the arrays
@@ -81,7 +82,9 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
                 this.currentIndex++;
                 this.nestedIterator = getNestedIteratorAtIndex(this.currentIndex);
             } else {
-                throw new NoSuchElementException("The are no more combinations to iterate.");
+                throw new NoSuchElementException(ExaError.messageBuilder("F-VSD-30")
+                        .message("Internal error (The are no more combinations to iterate).").ticketMitigation()
+                        .toString());
             }
         }
     }
@@ -117,7 +120,9 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
                 return this.nextState.getIndexFor(remainingPathToRequestedArrayAll);
             } else {
                 throw new IllegalStateException(
-                        "The requested path does not match the path that this iterator unwinds.");
+                        ExaError.messageBuilder("F-VSD-31")
+                                .message("The requested path does not match the path that this iterator unwinds.")
+                                .ticketMitigation().toString());
             }
         }
     }

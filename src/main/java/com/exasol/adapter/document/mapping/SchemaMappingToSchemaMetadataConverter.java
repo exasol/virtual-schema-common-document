@@ -9,6 +9,7 @@ import java.util.List;
 import com.exasol.adapter.metadata.ColumnMetadata;
 import com.exasol.adapter.metadata.SchemaMetadata;
 import com.exasol.adapter.metadata.TableMetadata;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.utils.StringSerializer;
 
 /**
@@ -23,9 +24,8 @@ public class SchemaMappingToSchemaMetadataConverter {
      *
      * @param schemaMapping the {@link SchemaMapping} to be converted
      * @return {@link SchemaMetadata}
-     * @throws IOException if {@link ColumnMapping} could not get serialized
      */
-    public SchemaMetadata convert(final SchemaMapping schemaMapping) throws IOException {
+    public SchemaMetadata convert(final SchemaMapping schemaMapping) {
         final List<TableMetadata> tableMetadata = new ArrayList<>();
         /* The HashMap is used here instead of the List interface because it is serializable. */
         final HashMap<String, TableMapping> tableMappings = new HashMap<>();
@@ -38,11 +38,21 @@ public class SchemaMappingToSchemaMetadataConverter {
          * Actually the tables should be serialized into TableSchema adapter notes. But as these do not work due to a
          * bug, they are added here. {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25}
          */
-        final String serialized = StringSerializer.serializeToString(new TableMappings(tableMappings));
+        final String serialized = serializeTableMapping(tableMappings);
         return new SchemaMetadata(serialized, tableMetadata);
     }
 
-    private TableMetadata convertTable(final TableMapping tableMapping) throws IOException {
+    private String serializeTableMapping(final HashMap<String, TableMapping> tableMappings) {
+        try {
+            return StringSerializer.serializeToString(new TableMappings(tableMappings));
+        } catch (final IOException exception) {
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-25")
+                    .message("Internal error (failed to serialize TableMapping).").ticketMitigation().toString(),
+                    exception);
+        }
+    }
+
+    private TableMetadata convertTable(final TableMapping tableMapping) {
         final List<ColumnMetadata> columnDefinitions = new ArrayList<>();
         for (final ColumnMapping column : tableMapping.getColumns()) {
             columnDefinitions.add(convertColumn(column));
@@ -58,8 +68,15 @@ public class SchemaMappingToSchemaMetadataConverter {
      * @return {@link ColumnMetadata}
      * @throws IOException if serialization fails
      */
-    public ColumnMetadata convertColumn(final ColumnMapping columnMapping) throws IOException {
-        final String serialized = StringSerializer.serializeToString(columnMapping);
+    public ColumnMetadata convertColumn(final ColumnMapping columnMapping) {
+        final String serialized;
+        try {
+            serialized = StringSerializer.serializeToString(columnMapping);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-26")
+                    .message("Internal error (failed to serialize ColumnMapping).").ticketMitigation().toString(),
+                    exception);
+        }
         return ColumnMetadata.builder()//
                 .name(columnMapping.getExasolColumnName())//
                 .type(columnMapping.getExasolDataType())//
@@ -80,7 +97,8 @@ public class SchemaMappingToSchemaMetadataConverter {
         try {
             return convertBackTableIntern(tableMetadata, schemaAdapterNotes);
         } catch (final IOException | ClassNotFoundException exception) {
-            throw new IllegalStateException("Failed to deserialize TableMappingDefinition.", exception);
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-57")
+                    .message("Failed to deserialize TableMappingDefinition.").ticketMitigation().toString(), exception);
         }
     }
 
@@ -120,7 +138,9 @@ public class SchemaMappingToSchemaMetadataConverter {
             final String serialized = columnMetadata.getAdapterNotes();
             return (ColumnMapping) StringSerializer.deserializeFromString(serialized);
         } catch (final IOException | ClassNotFoundException exception) {
-            throw new IllegalStateException("Failed to deserialize ColumnMappingDefinition.", exception);
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-58")
+                    .message("Failed to deserialize ColumnMappingDefinition.").ticketMitigation().toString(),
+                    exception);
         }
     }
 
@@ -130,7 +150,7 @@ public class SchemaMappingToSchemaMetadataConverter {
      * stores a map that gives the {@link TableMapping} for its Exasol table name.
      */
     private static class TableMappings implements Serializable {
-        private static final long serialVersionUID = -6920869661356098960L;
+        private static final long serialVersionUID = -7483077090584761259L;
         private final HashMap<String, TableMapping> mappings;
 
         private TableMappings(final HashMap<String, TableMapping> mappings) {

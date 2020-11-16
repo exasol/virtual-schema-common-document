@@ -8,6 +8,7 @@ import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
 import com.exasol.adapter.sql.*;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class builds a{@link QueryPredicate} structure from a {@link SqlStatementSelect}s where clause. The new
@@ -48,7 +49,8 @@ public class QueryPredicateFactory {
                 sqlPredicate.accept(visitor);
             } catch (final AdapterException exception) {
                 // This should never happen, as we do not throw adapter exceptions in the visitor.
-                throw new IllegalStateException("An unexpected adapter exception occurred", exception);
+                throw new IllegalStateException(ExaError.messageBuilder("F-VSD-39")
+                        .message("An unexpected adapter exception occurred.").ticketMitigation().toString(), exception);
             }
             return visitor.getPredicate();
         }
@@ -80,9 +82,9 @@ public class QueryPredicateFactory {
             final SqlNode left = sqlPredicateLike.getLeft();
             final SqlNode pattern = sqlPredicateLike.getPattern();
             if (!(left instanceof SqlColumn) || pattern instanceof SqlColumn) {
-                throw new UnsupportedOperationException(
-                        "E-VSD-1: This version of the document virtual schemas only supports LIKE operators in the form <column> LIKE <literal>. "
-                                + "Other formats are not supported. " + "Please change your query.");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("E-VSD-1").message(
+                        "This version of the document virtual schemas only supports LIKE operators in the form <column> LIKE <literal>. Other formats are not supported.")
+                        .mitigation("Please change your query.").toString());
             }
             buildColumnLiteralComparision((SqlColumn) left, pattern, AbstractComparisonPredicate.Operator.LIKE);
             return null;
@@ -99,15 +101,17 @@ public class QueryPredicateFactory {
             final SqlNode left = sqlEquality.getLeft();
             final SqlNode right = sqlEquality.getRight();
             if (left instanceof SqlColumn && right instanceof SqlColumn) {
-                throw new UnsupportedOperationException(
-                        "Predicates on two columns are not yet supported in this Virtual Schema version.");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("E-VSD-40")
+                        .message("Predicates on two columns are not yet supported in this Virtual Schema version.")
+                        .mitigation("Change your query.").toString());
             } else if (right instanceof SqlColumn) {
                 buildColumnLiteralComparision((SqlColumn) right, left, mirrorOperator(operator));
             } else if (left instanceof SqlColumn) {
                 buildColumnLiteralComparision((SqlColumn) left, right, operator);
             } else {
-                throw new UnsupportedOperationException(
-                        "Predicates on two literals are not yet supported in this Virtual Schema version.");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("E-VSD-41")
+                        .message("Predicates on two literals are not yet supported in this Virtual Schema version.")
+                        .mitigation("Change your query.").toString());
             }
         }
 
@@ -127,9 +131,9 @@ public class QueryPredicateFactory {
             case NOT_EQUAL:
                 return AbstractComparisonPredicate.Operator.NOT_EQUAL;
             default:
-                throw new UnsupportedOperationException("F-VSD-2: This operator is not yet implemented. "
-                        + "Actually the database should not have passed this operator here, since this adapter does not have the corresponding capabilities set."
-                        + "Please open an issue.");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-2").message(
+                        "Unimplemented operator: {{OPERATOR}}. Actually the database should not have passed this operator here, since this adapter does not have the corresponding capabilities set.")
+                        .parameter("OPERATOR", operator.toString()).ticketMitigation().toString());
             }
         }
 

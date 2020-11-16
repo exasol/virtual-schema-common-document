@@ -2,6 +2,7 @@ package com.exasol.adapter.document.literalconverter;
 
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.sql.*;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.*;
 
 /**
@@ -37,8 +38,10 @@ public class SqlLiteralToValueExpressionConverter {
         try {
             sqlNode.accept(visitor);
             return visitor.getResult();
-        } catch (final AdapterException e) {
-            throw new IllegalStateException("This should never happen as no AdapterException is thrown in the visitor");
+        } catch (final AdapterException exception) {
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-60").message(
+                    "Unexpected adapter exception. This should never happen as no AdapterException is thrown in the visitor.")
+                    .ticketMitigation().toString(), exception);
         }
     }
 
@@ -53,7 +56,9 @@ public class SqlLiteralToValueExpressionConverter {
 
         @Override
         public Void visit(final SqlLiteralDate sqlLiteralDate) {
-            throw new UnsupportedOperationException("There is no ValueExpression for date literals");
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-61").message(
+                    "DateLiterals are not yet supported. This should however never happen since the corresponding capability is not set.")
+                    .ticketMitigation().toString());
         }
 
         @Override
@@ -86,22 +91,29 @@ public class SqlLiteralToValueExpressionConverter {
 
         @Override
         public Void visit(final SqlLiteralTimestamp sqlLiteralTimestamp) {
-            throw new UnsupportedOperationException("There is no ValueExpression for timestamp literals");
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-64").message(
+                    "Timestamp literals are not yet supported. This should however never happen since the corresponding capability is not set.")
+                    .ticketMitigation().toString());
         }
 
         @Override
         public Void visit(final SqlLiteralTimestampUtc sqlLiteralTimestampUtc) {
-            throw new UnsupportedOperationException("There is no ValueExpression for timestamp utc literals");
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-62").message(
+                    "Timestamp utc literals are not yet supported. This should however never happen since the corresponding capability is not set.")
+                    .ticketMitigation().toString());
         }
 
         @Override
         public Void visit(final SqlLiteralInterval sqlLiteralInterval) {
-            throw new UnsupportedOperationException("There is no ValueExpression for interval literals");
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-63").message(
+                    "Interval literals are not yet supported. This should however never happen since the corresponding capability is not set.")
+                    .ticketMitigation().toString());
         }
 
         @Override
         public void visitUnimplemented() {
-            throw new IllegalArgumentException("The given SqlNode is not a literal");
+            throw new IllegalArgumentException(ExaError.messageBuilder("F-VDF-65")
+                    .message("The given SqlNode is not a literal").ticketMitigation().toString());
         }
 
         public ValueExpression getResult() {
