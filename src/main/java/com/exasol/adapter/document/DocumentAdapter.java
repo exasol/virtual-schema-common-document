@@ -139,7 +139,6 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * 
      * @param connectionInformation connection details
      * @return source specific {@link QueryPlanner}
-     * @throws AdapterException if connecting fails
      */
     protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation);
 

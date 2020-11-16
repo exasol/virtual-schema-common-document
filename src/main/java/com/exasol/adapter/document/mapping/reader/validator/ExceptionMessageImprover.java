@@ -8,8 +8,8 @@ public interface ExceptionMessageImprover {
 
     /**
      * Get an improved error message if possible.
-     * 
-     * @param exception
+     *
+     * @param exception exception to improve
      * @return Improved error message or {@link Optional#empty()} if the message can't be improved by this improver.
      */
     public Optional<String> tryToImprove(ValidationException exception);

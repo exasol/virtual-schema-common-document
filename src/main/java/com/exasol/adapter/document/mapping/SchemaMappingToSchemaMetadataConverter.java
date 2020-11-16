@@ -66,7 +66,6 @@ public class SchemaMappingToSchemaMetadataConverter {
      * 
      * @param columnMapping to convert
      * @return {@link ColumnMetadata}
-     * @throws IOException if serialization fails
      */
     public ColumnMetadata convertColumn(final ColumnMapping columnMapping) {
         final String serialized;
@@ -150,7 +149,7 @@ public class SchemaMappingToSchemaMetadataConverter {
      * stores a map that gives the {@link TableMapping} for its Exasol table name.
      */
     private static class TableMappings implements Serializable {
-        private static final long serialVersionUID = -7483077090584761259L;
+        private static final long serialVersionUID = -9060807628343035959L;
         private final HashMap<String, TableMapping> mappings;
 
         private TableMappings(final HashMap<String, TableMapping> mappings) {
