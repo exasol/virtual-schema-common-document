@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.hamcrest.Matcher;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -128,18 +129,15 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testToStringMappingAtRootLevelException() throws IOException {
+    void testToStringMappingAtRootLevelException() throws IOException, AdapterException {
         final File invalidFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
             final JSONObject newMappings = new JSONObject();
             newMappings.put("toVarcharMapping", new JSONObject());
             base.put("mapping", newMappings);
             return base;
         }, this.tempDir);
-
-        final ExasolDocumentMappingLanguageException exception = assertThrows(
-                ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
-        assertThat(exception.getMessage(), startsWith(
-                "toVarcharMapping is not allowed at root level. You probably want to replace it with a \"fields\" definition. In mapping definition file"));
+        assertReaderThrowsExceptionMessage(invalidFile, equalTo(
+                "E-VSD-EDML-9: The mapping type 'toVarcharMapping' is not allowed at root level. You probably want to replace it with a 'fields' definition."));
     }
 
     @Test
@@ -149,10 +147,8 @@ class JsonSchemaMappingReaderIT {
                     .getJSONObject("toVarcharMapping").put("key", "local");
             return base;
         }, this.tempDir);
-        final ExasolDocumentMappingLanguageException exception = assertThrows(
-                ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
-        assertThat(exception.getMessage(), startsWith(
-                "/name: This table already has a key of different type (global/local). Please either define all keys of the table local or global."));
+        assertReaderThrowsExceptionMessage(invalidFile, equalTo(
+                "E-VSD-8: /name: This table already has a key of different type (global/local). Please either define all keys of the table local or global."));
     }
 
     @Test
@@ -162,10 +158,20 @@ class JsonSchemaMappingReaderIT {
                     .getJSONObject("toVarcharMapping").put("key", "local");
             return base;
         }, this.tempDir);
+
+        final Matcher<String> messageMatcher = equalTo(
+                "E-VSD-47: Local keys make no sense in root table mapping definitions. Please make this key global.");
+        assertReaderThrowsExceptionMessage(invalidFile, messageMatcher);
+    }
+
+    private void assertReaderThrowsExceptionMessage(final File invalidFile, final Matcher<String> messageMatcher) {
         final ExasolDocumentMappingLanguageException exception = assertThrows(
                 ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
-        assertThat(exception.getMessage(),
-                startsWith("Local keys make no sense in root table mapping definitions. Please make this key global."));
+        assertAll(//
+                () -> assertThat(exception.getMessage(),
+                        startsWith("E-VSD-EDML-10: Semantic-validation error in schema mapping '")),
+                () -> assertThat(exception.getCause().getMessage(), messageMatcher)//
+        );
     }
 
     @Test
@@ -187,10 +193,8 @@ class JsonSchemaMappingReaderIT {
             base.getJSONObject("mapping").getJSONObject("fields").remove("isbn");
             return base;
         }, this.tempDir);
-        final ExasolDocumentMappingLanguageException exception = assertThrows(
-                ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(mappingFile));
-        assertThat(exception.getMessage(), startsWith(
-                "Could not infer keys for table BOOKS. Please define a unique key by setting key='global' for one or more columns."));
+        assertReaderThrowsExceptionMessage(mappingFile, equalTo(
+                "E-VSD-46: Could not infer keys for table 'BOOKS'. Define a unique key by setting key='global' for one or more columns."));
     }
 
     @Test

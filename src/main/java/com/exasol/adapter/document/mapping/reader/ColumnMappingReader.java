@@ -142,6 +142,7 @@ class ColumnMappingReader {
         if (isRootLevel) {
             throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-EDML-9")
                     .message("The mapping type {{MAPPING_TYPE}} is not allowed at root level.")
+                    .parameter("MAPPING_TYPE", mappingType)
                     .mitigation("You probably want to replace it with a 'fields' definition.").toString());
         }
     }

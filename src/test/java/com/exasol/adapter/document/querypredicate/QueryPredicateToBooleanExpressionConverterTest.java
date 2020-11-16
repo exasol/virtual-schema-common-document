@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -50,7 +49,6 @@ class QueryPredicateToBooleanExpressionConverterTest {
         );
     }
 
-    @NotNull
     private ColumnMapping getMockColumn(final String columnName) {
         final ColumnMapping column = mock(ColumnMapping.class);
         when(column.getExasolColumnName()).thenReturn(columnName);

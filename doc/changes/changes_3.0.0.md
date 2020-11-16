@@ -21,7 +21,12 @@ Code name: Added optional SOURCE_REFERENCE column
  * Updated `com.exasol:sql-statement-builder` from 4.1.0 to 4.3.0
  * Updated `org.logicng:logicng` from 2.0.0 to 2.0.2
  * Updated `org.mockito:mockito-core` from 3.5.13 to 3.5.15
- * Updated `com.exasol:exasol-testcontainers` from 3.0.0 to 3.2.0
+ * Removed `com.exasol:exasol-testcontainers`
  * Added `com.exasol:error-reporting-java` 0.1.2
+ * Removed `com.exasol:junit-platform-runner`
+ * Removed `org.testcontainers:junit-jupiter`
+ * Removed `org.jacoco:org.jacoco.agent`
+ * Removed `org.jacoco:org.jacoco.core`
+ * Removed `org.apache.xmlrpc:xmlrpc-client`
 
 
