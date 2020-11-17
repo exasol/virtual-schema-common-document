@@ -157,7 +157,7 @@ abstract class AbstractTableMappingReader {
                 if (this.keyType != columnsKeyType
                         && this.keyType != ColumnMappingDefinitionKeyTypeReader.KeyType.NO_KEY) {
                     throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-8").message(
-                            "{{VIOLATION_POINTER}}: This table already has a key of different type (global/local).")
+                            "{{VIOLATION_POINTER}}: This table already has a key of a different type (global/local).")
                             .mitigation("Please either define all keys of the table local or global.")
                             .unquotedParameter("VIOLATION_POINTER", sourcePath.build().toString()).toString());
                 }

@@ -66,7 +66,7 @@ public class DocumentAdapterProperties {
         } else {
             throw new IllegalArgumentException(ExaError.messageBuilder("EXA-VSD-16")
                     .message("Invalid value {{VALUE}} for property MAX_PARALLEL_UDFS.")
-                    .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to an number >= 1.")
+                    .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1.")
                     .toString());
         }
     }
@@ -79,8 +79,8 @@ public class DocumentAdapterProperties {
                 return Integer.parseInt(propertyValue);
             } catch (final NumberFormatException exception) {
                 throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-17")
-                        .message("Invalid value non-integer value {{VALUE}} for property MAX_PARALLEL_UDFS. ")
-                        .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to an number >= 1.")
+                        .message("Invalid non-integer value {{VALUE}} for property MAX_PARALLEL_UDFS. ")
+                        .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1.")
                         .toString());
             }
         }
