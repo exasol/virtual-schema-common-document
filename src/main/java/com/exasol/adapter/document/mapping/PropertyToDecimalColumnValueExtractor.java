@@ -142,7 +142,12 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
             this.value = value;
         }
 
-        private String getValue() {
+        /**
+         * Get the value that is not a number.
+         * 
+         * @return string value
+         */
+        public String getValue() {
             return this.value;
         }
     }
