@@ -10,12 +10,21 @@ import org.everit.json.schema.Schema;
 
 import com.exasol.adapter.document.mapping.reader.validator.ExceptionMessageImprover;
 
+/**
+ * Abstract basis for {@link ExceptionMessageImprover}s.
+ */
 public abstract class AbstractExceptionMessageImprover implements ExceptionMessageImprover {
 
+    /**
+     * Get possible values for a given schema element.
+     * 
+     * @param schema violated schema element
+     * @return list of possible options
+     */
     protected Set<String> possibleObjectProperties(final Schema schema) {
         try {
             final Set<String> possibleProperties = new HashSet<>();
-            final ObjectSchema objectSchema = (ObjectSchema) schema;
+            final ObjectSchema objectSchema = getObjectSchema(schema);
             possibleProperties.addAll(objectSchema.getPropertySchemas().keySet());
             possibleProperties.addAll(possibleAdditionalObjectProperties(objectSchema));
             return possibleProperties;

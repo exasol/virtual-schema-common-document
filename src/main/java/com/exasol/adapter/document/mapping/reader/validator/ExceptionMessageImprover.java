@@ -4,6 +4,13 @@ import java.util.Optional;
 
 import org.everit.json.schema.ValidationException;
 
+/**
+ * Classes implementing this interface improve schema validation error messages.
+ * <p>
+ * Each implementing class implements a different improvement. The {@link JsonSchemaMappingValidator} only uses the
+ * first fitting improvement.
+ * </p>
+ */
 public interface ExceptionMessageImprover {
 
     /**

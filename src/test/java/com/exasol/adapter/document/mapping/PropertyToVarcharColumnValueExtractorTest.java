@@ -68,7 +68,7 @@ class PropertyToVarcharColumnValueExtractorTest {
         final PropertyToVarcharColumnMapping mapping = getDefaultMappingBuilder()
                 .nonStringBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT).build();
         final ToVarcharValueMapperStub valueMapper = new ToVarcharValueMapperStub(mapping,
-                new PropertyToVarcharColumnValueExtractor.CouldNotConvertResult("myType"));
+                new PropertyToVarcharColumnValueExtractor.FailedConversionResult("myType"));
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
                 () -> valueMapper.mapValue(null));
         assertThat(exception.getMessage(), equalTo(

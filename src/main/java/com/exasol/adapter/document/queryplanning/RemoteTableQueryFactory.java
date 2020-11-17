@@ -33,7 +33,7 @@ public class RemoteTableQueryFactory {
             selectStatement.accept(visitor);
         } catch (final AdapterException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("E-VSD-42").message(
-                    "Unexpected AdapterException. This should no happen since no adapter exceptions are thrown in the visitor.")
+                    "Unexpected AdapterException.")
                     .ticketMitigation().toString(), exception);
         }
         final SchemaMappingToSchemaMetadataConverter converter = new SchemaMappingToSchemaMetadataConverter();

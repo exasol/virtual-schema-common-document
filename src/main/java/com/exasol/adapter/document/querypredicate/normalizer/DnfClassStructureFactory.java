@@ -67,7 +67,7 @@ class DnfClassStructureFactory {
     }
 
     private static IllegalStateException getInvalidDnfException(final String internalDescription) {
-        throw new IllegalStateException(ExaError.messageBuilder("F-VSD-12").message("{{INTERNAL_DESCRIPTION}}).")
+        return new IllegalStateException(ExaError.messageBuilder("F-VSD-12").message("{{INTERNAL_DESCRIPTION}}).")
                 .ticketMitigation().unquotedParameter("INTERNAL_DESCRIPTION", internalDescription).toString());
     }
 
@@ -86,13 +86,13 @@ class DnfClassStructureFactory {
                         .collect(Collectors.toSet());
                 this.result = new DnfAnd(operands);
             } else {
-                throw getInvalidDnfException("Invalid DNF. ORs are not allowed at the second level.");
+                throw getInvalidDnfException("Invalid DNF. The DNF does not allow nested ORs.");
             }
         }
 
         @Override
         public void visit(final NoPredicate noPredicate) {
-            throw getInvalidDnfException("Invalid DNF. NoPredicate are only allowed at the first level.");
+            throw getInvalidDnfException("Invalid DNF. The DNF does not allow empty predicates here");
         }
 
         @Override
@@ -122,12 +122,13 @@ class DnfClassStructureFactory {
 
         @Override
         public void visit(final LogicalOperator logicalOperator) {
-            throw getInvalidDnfException("Invalid DNF. ANDs and ORs are not allowed at the third level.");
+            throw getInvalidDnfException(
+                    "Invalid DNF. The DNF does not allow more than two levels of nested AND and ORs.");
         }
 
         @Override
         public void visit(final NoPredicate noPredicate) {
-            throw getInvalidDnfException("Invalid DNF. NoPredicate are only allowed at the first level.");
+            throw getInvalidDnfException("Invalid DNF. The DNF does not allow empty predicates here.");
         }
 
         @Override

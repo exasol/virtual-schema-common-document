@@ -1,6 +1,7 @@
 package com.exasol.adapter.document;
 
 import static com.exasol.sql.expression.ExpressionTerm.column;
+import static com.exasol.utils.StringSerializer.serializeToString;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -29,7 +30,6 @@ import com.exasol.sql.expression.BooleanLiteral;
 import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.rendering.StringRendererConfig;
-import com.exasol.utils.StringSerializer;
 
 /**
  * This class builds push down SQL statement with a UDF call to {@link UdfEntryPoint}.
@@ -170,7 +170,7 @@ public class UdfCallBuilder {
 
     private String serializeDataLoader(final DataLoader dataLoader) {
         try {
-            return StringSerializer.serializeToString(dataLoader);
+            return serializeToString(dataLoader);
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-19")
                     .message("Internal error (Failed to serialize DataLoader).").ticketMitigation().toString(),
@@ -180,7 +180,7 @@ public class UdfCallBuilder {
 
     private String serializeSchemaMappingRequest(final SchemaMappingRequest schemaMappingRequest) {
         try {
-            return StringSerializer.serializeToString(schemaMappingRequest);
+            return serializeToString(schemaMappingRequest);
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-18")
                     .message("Internal error (Failed to serialize SchemaMappingRequest).").ticketMitigation()

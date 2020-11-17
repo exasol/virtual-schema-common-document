@@ -1,5 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
+import static com.exasol.utils.StringSerializer.serializeToString;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -44,7 +46,7 @@ public class SchemaMappingToSchemaMetadataConverter {
 
     private String serializeTableMapping(final HashMap<String, TableMapping> tableMappings) {
         try {
-            return StringSerializer.serializeToString(new TableMappings(tableMappings));
+            return serializeToString(new TableMappings(tableMappings));
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-25")
                     .message("Internal error (failed to serialize TableMapping).").ticketMitigation().toString(),
@@ -70,7 +72,7 @@ public class SchemaMappingToSchemaMetadataConverter {
     public ColumnMetadata convertColumn(final ColumnMapping columnMapping) {
         final String serialized;
         try {
-            serialized = StringSerializer.serializeToString(columnMapping);
+            serialized = serializeToString(columnMapping);
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-26")
                     .message("Internal error (failed to serialize ColumnMapping).").ticketMitigation().toString(),
@@ -149,7 +151,7 @@ public class SchemaMappingToSchemaMetadataConverter {
      * stores a map that gives the {@link TableMapping} for its Exasol table name.
      */
     private static class TableMappings implements Serializable {
-        private static final long serialVersionUID = -9060807628343035959L;
+        private static final long serialVersionUID = -8073968119043863037L;
         private final HashMap<String, TableMapping> mappings;
 
         private TableMappings(final HashMap<String, TableMapping> mappings) {

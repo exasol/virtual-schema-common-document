@@ -148,7 +148,7 @@ class JsonSchemaMappingReaderIT {
             return base;
         }, this.tempDir);
         assertReaderThrowsExceptionMessage(invalidFile, equalTo(
-                "E-VSD-8: /name: This table already has a key of different type (global/local). Please either define all keys of the table local or global."));
+                "E-VSD-8: /name: This table already has a key of a different type (global/local). Please either define all keys of the table local or global."));
     }
 
     @Test

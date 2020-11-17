@@ -35,8 +35,8 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
             final ConvertedResult convertedResult = (ConvertedResult) conversionResult;
             return fitValue(convertedResult.getResult());
         } else {
-            final NotANumberResult result = (NotANumberResult) conversionResult;
-            return handleNotANumber(result.getValue());
+            final NotNumericResult result = (NotNumericResult) conversionResult;
+            return handleNotNumeric(result.getValue());
         }
     }
 
@@ -50,7 +50,7 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    private ValueExpression handleNotANumber(final String value) {
+    private ValueExpression handleNotNumeric(final String value) {
         if (this.column.getNotNumericBehaviour() == MappingErrorBehaviour.ABORT) {
             throw new ColumnValueExtractorException(
                     ExaError.messageBuilder("E-VSD-33")
@@ -89,7 +89,7 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
         try {
             return new ConvertedResult(new BigDecimal(value));
         } catch (final NumberFormatException exception) {
-            return new NotANumberResult(value);
+            return new NotNumericResult(value);
         }
     }
 
@@ -130,15 +130,15 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
     /**
      * Result if the value was not a number.
      */
-    public static class NotANumberResult implements ConversionResult {
+    public static class NotNumericResult implements ConversionResult {
         private final String value;
 
         /**
-         * Create a new instance of {@link NotANumberResult}.
+         * Create a new instance of {@link NotNumericResult}.
          *
          * @param value string value for error message.
          */
-        public NotANumberResult(final String value) {
+        public NotNumericResult(final String value) {
             this.value = value;
         }
 

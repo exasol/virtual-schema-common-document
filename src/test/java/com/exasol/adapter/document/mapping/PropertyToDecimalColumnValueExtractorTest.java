@@ -62,7 +62,7 @@ class PropertyToDecimalColumnValueExtractorTest {
     @Test
     void testNaNHandlingException() {
         final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.NotANumberResult("test"));
+                new PropertyToDecimalColumnValueExtractor.NotNumericResult("test"));
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
                 () -> extractor.mapValue(null));
         assertThat(exception.getMessage(), equalTo(
@@ -72,7 +72,7 @@ class PropertyToDecimalColumnValueExtractorTest {
     @Test
     void testNaNHandlingNull() {
         final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.NotANumberResult("test"));
+                new PropertyToDecimalColumnValueExtractor.NotNumericResult("test"));
         final ValueExpression valueExpression = extractor.mapValue(null);
         assertThat(valueExpression, instanceOf(NullLiteral.class));
     }

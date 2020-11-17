@@ -39,7 +39,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         if (result instanceof MappedStringResult) {
             return handleConvertedResult((MappedStringResult) result);
         } else {
-            return handleNotConvertedResult((CouldNotConvertResult) result);
+            return handleNotConvertedResult((FailedConversionResult) result);
         }
     }
 
@@ -59,7 +59,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    private String handleNotConvertedResult(final CouldNotConvertResult result) {
+    private String handleNotConvertedResult(final FailedConversionResult result) {
         if (this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT
                 || this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
             throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-37")
@@ -129,15 +129,15 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    public static class CouldNotConvertResult implements ConversionResult {
+    public static class FailedConversionResult implements ConversionResult {
         private final String typeName;
 
         /**
-         * Create a new instance of {@link CouldNotConvertResult}.
+         * Create a new instance of {@link FailedConversionResult}.
          * 
          * @param typeName name of the unsupported type
          */
-        public CouldNotConvertResult(final String typeName) {
+        public FailedConversionResult(final String typeName) {
             this.typeName = typeName;
         }
 

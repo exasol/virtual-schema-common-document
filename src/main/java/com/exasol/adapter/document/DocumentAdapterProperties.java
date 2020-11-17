@@ -37,7 +37,7 @@ public class DocumentAdapterProperties {
     public String getMappingDefinition() {
         if (!hasMappingDefinition()) {
             throw new IllegalArgumentException(
-                    ExaError.messageBuilder("E-VSD-20").message("Missing mandatory MAPPING property.")
+                    ExaError.messageBuilder("E-VSD-72").message("Missing mandatory MAPPING property.")
                             .mitigation("Please set MAPPING to the path to your schema mapping files in the BucketFS.")
                             .toString());
         }
@@ -64,7 +64,7 @@ public class DocumentAdapterProperties {
         } else if (integerValue >= 1) {
             return integerValue;
         } else {
-            throw new IllegalArgumentException(ExaError.messageBuilder("EXA-VSD-16")
+            throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-16")
                     .message("Invalid value {{VALUE}} for property MAX_PARALLEL_UDFS.")
                     .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1.")
                     .toString());

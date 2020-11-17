@@ -40,7 +40,7 @@ public class SqlLiteralToValueExpressionConverter {
             return visitor.getResult();
         } catch (final AdapterException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-60").message(
-                    "Unexpected adapter exception. This should never happen as no AdapterException is thrown in the visitor.")
+                    "Unexpected adapter exception.")
                     .ticketMitigation().toString(), exception);
         }
     }
@@ -57,7 +57,7 @@ public class SqlLiteralToValueExpressionConverter {
         @Override
         public Void visit(final SqlLiteralDate sqlLiteralDate) {
             throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-61").message(
-                    "DateLiterals are not yet supported. This should however never happen since the corresponding capability is not set.")
+                    "DateLiterals are not yet supported. This should not be possible since the corresponding capability is not set.")
                     .ticketMitigation().toString());
         }
 
@@ -112,7 +112,7 @@ public class SqlLiteralToValueExpressionConverter {
 
         @Override
         public void visitUnimplemented() {
-            throw new IllegalArgumentException(ExaError.messageBuilder("F-VDF-65")
+            throw new IllegalArgumentException(ExaError.messageBuilder("F-VSD-65")
                     .message("The given SqlNode is not a literal").ticketMitigation().toString());
         }
 
