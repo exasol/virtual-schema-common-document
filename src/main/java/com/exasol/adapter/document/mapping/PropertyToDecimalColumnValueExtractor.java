@@ -117,7 +117,12 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
             this.result = result;
         }
 
-        private BigDecimal getResult() {
+        /**
+         * Get the converted result.
+         * 
+         * @return converted result
+         */
+        public BigDecimal getResult() {
             return this.result;
         }
     }
