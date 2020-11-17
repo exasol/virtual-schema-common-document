@@ -137,7 +137,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
          * 
          * @param typeName name of the unsupported type
          */
-        protected CouldNotConvertResult(final String typeName) {
+        public CouldNotConvertResult(final String typeName) {
             this.typeName = typeName;
         }
 

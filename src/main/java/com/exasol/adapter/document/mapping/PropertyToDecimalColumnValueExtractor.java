@@ -113,7 +113,7 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
          *
          * @param result decimal result
          */
-        protected ConvertedResult(final BigDecimal result) {
+        public ConvertedResult(final BigDecimal result) {
             this.result = result;
         }
 
@@ -133,7 +133,7 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
          *
          * @param value string value for error message.
          */
-        protected NotANumberResult(final String value) {
+        public NotANumberResult(final String value) {
             this.value = value;
         }
 
