@@ -3,6 +3,8 @@ package com.exasol.adapter.document.mapping.reader;
 import static com.exasol.adapter.document.mapping.MappingTestFiles.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -10,18 +12,21 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Function;
 
+import org.hamcrest.Matcher;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exasol.adapter.document.mapping.reader.validator.JsonSchemaMappingValidator;
+
 class JsonSchemaMappingValidatorTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonSchemaMappingValidatorTest.class);
     @TempDir
     Path tempDir;
 
-    void runValidation(final File file) throws IOException {
+    void runValidation(final File file) {
         final JsonSchemaMappingValidator jsonSchemaMappingValidator = new JsonSchemaMappingValidator();
         try {
             jsonSchemaMappingValidator.validate(file);
@@ -57,12 +62,16 @@ class JsonSchemaMappingValidatorTest {
     }
 
     private void testInvalid(final String base, final Function<JSONObject, JSONObject> invalidator,
-            final String expectedMessage) throws IOException {
+            final Matcher<String> messageMatcher) throws IOException {
         final File invalidFile = generateInvalidFile(base, invalidator, this.tempDir);
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        final ExasolDocumentMappingLanguageException exception = assertThrows(
+                ExasolDocumentMappingLanguageException.class,
                 () -> runValidation(invalidFile));
-        assertThat(exception.getMessage(),
-                equalTo("Syntax error in " + invalidFile.getName() + ": " + expectedMessage));
+        assertAll(
+                () -> assertThat(exception.getMessage(),
+                        equalTo("E-VSD-EDML-1: Syntax error in mapping definition '" + invalidFile.getName()
+                                + "'. See causing exception for details.")),
+                () -> assertThat(exception.getCause().getMessage(), messageMatcher));
     }
 
     @Test
@@ -70,7 +79,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.remove("destinationTable");
             return base;
-        }, "#: required key [destinationTable] not found");
+        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: required key [destinationTable] not found."));
     }
 
     @Test
@@ -78,7 +87,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.remove("$schema");
             return base;
-        }, "#: required key [$schema] not found");
+        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: required key [$schema] not found."));
     }
 
     @Test
@@ -86,7 +95,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.put("$schema", "wrongSchema");
             return base;
-        }, "#/$schema $schema must be set  to https://schemas.exasol.com/edml-1.0.0.json");
+        }, startsWith("E-VSD-EDML-6: Illegal value for $schema. Supported schema versions are ["));
     }
 
     @Test
@@ -94,7 +103,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.put("unknownProperty", "someValue");
             return base;
-        }, "#: extraneous key [unknownProperty] is not permitted");
+        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: extraneous key [unknownProperty] is not permitted."));
     }
 
     @Test
@@ -104,33 +113,8 @@ class JsonSchemaMappingValidatorTest {
             isbn.remove("toVarcharMapping");
             isbn.put("toStriiiiiiingMapping", "");
             return base;
-        }, "#/mapping/fields/isbn: extraneous key [toStriiiiiiingMapping] is not permitted, use one of the following mapping definitions: toVarcharMapping, toTableMapping, toDecimalMapping, toJsonMapping, fields");
-    }
-
-    @Test
-    void testInvalidToTableWithNoFields() throws IOException {
-        testInvalid(MULTI_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("chapters")
-                    .getJSONObject("toTableMapping").getJSONObject("mapping").remove("fields");
-            return base;
-        }, "#/mapping/fields/chapters/toTableMapping/mapping Please specify at least one mapping. Possible are: toVarcharMapping, toTableMapping, toDecimalMapping, toJsonMapping, fields");
-    }
-
-    @Test
-    void testInvalidKeyValue() throws IOException {
-        testInvalid(BASIC_MAPPING, base -> {
-            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("name")
-                    .getJSONObject("toVarcharMapping").put("key", "");
-            return base;
-        }, "#/mapping/fields/name/toVarcharMapping/key: Please set key property to 'local' or 'global'.");
-    }
-
-    @Test
-    void testInvalidNoMapping() throws IOException {
-        testInvalid(BASIC_MAPPING, base -> {
-            base.remove("mapping");
-            return base;
-        }, "#: required key [mapping] not found");
+        }, startsWith(
+                "E-VSD-EDML-4: #/mapping/fields/isbn: extraneous key [toStriiiiiiingMapping] is not permitted. Use one of the following mapping definitions: ["));
     }
 
     @Test
@@ -141,6 +125,43 @@ class JsonSchemaMappingValidatorTest {
             mapping.remove("fields");
             mapping.put("toStriiiiingMapping", "");
             return base;
-        }, "#/mapping/fields/chapters/toTableMapping/mapping: extraneous key [toStriiiiingMapping] is not permitted, use one of the following mapping definitions: toVarcharMapping, toTableMapping, toDecimalMapping, toJsonMapping, fields");
+        }, startsWith(
+                "E-VSD-EDML-4: #/mapping/fields/chapters/toTableMapping/mapping: extraneous key [toStriiiiingMapping] is not permitted. Use one of the following mapping definitions: ["));
+    }
+
+    @Test
+    void testInvalidToTableWithNoFields() throws IOException {
+        testInvalid(MULTI_COLUMN_TO_TABLE_MAPPING, base -> {
+            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("chapters")
+                    .getJSONObject("toTableMapping").getJSONObject("mapping").remove("fields");
+            return base;
+        }, startsWith(
+                "E-VSD-EDML-2: '#/mapping/fields/chapters/toTableMapping/mapping' is empty. Specify at least one mapping. Possible mappings are ["));
+    }
+
+    @Test
+    void testInvalidKeyValue() throws IOException {
+        testInvalid(BASIC_MAPPING, base -> {
+            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("name")
+                    .getJSONObject("toVarcharMapping").put("key", "");
+            return base;
+        }, equalTo(
+                "E-VSD-EDML-5: #/mapping/fields/name/toVarcharMapping/key: Illegal value for property 'key'. Please set key property to 'local' or 'global'."));
+    }
+
+    @Test
+    void testInvalidNoMapping() throws IOException {
+        testInvalid(BASIC_MAPPING, base -> {
+            base.remove("mapping");
+            return base;
+        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: required key [mapping] not found."));
+    }
+
+    @Test
+    void testInvalidNoFields() throws IOException {
+        testInvalid(BASIC_MAPPING, base -> {
+            base.getJSONObject("mapping").remove("fields");
+            return base;
+        }, startsWith("E-VSD-EDML-2: '#/mapping' is empty. Specify at least one mapping. Possible mappings are ["));
     }
 }

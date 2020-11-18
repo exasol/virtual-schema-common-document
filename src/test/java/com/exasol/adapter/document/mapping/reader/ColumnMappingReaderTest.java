@@ -2,6 +2,7 @@ package com.exasol.adapter.document.mapping.reader;
 
 import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
 import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.ABORT;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -84,7 +85,7 @@ class ColumnMappingReaderTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> columnMappingReader.readColumnMapping("unknownType", definition, sourcePath, "test", false));
         assertThat(exception.getMessage(),
-                equalTo("This mapping type (unknownType) is not supported in the current version."));
+                startsWith("F-VSD-EDML-7: The mapping type 'unknownType' is not supported in this version."));
     }
 
     @Test

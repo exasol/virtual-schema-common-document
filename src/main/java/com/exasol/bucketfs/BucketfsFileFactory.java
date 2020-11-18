@@ -3,6 +3,8 @@ package com.exasol.bucketfs;
 import java.io.File;
 import java.io.IOException;
 
+import com.exasol.errorreporting.ExaError;
+
 /**
  * Factory for files in bucketfs. Breaking out of the bucketfs using injection is prevented.
  */
@@ -29,11 +31,15 @@ public class BucketfsFileFactory {
             final String absolute = file.getCanonicalPath();
             if (!absolute.startsWith(BUCKETFS_BASIC_PATH)) {
                 throw new IllegalArgumentException(
-                        "Given path (" + file.getCanonicalPath() + ") is outside of bucketfs.");
+                        ExaError.messageBuilder("E-VSD-10").message("The path {{PATH}} is outside of BucketFS.")
+                                .parameter("PATH", file.getCanonicalPath())
+                                .mitigation("Change the path to the mapping definition file (remove ../ s).")
+                                .toString());
 
             }
         } catch (final IOException exception) {
-            throw new IllegalArgumentException("Error in file path: " + file.getAbsolutePath());
+            throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-11").message("Could not open {{PATH}}.")
+                    .parameter("PATH", file.getAbsolutePath()).toString(), exception);
         }
     }
 }

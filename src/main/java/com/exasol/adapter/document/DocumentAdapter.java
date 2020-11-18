@@ -1,7 +1,6 @@
 package com.exasol.adapter.document;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,6 +24,7 @@ import com.exasol.adapter.metadata.SchemaMetadata;
 import com.exasol.adapter.request.*;
 import com.exasol.adapter.response.*;
 import com.exasol.bucketfs.BucketfsFileFactory;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class is the abstract basis for Virtual Schema adapter for document data.
@@ -43,33 +43,20 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
             final CreateVirtualSchemaRequest request) throws AdapterException {
-        try {
-            return runCreateVirtualSchema(exaMetadata, request);
-        } catch (final IOException | ExaConnectionAccessException exception) {
-            throw new AdapterException("Unable to create Virtual Schema \"" + request.getVirtualSchemaName() + "\". "
-                    + "Cause: " + exception.getMessage(), exception);
-        }
-    }
-
-    private CreateVirtualSchemaResponse runCreateVirtualSchema(final ExaMetadata exaMetadata,
-            final CreateVirtualSchemaRequest request)
-            throws IOException, AdapterException, ExaConnectionAccessException {
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, request);
         return CreateVirtualSchemaResponse.builder().schemaMetadata(schemaMetadata).build();
     }
 
-    private SchemaMetadata getSchemaMetadata(final ExaMetadata exaMetadata, final AdapterRequest request)
-            throws AdapterException, IOException, ExaConnectionAccessException {
+    private SchemaMetadata getSchemaMetadata(final ExaMetadata exaMetadata, final AdapterRequest request) {
         final SchemaMapping schemaMapping = getSchemaMappingDefinition(exaMetadata, request);
         return new SchemaMappingToSchemaMetadataConverter().convert(schemaMapping);
     }
 
-    private SchemaMapping getSchemaMappingDefinition(final ExaMetadata exaMetadata, final AdapterRequest request)
-            throws AdapterException, IOException, ExaConnectionAccessException {
+    private SchemaMapping getSchemaMappingDefinition(final ExaMetadata exaMetadata, final AdapterRequest request) {
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
-        final DynamodbAdapterProperties dynamodbAdapterProperties = new DynamodbAdapterProperties(adapterProperties);
-        final File mappingDefinitionFile = getSchemaMappingFile(dynamodbAdapterProperties);
+        final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
+        final File mappingDefinitionFile = getSchemaMappingFile(documentAdapterProperties);
         getConnectionInformation(exaMetadata, request);
         final TableKeyFetcher tableKeyFetcher = getTableKeyFetcher(getConnectionInformation(exaMetadata, request));
         final SchemaMappingReader mappingFactory = new JsonSchemaMappingReader(mappingDefinitionFile, tableKeyFetcher);
@@ -81,25 +68,31 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * 
      * @param connectionInformation connection details
      * @return database specific {@link TableKeyFetcher}
-     * @throws AdapterException if connection fails
      */
-    protected abstract TableKeyFetcher getTableKeyFetcher(ExaConnectionInformation connectionInformation)
-            throws AdapterException;
+    protected abstract TableKeyFetcher getTableKeyFetcher(ExaConnectionInformation connectionInformation);
 
     private ExaConnectionInformation getConnectionInformation(final ExaMetadata exaMetadata,
-            final AdapterRequest request) throws ExaConnectionAccessException {
-        final AdapterProperties properties = getPropertiesFromRequest(request);
-        return exaMetadata.getConnection(properties.getConnectionName());
+            final AdapterRequest request) {
+        try {
+            final AdapterProperties properties = getPropertiesFromRequest(request);
+            return exaMetadata.getConnection(properties.getConnectionName());
+        } catch (final ExaConnectionAccessException exception) {
+            throw new IllegalStateException(
+                    ExaError.messageBuilder("E-VSD-15")
+                            .message("Could not access the remote databases connection information.").toString(),
+                    exception);
+        }
     }
 
-    private File getSchemaMappingFile(final DynamodbAdapterProperties dynamodbAdapterProperties)
-            throws AdapterException {
-        final String path = dynamodbAdapterProperties.getMappingDefinition();
+    private File getSchemaMappingFile(final DocumentAdapterProperties documentAdapterProperties) {
+        final String path = documentAdapterProperties.getMappingDefinition();
         final File file = new BucketfsFileFactory().openFile(path);
         if (!file.exists()) {
-            throw new AdapterException("The specified mapping file (" + file
-                    + ") could not be found. Make sure you uploaded your mapping definition to BucketFS and specified "
-                    + "the correct bucketfs, bucket and path within the bucket.");
+            throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-14")
+                    .message("Could not open mapping file {{MAPPING_FILE}}.").parameter("MAPPING_FILE", file)
+                    .mitigation(
+                            "Make sure you uploaded your mapping definition to BucketFS and specified the correct BucketFS, bucket and path within the bucket.")
+                    .toString());
         }
         return file;
     }
@@ -121,16 +114,6 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final PushDownResponse pushdown(final ExaMetadata exaMetadata, final PushDownRequest request)
             throws AdapterException {
-        try {
-            return runPushdown(exaMetadata, request);
-        } catch (final ExaConnectionAccessException | IOException exception) {
-            throw new AdapterException("Unable to create Virtual Schema \"" + request.getVirtualSchemaName() + "\". "
-                    + "Cause: " + exception.getMessage(), exception);
-        }
-    }
-
-    private PushDownResponse runPushdown(final ExaMetadata exaMetadata, final PushDownRequest request)
-            throws AdapterException, ExaConnectionAccessException, IOException {
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(request.getSelect(),
                 request.getSchemaMetadataInfo().getAdapterNotes());
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
@@ -140,8 +123,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     }
 
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
-            final RemoteTableQuery remoteTableQuery)
-            throws ExaConnectionAccessException, IOException, AdapterException {
+            final RemoteTableQuery remoteTableQuery) {
         final QueryPlanner queryPlanner = getQueryPlanner(getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
@@ -157,10 +139,8 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * 
      * @param connectionInformation connection details
      * @return source specific {@link QueryPlanner}
-     * @throws AdapterException if connecting fails
      */
-    protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation)
-            throws AdapterException;
+    protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation);
 
     /**
      * Get the number of cores that can be used by a query. This methods calculates the number of available cores and
@@ -172,27 +152,16 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * @param adapterProperties adapter properties
      * @return total number of cores that are available in the cluster
      */
-    private int getMaxCoreNumber(final ExaMetadata exaMetadata, final AdapterProperties adapterProperties)
-            throws AdapterException {
+    private int getMaxCoreNumber(final ExaMetadata exaMetadata, final AdapterProperties adapterProperties) {
         final int cores = Runtime.getRuntime().availableProcessors();
-        final DynamodbAdapterProperties dynamodbAdapterProperties = new DynamodbAdapterProperties(adapterProperties);
-        final int maxConfiguredCores = dynamodbAdapterProperties.getMaxParallelUdfs();
+        final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
+        final int maxConfiguredCores = documentAdapterProperties.getMaxParallelUdfs();
         return Math.min(((int) exaMetadata.getNodeCount() * cores), maxConfiguredCores);
     }
 
     @Override
     public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
             throws AdapterException {
-        try {
-            return runRefresh(exaMetadata, refreshRequest);
-        } catch (final IOException | ExaConnectionAccessException exception) {
-            throw new AdapterException("Unable to update Virtual Schema \"" + refreshRequest.getVirtualSchemaName()
-                    + "\". Cause: " + exception.getMessage(), exception);
-        }
-    }
-
-    private RefreshResponse runRefresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
-            throws IOException, AdapterException, ExaConnectionAccessException {
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, refreshRequest);
         return RefreshResponse.builder().schemaMetadata(schemaMetadata).build();
     }
@@ -201,7 +170,10 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     public final SetPropertiesResponse setProperties(final ExaMetadata exaMetadata,
             final SetPropertiesRequest setPropertiesRequest) {
         throw new UnsupportedOperationException(
-                "The current version of this Virtual Schema does not support SET PROPERTIES statement.");
+                ExaError.messageBuilder("F-VSD-27")
+                        .message(
+                                "The current version of this Virtual Schema does not support SET PROPERTIES statement.")
+                        .mitigation("Drop and recreate the virtual schema instead.").toString());
     }
 
     /**

@@ -66,7 +66,7 @@ class SelectionExtractorTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> EXTRACTOR.extractIndexColumnSelection(predicate));
         assertThat(exception.getMessage(), equalTo(
-                "This query combines selections on columns in a way, so that the selection can't be split up."));
+                "E-VSD-59: This query combines selections on columns in a way, so that the selection can't be split up. Change your query: Try to simplify AND and OR constructs or move parts of the selection in a wrapping SELECT statement)."));
     }
 
     @Test

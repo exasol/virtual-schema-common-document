@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.StringLiteral;
 import com.exasol.sql.expression.ValueExpression;
@@ -29,7 +30,11 @@ public abstract class PropertyToJsonColumnValueExtractor<DocumentVisitorType>
         if (jsonValue.length() > this.column.getVarcharColumnSize()) {
             if (this.column.getOverflowBehaviour().equals(MappingErrorBehaviour.ABORT)) {
                 throw new OverflowException(
-                        "The generated JSON did exceed the configured maximum size. You can either increase the column size of this column or set the overflow behaviour to NULL.",
+                        ExaError.messageBuilder("E-VSD-35").message(
+                                "A generated JSON did exceed the configured maximum size of the column {{COLUMN_NAME}}.")
+                                .parameter("COLUMN_NAME", this.column.getExasolColumnName())
+                                .mitigation("Increase the 'varcharColumnSize' in your mapping definition.")
+                                .mitigation("Set the 'overflowBehaviour' to 'NULL'.").toString(),
                         this.column);
             } else {
                 return NullLiteral.nullLiteral();

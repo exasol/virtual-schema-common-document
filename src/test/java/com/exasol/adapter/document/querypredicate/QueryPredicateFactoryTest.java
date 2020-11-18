@@ -94,7 +94,7 @@ class QueryPredicateFactoryTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> FACTORY.buildPredicateFor(predicate));
         assertThat(exception.getMessage(),
-                equalTo("Predicates on two columns are not yet supported in this Virtual Schema version."));
+                equalTo("E-VSD-40: Predicates on two columns are not yet supported in this Virtual Schema version. Change your query."));
     }
 
     @Test
@@ -103,7 +103,7 @@ class QueryPredicateFactoryTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> FACTORY.buildPredicateFor(predicate));
         assertThat(exception.getMessage(),
-                equalTo("Predicates on two literals are not yet supported in this Virtual Schema version."));
+                equalTo("E-VSD-41: Predicates on two literals are not yet supported in this Virtual Schema version. Change your query."));
     }
 
     @Test

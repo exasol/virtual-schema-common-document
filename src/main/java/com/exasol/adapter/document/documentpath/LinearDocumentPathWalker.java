@@ -3,6 +3,7 @@ package com.exasol.adapter.document.documentpath;
 import java.util.Optional;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class is a simplified version of {@link DocumentPathWalker} for linear paths.
@@ -40,9 +41,8 @@ public class LinearDocumentPathWalker<VisitorType> {
         for (final PathSegment pathSegment : pathExpression.getSegments()) {
             if (pathSegment instanceof ArrayAllPathSegment) {
                 throw new IllegalArgumentException(
-                        "The given path is not a linear path. "
-                                + "You can either remove the ArrayAllSegments from path or use a DocumentPathWalker.",
-                        null);
+                        ExaError.messageBuilder("F-VSD-28").message("The given path is not a linear path.")
+                                .ticketMitigation().toString());
             }
         }
     }

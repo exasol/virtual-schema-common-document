@@ -2,6 +2,7 @@ package com.exasol.adapter.sql;
 
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.document.queryplanning.RemoteTableQueryFactory;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * Facade for the {@link SqlNodeVisitor} interface implementing all methods with unsupported exception. This class is
@@ -247,6 +248,8 @@ public abstract class VoidSqlNodeVisitor implements SqlNodeVisitor<Void> {
      * This method is called when the specific visit method for a type was not implemented.
      */
     public void visitUnimplemented() {
-        throw new UnsupportedOperationException("A handling for this SQL statement part was not implemented yet.");
+        throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-71")
+                .message("A handling for this SQL statement part was not implemented yet.").ticketMitigation()
+                .toString());
     }
 }

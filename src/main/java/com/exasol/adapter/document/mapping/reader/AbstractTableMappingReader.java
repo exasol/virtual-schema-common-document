@@ -9,6 +9,7 @@ import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.ColumnMappingDefinitionKeyTypeReader;
 import com.exasol.adapter.document.mapping.SourceReferenceColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.errorreporting.ExaError;
 
 /**
  * This class builds {@link TableMapping}s from Exasol document mapping language definitions. If the definition contains
@@ -155,9 +156,10 @@ abstract class AbstractTableMappingReader {
             } else {
                 if (this.keyType != columnsKeyType
                         && this.keyType != ColumnMappingDefinitionKeyTypeReader.KeyType.NO_KEY) {
-                    throw new ExasolDocumentMappingLanguageException(sourcePath.build().toString()
-                            + ": This table already has a key of different type (global/local). "
-                            + "Please either define all keys of the table local or global.");
+                    throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-8").message(
+                            "{{VIOLATION_POINTER}}: This table already has a key of a different type (global/local).")
+                            .mitigation("Please either define all keys of the table local or global.")
+                            .unquotedParameter("VIOLATION_POINTER", sourcePath.build().toString()).toString());
                 }
                 this.keyType = columnsKeyType;
                 this.keyColumns.add(column);
@@ -178,7 +180,10 @@ abstract class AbstractTableMappingReader {
                 return keys.iterator().next();
             } else {
                 throw new ExasolDocumentMappingLanguageException(
-                        sourcePath.build().toString() + ": Please define only one mapping for one property.");
+                        ExaError.messageBuilder("E-VSD-9")
+                                .message("{{VIOLATION_POINTER}}: More than one mapping for a single property.")
+                                .unquotedParameter("VIOLATION_POINTER", sourcePath.build().toString())
+                                .mitigation("Please define only one mapping for one property.").toString());
             }
         }
 

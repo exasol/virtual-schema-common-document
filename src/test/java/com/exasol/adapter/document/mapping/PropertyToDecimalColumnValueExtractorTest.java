@@ -35,7 +35,8 @@ class PropertyToDecimalColumnValueExtractorTest {
     @Test
     void testConvert() {
         final BigDecimal bigDecimalValue = BigDecimal.valueOf(10);
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING, bigDecimalValue);
+        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
+                new PropertyToDecimalColumnValueExtractor.ConvertedResult(bigDecimalValue));
         final BigDecimalLiteral result = (BigDecimalLiteral) extractor.mapValue(null);
         assertThat(result.getValue(), equalTo(BigDecimal.valueOf(10)));
     }
@@ -43,46 +44,50 @@ class PropertyToDecimalColumnValueExtractorTest {
     @Test
     void testOverflowException() {
         final BigDecimal bigDecimalValue = BigDecimal.valueOf(100);
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING, bigDecimalValue);
+        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
+                new PropertyToDecimalColumnValueExtractor.ConvertedResult(bigDecimalValue));
         final OverflowException exception = assertThrows(OverflowException.class, () -> extractor.mapValue(null));
         assertThat(exception.getMessage(), equalTo(
-                "The input value exceeded the size of the EXASOL_COLUMN DECIMAL column. You can either increase the DECIMAL precision of this column or set the overflow behaviour to NULL."));
+                "E-VSD-34: An input value exceeded the size of the DECIMAL column 'EXASOL_COLUMN'. Known mitigations:\n* Increase the decimalPrecision of this column in your mapping definition.\n* Set the overflow behaviour to NULL."));
     }
 
     @Test
     void testOverflowNull() {
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING, BigDecimal.valueOf(100));
+        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING,
+                new PropertyToDecimalColumnValueExtractor.ConvertedResult(BigDecimal.valueOf(100)));
         final ValueExpression valueExpression = extractor.mapValue(null);
         assertThat(valueExpression, instanceOf(NullLiteral.class));
     }
 
     @Test
     void testNaNHandlingException() {
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING, null);
+        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
+                new PropertyToDecimalColumnValueExtractor.NotNumericResult("test"));
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
                 () -> extractor.mapValue(null));
         assertThat(exception.getMessage(), equalTo(
-                "The input value was no number. Try using a different mapping or ignore this error by setting notNumericBehaviour = \"null\"."));
+                "E-VSD-33: Could not convert 'test' to decimal column ('EXASOL_COLUMN'). Known mitigations:\n* Try using a different mapping.\n* Ignore this error by setting 'notNumericBehaviour' to 'null'."));
     }
 
     @Test
     void testNaNHandlingNull() {
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING, null);
+        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING,
+                new PropertyToDecimalColumnValueExtractor.NotNumericResult("test"));
         final ValueExpression valueExpression = extractor.mapValue(null);
         assertThat(valueExpression, instanceOf(NullLiteral.class));
     }
 
     private static class ToDecimalExtractorStub extends PropertyToDecimalColumnValueExtractor<Object> {
-        private final BigDecimal value;
+        private final ConversionResult result;
 
-        public ToDecimalExtractorStub(final PropertyToDecimalColumnMapping column, final BigDecimal value) {
+        public ToDecimalExtractorStub(final PropertyToDecimalColumnMapping column, final ConversionResult result) {
             super(column);
-            this.value = value;
+            this.result = result;
         }
 
         @Override
-        protected BigDecimal mapValueToDecimal(final DocumentNode<Object> documentValue) {
-            return this.value;
+        protected ConversionResult mapValueToDecimal(final DocumentNode<Object> documentValue) {
+            return this.result;
         }
     }
 }

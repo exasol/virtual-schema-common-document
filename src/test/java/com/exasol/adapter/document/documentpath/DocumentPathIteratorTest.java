@@ -1,8 +1,7 @@
 package com.exasol.adapter.document.documentpath;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.*;
@@ -101,7 +100,7 @@ class DocumentPathIteratorTest {
         final IllegalStateException exception = assertThrows(IllegalStateException.class,
                 () -> next.getIndexFor(otherPath));
         assertThat(exception.getMessage(),
-                equalTo("The requested path does not match the path that this iterator unwinds."));
+                startsWith("F-VSD-31: The requested path does not match the path that this iterator unwinds."));
     }
 
     @Test
@@ -115,6 +114,6 @@ class DocumentPathIteratorTest {
         final PathIterationStateProvider next = iterator.next();
         final IllegalStateException exception = assertThrows(IllegalStateException.class,
                 () -> next.getIndexFor(tooLongPath));
-        assertThat(exception.getMessage(), equalTo("The requested path is longer than the unwinded one."));
+        assertThat(exception.getMessage(), startsWith("F-VSD-67: The requested path is longer than the unwinded one."));
     }
 }

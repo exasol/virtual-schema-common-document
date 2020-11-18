@@ -5,6 +5,7 @@ import static com.exasol.sql.expression.ExpressionTerm.column;
 
 import com.exasol.adapter.document.literalconverter.SqlLiteralToValueExpressionConverter;
 import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator;
+import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.*;
 
 /**
@@ -72,11 +73,13 @@ public class QueryPredicateToBooleanExpressionConverter {
                 return ComparisonOperator.NOT_EQUAL;
             case LIKE:
             case NOT_LIKE:
-                throw new UnsupportedOperationException(
-                        "F-VSD-5 The current version of virtual-schemas does not support LIKE and NOT LIKE as post-selection.");
+                throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-5").message(
+                        "The current version of virtual-schemas does not support LIKE and NOT LIKE as post-selection.")
+                        .mitigation("Please change your query.").toString());
             default:
                 throw new UnsupportedOperationException(
-                        "F-VSD-4: Converting " + operator + "is not yet implemented. Please open a ticket.");
+                        ExaError.messageBuilder("F-VSD-4").message("Converting {{OPERATOR}} is not yet implemented.")
+                                .ticketMitigation().toString());
             }
         }
 

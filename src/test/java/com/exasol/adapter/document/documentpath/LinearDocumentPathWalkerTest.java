@@ -2,6 +2,7 @@ package com.exasol.adapter.document.documentpath;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Map;
@@ -31,7 +32,6 @@ class LinearDocumentPathWalkerTest {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addArrayAll().build();
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new LinearDocumentPathWalker<>(pathExpression));
-        assertThat(exception.getMessage(), equalTo(
-                "The given path is not a linear path. You can either remove the ArrayAllSegments from path or use a DocumentPathWalker."));
+        assertThat(exception.getMessage(), startsWith("F-VSD-28: The given path is not a linear path."));
     }
 }
