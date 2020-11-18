@@ -31,6 +31,13 @@ class DocumentAdapterPropertiesTest {
     }
 
     @Test
+    void testGetMappingDefinitionDoesNotRemovesPrefixStartingWithBuckets() {
+        final DocumentAdapterProperties properties = new DocumentAdapterProperties(
+                new AdapterProperties(Map.of(MAPPING_KEY, "/buckets-1" + MAPPING_PATH)));
+        assertThat(properties.getMappingDefinition(), equalTo("/buckets-1" + MAPPING_PATH));
+    }
+
+    @Test
     void testEmptyMapping() {
         final DocumentAdapterProperties properties = new DocumentAdapterProperties(
                 new AdapterProperties(Map.of(MAPPING_KEY, "")));

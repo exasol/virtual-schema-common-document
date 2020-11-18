@@ -9,7 +9,7 @@ import com.exasol.errorreporting.ExaError;
 public class DocumentAdapterProperties {
     private static final String MAPPING_KEY = "MAPPING";
     private static final String MAX_PARALLEL_UDFS_KEY = "MAX_PARALLEL_UDFS";
-    private static final String BUCKETS_PREFIX = "/buckets";
+    private static final String BUCKETS_PREFIX = "/buckets/";
     private final AdapterProperties properties;
 
     /**
@@ -50,7 +50,7 @@ public class DocumentAdapterProperties {
                             .toString());
         }
         if (property.startsWith(BUCKETS_PREFIX)) {
-            return property.replaceFirst(BUCKETS_PREFIX, "");
+            return property.replaceFirst(BUCKETS_PREFIX, "/");
         } else {
             return property;
         }
