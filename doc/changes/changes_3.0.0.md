@@ -11,6 +11,7 @@ Code name: Added optional SOURCE_REFERENCE column
 * #49: Moved test resources to dynamodb virtual schema
 * #48: Made schema validation errors more readable
 * #37: Used unified error codes
+* #47: Allowed `buckets/` prefix for `MAPPING` property
 
 ## Bugfixes
 
