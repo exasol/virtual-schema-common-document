@@ -12,10 +12,9 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <junit.version>5.6.2</junit.version>
-        <junit.platform.version>1.6.2</junit.platform.version>
+        <junit.version>5.7.0</junit.version>
         <jacoco.version>0.8.5</jacoco.version>
-        <vscommon.version>11.0.0</vscommon.version>
+        <vscommon.version>13.0.0</vscommon.version>
         <gpg.skip>true</gpg.skip>
         <surefire.and.failsafe.plugin.version>3.0.0-M4</surefire.and.failsafe.plugin.version>
     </properties>
@@ -117,7 +116,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.5.15</version>
+            <version>3.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -387,7 +386,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>0.2.0</version>
+                <version>0.3.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -397,9 +396,56 @@
                 </executions>
                 <configuration>
                     <modules>
+                        <module>integration_tests</module>
+                        <module>maven_central</module>
                     </modules>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.8</version>
+                <configuration>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                    <serverId>ossrh</serverId>
+                    <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>deploy</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- <plugin>
+                <groupId>org.jasig.maven</groupId>
+                <artifactId>maven-notice-plugin</artifactId>
+                <version>1.1.1</version>
+                <configuration>
+                    <noticeTemplate>NOTICE.template</noticeTemplate>
+                    <licenseMapping>
+                        <param>https://source.jasig.org/licenses/license-mappings.xml</param>
+                    </licenseMapping>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin> -->
         </plugins>
         <testResources>
             <testResource>

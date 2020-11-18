@@ -244,6 +244,12 @@ public abstract class VoidSqlNodeVisitor implements SqlNodeVisitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(final SqlFunctionAggregateListagg sqlFunctionAggregateListagg) throws AdapterException {
+        visitUnimplemented();
+        return null;
+    }
+
     /**
      * This method is called when the specific visit method for a type was not implemented.
      */
