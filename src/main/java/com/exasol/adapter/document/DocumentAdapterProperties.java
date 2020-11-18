@@ -9,6 +9,7 @@ import com.exasol.errorreporting.ExaError;
 public class DocumentAdapterProperties {
     private static final String MAPPING_KEY = "MAPPING";
     private static final String MAX_PARALLEL_UDFS_KEY = "MAX_PARALLEL_UDFS";
+    private static final String BUCKETS_PREFIX = "/buckets/";
     private final AdapterProperties properties;
 
     /**
@@ -48,7 +49,11 @@ public class DocumentAdapterProperties {
                             .mitigation("Please set MAPPING to the path to your schema mapping files in the BucketFS.")
                             .toString());
         }
-        return property;
+        if (property.startsWith(BUCKETS_PREFIX)) {
+            return property.replaceFirst(BUCKETS_PREFIX, "/");
+        } else {
+            return property;
+        }
     }
 
     /**
@@ -66,7 +71,8 @@ public class DocumentAdapterProperties {
         } else {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-16")
                     .message("Invalid value {{VALUE}} for property MAX_PARALLEL_UDFS.")
-                    .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1.")
+                    .parameter("VALUE", propertyValue)
+                    .mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1 or -1 for no limit.")
                     .toString());
         }
     }
@@ -80,7 +86,8 @@ public class DocumentAdapterProperties {
             } catch (final NumberFormatException exception) {
                 throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-17")
                         .message("Invalid non-integer value {{VALUE}} for property MAX_PARALLEL_UDFS. ")
-                        .parameter("VALUE", propertyValue).mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1.")
+                        .parameter("VALUE", propertyValue)
+                        .mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1 or -1 for no limit.")
                         .toString());
             }
         }
