@@ -9,7 +9,7 @@ import com.exasol.errorreporting.ExaError;
 public class DocumentAdapterProperties {
     private static final String MAPPING_KEY = "MAPPING";
     private static final String MAX_PARALLEL_UDFS_KEY = "MAX_PARALLEL_UDFS";
-    public static final String BUCKETS_PREFIX = "/buckets";
+    private static final String BUCKETS_PREFIX = "/buckets";
     private final AdapterProperties properties;
 
     /**
