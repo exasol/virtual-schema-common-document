@@ -1,4 +1,4 @@
-# Virtual Schema Common Document 3.0.0, released 2020-XX-XX
+# Virtual Schema Common Document 3.0.0, released 2020-11-18
 
 Code name: Added optional SOURCE_REFERENCE column
 
@@ -18,10 +18,10 @@ Code name: Added optional SOURCE_REFERENCE column
 * #44: Correct data types for empty result table
 
 ## Dependency updates
- * Added `com.exasol:project-keeper-maven-plugin` 0.2.0
+ * Added `com.exasol:project-keeper-maven-plugin` 0.3.0
  * Updated `com.exasol:sql-statement-builder` from 4.1.0 to 4.3.0
  * Updated `org.logicng:logicng` from 2.0.0 to 2.0.2
- * Updated `org.mockito:mockito-core` from 3.5.13 to 3.5.15
+ * Updated `org.mockito:mockito-core` from 3.5.13 to 3.6.0
  * Removed `com.exasol:exasol-testcontainers`
  * Added `com.exasol:error-reporting-java` 0.1.2
  * Removed `com.exasol:junit-platform-runner`
@@ -29,4 +29,6 @@ Code name: Added optional SOURCE_REFERENCE column
  * Removed `org.jacoco:org.jacoco.agent`
  * Removed `org.jacoco:org.jacoco.core`
  * Removed `org.apache.xmlrpc:xmlrpc-client`
+ * Updated `org.junit.jupiter:junit-jupiter-engine` from 5.6.2 to 5.7.0 
+ * Updated `org.junit.jupiter:junit-jupiter-params` from 5.6.2 to 5.7.0
 
