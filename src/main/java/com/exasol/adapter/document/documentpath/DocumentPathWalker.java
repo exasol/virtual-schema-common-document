@@ -3,9 +3,7 @@ package com.exasol.adapter.document.documentpath;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import com.exasol.adapter.document.documentnode.DocumentArray;
-import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.DocumentObject;
+import com.exasol.adapter.document.documentnode.*;
 
 /**
  * This class walks a given path defined in {@link DocumentPathExpression} through a {@link DocumentNode} structure.
@@ -34,24 +32,23 @@ public class DocumentPathWalker<VisitorType> {
      * @return document's attribute described in {@link DocumentPathExpression} or an empty {@link Optional} if the
      *         defined path does not exist in the given document
      */
-    public Optional<DocumentNode<VisitorType>> walkThroughDocument(final DocumentNode<VisitorType> rootNode) {
+    public Optional<DocumentNode> walkThroughDocument(final DocumentNode rootNode) {
         return this.performStep(rootNode, 0);
     }
 
-    private Optional<DocumentNode<VisitorType>> performStep(final DocumentNode<VisitorType> thisNode,
-            final int position) {
+    private Optional<DocumentNode> performStep(final DocumentNode thisNode, final int position) {
         if (this.pathExpression.size() <= position) {
             return Optional.of(thisNode);
         }
-        final BiFunction<DocumentNode<VisitorType>, DocumentPathExpression, Optional<DocumentNode<VisitorType>>> stepper = getStepperFor(
+        final BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper = getStepperFor(
                 this.pathExpression.getSegments().get(position));
         return runTraverseStepper(stepper, thisNode, position);
     }
 
-    private Optional<DocumentNode<VisitorType>> runTraverseStepper(
-            final BiFunction<DocumentNode<VisitorType>, DocumentPathExpression, Optional<DocumentNode<VisitorType>>> traverseStepper,
-            final DocumentNode<VisitorType> thisNode, final int position) {
-        final Optional<DocumentNode<VisitorType>> nextNode = traverseStepper.apply(thisNode,
+    private Optional<DocumentNode> runTraverseStepper(
+            final BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> traverseStepper,
+            final DocumentNode thisNode, final int position) {
+        final Optional<DocumentNode> nextNode = traverseStepper.apply(thisNode,
                 this.pathExpression.getSubPath(0, position + 1));
         if (nextNode.isEmpty()) {
             return Optional.empty();
@@ -61,7 +58,7 @@ public class DocumentPathWalker<VisitorType> {
     }
 
     @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
-    private BiFunction<DocumentNode<VisitorType>, DocumentPathExpression, Optional<DocumentNode<VisitorType>>> getStepperFor(
+    private BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> getStepperFor(
             final PathSegment pathSegment) {
         final WalkVisitor<VisitorType> visitor = new WalkVisitor<>();
         pathSegment.accept(visitor);
@@ -70,7 +67,7 @@ public class DocumentPathWalker<VisitorType> {
 
     @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
     private class WalkVisitor<VisitorType> implements PathSegmentVisitor {
-        BiFunction<DocumentNode<VisitorType>, DocumentPathExpression, Optional<DocumentNode<VisitorType>>> stepper;
+        BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper;
 
         @Override
         public void visit(final ObjectLookupPathSegment objectLookupPathSegment) {
@@ -79,7 +76,7 @@ public class DocumentPathWalker<VisitorType> {
                 if (!(thisNode instanceof DocumentObject)) {
                     return Optional.empty();
                 }
-                final DocumentObject<VisitorType> thisObject = (DocumentObject<VisitorType>) thisNode;
+                final DocumentObject thisObject = (DocumentObject) thisNode;
                 if (!thisObject.hasKey(key)) {
                     return Optional.empty();
                 }
@@ -93,7 +90,7 @@ public class DocumentPathWalker<VisitorType> {
                 if (!(thisNode instanceof DocumentArray)) {
                     return Optional.empty();
                 }
-                final DocumentArray<VisitorType> thisArray = (DocumentArray<VisitorType>) thisNode;
+                final DocumentArray thisArray = (DocumentArray) thisNode;
                 if (thisArray.size() < arrayLookupPathSegment.getLookupIndex()) {
                     return Optional.empty();
                 }
@@ -107,13 +104,13 @@ public class DocumentPathWalker<VisitorType> {
                 if (!(thisNode instanceof DocumentArray)) {
                     return Optional.empty();
                 }
-                final DocumentArray<VisitorType> thisArray = (DocumentArray<VisitorType>) thisNode;
+                final DocumentArray thisArray = (DocumentArray) thisNode;
                 final int iterationIndex = DocumentPathWalker.this.iterationStateProvider.getIndexFor(pathToThisNode);
                 return Optional.of(thisArray.getValue(iterationIndex));
             };
         }
 
-        public BiFunction<DocumentNode<VisitorType>, DocumentPathExpression, Optional<DocumentNode<VisitorType>>> getStepper() {
+        public BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> getStepper() {
             return this.stepper;
         }
     }

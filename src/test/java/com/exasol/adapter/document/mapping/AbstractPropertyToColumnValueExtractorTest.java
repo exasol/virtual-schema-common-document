@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
-import com.exasol.adapter.document.documentnode.MockObjectNode;
-import com.exasol.adapter.document.documentnode.MockValueNode;
+import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
+import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.StaticDocumentPathIterator;
 import com.exasol.sql.expression.NullLiteral;
@@ -22,16 +22,16 @@ import com.exasol.sql.expression.ValueExpression;
 class AbstractPropertyToColumnValueExtractorTest {
 
     public static final String KEY = "isbn";
-    public static final MockValueNode EXPECTED_VALUE = new MockValueNode("testValue");
-    private static final FetchedDocument<Object> STUB_DOCUMENT = new FetchedDocument<>(
-            new MockObjectNode(Map.of(KEY, EXPECTED_VALUE)), "test source");
+    public static final StringHolderNode EXPECTED_VALUE = new StringHolderNode("testValue");
+    private static final FetchedDocument STUB_DOCUMENT = new FetchedDocument(
+            new ObjectHolderNode(Map.of(KEY, EXPECTED_VALUE)), "test source");
 
     @Test
     void testLookup() {
         final DocumentPathExpression sourcePath = DocumentPathExpression.builder().addObjectLookup(KEY).build();
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.ABORT);
-        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(columnMappingDefinition);
+        final AbstractPropertyToColumnValueExtractor extractor = getMock(columnMappingDefinition);
         extractor.extractColumnValue(STUB_DOCUMENT, new StaticDocumentPathIterator());
         verify(extractor).mapValue(EXPECTED_VALUE);
     }
@@ -42,7 +42,7 @@ class AbstractPropertyToColumnValueExtractorTest {
                 .build();
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.NULL);
-        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(columnMappingDefinition);
+        final AbstractPropertyToColumnValueExtractor extractor = getMock(columnMappingDefinition);
         final ValueExpression valueExpression = extractor.extractColumnValue(STUB_DOCUMENT,
                 new StaticDocumentPathIterator());
         assertThat(valueExpression, instanceOf(NullLiteral.class));
@@ -54,7 +54,7 @@ class AbstractPropertyToColumnValueExtractorTest {
                 .build();
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.ABORT);
-        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(columnMappingDefinition);
+        final AbstractPropertyToColumnValueExtractor extractor = getMock(columnMappingDefinition);
         final StaticDocumentPathIterator pathIterator = new StaticDocumentPathIterator();
         assertThrows(SchemaMappingException.class, () -> extractor.extractColumnValue(STUB_DOCUMENT, pathIterator));
     }
@@ -64,7 +64,7 @@ class AbstractPropertyToColumnValueExtractorTest {
         final String columnName = "name";
         final MockPropertyToColumnMapping mappingDefinition = new MockPropertyToColumnMapping(columnName,
                 DocumentPathExpression.empty(), MappingErrorBehaviour.ABORT);
-        final AbstractPropertyToColumnValueExtractor<Object> extractor = getMock(mappingDefinition);
+        final AbstractPropertyToColumnValueExtractor extractor = getMock(mappingDefinition);
         when(extractor.mapValue(any())).thenThrow(new ColumnValueExtractorException("mocMessage", mappingDefinition));
         final StaticDocumentPathIterator pathIterator = new StaticDocumentPathIterator();
         final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
@@ -72,8 +72,7 @@ class AbstractPropertyToColumnValueExtractorTest {
         assertThat(exception.getCausingColumn().getExasolColumnName(), equalTo(columnName));
     }
 
-    private AbstractPropertyToColumnValueExtractor<Object> getMock(
-            final MockPropertyToColumnMapping columnMappingDefinition) {
+    private AbstractPropertyToColumnValueExtractor getMock(final MockPropertyToColumnMapping columnMappingDefinition) {
         return mock(AbstractPropertyToColumnValueExtractor.class, Mockito.withSettings()
                 .useConstructor(columnMappingDefinition).defaultAnswer(Mockito.CALLS_REAL_METHODS));
     }

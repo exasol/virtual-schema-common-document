@@ -15,7 +15,7 @@ public class PropertyToColumnMappingBuilderQuickAccess {
         return builder;
     }
 
-    public static PropertyToColumnMapping.Builder getColumnMappingExample() {
+    public static PropertyToJsonColumnMapping.Builder getColumnMappingExample() {
         return PropertyToJsonColumnMapping.builder().exasolColumnName("test")
                 .pathToSourceProperty(DocumentPathExpression.empty()).varcharColumnSize(10)
                 .lookupFailBehaviour(MappingErrorBehaviour.ABORT).overflowBehaviour(MappingErrorBehaviour.ABORT);

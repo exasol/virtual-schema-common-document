@@ -4,45 +4,28 @@ package com.exasol.adapter.document.mapping;
  * This class is a factory for {@link ColumnValueExtractor}s.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public class ColumnValueExtractorFactory<DocumentVisitorType> {
-    private final PropertyToColumnValueExtractorFactory<DocumentVisitorType> propertyToColumnValueExtractorFactory;
-
-    /**
-     * Create an instance of {@link ColumnValueExtractorFactory}.
-     * 
-     * @param propertyToColumnValueExtractorFactory {@link PropertyToColumnValueExtractorFactory} for building
-     *                                              {@link AbstractPropertyToColumnValueExtractor}s
-     */
-    public ColumnValueExtractorFactory(
-            final PropertyToColumnValueExtractorFactory<DocumentVisitorType> propertyToColumnValueExtractorFactory) {
-        this.propertyToColumnValueExtractorFactory = propertyToColumnValueExtractorFactory;
-    }
-
+public class ColumnValueExtractorFactory {
     /**
      * Builds a {@link ColumnValueExtractor} for a given {@link ColumnMapping}.
      * 
      * @param columnMapping {@link ColumnMapping} that builds the {@link ColumnValueExtractor}.
      * @return built {@link ColumnValueExtractor}
      */
-    public ColumnValueExtractor<DocumentVisitorType> getValueExtractorForColumn(final ColumnMapping columnMapping) {
-        final Visitor<DocumentVisitorType> visitor = new Visitor<>(this.propertyToColumnValueExtractorFactory);
+    public ColumnValueExtractor getValueExtractorForColumn(final ColumnMapping columnMapping) {
+        final Visitor visitor = new Visitor();
         columnMapping.accept(visitor);
         return visitor.getExtractor();
     }
 
-    private static class Visitor<DocumentVisitorType> implements ColumnMappingVisitor {
-        private final PropertyToColumnValueExtractorFactory<DocumentVisitorType> propertyToColumnValueExtractorFactory;
-        private ColumnValueExtractor<DocumentVisitorType> extractor;
+    private static class Visitor implements ColumnMappingVisitor {
+        private ColumnValueExtractor extractor;
 
-        private Visitor(
-                final PropertyToColumnValueExtractorFactory<DocumentVisitorType> propertyToColumnValueExtractorFactory) {
-            this.propertyToColumnValueExtractorFactory = propertyToColumnValueExtractorFactory;
+        private Visitor() {
         }
 
         @Override
         public void visit(final PropertyToColumnMapping propertyToColumnMapping) {
-            this.extractor = this.propertyToColumnValueExtractorFactory
-                    .getValueExtractorForColumn(propertyToColumnMapping);
+            this.extractor = PropertyToColumnValueExtractorFactory.getValueExtractorForColumn(propertyToColumnMapping);
         }
 
         @Override
@@ -55,7 +38,7 @@ public class ColumnValueExtractorFactory<DocumentVisitorType> {
             this.extractor = new SourceReferenceColumnValueExtractor<>();
         }
 
-        public ColumnValueExtractor<DocumentVisitorType> getExtractor() {
+        public ColumnValueExtractor getExtractor() {
             return this.extractor;
         }
     }

@@ -6,7 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
-import com.exasol.adapter.document.documentnode.MockValueNode;
+import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.sql.expression.IntegerLiteral;
@@ -31,8 +31,7 @@ class IterationIndexColumnValueExtractorTest {
     @Test
     void testExtractColumnValue() {
         final IntegerLiteral intValue = (IntegerLiteral) EXTRACTOR
-                .extractColumnValue(new FetchedDocument<>(new MockValueNode(""), ""),
-                this.ITERATION_STATE_PROVIDER);
+                .extractColumnValue(new FetchedDocument(new StringHolderNode(""), ""), this.ITERATION_STATE_PROVIDER);
         assertThat(intValue.getValue(), equalTo(ITERATION_INDEX));
     }
 }

@@ -12,12 +12,11 @@ import com.exasol.sql.expression.ValueExpression;
 
 /**
  * This class is the abstract basis for mapping a property of a document to an Exasol column. It provides functionality
- * for extracting the the property described by the path in the {@link PropertyToColumnMapping}. The conversion of the
- * value is delegated to the implementation using the abstract method {@link #mapValue(DocumentNode)}.
+ * for extracting the property described by the path in the {@link PropertyToColumnMapping}. The conversion of the value
+ * is delegated to the implementation using the abstract method {@link #mapValue(DocumentNode)}.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public abstract class AbstractPropertyToColumnValueExtractor<DocumentVisitorType>
-        implements ColumnValueExtractor<DocumentVisitorType> {
+public abstract class AbstractPropertyToColumnValueExtractor implements ColumnValueExtractor {
     private final PropertyToColumnMapping column;
 
     /**
@@ -31,12 +30,11 @@ public abstract class AbstractPropertyToColumnValueExtractor<DocumentVisitorType
     }
 
     @Override
-    public ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
+    public ValueExpression extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
-        final DocumentPathWalker<DocumentVisitorType> walker = new DocumentPathWalker<>(
-                this.column.getPathToSourceProperty(), arrayAllIterationState);
-        final Optional<DocumentNode<DocumentVisitorType>> dynamodbProperty = walker
-                .walkThroughDocument(document.getRootDocumentNode());
+        final DocumentPathWalker<Object> walker = new DocumentPathWalker<>(this.column.getPathToSourceProperty(),
+                arrayAllIterationState);
+        final Optional<DocumentNode> dynamodbProperty = walker.walkThroughDocument(document.getRootDocumentNode());
         if (dynamodbProperty.isEmpty()) {
             if (this.column.getLookupFailBehaviour() == MappingErrorBehaviour.NULL) {
                 return NullLiteral.nullLiteral();
@@ -52,25 +50,11 @@ public abstract class AbstractPropertyToColumnValueExtractor<DocumentVisitorType
     }
 
     /**
-     * Get an excerpt of a string value for error reporting.
-     * 
-     * @param value string value
-     * @return excerpt if string was longer than 50 chars. Otherwise the original string.
-     */
-    protected String getExcerpt(final String value) {
-        if (value.length() > 50) {
-            return value.substring(0, 50) + "...";
-        } else {
-            return value;
-        }
-    }
-
-    /**
      * Converts a document property into an Exasol {@link ValueExpression}.
      *
      * @param documentValue the document value specified in the columns path expression to be converted
      * @return the conversion result
      * @throws ColumnValueExtractorException if the value can't be mapped
      */
-    protected abstract ValueExpression mapValue(DocumentNode<DocumentVisitorType> documentValue);
+    protected abstract ValueExpression mapValue(DocumentNode documentValue);
 }

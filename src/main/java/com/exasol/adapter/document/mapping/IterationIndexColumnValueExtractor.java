@@ -9,8 +9,7 @@ import com.exasol.sql.expression.ValueExpression;
  * This class extracts the current array all iteration index as {@link ValueExpression}.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public class IterationIndexColumnValueExtractor<DocumentVisitorType>
-        implements ColumnValueExtractor<DocumentVisitorType> {
+public class IterationIndexColumnValueExtractor<DocumentVisitorType> implements ColumnValueExtractor {
     private final IterationIndexColumnMapping column;
 
     /**
@@ -23,7 +22,7 @@ public class IterationIndexColumnValueExtractor<DocumentVisitorType>
     }
 
     @Override
-    public ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
+    public ValueExpression extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
         final int arrayIndex = arrayAllIterationState.getIndexFor(this.column.getTablesPath());
         return IntegerLiteral.of(arrayIndex);

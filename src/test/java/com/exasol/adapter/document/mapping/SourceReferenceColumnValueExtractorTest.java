@@ -13,7 +13,7 @@ class SourceReferenceColumnValueExtractorTest {
     @Test
     void test() {
         final String sourcePath = "test source";
-        final FetchedDocument<Object> document = new FetchedDocument<>(null, sourcePath);
+        final FetchedDocument document = new FetchedDocument(null, sourcePath);
         assertThat(EXTRACTOR.extractColumnValue(document, null).toString(), equalTo(sourcePath));
     }
 }

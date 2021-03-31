@@ -1,8 +1,6 @@
 package com.exasol.adapter.document.documentpath;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import com.exasol.adapter.document.documentnode.DocumentArray;
 import com.exasol.adapter.document.documentnode.DocumentNode;
@@ -20,7 +18,7 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
     protected final DocumentPathExpression pathOfThisIterator;
     private final int arraySize;
     private final DocumentPathExpression pathOfNextIterator;
-    private final DocumentArray<VisitorType> arrayToIterate;
+    private final DocumentArray arrayToIterate;
     private int currentIndex = -1;
     private Iterator<PathIterationStateProvider> nestedIterator;
 
@@ -30,7 +28,7 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
      * @param path     path definition used for extracting the {@link ArrayAllPathSegment}s to iterate
      * @param document document used for reading the array sizes
      */
-    public LoopDocumentPathIterator(final DocumentPathExpression path, final DocumentNode<VisitorType> document) {
+    public LoopDocumentPathIterator(final DocumentPathExpression path, final DocumentNode document) {
         final int indexOfFirstArrayAllSegment = path.indexOfFirstArrayAllSegment();
         this.pathOfThisIterator = path.getSubPath(0, indexOfFirstArrayAllSegment + 1);
         this.pathOfNextIterator = path.getSubPath(indexOfFirstArrayAllSegment + 1, path.size());
@@ -39,14 +37,13 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
         this.arraySize = this.arrayToIterate == null ? 0 : this.arrayToIterate.size();
     }
 
-    private DocumentArray<VisitorType> getArrayToIterate(final DocumentNode<VisitorType> document,
-            final DocumentPathExpression pathToThisArray) {
-        final Optional<DocumentNode<VisitorType>> documentArray = new LinearDocumentPathWalker<VisitorType>(
-                pathToThisArray).walkThroughDocument(document);
+    private DocumentArray getArrayToIterate(final DocumentNode document, final DocumentPathExpression pathToThisArray) {
+        final Optional<DocumentNode> documentArray = new LinearDocumentPathWalker<VisitorType>(pathToThisArray)
+                .walkThroughDocument(document);
         if (documentArray.isEmpty()) {
             return null;
         } else {
-            return (DocumentArray<VisitorType>) documentArray.get();
+            return (DocumentArray) documentArray.get();
         }
     }
 
@@ -90,8 +87,8 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
     }
 
     private Iterator<PathIterationStateProvider> getNestedIteratorAtIndex(final int index) {
-        final DocumentNode<VisitorType> subDocument = this.arrayToIterate.getValue(index);
-        return new DocumentPathIteratorFactory<VisitorType>(this.pathOfNextIterator, subDocument).iterator();
+        final DocumentNode subDocument = this.arrayToIterate.getValue(index);
+        return new DocumentPathIteratorFactory(this.pathOfNextIterator, subDocument).iterator();
     }
 
     /**
@@ -119,10 +116,9 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
                         .getSubPath(this.pathOfThisIterator.size(), pathToRequestedArrayAll.size());
                 return this.nextState.getIndexFor(remainingPathToRequestedArrayAll);
             } else {
-                throw new IllegalStateException(
-                        ExaError.messageBuilder("F-VSD-31")
-                                .message("The requested path does not match the path that this iterator unwinds.")
-                                .ticketMitigation().toString());
+                throw new IllegalStateException(ExaError.messageBuilder("F-VSD-31")
+                        .message("The requested path does not match the path that this iterator unwinds.")
+                        .ticketMitigation().toString());
             }
         }
     }

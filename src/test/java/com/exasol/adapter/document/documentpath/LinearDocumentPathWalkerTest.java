@@ -11,18 +11,18 @@ import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.MockObjectNode;
-import com.exasol.adapter.document.documentnode.MockValueNode;
+import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
+import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 
 class LinearDocumentPathWalkerTest {
 
-    private static final MockValueNode NESTED_VALUE = new MockValueNode("value");
-    private static final MockObjectNode TEST_OBJECT_NODE = new MockObjectNode(Map.of("key", NESTED_VALUE));
+    private static final StringHolderNode NESTED_VALUE = new StringHolderNode("value");
+    private static final ObjectHolderNode TEST_OBJECT_NODE = new ObjectHolderNode(Map.of("key", NESTED_VALUE));
 
     @Test
     void testWalk() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addObjectLookup("key").build();
-        final Optional<DocumentNode<Object>> result = new LinearDocumentPathWalker<>(pathExpression)
+        final Optional<DocumentNode> result = new LinearDocumentPathWalker<>(pathExpression)
                 .walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), equalTo(NESTED_VALUE));
     }

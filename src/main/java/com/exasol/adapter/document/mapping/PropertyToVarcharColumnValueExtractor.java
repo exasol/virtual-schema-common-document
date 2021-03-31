@@ -1,17 +1,18 @@
 package com.exasol.adapter.document.mapping;
 
-import com.exasol.adapter.document.documentnode.DocumentNode;
+import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
+import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.NULL;
+import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
+
+import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.NullLiteral;
-import com.exasol.sql.expression.StringLiteral;
-import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.*;
 
 /**
  * ValueMapper for {@link PropertyToVarcharColumnMapping}
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
-        extends AbstractPropertyToColumnValueExtractor<DocumentVisitorType> {
+public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToColumnValueExtractor {
     private final PropertyToVarcharColumnMapping column;
 
     /**
@@ -25,7 +26,7 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
     }
 
     @Override
-    protected final ValueExpression mapValue(final DocumentNode<DocumentVisitorType> documentValue) {
+    protected final ValueExpression mapValue(final DocumentNode documentValue) {
         final ConversionResult result = mapStringValue(documentValue);
         final String stringResult = handleResult(result);
         if (stringResult == null) {
@@ -74,8 +75,6 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    protected abstract ConversionResult mapStringValue(DocumentNode<DocumentVisitorType> dynamodbProperty);
-
     private String handleOverflowIfNecessary(final String sourceString) {
         if (sourceString == null) {
             return null;
@@ -87,18 +86,25 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
     }
 
     private String handleOverflow(final String tooLongSourceString) {
-        if (this.column.getOverflowBehaviour() == TruncateableMappingErrorBehaviour.TRUNCATE) {
+        if (this.column.getOverflowBehaviour() == TRUNCATE) {
             return tooLongSourceString.substring(0, this.column.getVarcharColumnSize());
+        } else if (this.column.getOverflowBehaviour() == NULL) {
+            return null;
         } else {
-            throw new OverflowException(
-                    ExaError.messageBuilder("E-VSD-38").message(
-                            "A value for column {{COLUMN}} exceeded the configured varcharColumnSize of {{SIZE}}.")
-                            .parameter("COLUMN", this.column.getExasolColumnName())
-                            .parameter("SIZE", this.column.getVarcharColumnSize())
-                            .mitigation("Increase 'varcharColumnSize' for this column.")
-                            .mitigation("Set 'overflowBehaviour' for this column to 'ABORT' or 'NULL'.").toString(),
+            throw new OverflowException(ExaError.messageBuilder("E-VSD-38")
+                    .message("A value for column {{COLUMN}} exceeded the configured varcharColumnSize of {{SIZE}}.")
+                    .parameter("COLUMN", this.column.getExasolColumnName())
+                    .parameter("SIZE", this.column.getVarcharColumnSize())
+                    .mitigation("Increase 'varcharColumnSize' for this column.")
+                    .mitigation("Set 'overflowBehaviour' for this column to 'TRUNCATE' or 'NULL'.").toString(),
                     this.column);
         }
+    }
+
+    private ConversionResult mapStringValue(final DocumentNode property) {
+        final ToStringVisitor toStringVisitor = new ToStringVisitor();
+        property.accept(toStringVisitor);
+        return toStringVisitor.getResult();
     }
 
     /**
@@ -107,11 +113,11 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
      *
      * @implNote public so that it is accessible from test code
      */
-    public interface ConversionResult {
+    private interface ConversionResult {
 
     }
 
-    public static class MappedStringResult implements ConversionResult {
+    private static class MappedStringResult implements ConversionResult {
         private final String value;
         private final boolean isConverted;
 
@@ -129,12 +135,12 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
         }
     }
 
-    public static class FailedConversionResult implements ConversionResult {
+    private static class FailedConversionResult implements ConversionResult {
         private final String typeName;
 
         /**
          * Create a new instance of {@link FailedConversionResult}.
-         * 
+         *
          * @param typeName name of the unsupported type
          */
         public FailedConversionResult(final String typeName) {
@@ -148,6 +154,44 @@ public abstract class PropertyToVarcharColumnValueExtractor<DocumentVisitorType>
          */
         public String getTypeName() {
             return this.typeName;
+        }
+    }
+
+    private static class ToStringVisitor implements DocumentNodeVisitor {
+        private ConversionResult result;
+
+        @Override
+        public void visit(final DocumentObject objectNode) {
+            this.result = new FailedConversionResult("object");
+        }
+
+        @Override
+        public void visit(final DocumentArray arrayNode) {
+            this.result = new FailedConversionResult("array");
+        }
+
+        @Override
+        public void visit(final DocumentStringValue stringNode) {
+            this.result = new MappedStringResult(stringNode.getValue(), false);
+        }
+
+        @Override
+        public void visit(final DocumentBigDecimalValue numberNode) {
+            this.result = new MappedStringResult(numberNode.getValue().toString(), true);
+        }
+
+        @Override
+        public void visit(final DocumentNullValue nullNode) {
+            this.result = new MappedStringResult(null, false);
+        }
+
+        @Override
+        public void visit(final DocumentBooleanValue booleanNode) {
+            this.result = new MappedStringResult(booleanNode.getValue() ? "true" : "false", true);
+        }
+
+        public ConversionResult getResult() {
+            return this.result;
         }
     }
 }

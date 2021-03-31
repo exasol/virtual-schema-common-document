@@ -8,9 +8,7 @@ import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.documentnode.MockArrayNode;
-import com.exasol.adapter.document.documentnode.MockObjectNode;
-import com.exasol.adapter.document.documentnode.MockValueNode;
+import com.exasol.adapter.document.documentnode.holder.*;
 
 class DocumentPathIteratorTest {
     private static final String KEY = "key";
@@ -19,10 +17,9 @@ class DocumentPathIteratorTest {
 
     @Test
     void testSimpleIteration() {
-        final MockObjectNode testDocument = new MockObjectNode(
-                Map.of(KEY, new MockArrayNode(List.of(new MockValueNode("value1"), new MockValueNode("value2")))));
-        final DocumentPathIteratorFactory<Object> iterable = new DocumentPathIteratorFactory<>(SINGLE_NESTED_PATH,
-                testDocument);
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY,
+                new ArrayHolderNode(List.of(new StringHolderNode("value1"), new StringHolderNode("value2")))));
+        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
         int counter = 0;
         for (final PathIterationStateProvider state : iterable) {
             assertThat(state.getIndexFor(SINGLE_NESTED_PATH), equalTo(counter));
@@ -33,9 +30,8 @@ class DocumentPathIteratorTest {
 
     @Test
     void testEmptyIteration() {
-        final MockObjectNode testDocument = new MockObjectNode(Map.of(KEY, new MockArrayNode(List.of())));
-        final DocumentPathIteratorFactory<Object> iterable = new DocumentPathIteratorFactory<>(SINGLE_NESTED_PATH,
-                testDocument);
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY, new ArrayHolderNode(List.of())));
+        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
         int counter = 0;
         for (final PathIterationStateProvider state : iterable) {
             counter++;
@@ -45,20 +41,19 @@ class DocumentPathIteratorTest {
 
     @Test
     void testNoMoreElementsException() {
-        final MockObjectNode testDocument = new MockObjectNode(Map.of(KEY, new MockArrayNode(List.of())));
-        final Iterator<PathIterationStateProvider> iterator = new DocumentPathIteratorFactory<>(SINGLE_NESTED_PATH,
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY, new ArrayHolderNode(List.of())));
+        final Iterator<PathIterationStateProvider> iterator = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH,
                 testDocument).iterator();
         assertThrows(NoSuchElementException.class, iterator::next);
     }
 
     @Test
     void testPathWithNoArrayAll() {
-        final MockObjectNode testDocument = new MockObjectNode(
-                Map.of(KEY, new MockArrayNode(List.of(new MockValueNode("value1"), new MockValueNode("value2")))));
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY,
+                new ArrayHolderNode(List.of(new StringHolderNode("value1"), new StringHolderNode("value2")))));
         final DocumentPathExpression pathWithNoArrayAll = DocumentPathExpression.builder().addObjectLookup("key")
                 .build();
-        final DocumentPathIteratorFactory<Object> iterable = new DocumentPathIteratorFactory<>(pathWithNoArrayAll,
-                testDocument);
+        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(pathWithNoArrayAll, testDocument);
         int counter = 0;
         for (final PathIterationStateProvider state : iterable) {
             counter++;
@@ -68,14 +63,13 @@ class DocumentPathIteratorTest {
 
     @Test
     void testNestedIteration() {
-        final MockObjectNode testDocument = new MockObjectNode(Map.of(KEY, new MockArrayNode(List.of(//
-                new MockArrayNode(List.of(new MockValueNode("v1"), new MockValueNode("v2"))), //
-                new MockArrayNode(List.of(new MockValueNode("v3")))//
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY, new ArrayHolderNode(List.of(//
+                new ArrayHolderNode(List.of(new StringHolderNode("v1"), new StringHolderNode("v2"))), //
+                new ArrayHolderNode(List.of(new StringHolderNode("v3")))//
         ))));
         final DocumentPathExpression doubleNestedPath = DocumentPathExpression.builder().addObjectLookup("key")
                 .addArrayAll().addArrayAll().build();
-        final DocumentPathIteratorFactory<Object> iterable = new DocumentPathIteratorFactory<>(doubleNestedPath,
-                testDocument);
+        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(doubleNestedPath, testDocument);
         int counter = 0;
         final List<String> combinations = new ArrayList<>();
         for (final PathIterationStateProvider state : iterable) {
@@ -92,9 +86,9 @@ class DocumentPathIteratorTest {
     void testUnfittingPathForGetIndexFor() {
         final DocumentPathExpression otherPath = DocumentPathExpression.builder().addObjectLookup("other").addArrayAll()
                 .build();
-        final MockObjectNode testDocument = new MockObjectNode(
-                Map.of(KEY, new MockArrayNode(List.of(new MockValueNode("value1"), new MockValueNode("value2")))));
-        final Iterator<PathIterationStateProvider> iterator = new DocumentPathIteratorFactory<>(SINGLE_NESTED_PATH,
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY,
+                new ArrayHolderNode(List.of(new StringHolderNode("value1"), new StringHolderNode("value2")))));
+        final Iterator<PathIterationStateProvider> iterator = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH,
                 testDocument).iterator();
         final PathIterationStateProvider next = iterator.next();
         final IllegalStateException exception = assertThrows(IllegalStateException.class,
@@ -107,9 +101,9 @@ class DocumentPathIteratorTest {
     void testTooLongPathForGetIndexFor() {
         final DocumentPathExpression tooLongPath = DocumentPathExpression.builder().addObjectLookup(KEY).addArrayAll()
                 .addArrayAll().build();
-        final MockObjectNode testDocument = new MockObjectNode(
-                Map.of(KEY, new MockArrayNode(List.of(new MockValueNode("value1"), new MockValueNode("value2")))));
-        final Iterator<PathIterationStateProvider> iterator = new DocumentPathIteratorFactory<>(SINGLE_NESTED_PATH,
+        final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY,
+                new ArrayHolderNode(List.of(new StringHolderNode("value1"), new StringHolderNode("value2")))));
+        final Iterator<PathIterationStateProvider> iterator = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH,
                 testDocument).iterator();
         final PathIterationStateProvider next = iterator.next();
         final IllegalStateException exception = assertThrows(IllegalStateException.class,
