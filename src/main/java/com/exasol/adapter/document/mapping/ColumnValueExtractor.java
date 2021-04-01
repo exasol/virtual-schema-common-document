@@ -8,7 +8,7 @@ import com.exasol.sql.expression.ValueExpression;
  * Interface for extracting a value specified in a {@link ColumnMapping} from a document.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public interface ColumnValueExtractor<DocumentVisitorType> {
+public interface ColumnValueExtractor {
 
     /**
      * Extracts the columns values from the given document.
@@ -19,6 +19,6 @@ public interface ColumnValueExtractor<DocumentVisitorType> {
      * @throws ColumnValueExtractorException if specified property can't be mapped and {@link MappingErrorBehaviour} is
      *                                       set to {@code EXCEPTION }
      */
-    ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
+    ValueExpression extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState);
 }

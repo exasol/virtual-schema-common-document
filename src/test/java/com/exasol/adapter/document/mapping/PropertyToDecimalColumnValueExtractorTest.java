@@ -1,93 +1,115 @@
 package com.exasol.adapter.document.mapping;
 
+import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.ABORT;
+import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.NULL;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.sql.expression.BigDecimalLiteral;
-import com.exasol.sql.expression.NullLiteral;
-import com.exasol.sql.expression.ValueExpression;
+import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.sql.expression.*;
 
 class PropertyToDecimalColumnValueExtractorTest {
 
-    private static final PropertyToDecimalColumnMapping ABORT_MAPPING = commonMappingBuilder()//
-            .overflowBehaviour(MappingErrorBehaviour.ABORT)//
-            .notNumericBehaviour(MappingErrorBehaviour.ABORT)//
-            .build();
-    private static final PropertyToDecimalColumnMapping NULL_MAPPING = commonMappingBuilder()//
-            .overflowBehaviour(MappingErrorBehaviour.NULL)//
-            .notNumericBehaviour(MappingErrorBehaviour.NULL)//
-            .build();
-
     private static PropertyToDecimalColumnMapping.Builder commonMappingBuilder() {
         return configureExampleMapping(PropertyToDecimalColumnMapping.builder())//
-                .decimalPrecision(2)//
-                .decimalScale(0);
+                .overflowBehaviour(ABORT)//
+                .notNumericBehaviour(ABORT)//
+                .decimalPrecision(8)//
+                .decimalScale(3);
+    }
+
+    static Stream<Arguments> getNonNumericTypes() {
+        return Stream.of(//
+                Arguments.of(new StringHolderNode("test")), //
+                Arguments.of(new BooleanHolderNode(true)), //
+                Arguments.of(new ObjectHolderNode(Collections.emptyMap())), //
+                Arguments.of(new ArrayHolderNode(Collections.emptyList()))//
+        );
     }
 
     @Test
-    void testConvert() {
-        final BigDecimal bigDecimalValue = BigDecimal.valueOf(10);
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.ConvertedResult(bigDecimalValue));
-        final BigDecimalLiteral result = (BigDecimalLiteral) extractor.mapValue(null);
-        assertThat(result.getValue(), equalTo(BigDecimal.valueOf(10)));
+    void testConvertBigDecimal() {
+        final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(BigDecimal.valueOf(1.23));
+        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(
+                commonMappingBuilder().build()).mapValue(numberNode);
+        assertThat(result.getValue(), equalTo(new BigDecimal("1.230")));
     }
 
     @Test
-    void testOverflowException() {
-        final BigDecimal bigDecimalValue = BigDecimal.valueOf(100);
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.ConvertedResult(bigDecimalValue));
-        final OverflowException exception = assertThrows(OverflowException.class, () -> extractor.mapValue(null));
-        assertThat(exception.getMessage(), equalTo(
-                "E-VSD-34: An input value exceeded the size of the DECIMAL column 'EXASOL_COLUMN'. Known mitigations:\n* Increase the decimalPrecision of this column in your mapping definition.\n* Set the overflow behaviour to NULL."));
+    void testConvertBigDecimalWithScaleReduction() {
+        final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(BigDecimal.valueOf(1.23));
+        final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).build();
+        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(column)
+                .mapValue(numberNode);
+        assertThat(result.getValue(), equalTo(new BigDecimal("1")));
     }
 
     @Test
-    void testOverflowNull() {
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.ConvertedResult(BigDecimal.valueOf(100)));
-        final ValueExpression valueExpression = extractor.mapValue(null);
-        assertThat(valueExpression, instanceOf(NullLiteral.class));
+    void testConvertBigDecimalWithOnlyTypeOverflow() {
+        final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(new BigDecimal("12"));
+        final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).decimalPrecision(2)
+                .build();
+        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(column)
+                .mapValue(numberNode);
+        assertThat(result.getValue(), equalTo(new BigDecimal("12")));
     }
 
     @Test
-    void testNaNHandlingException() {
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(ABORT_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.NotNumericResult("test"));
-        final ColumnValueExtractorException exception = assertThrows(ColumnValueExtractorException.class,
-                () -> extractor.mapValue(null));
-        assertThat(exception.getMessage(), equalTo(
-                "E-VSD-33: Could not convert 'test' to decimal column ('EXASOL_COLUMN'). Known mitigations:\n* Try using a different mapping.\n* Ignore this error by setting 'notNumericBehaviour' to 'null'."));
+    void testConvertBigDecimalWithPrecisionOverflow() {
+        final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(new BigDecimal("12"));
+        final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).decimalPrecision(1)
+                .build();
+        final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(column);
+        final OverflowException overflowException = assertThrows(OverflowException.class,
+                () -> valueExtractor.mapValue(numberNode));
+        assertThat(overflowException.getMessage(), startsWith("E-VSD-34"));
     }
 
     @Test
-    void testNaNHandlingNull() {
-        final ToDecimalExtractorStub extractor = new ToDecimalExtractorStub(NULL_MAPPING,
-                new PropertyToDecimalColumnValueExtractor.NotNumericResult("test"));
-        final ValueExpression valueExpression = extractor.mapValue(null);
-        assertThat(valueExpression, instanceOf(NullLiteral.class));
+    void testConvertBigDecimalWithPrecisionOverflowWithNullBehaviour() {
+        final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(new BigDecimal("12"));
+        final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).decimalPrecision(1)
+                .overflowBehaviour(NULL).build();
+        final ValueExpression result = new PropertyToDecimalColumnValueExtractor(column).mapValue(numberNode);
+        assertThat(result, instanceOf(NullLiteral.class));
     }
 
-    private static class ToDecimalExtractorStub extends PropertyToDecimalColumnValueExtractor<Object> {
-        private final ConversionResult result;
+    @ParameterizedTest
+    @MethodSource("getNonNumericTypes")
+    void testNonNumericsThrowException(final DocumentNode nonNumericNode) {
+        final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
+                commonMappingBuilder().notNumericBehaviour(ABORT).build());
+        final Exception exception = assertThrows(ColumnValueExtractorException.class,
+                () -> valueExtractor.mapValue(nonNumericNode));
+        assertThat(exception.getMessage(), startsWith("E-VSD-33"));
+    }
 
-        public ToDecimalExtractorStub(final PropertyToDecimalColumnMapping column, final ConversionResult result) {
-            super(column);
-            this.result = result;
-        }
+    @ParameterizedTest
+    @MethodSource("getNonNumericTypes")
+    void testNonNumericsConvertsToNull(final DocumentNode nonNumericNode) {
+        final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
+                commonMappingBuilder().notNumericBehaviour(NULL).build());
+        final ValueExpression result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, instanceOf(NullLiteral.class));
+    }
 
-        @Override
-        protected ConversionResult mapValueToDecimal(final DocumentNode<Object> documentValue) {
-            return this.result;
-        }
+    @ParameterizedTest
+    @CsvSource({ "NULL", "ABORT" })
+    void testNullIsAlwaysConvertedToNull(final MappingErrorBehaviour behaviour) {
+        final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
+                commonMappingBuilder().notNumericBehaviour(behaviour).build());
+        final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
+        assertThat(result, instanceOf(NullLiteral.class));
     }
 }

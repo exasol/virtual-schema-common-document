@@ -5,41 +5,32 @@ import java.util.stream.Stream;
 
 import com.exasol.ExaConnectionInformation;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
-import com.exasol.adapter.document.mapping.PropertyToColumnValueExtractorFactory;
 import com.exasol.adapter.document.mapping.SchemaMapper;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.sql.expression.ValueExpression;
 
 /**
- * Abstract basis for dialect specific {@link DataLoader}s.
+ * Implementation of the {@link DataLoader} interface.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public abstract class AbstractDataLoader<DocumentVisitorType> implements DataLoader {
+public class DataLoaderImpl implements DataLoader {
     private static final long serialVersionUID = 4631968154506118888L;
     /** @serial */
-    private final DocumentFetcher<DocumentVisitorType> documentFetcher;
+    private final DocumentFetcher documentFetcher;
 
     /**
-     * Create a new instance of {@link AbstractDataLoader}.
+     * Create a new instance of {@link DataLoaderImpl}.
      * 
      * @param documentFetcher document fetcher that provides the document data.
      */
-    public AbstractDataLoader(final DocumentFetcher<DocumentVisitorType> documentFetcher) {
+    public DataLoaderImpl(final DocumentFetcher documentFetcher) {
         this.documentFetcher = documentFetcher;
     }
-
-    /**
-     * Get a database specific {@link PropertyToColumnValueExtractorFactory}.
-     *
-     * @return database specific {@link PropertyToColumnValueExtractorFactory}
-     */
-    protected abstract PropertyToColumnValueExtractorFactory<DocumentVisitorType> getValueExtractorFactory();
 
     @Override
     public final Stream<List<ValueExpression>> run(final ExaConnectionInformation connectionInformation,
             final SchemaMappingRequest schemaMappingRequest) {
-        final SchemaMapper<DocumentVisitorType> schemaMapper = new SchemaMapper<>(schemaMappingRequest,
-                getValueExtractorFactory());
+        final SchemaMapper schemaMapper = new SchemaMapper(schemaMappingRequest);
         return this.documentFetcher.run(connectionInformation).flatMap(schemaMapper::mapRow);
     }
 }

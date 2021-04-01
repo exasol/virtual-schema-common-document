@@ -11,13 +11,9 @@ import java.util.stream.Stream;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
-import com.exasol.adapter.document.queryplan.EmptyQueryPlan;
-import com.exasol.adapter.document.queryplan.FetchQueryPlan;
-import com.exasol.adapter.document.queryplan.QueryPlan;
+import com.exasol.adapter.document.queryplan.*;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
-import com.exasol.adapter.document.querypredicate.InvolvedColumnCollector;
-import com.exasol.adapter.document.querypredicate.QueryPredicate;
-import com.exasol.adapter.document.querypredicate.QueryPredicateToBooleanExpressionConverter;
+import com.exasol.adapter.document.querypredicate.*;
 import com.exasol.adapter.metadata.DataType;
 import com.exasol.datatype.type.*;
 import com.exasol.datatype.type.Boolean;
@@ -25,26 +21,25 @@ import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.*;
 import com.exasol.sql.dql.select.Select;
 import com.exasol.sql.dql.select.rendering.SelectRenderer;
-import com.exasol.sql.expression.BooleanExpression;
-import com.exasol.sql.expression.BooleanLiteral;
-import com.exasol.sql.expression.NullLiteral;
+import com.exasol.sql.expression.*;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.rendering.StringRendererConfig;
 
 /**
  * This class builds push down SQL statement with a UDF call to {@link UdfEntryPoint}.
  * 
- * @implNote the push down statement consists of three cascaded statements.
+ * <p>
+ * The push down statement consists of three cascaded statements.
  * 
- *           Consider the following example:
+ * Consider the following example:
  *
  * 
- *           SELECT COL1 FROM (
+ * SELECT COL1 FROM (
  * 
- *           SELECT UDF(PARAMS) EMITS (COL1, COL2) FROM VALUES ((v1, 1), (v2, 2), (v3, 3)) AS P1, C GROUP BY C
+ * SELECT UDF(PARAMS) EMITS (COL1, COL2) FROM VALUES ((v1, 1), (v2, 2), (v3, 3)) AS P1, C GROUP BY C
  * 
- *           ) WHERE COL2 = X
- *
+ * ) WHERE COL2 = X
+ * </p>
  */
 public class UdfCallBuilder {
     private static final String DATA_LOADER_COLUMN = "DATA_LOADER";

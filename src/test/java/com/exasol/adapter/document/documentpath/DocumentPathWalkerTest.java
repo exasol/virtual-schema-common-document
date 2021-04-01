@@ -4,33 +4,29 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.MockArrayNode;
-import com.exasol.adapter.document.documentnode.MockObjectNode;
-import com.exasol.adapter.document.documentnode.MockValueNode;
+import com.exasol.adapter.document.documentnode.holder.*;
 
 class DocumentPathWalkerTest {
 
-    private static final MockValueNode NESTED_VALUE1 = new MockValueNode("value");
-    private static final MockValueNode NESTED_VALUE2 = new MockValueNode("value");
+    private static final StringHolderNode NESTED_VALUE1 = new StringHolderNode("value");
+    private static final StringHolderNode NESTED_VALUE2 = new StringHolderNode("value");
     private static final String ARRAY_KEY = "array_key";
     private static final String OBJECT_KEY = "array_key";
-    private static final MockArrayNode TEST_ARRAY_NODE = new MockArrayNode(List.of(NESTED_VALUE1, NESTED_VALUE2));
-    private static final MockObjectNode TEST_OBJECT_NODE = new MockObjectNode(
+    private static final ArrayHolderNode TEST_ARRAY_NODE = new ArrayHolderNode(List.of(NESTED_VALUE1, NESTED_VALUE2));
+    private static final ObjectHolderNode TEST_OBJECT_NODE = new ObjectHolderNode(
             Map.of("key", NESTED_VALUE1, OBJECT_KEY, TEST_ARRAY_NODE));
-    private static final MockObjectNode TEST_NESTED_OBJECT_NODE = new MockObjectNode(
+    private static final ObjectHolderNode TEST_NESTED_OBJECT_NODE = new ObjectHolderNode(
             Map.of(OBJECT_KEY, TEST_OBJECT_NODE));
 
     @Test
     void testWalkEmptyPath() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.empty();
-        final Optional<DocumentNode<Object>> result = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result = new DocumentPathWalker<Object>(pathExpression,
                 new StaticDocumentPathIterator()).walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), equalTo(TEST_OBJECT_NODE));
     }
@@ -38,7 +34,7 @@ class DocumentPathWalkerTest {
     @Test
     void testWalkObjectPath() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addObjectLookup("key").build();
-        final Optional<DocumentNode<Object>> result = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result = new DocumentPathWalker<Object>(pathExpression,
                 new StaticDocumentPathIterator()).walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), equalTo(NESTED_VALUE1));
     }
@@ -47,8 +43,8 @@ class DocumentPathWalkerTest {
     void testNestedObject() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addObjectLookup(OBJECT_KEY)
                 .addObjectLookup("key").build();
-        final Optional<DocumentNode<Object>> result = new DocumentPathWalker<>(pathExpression,
-                new StaticDocumentPathIterator()).walkThroughDocument(TEST_NESTED_OBJECT_NODE);
+        final Optional<DocumentNode> result = new DocumentPathWalker<>(pathExpression, new StaticDocumentPathIterator())
+                .walkThroughDocument(TEST_NESTED_OBJECT_NODE);
         assertThat(result.orElse(null), equalTo(NESTED_VALUE1));
     }
 
@@ -58,7 +54,7 @@ class DocumentPathWalkerTest {
                 .addObjectLookup("key2").build();
         final DocumentPathWalker<Object> pathWalker = new DocumentPathWalker<>(pathExpression,
                 new StaticDocumentPathIterator());
-        final Optional<DocumentNode<Object>> result = pathWalker.walkThroughDocument(TEST_OBJECT_NODE);
+        final Optional<DocumentNode> result = pathWalker.walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), is(nullValue()));
     }
 
@@ -68,14 +64,14 @@ class DocumentPathWalkerTest {
                 .build();
         final DocumentPathWalker<Object> pathWalker = new DocumentPathWalker<>(pathExpression,
                 new StaticDocumentPathIterator());
-        final Optional<DocumentNode<Object>> result = pathWalker.walkThroughDocument(TEST_OBJECT_NODE);
+        final Optional<DocumentNode> result = pathWalker.walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), is(nullValue()));
     }
 
     @Test
     void testArrayLookup() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addArrayLookup(0).build();
-        final Optional<DocumentNode<Object>> result = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result = new DocumentPathWalker<Object>(pathExpression,
                 new StaticDocumentPathIterator()).walkThroughDocument(TEST_ARRAY_NODE);
         assertThat(result.orElse(null), equalTo(NESTED_VALUE1));
     }
@@ -85,7 +81,7 @@ class DocumentPathWalkerTest {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addArrayLookup(10).build();
         final DocumentPathWalker<Object> pathWalker = new DocumentPathWalker<>(pathExpression,
                 new StaticDocumentPathIterator());
-        final Optional<DocumentNode<Object>> result = pathWalker.walkThroughDocument(TEST_ARRAY_NODE);
+        final Optional<DocumentNode> result = pathWalker.walkThroughDocument(TEST_ARRAY_NODE);
         assertThat(result.orElse(null), is(nullValue()));
     }
 
@@ -94,7 +90,7 @@ class DocumentPathWalkerTest {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addArrayLookup(10).build();
         final DocumentPathWalker<Object> pathWalker = new DocumentPathWalker<>(pathExpression,
                 new StaticDocumentPathIterator());
-        final Optional<DocumentNode<Object>> result = pathWalker.walkThroughDocument(TEST_OBJECT_NODE);
+        final Optional<DocumentNode> result = pathWalker.walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), is(nullValue()));
 
     }
@@ -102,9 +98,9 @@ class DocumentPathWalkerTest {
     @Test
     void testArrayAll() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addArrayAll().build();
-        final Optional<DocumentNode<Object>> result1 = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result1 = new DocumentPathWalker<Object>(pathExpression,
                 new PathIterationStateProviderStub(0)).walkThroughDocument(TEST_ARRAY_NODE);
-        final Optional<DocumentNode<Object>> result2 = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result2 = new DocumentPathWalker<Object>(pathExpression,
                 new PathIterationStateProviderStub(1)).walkThroughDocument(TEST_ARRAY_NODE);
         assertAll(() -> assertThat(result1.orElse(null), equalTo(NESTED_VALUE1)),
                 () -> assertThat(result2.orElse(null), equalTo(NESTED_VALUE2)));
@@ -114,9 +110,9 @@ class DocumentPathWalkerTest {
     void testNestedArrayAll() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addObjectLookup(OBJECT_KEY)
                 .addArrayAll().build();
-        final Optional<DocumentNode<Object>> result1 = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result1 = new DocumentPathWalker<Object>(pathExpression,
                 new PathIterationStateProviderStub(0)).walkThroughDocument(TEST_OBJECT_NODE);
-        final Optional<DocumentNode<Object>> result2 = new DocumentPathWalker<Object>(pathExpression,
+        final Optional<DocumentNode> result2 = new DocumentPathWalker<Object>(pathExpression,
                 new PathIterationStateProviderStub(1)).walkThroughDocument(TEST_OBJECT_NODE);
         assertAll(() -> assertThat(result1.orElse(null), equalTo(NESTED_VALUE1)),
                 () -> assertThat(result2.orElse(null), equalTo(NESTED_VALUE2)));

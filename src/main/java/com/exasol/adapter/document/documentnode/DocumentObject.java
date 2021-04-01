@@ -6,14 +6,14 @@ import java.util.Map;
  * Interface for object document nodes.
  */
 @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
-public interface DocumentObject<VisitorType> extends DocumentNode<VisitorType> {
+public interface DocumentObject extends DocumentNode {
 
     /**
      * Get a map that represents this object. The values are wrapped as document nodes.
      * 
      * @return map representing this object
      */
-    Map<String, DocumentNode<VisitorType>> getKeyValueMap();
+    Map<String, DocumentNode> getKeyValueMap();
 
     /**
      * Returns a specific object value of given key.
@@ -21,7 +21,7 @@ public interface DocumentObject<VisitorType> extends DocumentNode<VisitorType> {
      * @param key The key that shall be accessed
      * @return result wrapped in a document node.
      */
-    DocumentNode<VisitorType> get(String key);
+    DocumentNode get(String key);
 
     /**
      * Checks if this object contains a given key.
@@ -30,4 +30,9 @@ public interface DocumentObject<VisitorType> extends DocumentNode<VisitorType> {
      * @return {@code true} if key is present
      */
     boolean hasKey(String key);
+
+    @Override
+    default void accept(final DocumentNodeVisitor visitor) {
+        visitor.visit(this);
+    }
 }

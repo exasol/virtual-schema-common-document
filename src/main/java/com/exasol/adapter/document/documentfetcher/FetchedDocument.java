@@ -5,9 +5,8 @@ import com.exasol.adapter.document.documentnode.DocumentNode;
 /**
  * This class groups the fetched {@link DocumentNode} additional metadata.
  */
-@java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public class FetchedDocument<DocumentVisitorType> {
-    private final DocumentNode<DocumentVisitorType> rootDocumentNode;
+public class FetchedDocument {
+    private final DocumentNode rootDocumentNode;
     private final String sourcePath;
 
     /**
@@ -16,7 +15,7 @@ public class FetchedDocument<DocumentVisitorType> {
      * @param rootDocumentNode fetched document
      * @param sourcePath       path / name of the document's source.
      */
-    public FetchedDocument(final DocumentNode<DocumentVisitorType> rootDocumentNode, final String sourcePath) {
+    public FetchedDocument(final DocumentNode rootDocumentNode, final String sourcePath) {
         this.rootDocumentNode = rootDocumentNode;
         this.sourcePath = sourcePath;
     }
@@ -26,7 +25,7 @@ public class FetchedDocument<DocumentVisitorType> {
      * 
      * @return fetched {@link DocumentNode}
      */
-    public DocumentNode<DocumentVisitorType> getRootDocumentNode() {
+    public DocumentNode getRootDocumentNode() {
         return this.rootDocumentNode;
     }
 

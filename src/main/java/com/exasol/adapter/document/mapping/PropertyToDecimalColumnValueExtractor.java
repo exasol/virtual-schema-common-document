@@ -1,21 +1,20 @@
 package com.exasol.adapter.document.mapping;
 
+import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.BigDecimalLiteral;
-import com.exasol.sql.expression.NullLiteral;
-import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.*;
 
 /**
  * This class extracts DECIMAL values from document data. The extraction is defined using a
  * {@link PropertyToDecimalColumnMapping}.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
-        extends AbstractPropertyToColumnValueExtractor<DocumentVisitorType> {
+public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToColumnValueExtractor {
     private final PropertyToDecimalColumnMapping column;
 
     /**
@@ -29,126 +28,94 @@ public abstract class PropertyToDecimalColumnValueExtractor<DocumentVisitorType>
     }
 
     @Override
-    protected final ValueExpression mapValue(final DocumentNode<DocumentVisitorType> documentValue) {
-        final ConversionResult conversionResult = mapValueToDecimal(documentValue);
-        if (conversionResult instanceof ConvertedResult) {
-            final ConvertedResult convertedResult = (ConvertedResult) conversionResult;
-            return fitValue(convertedResult.getResult());
-        } else {
-            final NotNumericResult result = (NotNumericResult) conversionResult;
-            return handleNotNumeric(result.getValue());
+    protected final ValueExpression mapValue(final DocumentNode documentValue) {
+        final ConversionVisitor conversionVisitor = new ConversionVisitor(this.column);
+        documentValue.accept(conversionVisitor);
+        return conversionVisitor.getResult();
+    }
+
+    private static class ConversionVisitor implements DocumentNodeVisitor {
+        private final PropertyToDecimalColumnMapping column;
+        private ValueExpression result;
+
+        private ConversionVisitor(final PropertyToDecimalColumnMapping column) {
+            this.column = column;
         }
-    }
 
-    private ValueExpression fitValue(final BigDecimal decimalValue) {
-        final BigDecimal decimalWithDestinationScale = decimalValue.setScale(this.column.getDecimalScale(),
-                RoundingMode.FLOOR);
-        if (decimalWithDestinationScale.precision() > this.column.getDecimalPrecision()) {
-            return handleOverflow();
-        } else {
-            return BigDecimalLiteral.of(decimalWithDestinationScale);
+        @Override
+        public void visit(final DocumentObject jsonObjectNode) {
+            this.result = handleNotNumeric("<object>");
         }
-    }
 
-    private ValueExpression handleNotNumeric(final String value) {
-        if (this.column.getNotNumericBehaviour() == MappingErrorBehaviour.ABORT) {
-            throw new ColumnValueExtractorException(
-                    ExaError.messageBuilder("E-VSD-33")
-                            .message("Could not convert {{VALUE}} to decimal column ({{COLUMN_NAME}}).")
-                            .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
-                            .parameter("COLUMN_NAME", this.column.getExasolColumnName())
-                            .mitigation("Try using a different mapping.")
-                            .mitigation("Ignore this error by setting 'notNumericBehaviour' to 'null'.").toString(),
-                    this.column);
-        } else {
-            return NullLiteral.nullLiteral();
+        @Override
+        public void visit(final DocumentArray jsonArrayNode) {
+            this.result = handleNotNumeric("<array>");
         }
-    }
 
-    private ValueExpression handleOverflow() {
-        if (this.column.getOverflowBehaviour() == MappingErrorBehaviour.ABORT) {
-            throw new OverflowException(ExaError.messageBuilder("E-VSD-34")
-                    .message("An input value exceeded the size of the DECIMAL column {{COLUMN_NAME}}.")
-                    .parameter("COLUMN_NAME", this.column.getExasolColumnName())
-                    .mitigation("Increase the decimalPrecision of this column in your mapping definition.")
-                    .mitigation("Set the overflow behaviour to NULL.").toString(), this.column);
-        } else {
-            return NullLiteral.nullLiteral();
+        @Override
+        public void visit(final DocumentStringValue stringNode) {
+            this.result = handleNotNumeric(stringNode.getValue());
         }
-    }
 
-    /**
-     * Convert the document value to a BigDecimal. If not a number return {@code null}.
-     * 
-     * @param documentValue document value to convert
-     * @return BigDecimal representation
-     */
-    protected abstract ConversionResult mapValueToDecimal(final DocumentNode<DocumentVisitorType> documentValue);
-
-    protected ConversionResult parseString(final String value) {
-        try {
-            return new ConvertedResult(new BigDecimal(value));
-        } catch (final NumberFormatException exception) {
-            return new NotNumericResult(value);
+        @Override
+        public void visit(final DocumentBigDecimalValue numberNode) {
+            this.result = fitBigDecimalValue(numberNode.getValue());
         }
-    }
 
-    /**
-     * Interface for the result of the conversion.
-     * 
-     * @implNote public so that accessible in test-code
-     */
-    public interface ConversionResult {
+        @Override
+        public void visit(final DocumentNullValue nullNode) {
+            this.result = NullLiteral.nullLiteral();
+        }
 
-    }
+        @Override
+        public void visit(final DocumentBooleanValue booleanNode) {
+            this.result = handleNotNumeric("<" + (booleanNode.getValue() ? "true" : "false") + ">");
+        }
 
-    /**
-     * This class represents the result of a successful conversion.
-     */
-    public static class ConvertedResult implements ConversionResult {
-        private final BigDecimal result;
+        private ValueExpression handleNotNumeric(final String value) {
+            if (this.column.getNotNumericBehaviour() == MappingErrorBehaviour.ABORT) {
+                throw new ColumnValueExtractorException(
+                        ExaError.messageBuilder("E-VSD-33")
+                                .message("Could not convert {{VALUE}} to decimal column ({{COLUMN_NAME}}).")
+                                .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
+                                .parameter("COLUMN_NAME", this.column.getExasolColumnName())
+                                .mitigation("Try using a different mapping.")
+                                .mitigation("Ignore this error by setting 'notNumericBehaviour' to 'null'.").toString(),
+                        this.column);
+            } else {
+                return NullLiteral.nullLiteral();
+            }
+        }
+
+        private ValueExpression fitBigDecimalValue(final BigDecimal decimalValue) {
+            final BigDecimal decimalWithDestinationScale = decimalValue.setScale(this.column.getDecimalScale(),
+                    RoundingMode.FLOOR);
+            if (decimalWithDestinationScale.precision() > this.column.getDecimalPrecision()) {
+                return handleOverflow();
+            } else {
+                return BigDecimalLiteral.of(decimalWithDestinationScale);
+            }
+        }
+
+        private ValueExpression handleOverflow() {
+            if (this.column.getOverflowBehaviour() == MappingErrorBehaviour.ABORT) {
+                throw new OverflowException(ExaError.messageBuilder("E-VSD-34")
+                        .message("An input value exceeded the size of the DECIMAL column {{COLUMN_NAME}}.")
+                        .parameter("COLUMN_NAME", this.column.getExasolColumnName())
+                        .mitigation("Increase the decimalPrecision of this column in your mapping definition.")
+                        .mitigation("Set the overflow behaviour to NULL.").toString(), this.column);
+            } else {
+                return NullLiteral.nullLiteral();
+            }
+        }
 
         /**
-         * Create a mew instance {@link ConversionResult}.
+         * Get the result of the conversion.
          *
-         * @param result decimal result
+         * @return result of the conversion
          */
-        public ConvertedResult(final BigDecimal result) {
-            this.result = result;
-        }
-
-        /**
-         * Get the converted result.
-         * 
-         * @return converted result
-         */
-        public BigDecimal getResult() {
+        public ValueExpression getResult() {
             return this.result;
-        }
-    }
-
-    /**
-     * Result if the value was not a number.
-     */
-    public static class NotNumericResult implements ConversionResult {
-        private final String value;
-
-        /**
-         * Create a new instance of {@link NotNumericResult}.
-         *
-         * @param value string value for error message.
-         */
-        public NotNumericResult(final String value) {
-            this.value = value;
-        }
-
-        /**
-         * Get the value that is not a number.
-         * 
-         * @return string value
-         */
-        public String getValue() {
-            return this.value;
         }
     }
 }

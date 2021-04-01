@@ -33,16 +33,15 @@ public class LinearDocumentPathWalker<VisitorType> {
      * @return documents attribute described in {@link DocumentPathExpression} or an empty {@link Optional} if the path
      *         does not exist in the given document
      */
-    public Optional<DocumentNode<VisitorType>> walkThroughDocument(final DocumentNode<VisitorType> rootNode) {
+    public Optional<DocumentNode> walkThroughDocument(final DocumentNode rootNode) {
         return this.documentPathWalker.walkThroughDocument(rootNode);
     }
 
     private void checkPathIsLinear(final DocumentPathExpression pathExpression) {
         for (final PathSegment pathSegment : pathExpression.getSegments()) {
             if (pathSegment instanceof ArrayAllPathSegment) {
-                throw new IllegalArgumentException(
-                        ExaError.messageBuilder("F-VSD-28").message("The given path is not a linear path.")
-                                .ticketMitigation().toString());
+                throw new IllegalArgumentException(ExaError.messageBuilder("F-VSD-28")
+                        .message("The given path is not a linear path.").ticketMitigation().toString());
             }
         }
     }

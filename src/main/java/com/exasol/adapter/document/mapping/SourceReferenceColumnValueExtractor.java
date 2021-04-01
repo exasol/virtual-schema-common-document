@@ -9,11 +9,10 @@ import com.exasol.sql.expression.ValueExpression;
  * {@link ColumnValueExtractor} for {@link SourceReferenceColumnMapping}s.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public class SourceReferenceColumnValueExtractor<DocumentVisitorType>
-        implements ColumnValueExtractor<DocumentVisitorType> {
+public class SourceReferenceColumnValueExtractor<DocumentVisitorType> implements ColumnValueExtractor {
 
     @Override
-    public ValueExpression extractColumnValue(final FetchedDocument<DocumentVisitorType> document,
+    public ValueExpression extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
         return StringLiteral.of(document.getSourcePath());
     }
