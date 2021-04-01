@@ -40,15 +40,14 @@ public class RedundantPathEliminator {
 
     /**
      * Eliminate path expressions that are redundant when used as a projection expression.
+     * <p>
+     * The basic idea of this algorithm is to iterate over the paths with an increasing path length. In the first
+     * iteration only the paths with a length of 0 are considered. In each iteration the algorithm removes all paths
+     * that are already included in the result from allPaths.
+     * </p>
      * 
      * @param paths collection of paths
      * @return Set with redundancy free paths
-     * 
-     *         <p>
-     *         The basic idea of this algorithm is to iterate over the paths with an increasing path length. In the
-     *         first iteration only the paths with a length of 0 are considered. In each iteration the algorithm removes
-     *         all paths that are already included in the result from allPaths.
-     *         </p>
      */
     public Set<DocumentPathExpression> removeRedundantPaths(final Stream<DocumentPathExpression> paths) {
         final List<DocumentPathExpression> allPaths = paths.collect(Collectors.toCollection(LinkedList::new));
