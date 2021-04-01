@@ -29,7 +29,7 @@ import com.exasol.sql.rendering.StringRendererConfig;
  * This class builds push down SQL statement with a UDF call to {@link UdfEntryPoint}.
  * 
  * <p>
- * the push down statement consists of three cascaded statements.
+ * The push down statement consists of three cascaded statements.
  * 
  * Consider the following example:
  *

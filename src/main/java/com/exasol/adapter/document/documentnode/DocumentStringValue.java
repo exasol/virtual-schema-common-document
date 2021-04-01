@@ -1,7 +1,7 @@
 package com.exasol.adapter.document.documentnode;
 
 /**
- * Interface for null values
+ * Interface for string values
  */
 public interface DocumentStringValue extends DocumentNode {
     @Override

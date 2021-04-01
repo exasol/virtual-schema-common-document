@@ -36,9 +36,9 @@ public interface DocumentNodeVisitor {
     /**
      * Visit a {@link DocumentBigDecimalValue}.
      * 
-     * @param stringValue big decimal value to visit
+     * @param bigDecimalValue big decimal value to visit
      */
-    public void visit(DocumentBigDecimalValue stringValue);
+    public void visit(DocumentBigDecimalValue bigDecimalValue);
 
     /**
      * Visit a {@link DocumentBooleanValue}.
