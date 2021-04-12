@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.adapter.document.queryplan.*;
@@ -126,7 +127,8 @@ public class UdfCallBuilder {
                 column(CONNECTION_NAME_COLUMN));
         final SchemaMappingRequest schemaMappingRequest = new SchemaMappingRequest(
                 query.getFromTable().getPathInRemoteTable(), requiredColumns);
-        final ValueTable valueTable = buildValueTable(queryPlan.getDataLoaders(), schemaMappingRequest, udfCallSelect);
+        final ValueTable valueTable = buildValueTable(queryPlan.getDocumentFetcher(), schemaMappingRequest,
+                udfCallSelect);
         udfCallSelect.from().valueTableAs(valueTable, "T", DATA_LOADER_COLUMN, SCHEMA_MAPPING_REQUEST_COLUMN,
                 CONNECTION_NAME_COLUMN, FRAGMENT_ID_COLUMN);
         udfCallSelect.groupBy(column(FRAGMENT_ID_COLUMN));
@@ -145,14 +147,14 @@ public class UdfCallBuilder {
                 convertDataType(column.getExasolDataType()))).collect(Collectors.toList());
     }
 
-    private ValueTable buildValueTable(final List<DataLoader> dataLoaders,
+    private ValueTable buildValueTable(final List<DocumentFetcher> documentFetchers,
             final SchemaMappingRequest schemaMappingRequest, final Select select) {
         final ValueTable valueTable = new ValueTable(select);
         int rowCounter = 0;
         final String serializedSchemaMappingRequest = serializeSchemaMappingRequest(schemaMappingRequest);
-        for (final DataLoader dataLoader : dataLoaders) {
-            final String serializedDataLoader = serializeDataLoader(dataLoader);
-            final ValueTableRow row = ValueTableRow.builder(select).add(serializedDataLoader)
+        for (final DocumentFetcher documentFetcher : documentFetchers) {
+            final String serializeDocumentFetcher = serializeDocumentFetcher(documentFetcher);
+            final ValueTableRow row = ValueTableRow.builder(select).add(serializeDocumentFetcher)
                     .add(serializedSchemaMappingRequest) //
                     .add(this.connectionName) //
                     .add(rowCounter) //
@@ -163,12 +165,12 @@ public class UdfCallBuilder {
         return valueTable;
     }
 
-    private String serializeDataLoader(final DataLoader dataLoader) {
+    private String serializeDocumentFetcher(final DocumentFetcher documentFetcher) {
         try {
-            return serializeToString(dataLoader);
+            return serializeToString(documentFetcher);
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-19")
-                    .message("Internal error (Failed to serialize DataLoader).").ticketMitigation().toString(),
+                    .message("Internal error (Failed to serialize DocumentFetcher).").ticketMitigation().toString(),
                     exception);
         }
     }

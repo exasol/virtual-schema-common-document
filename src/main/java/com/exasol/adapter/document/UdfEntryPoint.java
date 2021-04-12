@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.exasol.*;
+import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
+import com.exasol.adapter.document.mapping.SchemaMapper;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expresion.ValueExpressionToJavaObjectConverter;
@@ -15,7 +17,7 @@ import com.exasol.utils.StringSerializer;
  */
 public class UdfEntryPoint {
     public static final String UDF_PREFIX = "IMPORT_FROM_";
-    public static final String PARAMETER_DATA_LOADER = "DATA_LOADER";
+    public static final String PARAMETER_DOCUMENT_FETCHER = "DATA_LOADER";
     public static final String PARAMETER_SCHEMA_MAPPING_REQUEST = "SCHEMA_MAPPING_REQUEST";
     public static final String PARAMETER_CONNECTION_NAME = "CONNECTION_NAME";
 
@@ -37,17 +39,18 @@ public class UdfEntryPoint {
         final SchemaMappingRequest schemaMappingRequest = deserializeSchemaMappingRequest(exaIterator);
         final ValueExpressionToJavaObjectConverter valueExpressionToJavaObjectConverter = new ValueExpressionToJavaObjectConverter();
         do {
-            final DataLoader dataLoader = deserializeDataLoader(exaIterator);
-            dataLoader.run(connectionInformation, schemaMappingRequest).map(
+            final DocumentFetcher documentFetcher = deserializeDocumentFetcher(exaIterator);
+            final SchemaMapper schemaMapper = new SchemaMapper(schemaMappingRequest);
+            documentFetcher.run(connectionInformation).flatMap(schemaMapper::mapRow).map(
                     row -> row.stream().map(valueExpressionToJavaObjectConverter::convert).collect(Collectors.toList()))
                     .forEach(values -> emitRow(values, exaIterator));
         } while (exaIterator.next());
     }
 
-    private static DataLoader deserializeDataLoader(final ExaIterator exaIterator)
+    private static DocumentFetcher deserializeDocumentFetcher(final ExaIterator exaIterator)
             throws ExaIterationException, ExaDataTypeException, IOException, ClassNotFoundException {
-        final String serialized = exaIterator.getString(PARAMETER_DATA_LOADER);
-        return (DataLoader) StringSerializer.deserializeFromString(serialized);
+        final String serialized = exaIterator.getString(PARAMETER_DOCUMENT_FETCHER);
+        return (DocumentFetcher) StringSerializer.deserializeFromString(serialized);
     }
 
     private static SchemaMappingRequest deserializeSchemaMappingRequest(final ExaIterator exaIterator)

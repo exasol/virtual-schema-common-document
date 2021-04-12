@@ -5,3 +5,4 @@ Code name:
 ## Refactoring
 
 * #61: Refactor DocumentNode structure to be dialect independent
+* #63: Remove DataLoader interface
