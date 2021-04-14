@@ -6,3 +6,4 @@ Code name:
 
 * #61: Refactored DocumentNode structure to be dialect independent
 * #63: Removed DataLoader interface
+* #65: Decoupled loading and emitting to improve performance
