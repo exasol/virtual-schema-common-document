@@ -6,8 +6,6 @@ import static org.hamcrest.Matchers.lessThan;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +15,9 @@ import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.BigDecimalHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.mapping.*;
+
+import akka.NotUsed;
+import akka.stream.javadsl.Source;
 
 class DataProcessingPipelineTest {
     private static final int TEST_SIZE = 100;
@@ -55,19 +56,6 @@ class DataProcessingPipelineTest {
         GENERATE, EMIT
     }
 
-    private static class MyIterable implements Iterable<FetchedDocument> {
-        private final Runnable onNext;
-
-        private MyIterable(final Runnable onNext) {
-            this.onNext = onNext;
-        }
-
-        @Override
-        public Iterator<FetchedDocument> iterator() {
-            return new MyIterator(this.onNext);
-        }
-    }
-
     private static class MyIterator implements Iterator<FetchedDocument> {
         private final Runnable onNext;
         int counter = 0;
@@ -91,7 +79,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class MyDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -7067199679106927193L;
+        private static final long serialVersionUID = 2990941798338199437L;
         private final Runnable onNext;
 
         private MyDocumentFetcher(final Runnable onNext) {
@@ -99,8 +87,8 @@ class DataProcessingPipelineTest {
         }
 
         @Override
-        public Stream<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
-            return StreamSupport.stream(new MyIterable(this.onNext).spliterator(), false);
+        public Source<List<FetchedDocument>, NotUsed> run(final ExaConnectionInformation connectionInformation) {
+            return Source.fromIterator(() -> new MyIterator(this.onNext)).grouped(10);
         }
     }
 }

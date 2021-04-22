@@ -2,7 +2,7 @@ package com.exasol.adapter.document.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.function.Consumer;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.DocumentPathIteratorFactory;
@@ -31,13 +31,14 @@ public class SchemaMapper {
      * Processes a document according to the given schema definition and gives an Exasol result row. If a non-root table
      * is queried multiple results can be returned.
      *
-     * @param document document to map
-     * @return stream of exasol rows
+     * @param document       document to map
+     * @param resultConsumer function that consumes the rows
      */
-    public Stream<List<ValueExpression>> mapRow(final FetchedDocument document) {
+    public void mapRow(final FetchedDocument document, final Consumer<List<ValueExpression>> resultConsumer) {
         final DocumentPathIteratorFactory arrayAllCombinationIterable = new DocumentPathIteratorFactory(
                 this.request.getPathInRemoteTable(), document.getRootDocumentNode());
-        return arrayAllCombinationIterable.stream().map(iterationState -> mapColumns(document, iterationState));
+        arrayAllCombinationIterable
+                .forEach(iterationState -> resultConsumer.accept(mapColumns(document, iterationState)));
     }
 
     private List<ValueExpression> mapColumns(final FetchedDocument document,

@@ -1,22 +1,19 @@
 package com.exasol.adapter.document.documentpath;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This class allows to express path through a document.
  */
 public class DocumentPathExpression implements Serializable {
     private static final DocumentPathExpression EMPTY_PATH = new DocumentPathExpression(Collections.emptyList());
-    private static final long serialVersionUID = -5010657725802907603L;//
+    private static final long serialVersionUID = -4163932011858280354L;//
     /** @serial */
     private final ArrayList<PathSegment> segments;
 
     private DocumentPathExpression(final List<PathSegment> segments) {
-        this.segments = new ArrayList<>(segments.size());
-        this.segments.addAll(segments);
+        this.segments = new ArrayList<>(segments);
     }
 
     /**
