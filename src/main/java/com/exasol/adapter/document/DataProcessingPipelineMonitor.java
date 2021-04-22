@@ -7,8 +7,8 @@ import java.util.logging.Logger;
 /**
  * This class monitors the fill state of the buffers in the {@link DataProcessingPipeline}.
  */
-class PipelineMonitor extends Thread {
-    private static final Logger LOGGER = Logger.getLogger(PipelineMonitor.class.getName());
+class DataProcessingPipelineMonitor extends Thread {
+    private static final Logger LOGGER = Logger.getLogger(DataProcessingPipelineMonitor.class.getName());
     private final AtomicBoolean stopRequested = new AtomicBoolean(false);
     long a = 0;
     long b = 0;
@@ -16,40 +16,40 @@ class PipelineMonitor extends Thread {
     long d = 0;
 
     /**
-     * Called when a row was loaded into the first buffer.
+     * Called when a row is loaded into the first buffer.
      * 
      * @param valueToPass a value
      * @param <T>         type of the value
      * @return value
      */
-    public <T> T onEnterBuffer1(final T valueToPass) {
+    public <T> T onEnterPreSchemaMappingBuffer(final T valueToPass) {
         this.a++;
         return valueToPass;
     }
 
     /**
-     * Called when an item was removed from the first buffer.
+     * Called when an item is removed from the first buffer.
      */
-    public void onLeaveBuffer1() {
+    public void onLeavePreSchemaMappingBuffer() {
         this.b++;
     }
 
     /**
-     * Called when an item was loaded into the first buffer.
+     * Called when an item is loaded into the first buffer.
      */
-    public void onEnterBuffer2() {
+    public void onEnterPreEmitBuffer() {
         this.c++;
     }
 
     /**
-     * Called when an item was removed from the second buffer.
+     * Called when an item is removed from the second buffer.
      */
-    public void onLeaveBuffer2() {
+    public void onLeavePreEmitBuffer() {
         this.d++;
     }
 
     /**
-     * Called when an item was loaded into the second buffer.
+     * Stop the monitor.
      */
     public void requestStop() {
         this.stopRequested.set(true);

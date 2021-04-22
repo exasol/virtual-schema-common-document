@@ -26,7 +26,7 @@ class DataProcessingPipelineTest {
     void testResultIsCorrect() throws InterruptedException {
         final DataProcessingPipeline pipeline = getPipeline();
         final ArrayList<List<Object>> result = new ArrayList<>();
-        pipeline.run(new MyDocumentFetcher(() -> {
+        pipeline.run(new HelperDocumentFetcher(() -> {
         }), null, result::add);
         assertThat(result.size(), equalTo(TEST_SIZE));
         assertThat(result.get(result.size() - 1).get(0), equalTo(BigDecimal.valueOf(TEST_SIZE - 1)));
@@ -36,7 +36,7 @@ class DataProcessingPipelineTest {
     void testAsyncProcessing() throws InterruptedException {
         final List<EVENT> events = new ArrayList<>(TEST_SIZE * 2);
         final DataProcessingPipeline pipeline = getPipeline();
-        pipeline.run(new MyDocumentFetcher(() -> events.add(EVENT.GENERATE)), null, row -> {
+        pipeline.run(new HelperDocumentFetcher(() -> events.add(EVENT.GENERATE)), null, row -> {
             events.add(EVENT.EMIT);
         });
         assertThat("First emit was too late.", events.indexOf(EVENT.EMIT), lessThan(TEST_SIZE / 4));
@@ -56,11 +56,11 @@ class DataProcessingPipelineTest {
         GENERATE, EMIT
     }
 
-    private static class MyIterator implements Iterator<FetchedDocument> {
+    private static class HelperIterator implements Iterator<FetchedDocument> {
         private final Runnable onNext;
         int counter = 0;
 
-        private MyIterator(final Runnable onNext) {
+        private HelperIterator(final Runnable onNext) {
             this.onNext = onNext;
         }
 
@@ -78,17 +78,17 @@ class DataProcessingPipelineTest {
         }
     }
 
-    private static class MyDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = 2990941798338199437L;
+    private static class HelperDocumentFetcher implements DocumentFetcher {
+        private static final long serialVersionUID = 886330922787566743L;
         private final Runnable onNext;
 
-        private MyDocumentFetcher(final Runnable onNext) {
+        private HelperDocumentFetcher(final Runnable onNext) {
             this.onNext = onNext;
         }
 
         @Override
         public Source<List<FetchedDocument>, NotUsed> run(final ExaConnectionInformation connectionInformation) {
-            return Source.fromIterator(() -> new MyIterator(this.onNext)).grouped(10);
+            return Source.fromIterator(() -> new HelperIterator(this.onNext)).grouped(10);
         }
     }
 }
