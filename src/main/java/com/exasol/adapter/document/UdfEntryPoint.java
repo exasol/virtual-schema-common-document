@@ -2,14 +2,11 @@ package com.exasol.adapter.document;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.exasol.*;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
-import com.exasol.adapter.document.mapping.SchemaMapper;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expresion.ValueExpressionToJavaObjectConverter;
 import com.exasol.utils.StringSerializer;
 
 /**
@@ -37,13 +34,10 @@ public class UdfEntryPoint {
         final ExaConnectionInformation connectionInformation = exaMetadata
                 .getConnection(exaIterator.getString(PARAMETER_CONNECTION_NAME));
         final SchemaMappingRequest schemaMappingRequest = deserializeSchemaMappingRequest(exaIterator);
-        final ValueExpressionToJavaObjectConverter valueExpressionToJavaObjectConverter = new ValueExpressionToJavaObjectConverter();
         do {
             final DocumentFetcher documentFetcher = deserializeDocumentFetcher(exaIterator);
-            final SchemaMapper schemaMapper = new SchemaMapper(schemaMappingRequest);
-            documentFetcher.run(connectionInformation).flatMap(schemaMapper::mapRow).map(
-                    row -> row.stream().map(valueExpressionToJavaObjectConverter::convert).collect(Collectors.toList()))
-                    .forEach(values -> emitRow(values, exaIterator));
+            new DataProcessingPipeline(schemaMappingRequest).run(documentFetcher, connectionInformation,
+                    row -> emitRow(row, exaIterator));
         } while (exaIterator.next());
     }
 

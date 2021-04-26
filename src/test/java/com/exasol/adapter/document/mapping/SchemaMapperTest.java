@@ -5,9 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
@@ -25,9 +23,11 @@ class SchemaMapperTest {
         final SchemaMappingRequest request = new SchemaMappingRequest(DocumentPathExpression.empty(),
                 List.of(columnMapping));
         final SchemaMapper schemaMapper = new SchemaMapper(request);
-        final List<List<ValueExpression>> result = schemaMapper.mapRow(
-                new FetchedDocument(new ObjectHolderNode(Map.of("testKey", new StringHolderNode("testValue"))), ""))
-                .collect(Collectors.toList());
+
+        final List<List<ValueExpression>> result = new ArrayList<>();
+        schemaMapper.mapRow(
+                new FetchedDocument(new ObjectHolderNode(Map.of("testKey", new StringHolderNode("testValue"))), ""),
+                result::add);
         assertAll(//
                 () -> assertThat(result.size(), equalTo(1)),
                 () -> assertThat(result.get(0).get(0).toString(), equalTo("{\"testKey\":\"testValue\"}"))//
@@ -46,12 +46,13 @@ class SchemaMapperTest {
         final SchemaMappingRequest request = new SchemaMappingRequest(pathToNestedTable,
                 List.of(indexColumn, columnMapping));
         final SchemaMapper schemaMapper = new SchemaMapper(request);
-        final List<List<ValueExpression>> result = schemaMapper
-                .mapRow(new FetchedDocument(new ObjectHolderNode(Map.of(nestedListKey,
+        final List<List<ValueExpression>> result = new ArrayList<>();
+        schemaMapper.mapRow(
+                new FetchedDocument(new ObjectHolderNode(Map.of(nestedListKey,
                         new ArrayHolderNode(
                                 List.of(new StringHolderNode("testValue"), new StringHolderNode("testValue"))))),
-                        ""))
-                .collect(Collectors.toList());
+                        ""),
+                result::add);
         assertAll(//
                 () -> assertThat(result.size(), equalTo(2)),
                 () -> assertThat(result.get(0).get(1).toString(), equalTo("\"testValue\"")), //
