@@ -32,7 +32,7 @@ public abstract class AbstractPropertyToColumnValueExtractor implements ColumnVa
     @Override
     public ValueExpression extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
-        final DocumentPathWalker<Object> walker = new DocumentPathWalker<>(this.column.getPathToSourceProperty(),
+        final DocumentPathWalker walker = new DocumentPathWalker(this.column.getPathToSourceProperty(),
                 arrayAllIterationState);
         final Optional<DocumentNode> dynamodbProperty = walker.walkThroughDocument(document.getRootDocumentNode());
         if (dynamodbProperty.isEmpty()) {

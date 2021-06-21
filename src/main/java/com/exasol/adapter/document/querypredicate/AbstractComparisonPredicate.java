@@ -15,7 +15,7 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
      * 
      * @param operator comparison operator
      */
-    public AbstractComparisonPredicate(final Operator operator) {
+    protected AbstractComparisonPredicate(final Operator operator) {
         this.operator = operator;
     }
 

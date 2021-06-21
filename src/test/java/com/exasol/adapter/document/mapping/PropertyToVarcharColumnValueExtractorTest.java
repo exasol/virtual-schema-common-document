@@ -100,8 +100,9 @@ class PropertyToVarcharColumnValueExtractorTest {
     void testConversionPossibleButAbort() {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().nonStringBehaviour(ABORT).build();
         final PropertyToVarcharColumnValueExtractor valueExtractor = new PropertyToVarcharColumnValueExtractor(column);
+        final BooleanHolderNode documentValue = new BooleanHolderNode(true);
         final ColumnValueExtractorException columnValueExtractorException = assertThrows(
-                ColumnValueExtractorException.class, () -> valueExtractor.mapValue(new BooleanHolderNode(true)));
+                ColumnValueExtractorException.class, () -> valueExtractor.mapValue(documentValue));
         assertThat(columnValueExtractorException.getMessage(), startsWith("E-VSD-36"));
     }
 

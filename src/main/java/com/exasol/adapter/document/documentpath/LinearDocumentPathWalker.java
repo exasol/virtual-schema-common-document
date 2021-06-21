@@ -11,7 +11,7 @@ import com.exasol.errorreporting.ExaError;
 @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
 public class LinearDocumentPathWalker<VisitorType> {
 
-    private final DocumentPathWalker<VisitorType> documentPathWalker;
+    private final DocumentPathWalker documentPathWalker;
 
     /**
      * Create a {@link LinearDocumentPathWalker}. This walker has the limitation that it can only walk linear paths.
@@ -22,7 +22,7 @@ public class LinearDocumentPathWalker<VisitorType> {
      */
     public LinearDocumentPathWalker(final DocumentPathExpression pathExpression) {
         checkPathIsLinear(pathExpression);
-        this.documentPathWalker = new DocumentPathWalker<>(pathExpression, new StaticDocumentPathIterator());
+        this.documentPathWalker = new DocumentPathWalker(pathExpression, new StaticDocumentPathIterator());
     }
 
     /**
