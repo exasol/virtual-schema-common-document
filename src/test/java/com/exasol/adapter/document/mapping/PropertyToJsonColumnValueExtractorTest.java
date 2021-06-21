@@ -37,6 +37,7 @@ class PropertyToJsonColumnValueExtractorTest {
                 Arguments.of(new BigDecimalHolderNode(new BigDecimal("2")), "2"), //
                 Arguments.of(new BooleanHolderNode(true), "true"), //
                 Arguments.of(new BooleanHolderNode(false), "false"), //
+                Arguments.of(new DoubleHolderNode(1.2), "1.2"), //
                 Arguments.of(new ArrayHolderNode(List.of(new StringHolderNode("test"))), "[\"test\"]"), //
                 Arguments.of(new ArrayHolderNode(List.of(new NullHolderNode())), "[null]"), //
                 Arguments.of(new ObjectHolderNode(Map.of("test", new BooleanHolderNode(false))), "{\"test\":false}"), //

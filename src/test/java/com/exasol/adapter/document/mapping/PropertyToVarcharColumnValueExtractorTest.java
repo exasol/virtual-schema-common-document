@@ -38,7 +38,8 @@ class PropertyToVarcharColumnValueExtractorTest {
                 Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_NULL", "123"), //
                 Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_NULL", "true"), //
                 Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_ABORT", "123"), //
-                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true")//
+                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true"), //
+                Arguments.of(new DoubleHolderNode(12.2), "CONVERT_OR_NULL", "12.2") //
         );
     }
 

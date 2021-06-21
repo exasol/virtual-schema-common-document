@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.*;
 
+import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
 import com.exasol.sql.expression.ValueExpression;
@@ -38,6 +39,14 @@ class PropertyToDecimalColumnValueExtractorTest {
                 Arguments.of(new ObjectHolderNode(Collections.emptyMap())), //
                 Arguments.of(new ArrayHolderNode(Collections.emptyList()))//
         );
+    }
+
+    @Test
+    void testConvertDouble() {
+        final DocumentFloatingPointValue numberNode = new DoubleHolderNode(1.23);
+        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(
+                commonMappingBuilder().build()).mapValue(numberNode);
+        assertThat(result.getValue(), equalTo(new BigDecimal("1.230")));
     }
 
     @Test
