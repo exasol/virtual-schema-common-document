@@ -7,7 +7,9 @@ import java.math.RoundingMode;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.BigDecimalLiteral;
+import com.exasol.sql.expression.literal.NullLiteral;
 
 /**
  * This class extracts DECIMAL values from document data. The extraction is defined using a
@@ -58,7 +60,7 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToCol
         }
 
         @Override
-        public void visit(final DocumentBigDecimalValue numberNode) {
+        public void visit(final DocumentDecimalValue numberNode) {
             this.result = fitBigDecimalValue(numberNode.getValue());
         }
 
@@ -70,6 +72,11 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToCol
         @Override
         public void visit(final DocumentBooleanValue booleanNode) {
             this.result = handleNotNumeric("<" + (booleanNode.getValue() ? "true" : "false") + ">");
+        }
+
+        @Override
+        public void visit(final DocumentFloatingPointValue floatingPointValue) {
+            this.result = fitBigDecimalValue(BigDecimal.valueOf(floatingPointValue.getValue()));
         }
 
         private ValueExpression handleNotNumeric(final String value) {

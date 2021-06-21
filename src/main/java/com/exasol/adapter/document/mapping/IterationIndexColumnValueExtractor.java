@@ -2,14 +2,14 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
-import com.exasol.sql.expression.IntegerLiteral;
 import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.IntegerLiteral;
 
 /**
  * This class extracts the current array all iteration index as {@link ValueExpression}.
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public class IterationIndexColumnValueExtractor<DocumentVisitorType> implements ColumnValueExtractor {
+public class IterationIndexColumnValueExtractor implements ColumnValueExtractor {
     private final IterationIndexColumnMapping column;
 
     /**

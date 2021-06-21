@@ -7,8 +7,8 @@ import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentpath.DocumentPathWalker;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.NullLiteral;
 
 /**
  * This class is the abstract basis for mapping a property of a document to an Exasol column. It provides functionality

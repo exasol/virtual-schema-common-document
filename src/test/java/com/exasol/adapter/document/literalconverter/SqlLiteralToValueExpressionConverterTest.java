@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.sql.*;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.*;
 
 class SqlLiteralToValueExpressionConverterTest {
 

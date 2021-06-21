@@ -34,11 +34,11 @@ public interface DocumentNodeVisitor {
     public void visit(DocumentStringValue stringValue);
 
     /**
-     * Visit a {@link DocumentBigDecimalValue}.
+     * Visit a {@link DocumentDecimalValue}.
      * 
      * @param bigDecimalValue big decimal value to visit
      */
-    public void visit(DocumentBigDecimalValue bigDecimalValue);
+    public void visit(DocumentDecimalValue bigDecimalValue);
 
     /**
      * Visit a {@link DocumentBooleanValue}.
@@ -46,4 +46,11 @@ public interface DocumentNodeVisitor {
      * @param booleanValue boolean value to visit
      */
     public void visit(DocumentBooleanValue booleanValue);
+
+    /**
+     * Visit a {@link DocumentFloatingPointValue}.
+     *
+     * @param floatingPointValue double value to visit
+     */
+    public void visit(DocumentFloatingPointValue floatingPointValue);
 }

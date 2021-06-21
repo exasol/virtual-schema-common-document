@@ -3,7 +3,8 @@ package com.exasol.adapter.document.literalconverter;
 import com.exasol.adapter.AdapterException;
 import com.exasol.adapter.sql.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.*;
 
 /**
  * This class converts a {@link SqlNode} literal into a {@link ValueExpression}.
@@ -39,8 +40,7 @@ public class SqlLiteralToValueExpressionConverter {
             sqlNode.accept(visitor);
             return visitor.getResult();
         } catch (final AdapterException exception) {
-            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-60").message(
-                    "Unexpected adapter exception.")
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-60").message("Unexpected adapter exception.")
                     .ticketMitigation().toString(), exception);
         }
     }

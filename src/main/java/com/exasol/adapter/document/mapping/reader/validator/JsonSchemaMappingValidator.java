@@ -1,24 +1,16 @@
 package com.exasol.adapter.document.mapping.reader.validator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 import java.util.Optional;
 
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
-import org.everit.json.schema.Validator;
+import org.everit.json.schema.*;
 import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import com.exasol.adapter.document.mapping.reader.ExasolDocumentMappingLanguageException;
-import com.exasol.adapter.document.mapping.reader.validator.messageimprover.NoMappingExceptionMessageImprover;
-import com.exasol.adapter.document.mapping.reader.validator.messageimprover.UnknownKeyTypeExceptionMessageImprover;
-import com.exasol.adapter.document.mapping.reader.validator.messageimprover.UnknownMappingExceptionMessageImprover;
-import com.exasol.adapter.document.mapping.reader.validator.messageimprover.WongSchemaExceptionMessageImprover;
+import com.exasol.adapter.document.mapping.reader.validator.messageimprover.*;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -94,8 +86,8 @@ public class JsonSchemaMappingValidator {
                 }
             }
             return new ExasolDocumentMappingLanguageException(
-                    ExaError.messageBuilder("E-VSD-EDML-3").message("Syntax validation error: {{VALIDATION_ERROR}}.")
-                            .unquotedParameter("VALIDATION_ERROR", exception.getMessage()).toString());
+                    ExaError.messageBuilder("E-VSD-EDML-3").message("Syntax validation error: {{VALIDATION_ERROR|uq}}.")
+                            .parameter("VALIDATION_ERROR", exception.getMessage()).toString());
         }
     }
 }

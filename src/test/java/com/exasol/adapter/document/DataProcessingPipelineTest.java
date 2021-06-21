@@ -20,7 +20,7 @@ import akka.NotUsed;
 import akka.stream.javadsl.Source;
 
 class DataProcessingPipelineTest {
-    private static final int TEST_SIZE = 100;
+    private static final int TEST_SIZE = 100000;
 
     @Test
     void testResultIsCorrect() throws InterruptedException {
@@ -79,7 +79,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = 886330922787566743L;
+        private static final long serialVersionUID = -6036214356457982412L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {

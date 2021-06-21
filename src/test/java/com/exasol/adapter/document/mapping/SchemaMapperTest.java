@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.*;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
-import com.exasol.sql.expression.IntegerLiteral;
 import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.IntegerLiteral;
 
 class SchemaMapperTest {
 

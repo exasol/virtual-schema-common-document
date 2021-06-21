@@ -17,7 +17,9 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.BigDecimalLiteral;
+import com.exasol.sql.expression.literal.NullLiteral;
 
 class PropertyToDecimalColumnValueExtractorTest {
 

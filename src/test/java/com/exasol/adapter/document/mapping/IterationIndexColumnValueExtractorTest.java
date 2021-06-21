@@ -9,14 +9,13 @@ import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
-import com.exasol.sql.expression.IntegerLiteral;
+import com.exasol.sql.expression.literal.IntegerLiteral;
 
 class IterationIndexColumnValueExtractorTest {
     private static final DocumentPathExpression TABLES_PATH = DocumentPathExpression.builder().addObjectLookup("test")
             .addArrayAll().build();
     private static final IterationIndexColumnMapping COLUMN = new IterationIndexColumnMapping("INDEX", TABLES_PATH);
-    private static final IterationIndexColumnValueExtractor<Object> EXTRACTOR = new IterationIndexColumnValueExtractor<>(
-            COLUMN);
+    private static final IterationIndexColumnValueExtractor EXTRACTOR = new IterationIndexColumnValueExtractor(COLUMN);
     private static final int ITERATION_INDEX = 14;
     PathIterationStateProvider ITERATION_STATE_PROVIDER = new PathIterationStateProvider() {
         @Override
