@@ -235,4 +235,4 @@ The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. In case a s
 
 ## Reference
 
-[Schema mapping language reference](https://exasol.github.io/virtual-schema-common-ducument/schema_doc/edml_1.1.0/index.html)
+[Schema mapping language reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/edml_1.2.0/index.html)
