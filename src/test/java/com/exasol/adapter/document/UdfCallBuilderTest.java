@@ -9,17 +9,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
-import com.exasol.adapter.document.mapping.ColumnMapping;
-import com.exasol.adapter.document.mapping.PropertyToJsonColumnMapping;
-import com.exasol.adapter.document.mapping.SourceReferenceColumnMapping;
-import com.exasol.adapter.document.mapping.TableMapping;
-import com.exasol.adapter.document.queryplan.EmptyQueryPlan;
-import com.exasol.adapter.document.queryplan.FetchQueryPlan;
-import com.exasol.adapter.document.queryplan.QueryPlan;
+import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.queryplan.*;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
-import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate;
-import com.exasol.adapter.document.querypredicate.ColumnLiteralComparisonPredicate;
-import com.exasol.adapter.document.querypredicate.NoPredicate;
+import com.exasol.adapter.document.querypredicate.*;
 import com.exasol.adapter.sql.SqlLiteralString;
 
 class UdfCallBuilderTest {
@@ -33,7 +26,7 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumns();
         final QueryPlan queryPlan = new EmptyQueryPlan();
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, equalTo("SELECT * FROM (VALUES (CAST(NULL AS VARCHAR(123)))) WHERE FALSE"));
+        assertThat(udfCallSql, equalTo("SELECT * FROM (VALUES (CAST(NULL AS  VARCHAR(123)))) WHERE FALSE"));
     }
 
     @Test

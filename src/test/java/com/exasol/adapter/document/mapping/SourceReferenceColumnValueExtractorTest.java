@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 
 class SourceReferenceColumnValueExtractorTest {
-    private static final SourceReferenceColumnValueExtractor<Object> EXTRACTOR = new SourceReferenceColumnValueExtractor<>();
+    private static final SourceReferenceColumnValueExtractor EXTRACTOR = new SourceReferenceColumnValueExtractor();
 
     @Test
     void test() {

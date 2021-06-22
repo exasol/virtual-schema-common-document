@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 /**
  * Interface for BigDecimal values.
  */
-public interface DocumentBigDecimalValue extends DocumentNode {
+public interface DocumentDecimalValue extends DocumentNode {
     @Override
     public default void accept(final DocumentNodeVisitor visitor) {
         visitor.visit(this);

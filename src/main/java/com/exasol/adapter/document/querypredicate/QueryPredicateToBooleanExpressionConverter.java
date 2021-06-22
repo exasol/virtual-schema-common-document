@@ -2,11 +2,15 @@ package com.exasol.adapter.document.querypredicate;
 
 import static com.exasol.sql.expression.BooleanTerm.not;
 import static com.exasol.sql.expression.ExpressionTerm.column;
+import static com.exasol.sql.expression.comparison.SimpleComparisonOperator.*;
 
 import com.exasol.adapter.document.literalconverter.SqlLiteralToValueExpressionConverter;
 import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.comparison.SimpleComparison;
+import com.exasol.sql.expression.comparison.SimpleComparisonOperator;
+import com.exasol.sql.expression.literal.BooleanLiteral;
 
 /**
  * This class converts a {@link QueryPredicate} class structure to a {@link BooleanExpression} for the
@@ -53,33 +57,32 @@ public class QueryPredicateToBooleanExpressionConverter {
         public void visit(final ColumnLiteralComparisonPredicate columnLiteralComparisonPredicate) {
             final ValueExpression literal = SqlLiteralToValueExpressionConverter.getInstance()
                     .convert(columnLiteralComparisonPredicate.getLiteral());
-            this.result = new Comparison(convertOperator(columnLiteralComparisonPredicate.getOperator()),
+            this.result = new SimpleComparison(convertOperator(columnLiteralComparisonPredicate.getOperator()),
                     column(columnLiteralComparisonPredicate.getColumn().getExasolColumnName()), literal);
         }
 
-        private ComparisonOperator convertOperator(final Operator operator) {
+        private SimpleComparisonOperator convertOperator(final Operator operator) {
             switch (operator) {
             case GREATER:
-                return ComparisonOperator.GREATER_THAN;
+                return GREATER_THAN;
             case GREATER_EQUAL:
-                return ComparisonOperator.GREATER_THAN_OR_EQUAL;
+                return GREATER_THAN_OR_EQUAL;
             case EQUAL:
-                return ComparisonOperator.EQUAL;
+                return EQUAL;
             case LESS_EQUAL:
-                return ComparisonOperator.LESS_THAN_OR_EQUAL;
+                return LESS_THAN_OR_EQUAL;
             case LESS:
-                return ComparisonOperator.LESS_THAN;
+                return LESS_THAN;
             case NOT_EQUAL:
-                return ComparisonOperator.NOT_EQUAL;
+                return NOT_EQUAL;
             case LIKE:
             case NOT_LIKE:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-5").message(
                         "The current version of virtual-schemas does not support LIKE and NOT LIKE as post-selection.")
                         .mitigation("Please change your query.").toString());
             default:
-                throw new UnsupportedOperationException(
-                        ExaError.messageBuilder("F-VSD-4").message("Converting {{OPERATOR}} is not yet implemented.")
-                                .ticketMitigation().toString());
+                throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-4")
+                        .message("Converting {{OPERATOR}} is not yet implemented.").ticketMitigation().toString());
             }
         }
 

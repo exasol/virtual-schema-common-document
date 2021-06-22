@@ -6,7 +6,9 @@ import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehavi
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.NullLiteral;
+import com.exasol.sql.expression.literal.StringLiteral;
 
 /**
  * ValueMapper for {@link PropertyToVarcharColumnMapping}
@@ -176,7 +178,7 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
         }
 
         @Override
-        public void visit(final DocumentBigDecimalValue numberNode) {
+        public void visit(final DocumentDecimalValue numberNode) {
             this.result = new MappedStringResult(numberNode.getValue().toString(), true);
         }
 
@@ -188,6 +190,11 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
         @Override
         public void visit(final DocumentBooleanValue booleanNode) {
             this.result = new MappedStringResult(booleanNode.getValue() ? "true" : "false", true);
+        }
+
+        @Override
+        public void visit(final DocumentFloatingPointValue floatingPointValue) {
+            this.result = new MappedStringResult(String.valueOf(floatingPointValue.getValue()), true);
         }
 
         public ConversionResult getResult() {

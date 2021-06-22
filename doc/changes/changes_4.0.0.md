@@ -2,6 +2,10 @@
 
 Code name:
 
+## Features:
+
+* #69: Added document node factory that wraps java objects
+
 ## Refactoring
 
 * #61: Refactored DocumentNode structure to be dialect independent

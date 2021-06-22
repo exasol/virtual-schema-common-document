@@ -2,12 +2,12 @@ package com.exasol.adapter.document.documentnode.holder;
 
 import java.math.BigDecimal;
 
-import com.exasol.adapter.document.documentnode.DocumentBigDecimalValue;
+import com.exasol.adapter.document.documentnode.DocumentDecimalValue;
 
 /**
- * Implementation of {@link DocumentBigDecimalValue} that simply holds the big decimal value in a variable.
+ * Implementation of {@link DocumentDecimalValue} that simply holds the big decimal value in a variable.
  */
-public class BigDecimalHolderNode implements DocumentBigDecimalValue {
+public class BigDecimalHolderNode implements DocumentDecimalValue {
     /** @serial */
     private final BigDecimal numberValue;
 

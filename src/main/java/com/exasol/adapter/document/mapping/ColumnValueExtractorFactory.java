@@ -30,12 +30,12 @@ public class ColumnValueExtractorFactory {
 
         @Override
         public void visit(final IterationIndexColumnMapping iterationIndexColumnDefinition) {
-            this.extractor = new IterationIndexColumnValueExtractor<>(iterationIndexColumnDefinition);
+            this.extractor = new IterationIndexColumnValueExtractor(iterationIndexColumnDefinition);
         }
 
         @Override
         public void visit(final SourceReferenceColumnMapping sourceReferenceColumnMapping) {
-            this.extractor = new SourceReferenceColumnValueExtractor<>();
+            this.extractor = new SourceReferenceColumnValueExtractor();
         }
 
         public ColumnValueExtractor getExtractor() {
