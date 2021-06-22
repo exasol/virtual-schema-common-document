@@ -1,6 +1,6 @@
 # Common module of Exasol Virtual Schema Adapters for Document Data Sources
 
-[![Build Status](https://travis-ci.com/exasol/virtual-schema-common-document.svg?branch=master)](https://travis-ci.com/exasol/virtual-schema-common-document)
+[![Build Status](https://travis-ci.com/exasol/virtual-schema-common-document.svg?branch=main)](https://travis-ci.com/exasol/virtual-schema-common-document)
 [![Maven Central](https://img.shields.io/maven-central/v/com.exasol/virtual-schema-common-document)](https://search.maven.org/artifact/com.exasol/virtual-schema-common-document)
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Avirtual-schema-common-document&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.exasol%3Avirtual-schema-common-document)
@@ -26,9 +26,8 @@ This repository contains common parts for Virtual Schema adapters for document d
 ### Dialects:
 
 * [DynamoDB](https://github.com/exasol/dynamodb-virtual-schema)
+* [Files](https://github.com/exasol/virtual-schema-common-document-files)
 
 ## Information for Developers
 
 You can use this repository as a basis for developing a custom Virtual Schema for document data.
-
-[edml-doc]: https://exasol.github.io/virtual-schema-common-ducument/schema_doc/edml_1.1.0/index.html
