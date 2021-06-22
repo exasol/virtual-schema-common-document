@@ -7,7 +7,9 @@ import javax.json.spi.JsonProvider;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.NullLiteral;
+import com.exasol.sql.expression.literal.StringLiteral;
 
 /**
  * {@link ColumnValueExtractor} for {@link PropertyToJsonColumnMapping}.
@@ -37,7 +39,7 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
         }
     }
 
-    private AbstractValueExpression wrapInStringLiteral(final JsonValue jsonResult) {
+    private ValueExpression wrapInStringLiteral(final JsonValue jsonResult) {
         final String jsonString = jsonResult.toString();
         if (jsonString.length() > this.column.getVarcharColumnSize()) {
             return handleOverflow();
@@ -91,7 +93,7 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
         }
 
         @Override
-        public void visit(final DocumentBigDecimalValue numberNode) {
+        public void visit(final DocumentDecimalValue numberNode) {
             this.jsonValue = JSON.createValue(numberNode.getValue());
         }
 
@@ -103,6 +105,11 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
         @Override
         public void visit(final DocumentBooleanValue booleanNode) {
             this.jsonValue = booleanNode.getValue() ? JsonValue.TRUE : JsonValue.FALSE;
+        }
+
+        @Override
+        public void visit(final DocumentFloatingPointValue floatingPointValue) {
+            this.jsonValue = JSON.createValue(floatingPointValue.getValue());
         }
 
         public JsonValue getJsonValue() {

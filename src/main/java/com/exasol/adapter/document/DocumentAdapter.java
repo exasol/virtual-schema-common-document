@@ -5,16 +5,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.exasol.ExaConnectionAccessException;
-import com.exasol.ExaConnectionInformation;
-import com.exasol.ExaMetadata;
-import com.exasol.adapter.AdapterException;
-import com.exasol.adapter.AdapterProperties;
-import com.exasol.adapter.VirtualSchemaAdapter;
+import com.exasol.*;
+import com.exasol.adapter.*;
 import com.exasol.adapter.capabilities.*;
-import com.exasol.adapter.document.mapping.SchemaMapping;
-import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
-import com.exasol.adapter.document.mapping.TableKeyFetcher;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
 import com.exasol.adapter.document.mapping.reader.SchemaMappingReader;
 import com.exasol.adapter.document.queryplan.QueryPlan;
@@ -169,11 +163,9 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final SetPropertiesResponse setProperties(final ExaMetadata exaMetadata,
             final SetPropertiesRequest setPropertiesRequest) {
-        throw new UnsupportedOperationException(
-                ExaError.messageBuilder("F-VSD-27")
-                        .message(
-                                "The current version of this Virtual Schema does not support SET PROPERTIES statement.")
-                        .mitigation("Drop and recreate the virtual schema instead.").toString());
+        throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-27")
+                .message("The current version of this Virtual Schema does not support SET PROPERTIES statement.")
+                .mitigation("Drop and recreate the virtual schema instead.").toString());
     }
 
     /**
@@ -201,9 +193,9 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
         return GetCapabilitiesResponse.builder().capabilities(capabilities).build();
     }
 
-    private void checkThatCapabilitiesAreSupported(final Set<? extends Enum> actualCapabilities,
-            final Set<? extends Enum> supportedCapabilities, final String capabilityType) {
-        final List<Enum> unsupportedCapabilities = actualCapabilities.stream()
+    private void checkThatCapabilitiesAreSupported(final Set<? extends Enum<?>> actualCapabilities,
+            final Set<? extends Enum<?>> supportedCapabilities, final String capabilityType) {
+        final List<Enum<?>> unsupportedCapabilities = actualCapabilities.stream()
                 .filter(mainCapability -> !supportedCapabilities.contains(mainCapability)).collect(Collectors.toList());
         if (!unsupportedCapabilities.isEmpty()) {
             final String listOfUnsupported = unsupportedCapabilities.stream().map(Enum::toString)

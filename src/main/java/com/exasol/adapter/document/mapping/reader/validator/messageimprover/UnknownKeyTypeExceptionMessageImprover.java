@@ -12,8 +12,8 @@ public class UnknownKeyTypeExceptionMessageImprover extends AbstractExceptionMes
         if (exception.getPointerToViolation().endsWith("/key")
                 && exception.getMessage().endsWith("is not a valid enum value")) {
             return Optional.of(ExaError.messageBuilder("E-VSD-EDML-5")
-                    .message("{{VIOLATION_POINTER}}: Illegal value for property 'key'.")
-                    .unquotedParameter("VIOLATION_POINTER", exception.getPointerToViolation(),
+                    .message("{{VIOLATION_POINTER|uq}}: Illegal value for property 'key'.")
+                    .parameter("VIOLATION_POINTER", exception.getPointerToViolation(),
                             "Pointer to the property in the document that cause the validation error.")
                     .mitigation("Please set key property to 'local' or 'global'.").toString());
         } else {

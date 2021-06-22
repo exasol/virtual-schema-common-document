@@ -12,7 +12,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
-        <junit.version>5.7.0</junit.version>
+        <junit.version>5.7.2</junit.version>
         <jacoco.version>0.8.5</jacoco.version>
         <vscommon.version>13.0.0</vscommon.version>
         <gpg.skip>true</gpg.skip>
@@ -89,18 +89,18 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.30</version>
+            <version>1.7.31</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.everit-org.json-schema</groupId>
             <artifactId>org.everit.json.schema</artifactId>
-            <version>1.12.1</version>
+            <version>1.12.3</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>sql-statement-builder</artifactId>
-            <version>4.3.0</version>
+            <version>4.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.logicng</groupId>
@@ -110,7 +110,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>error-reporting-java</artifactId>
-            <version>0.2.0</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.typesafe.akka</groupId>
@@ -138,7 +138,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.7.7</version>
+            <version>3.11.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -197,28 +197,31 @@
                         </goals>
                     </execution>
                     <execution>
+                        <id>merge-results</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.build.directory}/</directory>
+                                    <includes>
+                                        <include>jacoco*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                            <destFile>${project.build.directory}/aggregate.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>report</id>
-                        <phase>test</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>report</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>report-integration</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-integration</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report-udf-integration</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>report-integration</goal>
-                        </goals>
                         <configuration>
-                            <dataFile>${project.build.directory}/jacoco-udf.exec</dataFile>
-                            <outputDirectory>${project.reporting.outputDirectory}/jacoco-udf</outputDirectory>
+                            <dataFile>${project.build.directory}/aggregate.exec</dataFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -373,7 +376,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>0.6.0</version>
+                <version>0.7.2</version>
                 <executions>
                     <execution>
                         <goals>

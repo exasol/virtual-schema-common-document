@@ -15,22 +15,19 @@
 [![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Avirtual-schema-common-document&metric=duplicated_lines_density)](https://sonarcloud.io/dashboard?id=com.exasol%3Avirtual-schema-common-document)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=com.exasol%3Avirtual-schema-common-document&metric=ncloc)](https://sonarcloud.io/dashboard?id=com.exasol%3Avirtual-schema-common-document)
 
-
 This repository contains common parts for Virtual Schema adapters for document data sources.
 
 ## Information for Users
 
 * [EDML User Guide](doc/user_guide/edml_user_guide.md)
 * [Changelog](doc/changes/changelog.md)
+* [Dependencies](./dependencies.md)
 
 ### Dialects:
- 
+
 * [DynamoDB](https://github.com/exasol/dynamodb-virtual-schema)
+* [Files](https://github.com/exasol/virtual-schema-common-document-files)
 
 ## Information for Developers
 
 You can use this repository as a basis for developing a custom Virtual Schema for document data.
-
-[Dependencies](./NOTICE)
-
-[edml-doc]: https://exasol.github.io/virtual-schema-common-ducument/schema_doc/edml_1.1.0/index.html

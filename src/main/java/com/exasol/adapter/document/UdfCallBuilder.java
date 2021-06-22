@@ -22,8 +22,10 @@ import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.*;
 import com.exasol.sql.dql.select.Select;
 import com.exasol.sql.dql.select.rendering.SelectRenderer;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.BooleanExpression;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
+import com.exasol.sql.expression.literal.BooleanLiteral;
+import com.exasol.sql.expression.literal.NullLiteral;
 import com.exasol.sql.rendering.StringRendererConfig;
 
 /**

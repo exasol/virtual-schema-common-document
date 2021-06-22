@@ -16,8 +16,8 @@ import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
 import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.StaticDocumentPathIterator;
-import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.NullLiteral;
 
 class AbstractPropertyToColumnValueExtractorTest {
 

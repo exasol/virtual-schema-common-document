@@ -9,7 +9,7 @@ import com.exasol.adapter.document.documentnode.*;
  * This class walks a given path defined in {@link DocumentPathExpression} through a {@link DocumentNode} structure.
  */
 @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
-public class DocumentPathWalker<VisitorType> {
+public class DocumentPathWalker {
     private final DocumentPathExpression pathExpression;
     private final PathIterationStateProvider iterationStateProvider;
 
@@ -57,16 +57,14 @@ public class DocumentPathWalker<VisitorType> {
         }
     }
 
-    @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
     private BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> getStepperFor(
             final PathSegment pathSegment) {
-        final WalkVisitor<VisitorType> visitor = new WalkVisitor<>();
+        final WalkVisitor visitor = new WalkVisitor();
         pathSegment.accept(visitor);
         return visitor.getStepper();
     }
 
-    @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
-    private class WalkVisitor<VisitorType> implements PathSegmentVisitor {
+    private class WalkVisitor implements PathSegmentVisitor {
         BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper;
 
         @Override

@@ -19,6 +19,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.sql.SqlLiteralString;
 import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.comparison.*;
+import com.exasol.sql.expression.literal.BooleanLiteral;
 
 class QueryPredicateToBooleanExpressionConverterTest {
 
@@ -26,12 +28,12 @@ class QueryPredicateToBooleanExpressionConverterTest {
 
     static Stream<Arguments> expectedOperatorMapping() {
         return Stream.of(//
-                Arguments.of(EQUAL, ComparisonOperator.EQUAL), //
-                Arguments.of(LESS, ComparisonOperator.LESS_THAN), //
-                Arguments.of(LESS_EQUAL, ComparisonOperator.LESS_THAN_OR_EQUAL), //
-                Arguments.of(GREATER, ComparisonOperator.GREATER_THAN), //
-                Arguments.of(GREATER_EQUAL, ComparisonOperator.GREATER_THAN_OR_EQUAL), //
-                Arguments.of(AbstractComparisonPredicate.Operator.NOT_EQUAL, ComparisonOperator.NOT_EQUAL)//
+                Arguments.of(EQUAL, SimpleComparisonOperator.EQUAL), //
+                Arguments.of(LESS, SimpleComparisonOperator.LESS_THAN), //
+                Arguments.of(LESS_EQUAL, SimpleComparisonOperator.LESS_THAN_OR_EQUAL), //
+                Arguments.of(GREATER, SimpleComparisonOperator.GREATER_THAN), //
+                Arguments.of(GREATER_EQUAL, SimpleComparisonOperator.GREATER_THAN_OR_EQUAL), //
+                Arguments.of(AbstractComparisonPredicate.Operator.NOT_EQUAL, SimpleComparisonOperator.NOT_EQUAL)//
         );
     }
 
@@ -65,7 +67,7 @@ class QueryPredicateToBooleanExpressionConverterTest {
         final LogicalOperator logicalOperator = new LogicalOperator(Set.of(comparison1, comparison2),
                 LogicalOperator.Operator.AND);
         final And and = (And) CONVERTER.convert(logicalOperator);
-        assertThat(and.getChildren().size(), equalTo(2));
+        assertThat(and.getOperands().size(), equalTo(2));
     }
 
     @Test
@@ -78,7 +80,7 @@ class QueryPredicateToBooleanExpressionConverterTest {
         final LogicalOperator logicalOperator = new LogicalOperator(Set.of(comparison1, comparison2),
                 LogicalOperator.Operator.OR);
         final Or or = (Or) CONVERTER.convert(logicalOperator);
-        assertThat(or.getChildren().size(), equalTo(2));
+        assertThat(or.getOperands().size(), equalTo(2));
     }
 
     @Test

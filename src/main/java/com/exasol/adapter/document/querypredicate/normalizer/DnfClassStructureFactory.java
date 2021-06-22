@@ -67,8 +67,8 @@ class DnfClassStructureFactory {
     }
 
     private static IllegalStateException getInvalidDnfException(final String internalDescription) {
-        return new IllegalStateException(ExaError.messageBuilder("F-VSD-12").message("{{INTERNAL_DESCRIPTION}}).")
-                .ticketMitigation().unquotedParameter("INTERNAL_DESCRIPTION", internalDescription).toString());
+        return new IllegalStateException(ExaError.messageBuilder("F-VSD-12").message("{{INTERNAL_DESCRIPTION|uq}}).")
+                .ticketMitigation().parameter("INTERNAL_DESCRIPTION", internalDescription).toString());
     }
 
     private static class ConjunctionExtractor implements QueryPredicateVisitor {

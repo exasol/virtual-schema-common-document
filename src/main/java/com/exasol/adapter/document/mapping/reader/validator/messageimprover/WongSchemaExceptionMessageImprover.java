@@ -4,9 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.everit.json.schema.EnumSchema;
-import org.everit.json.schema.Schema;
-import org.everit.json.schema.ValidationException;
+import org.everit.json.schema.*;
 
 import com.exasol.errorreporting.ExaError;
 
@@ -25,6 +23,6 @@ public class WongSchemaExceptionMessageImprover extends AbstractExceptionMessage
 
     private List<String> getAvailableSchemas(final Schema violatedSchema) {
         final EnumSchema enumSchema = (EnumSchema) violatedSchema;
-        return enumSchema.getPossibleValues().stream().map(value -> (String) value).collect(Collectors.toList());
+        return enumSchema.getPossibleValues().stream().map(String.class::cast).collect(Collectors.toList());
     }
 }

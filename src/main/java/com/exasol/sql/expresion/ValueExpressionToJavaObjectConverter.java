@@ -5,9 +5,8 @@ import java.math.BigDecimal;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.UnnamedPlaceholder;
 import com.exasol.sql.expression.*;
-import com.exasol.sql.expression.function.exasol.CastExasolFunction;
-import com.exasol.sql.expression.function.exasol.ExasolFunction;
-import com.exasol.sql.expression.function.exasol.ExasolUdf;
+import com.exasol.sql.expression.function.Function;
+import com.exasol.sql.expression.literal.*;
 
 /**
  * This class converts {@link ValueExpression}s to java objects for the use in UDF emit functions. A description for the
@@ -27,8 +26,18 @@ public class ValueExpressionToJavaObjectConverter {
         return visitor.getResult();
     }
 
-    private static class Visitor implements ValueExpressionVisitor {
+    private static class Visitor implements ValueExpressionVisitor, LiteralVisitor {
         private Object result;
+
+        @Override
+        public void visit(final Literal literal) {
+            literal.accept((LiteralVisitor) this);
+        }
+
+        @Override
+        public void visit(final Function function) {
+            throwUnsupportedException("ExasolFunction");
+        }
 
         @Override
         public void visit(final UnnamedPlaceholder unnamedPlaceholder) {
@@ -81,26 +90,6 @@ public class ValueExpressionToJavaObjectConverter {
         }
 
         @Override
-        public void visit(final ExasolFunction function) {
-            throwUnsupportedException("ExasolFunction");
-        }
-
-        @Override
-        public void leave(final ExasolFunction function) {
-            throwUnsupportedException("ExasolFunction");
-        }
-
-        @Override
-        public void visit(final ExasolUdf function) {
-            throwUnsupportedException("ExasolUdf");
-        }
-
-        @Override
-        public void leave(final ExasolUdf function) {
-            throwUnsupportedException("ExasolUdf");
-        }
-
-        @Override
         public void visit(final BinaryArithmeticExpression expression) {
             throwUnsupportedException("BinaryArithmeticExpression");
         }
@@ -113,11 +102,6 @@ public class ValueExpressionToJavaObjectConverter {
         @Override
         public void visit(final BooleanExpression booleanExpression) {
             throwUnsupportedException("boolean expression");
-        }
-
-        @Override
-        public void visit(final CastExasolFunction castFunction) {
-            throwUnsupportedException("cast function");
         }
 
         private void throwUnsupportedException(final String type) {

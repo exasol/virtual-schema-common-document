@@ -7,8 +7,8 @@ import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentpath.DocumentPathWalker;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.NullLiteral;
 import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.NullLiteral;
 
 /**
  * This class is the abstract basis for mapping a property of a document to an Exasol column. It provides functionality
@@ -32,7 +32,7 @@ public abstract class AbstractPropertyToColumnValueExtractor implements ColumnVa
     @Override
     public ValueExpression extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
-        final DocumentPathWalker<Object> walker = new DocumentPathWalker<>(this.column.getPathToSourceProperty(),
+        final DocumentPathWalker walker = new DocumentPathWalker(this.column.getPathToSourceProperty(),
                 arrayAllIterationState);
         final Optional<DocumentNode> dynamodbProperty = walker.walkThroughDocument(document.getRootDocumentNode());
         if (dynamodbProperty.isEmpty()) {

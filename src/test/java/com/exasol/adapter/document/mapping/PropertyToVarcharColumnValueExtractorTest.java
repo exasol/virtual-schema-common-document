@@ -20,7 +20,9 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.*;
+import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.literal.NullLiteral;
+import com.exasol.sql.expression.literal.StringLiteral;
 
 class PropertyToVarcharColumnValueExtractorTest {
     private static final String TEST_STRING = "test";
@@ -36,7 +38,8 @@ class PropertyToVarcharColumnValueExtractorTest {
                 Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_NULL", "123"), //
                 Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_NULL", "true"), //
                 Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_ABORT", "123"), //
-                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true")//
+                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true"), //
+                Arguments.of(new DoubleHolderNode(12.2), "CONVERT_OR_NULL", "12.2") //
         );
     }
 
@@ -98,8 +101,9 @@ class PropertyToVarcharColumnValueExtractorTest {
     void testConversionPossibleButAbort() {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().nonStringBehaviour(ABORT).build();
         final PropertyToVarcharColumnValueExtractor valueExtractor = new PropertyToVarcharColumnValueExtractor(column);
+        final BooleanHolderNode documentValue = new BooleanHolderNode(true);
         final ColumnValueExtractorException columnValueExtractorException = assertThrows(
-                ColumnValueExtractorException.class, () -> valueExtractor.mapValue(new BooleanHolderNode(true)));
+                ColumnValueExtractorException.class, () -> valueExtractor.mapValue(documentValue));
         assertThat(columnValueExtractorException.getMessage(), startsWith("E-VSD-36"));
     }
 

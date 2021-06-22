@@ -5,10 +5,7 @@ import java.util.*;
 import javax.json.JsonObject;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
-import com.exasol.adapter.document.mapping.ColumnMapping;
-import com.exasol.adapter.document.mapping.ColumnMappingDefinitionKeyTypeReader;
-import com.exasol.adapter.document.mapping.SourceReferenceColumnMapping;
-import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -157,9 +154,9 @@ abstract class AbstractTableMappingReader {
                 if (this.keyType != columnsKeyType
                         && this.keyType != ColumnMappingDefinitionKeyTypeReader.KeyType.NO_KEY) {
                     throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-8").message(
-                            "{{VIOLATION_POINTER}}: This table already has a key of a different type (global/local).")
+                            "{{VIOLATION_POINTER|uq}}: This table already has a key of a different type (global/local).")
                             .mitigation("Please either define all keys of the table local or global.")
-                            .unquotedParameter("VIOLATION_POINTER", sourcePath.build().toString()).toString());
+                            .parameter("VIOLATION_POINTER", sourcePath.build().toString()).toString());
                 }
                 this.keyType = columnsKeyType;
                 this.keyColumns.add(column);
@@ -179,11 +176,10 @@ abstract class AbstractTableMappingReader {
             } else if (keys.size() == 1) {
                 return keys.iterator().next();
             } else {
-                throw new ExasolDocumentMappingLanguageException(
-                        ExaError.messageBuilder("E-VSD-9")
-                                .message("{{VIOLATION_POINTER}}: More than one mapping for a single property.")
-                                .unquotedParameter("VIOLATION_POINTER", sourcePath.build().toString())
-                                .mitigation("Please define only one mapping for one property.").toString());
+                throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-9")
+                        .message("{{VIOLATION_POINTER|uq}}: More than one mapping for a single property.")
+                        .parameter("VIOLATION_POINTER", sourcePath.build().toString())
+                        .mitigation("Please define only one mapping for one property.").toString());
             }
         }
 
