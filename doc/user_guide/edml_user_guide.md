@@ -1,7 +1,7 @@
 # Getting Started With the Exasol Document Mapping Language (EDML)
 
 For creating a Virtual Schema for document data you have to define a mapping from the document structure to a relational structure. This is done using the Exasol Document Mapping Language (EDML)
-([reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/edml_1.2.0/index.html), [schema](https://github.com/exasol/schemas/blob/main/edml-1.2.0.json)). You have to define a mapping in a JSON document, upload it to a bucket in BucketFS and reference in the `CREATE VIRTUAL SCHEMA` call.
+([reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/edml_latest/index.html)). You have to define a mapping in a JSON document, upload it to a bucket in BucketFS and reference in the `CREATE VIRTUAL SCHEMA` call.
 
 This guide explains how to define these mappings in general. For data source specifics, check the corresponding virtual schema. Different data sources use different data formats. In this guide we use JSON.
 
@@ -235,4 +235,4 @@ The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. In case a s
 
 ## Reference
 
-[Schema mapping language reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/edml_1.2.0/index.html)
+[Schema mapping language reference](https://exasol.github.io/virtual-schema-common-document/schema_doc/edml_latest/index.html)
