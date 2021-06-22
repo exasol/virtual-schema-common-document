@@ -4,7 +4,7 @@ Code name:
 
 ## Features:
 
-* #69: Add document node factory that wraps java objects
+* #69: Added document node factory that wraps java objects
 
 ## Refactoring
 
