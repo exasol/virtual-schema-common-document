@@ -17,7 +17,7 @@
         <vscommon.version>13.0.0</vscommon.version>
         <gpg.skip>true</gpg.skip>
         <surefire.and.failsafe.plugin.version>3.0.0-M4</surefire.and.failsafe.plugin.version>
-        <scala.binary.version>2.13</scala.binary.version>
+        <scala.binary.version>2.12</scala.binary.version>
     </properties>
     <licenses>
         <license>
