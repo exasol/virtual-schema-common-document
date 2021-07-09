@@ -6,6 +6,10 @@ Code name:
 
 * #69: Added document node factory that wraps java objects
 
+## Bug Fixes:
+
+* #72: Limited number of UDFs my memory
+
 ## Refactoring
 
 * #61: Refactored DocumentNode structure to be dialect independent
