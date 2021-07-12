@@ -8,7 +8,7 @@ Code name:
 
 ## Bug Fixes:
 
-* #72: Limited number of UDFs by memory
+* #72: Added parallel UDFs count calculation using memory limitation
 
 ## Refactoring
 
