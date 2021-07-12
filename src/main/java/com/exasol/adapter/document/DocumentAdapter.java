@@ -17,6 +17,7 @@ import com.exasol.adapter.document.queryplanning.RemoteTableQueryFactory;
 import com.exasol.adapter.metadata.SchemaMetadata;
 import com.exasol.adapter.request.*;
 import com.exasol.adapter.response.*;
+import com.exasol.adapter.sql.SqlStatement;
 import com.exasol.bucketfs.BucketfsFileFactory;
 import com.exasol.errorreporting.ExaError;
 
@@ -33,6 +34,11 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
             LiteralCapability.NULL, LiteralCapability.BOOL, LiteralCapability.DOUBLE, LiteralCapability.EXACTNUMERIC);
     private static final Set<AggregateFunctionCapability> SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES = Set.of();
     private static final Set<ScalarFunctionCapability> SUPPORTED_SCALAR_FUNCTION_CAPABILITIES = Set.of();
+    private final int thisNodesCoreCount;
+
+    protected DocumentAdapter() {
+        this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
+    }
 
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
@@ -108,8 +114,9 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final PushDownResponse pushdown(final ExaMetadata exaMetadata, final PushDownRequest request)
             throws AdapterException {
-        final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(request.getSelect(),
-                request.getSchemaMetadataInfo().getAdapterNotes());
+        final SqlStatement sqlQuery = request.getSelect();
+        final String adapterNotes = request.getSchemaMetadataInfo().getAdapterNotes();
+        final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
         return PushDownResponse.builder()//
                 .pushDownSql(responseStatement)//
@@ -121,7 +128,9 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
         final QueryPlanner queryPlanner = getQueryPlanner(getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
-        final int availableClusterCores = getMaxCoreNumber(exaMetadata, adapterProperties);
+        final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
+        final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
+                documentAdapterProperties, this.thisNodesCoreCount);
         final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery, availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
         return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), getAdapterName())
@@ -135,23 +144,6 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * @return source specific {@link QueryPlanner}
      */
     protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation);
-
-    /**
-     * Get the number of cores that can be used by a query. This methods calculates the number of available cores and
-     * limits it by the configured allowed amount.
-     *
-     * @implNote This method assumes that all cluster nodes have * an equal number of cores.
-     *
-     * @param exaMetadata       {@link ExaMetadata}
-     * @param adapterProperties adapter properties
-     * @return total number of cores that are available in the cluster
-     */
-    private int getMaxCoreNumber(final ExaMetadata exaMetadata, final AdapterProperties adapterProperties) {
-        final int cores = Runtime.getRuntime().availableProcessors();
-        final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
-        final int maxConfiguredCores = documentAdapterProperties.getMaxParallelUdfs();
-        return Math.min(((int) exaMetadata.getNodeCount() * cores), maxConfiguredCores);
-    }
 
     @Override
     public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
