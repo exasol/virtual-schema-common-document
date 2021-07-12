@@ -11,10 +11,11 @@ import com.exasol.ExaMetadata;
  * This class calculates the maximum number of UDFs that can be used to solve a query.
  */
 class UdfCountCalculator {
+    private static final int MB = 1000000;
     /**
      * A JAVA-UDF needs about 150 MB RAM. The rest is an estimate for buffering / handling data.
      */
-    private static final int UDF_MIN_MEMORY = 500000000;
+    private static final int UDF_MIN_MEMORY = 500 * MB;
     private static final Logger LOGGER = LoggerFactory.getLogger(UdfCountCalculator.class);
 
     /**
@@ -30,9 +31,9 @@ class UdfCountCalculator {
     public int calculateMaxUdfInstanceCount(final ExaMetadata exaMetadata,
             final DocumentAdapterProperties documentAdapterProperties, final int coresPerNode) {
         final BigInteger memoryLimit = exaMetadata.getMemoryLimit();
-        final int maximumPerNodeByMemory = memoryLimit.divide(BigInteger.valueOf(UDF_MIN_MEMORY)).intValue();
+        final int maximumNodesByMemory = memoryLimit.divide(BigInteger.valueOf(UDF_MIN_MEMORY)).intValue();
         final int nodeCount = (int) exaMetadata.getNodeCount();
-        final int autoDetectedMaximum = nodeCount * Math.min(maximumPerNodeByMemory, coresPerNode);
+        final int autoDetectedMaximum = nodeCount * Math.min(maximumNodesByMemory, coresPerNode);
         final int maxConfigured = documentAdapterProperties.getMaxParallelUdfs();
         final int result = Math.min(autoDetectedMaximum, maxConfigured);
         LOGGER.info("Calculating maximum UDF number as min(\n" + //
@@ -41,8 +42,8 @@ class UdfCountCalculator {
                 "    configuration MAX_PARALLEL_UDFS ({})\n" + //
                 ") = {}\n"
                 + "Note that this is just the maximum. The dialect will decide later how many UDFs will be started.",
-                coresPerNode * nodeCount, memoryLimit.divide(BigInteger.valueOf(1000000)).intValue(),
-                UDF_MIN_MEMORY / 1000000, nodeCount, maximumPerNodeByMemory * nodeCount, maxConfigured, result);
+                coresPerNode * nodeCount, memoryLimit.divide(BigInteger.valueOf(MB)).intValue(), UDF_MIN_MEMORY / MB,
+                nodeCount, maximumNodesByMemory * nodeCount, maxConfigured, result);
         return result;
     }
 }
