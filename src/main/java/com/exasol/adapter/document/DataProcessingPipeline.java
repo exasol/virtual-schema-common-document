@@ -15,6 +15,7 @@ import com.exasol.sql.expression.ValueExpression;
 
 import akka.actor.ActorSystem;
 import akka.stream.OverflowStrategy;
+import akka.stream.javadsl.Source;
 
 /**
  * This class implements the data processing in the UDF.
@@ -48,7 +49,7 @@ public class DataProcessingPipeline {
         final ActorSystem system = ActorSystem.create("DataProcessingPipeline");
         this.dataProcessingPipelineMonitor.start();
         try {
-            documentFetcher.run(connectionInformation).async()//
+            Source.fromIterator(() -> documentFetcher.run(connectionInformation)).async()//
                     .map(this.dataProcessingPipelineMonitor::onEnterPreSchemaMappingBuffer)//
                     .buffer(600, OverflowStrategy.backpressure())//
                     .map(this::runSchemaMapping).async()//
@@ -85,7 +86,7 @@ public class DataProcessingPipeline {
     }
 
     private void emitChunk(final List<List<Object>> chunkOfRows, final RowHandler rowHandler) {
-        this.dataProcessingPipelineMonitor.onLeavePreEmitBuffer();
+        this.dataProcessingPipelineMonitor.onLeavePreEmitBuffer(chunkOfRows.size());
         for (final List<Object> row : chunkOfRows) {
             rowHandler.acceptRow(row);
         }
