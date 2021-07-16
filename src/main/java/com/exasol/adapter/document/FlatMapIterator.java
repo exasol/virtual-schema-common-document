@@ -7,7 +7,6 @@ import java.util.function.Function;
 /**
  * This class implements a flat-map for iterators. That means for each item in the passed iterator a function is called
  * that again builds an iterator. This class then lazily flattens iterators and returns elements one by one on the next calls.
- * of the source iterator.
  * 
  * @param <T> result type
  * @param <S> input iterator type
