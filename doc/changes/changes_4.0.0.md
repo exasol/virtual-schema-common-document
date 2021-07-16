@@ -15,4 +15,4 @@ Code name:
 * #61: Refactored DocumentNode structure to be dialect independent
 * #63: Removed DataLoader interface
 * #65: Decoupled loading and emitting to improve performance
-* #75: Refactored to scope akka to this project
+* #75: Refactored to scope Akka to this project

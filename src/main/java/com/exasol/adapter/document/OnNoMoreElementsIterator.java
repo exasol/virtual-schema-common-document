@@ -4,8 +4,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 /**
- * This {@link Iterator} invokes a method when {@link #hasNext()} returned false the first time or when {@link #next()}
- * was called but no more elements are available.
+ * This {@link Iterator} invokes a method when {@link #hasNext()} returns false the first time or when {@link #next()}
+ * is called but no more elements are available.
  * <p>
  * You can use this iterator for example to close a resource.
  * </p>
