@@ -8,17 +8,17 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
 
-class OnNoMoreElementsIteratorTest {
+class AfterAllCallbackIteratorTest {
 
     @Test
     void testCallback() {
-        final AtomicBoolean wasCalled = new AtomicBoolean(false);
-        final OnNoMoreElementsIterator<Integer> iterator = new OnNoMoreElementsIterator<>(List.of(1).iterator(),
-                () -> wasCalled.set(true));
+        final AtomicBoolean isCalled = new AtomicBoolean(false);
+        final AfterAllCallbackIterator<Integer> iterator = new AfterAllCallbackIterator<>(List.of(1).iterator(),
+                () -> isCalled.set(true));
         iterator.hasNext();
         iterator.next();
-        assertFalse(wasCalled.get());
+        assertFalse(isCalled.get());
         iterator.hasNext();
-        assertTrue(wasCalled.get());
+        assertTrue(isCalled.get());
     }
 }

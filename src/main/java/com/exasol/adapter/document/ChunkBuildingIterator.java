@@ -31,7 +31,7 @@ public class ChunkBuildingIterator<T> implements Iterator<List<T>> {
     @Override
     public List<T> next() {
         if (!this.hasNext) {
-            throw new NoSuchElementException();// TODO add message
+            throw new NoSuchElementException();
         }
         final List<T> thisChunk = this.nextChunk;
         buildChunk();

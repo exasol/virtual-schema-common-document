@@ -12,18 +12,18 @@ import java.util.NoSuchElementException;
  * 
  * @param <T> type of the iterator
  */
-public class OnNoMoreElementsIterator<T> implements Iterator<T> {
+public class AfterAllCallbackIterator<T> implements Iterator<T> {
     private final Iterator<T> source;
     private final Runnable callback;
-    private boolean wasTriggered = false;
+    private boolean isCallbackTriggered = false;
 
     /**
-     * Create a new instance of {@link OnNoMoreElementsIterator}.
+     * Create a new instance of {@link AfterAllCallbackIterator}.
      * 
      * @param source   source iterator
      * @param callback callback function
      */
-    public OnNoMoreElementsIterator(final Iterator<T> source, final Runnable callback) {
+    public AfterAllCallbackIterator(final Iterator<T> source, final Runnable callback) {
         this.source = source;
         this.callback = callback;
     }
@@ -31,7 +31,7 @@ public class OnNoMoreElementsIterator<T> implements Iterator<T> {
     @Override
     public boolean hasNext() {
         final boolean hasNext = this.source.hasNext();
-        if (!hasNext && !this.wasTriggered) {
+        if (!hasNext && !this.isCallbackTriggered) {
             runCallback();
         }
         return hasNext;
@@ -39,7 +39,7 @@ public class OnNoMoreElementsIterator<T> implements Iterator<T> {
 
     private void runCallback() {
         this.callback.run();
-        this.wasTriggered = true;
+        this.isCallbackTriggered = true;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class OnNoMoreElementsIterator<T> implements Iterator<T> {
         try {
             return this.source.next();
         } catch (final NoSuchElementException exception) {
-            if (!this.wasTriggered) {
+            if (!this.isCallbackTriggered) {
                 runCallback();
             }
             throw exception;
