@@ -10,7 +10,7 @@ import java.util.NoSuchElementException;
  * You can use this iterator for example to close a resource.
  * </p>
  * 
- * @param <T>
+ * @param <T> type of the iterator
  */
 public class OnNoMoreElementsIterator<T> implements Iterator<T> {
     private final Iterator<T> source;
