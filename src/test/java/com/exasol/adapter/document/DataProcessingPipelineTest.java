@@ -53,7 +53,7 @@ class DataProcessingPipelineTest {
         GENERATE, EMIT
     }
 
-    private static class HelperIterator implements Iterator<List<FetchedDocument>> {
+    private static class HelperIterator implements Iterator<FetchedDocument> {
         private final Runnable onNext;
         int counter = 0;
 
@@ -67,16 +67,16 @@ class DataProcessingPipelineTest {
         }
 
         @Override
-        public List<FetchedDocument> next() {
+        public FetchedDocument next() {
             final BigDecimalHolderNode document = new BigDecimalHolderNode(BigDecimal.valueOf(this.counter));
             this.onNext.run();
             this.counter++;
-            return List.of(new FetchedDocument(document, "generated"));
+            return new FetchedDocument(document, "generated");
         }
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = 8074381824920576145L;
+        private static final long serialVersionUID = 8489721427702208566L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {
@@ -84,7 +84,7 @@ class DataProcessingPipelineTest {
         }
 
         @Override
-        public Iterator<List<FetchedDocument>> run(final ExaConnectionInformation connectionInformation) {
+        public Iterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
             return new HelperIterator(this.onNext);
         }
     }

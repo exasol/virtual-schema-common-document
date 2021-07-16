@@ -49,7 +49,7 @@ public class DataProcessingPipeline {
         final ActorSystem system = ActorSystem.create("DataProcessingPipeline");
         this.dataProcessingPipelineMonitor.start();
         try {
-            Source.fromIterator(() -> documentFetcher.run(connectionInformation)).async()//
+            Source.fromIterator(() -> new ChunkBuildingIterator<>(documentFetcher.run(connectionInformation))).async()//
                     .map(this.dataProcessingPipelineMonitor::onEnterPreSchemaMappingBuffer)//
                     .buffer(600, OverflowStrategy.backpressure())//
                     .map(this::runSchemaMapping).async()//
