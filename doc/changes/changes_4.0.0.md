@@ -4,7 +4,7 @@ Code name: Performance Optimizations
 
 ## Summary
 
-In this release we refactored the interface of this package to improve performance and make implementing new dialects easier.
+In this release we refactored the interface to improve performance and make implementing new dialects easier.
 
 ## Features:
 
