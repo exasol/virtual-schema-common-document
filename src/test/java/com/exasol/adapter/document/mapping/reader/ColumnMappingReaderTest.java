@@ -85,7 +85,7 @@ class ColumnMappingReaderTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> columnMappingReader.readColumnMapping("unknownType", definition, sourcePath, "test", false));
         assertThat(exception.getMessage(),
-                startsWith("F-VSD-EDML-7: The mapping type 'unknownType' is not supported in this version."));
+                startsWith("F-VSD-48: The mapping type 'unknownType' is not supported in this version."));
     }
 
     @Test

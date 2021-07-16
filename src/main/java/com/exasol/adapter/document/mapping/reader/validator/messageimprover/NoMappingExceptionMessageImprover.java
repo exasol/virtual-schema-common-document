@@ -12,7 +12,7 @@ public class NoMappingExceptionMessageImprover extends AbstractExceptionMessageI
     public Optional<String> tryToImprove(final ValidationException exception) {
         if (exception.getPointerToViolation().endsWith("/mapping") && exception.getKeyword().equals("minProperties")) {
             final Set<String> possibleMappings = possibleObjectProperties(exception.getViolatedSchema());
-            return Optional.of(ExaError.messageBuilder("E-VSD-EDML-2")//
+            return Optional.of(ExaError.messageBuilder("F-VSD-52")//
                     .message("{{DOC_POINTER}} is empty.")
                     .mitigation("Specify at least one mapping. Possible mappings are {{POSSIBLE_MAPPINGS}}.")
                     .parameter("DOC_POINTER", exception.getPointerToViolation(),

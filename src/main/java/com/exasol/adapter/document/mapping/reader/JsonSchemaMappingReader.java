@@ -1,19 +1,12 @@
 package com.exasol.adapter.document.mapping.reader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
+import javax.json.*;
 
-import com.exasol.adapter.document.mapping.SchemaMapping;
-import com.exasol.adapter.document.mapping.TableKeyFetcher;
-import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.reader.validator.JsonSchemaMappingValidator;
 import com.exasol.errorreporting.ExaError;
 
@@ -48,7 +41,7 @@ public class JsonSchemaMappingReader implements SchemaMappingReader {
             try {
                 parseFile(definitionPath);
             } catch (final ExasolDocumentMappingLanguageException exception) {
-                throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-EDML-10")
+                throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("F-VSD-81")
                         .message("Semantic-validation error in schema mapping {{MAPPING_FILE}}.")
                         .parameter("MAPPING_FILE", definitionPath.toString()).toString(), exception);
             }
@@ -91,7 +84,7 @@ public class JsonSchemaMappingReader implements SchemaMappingReader {
         } catch (final IOException exception) {
             throw new IllegalArgumentException(
                     ExaError.messageBuilder("E-VSD-24").message("Failed to open mapping file {{MAPPING_FILE}}.")
-                            .parameter("{{MAPPING_FILE}}", definitionPath).toString(),
+                            .parameter("MAPPING_FILE", definitionPath).toString(),
                     exception);
         }
     }

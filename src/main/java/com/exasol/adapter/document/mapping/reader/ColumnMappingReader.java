@@ -48,7 +48,7 @@ class ColumnMappingReader {
             abortIfAtRootLevel(EdmlConstants.TO_DECIMAL_MAPPING_KEY, isRootLevel);
             return readToDecimalColumn(definition);
         default:
-            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-EDML-7")
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-48")
                     .message("The mapping type {{MAPPING_TYPE}} is not supported in this version.")
                     .parameter("MAPPING_TYPE", mappingKey).ticketMitigation().toString());
         }
@@ -131,16 +131,16 @@ class ColumnMappingReader {
     private String readExasolColumnName(final JsonObject definition, final String defaultValue) {
         final String exasolColumnName = definition.getString(EdmlConstants.DEST_NAME_KEY, defaultValue);
         if (exasolColumnName == null) {
-            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-EDML-8")
-                    .message("'destinationName' is mandatory in this definition.")
-                    .mitigation("Please set it to the desired name for the Exasol column.").toString());
+            throw new ExasolDocumentMappingLanguageException(
+                    ExaError.messageBuilder("F-VSD-49").message("'destinationName' is mandatory in this definition.")
+                            .mitigation("Please set it to the desired name for the Exasol column.").toString());
         }
         return exasolColumnName.toUpperCase();
     }
 
     private void abortIfAtRootLevel(final String mappingType, final boolean isRootLevel) {
         if (isRootLevel) {
-            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-EDML-9")
+            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("F-VSD-50")
                     .message("The mapping type {{MAPPING_TYPE}} is not allowed at root level.")
                     .parameter("MAPPING_TYPE", mappingType)
                     .mitigation("You probably want to replace it with a 'fields' definition.").toString());
