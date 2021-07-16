@@ -16,9 +16,6 @@ import com.exasol.adapter.document.documentnode.holder.BigDecimalHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.mapping.*;
 
-import akka.NotUsed;
-import akka.stream.javadsl.Source;
-
 class DataProcessingPipelineTest {
     private static final int TEST_SIZE = 100000;
 
@@ -79,7 +76,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -6036214356457982412L;
+        private static final long serialVersionUID = 8489721427702208566L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {
@@ -87,8 +84,8 @@ class DataProcessingPipelineTest {
         }
 
         @Override
-        public Source<List<FetchedDocument>, NotUsed> run(final ExaConnectionInformation connectionInformation) {
-            return Source.fromIterator(() -> new HelperIterator(this.onNext)).grouped(10);
+        public Iterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
+            return new HelperIterator(this.onNext);
         }
     }
 }

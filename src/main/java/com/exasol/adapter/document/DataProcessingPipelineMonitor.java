@@ -14,6 +14,7 @@ class DataProcessingPipelineMonitor extends Thread {
     long b = 0;
     long c = 0;
     long d = 0;
+    long totalEmitted = 0;
 
     /**
      * Called when a row is loaded into the first buffer.
@@ -44,7 +45,8 @@ class DataProcessingPipelineMonitor extends Thread {
     /**
      * Called when an item is removed from the second buffer.
      */
-    public void onLeavePreEmitBuffer() {
+    public void onLeavePreEmitBuffer(final long emitSize) {
+        this.totalEmitted += emitSize;
         this.d++;
     }
 
@@ -59,7 +61,11 @@ class DataProcessingPipelineMonitor extends Thread {
     @Override
     public void run() {
         while (!this.stopRequested.get()) {
-            LOGGER.log(Level.INFO, "pipeline state: {0} {1}", new Object[] { (this.a - this.b), (this.c - this.d) });
+            final Runtime instance = Runtime.getRuntime();
+            LOGGER.log(Level.INFO, "pipeline state: {0} {1} {2} {3} {4} {5}",
+                    new Object[] { String.valueOf(this.a - this.b), String.valueOf(this.c - this.d),
+                            String.valueOf(this.totalEmitted), String.valueOf(System.currentTimeMillis()),
+                            String.valueOf(instance.totalMemory()), String.valueOf(instance.freeMemory()) });
             try {
                 Thread.sleep(500);
             } catch (final InterruptedException exception) {
