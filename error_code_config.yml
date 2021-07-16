@@ -1,0 +1,4 @@
+error-tags:
+  VSD:
+    packages:
+      - com.exasol

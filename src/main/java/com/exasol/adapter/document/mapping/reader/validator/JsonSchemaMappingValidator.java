@@ -55,7 +55,7 @@ public class JsonSchemaMappingValidator {
         } catch (final IOException exception) {
             throw new IllegalArgumentException(
                     ExaError.messageBuilder("E-VSD-23").message("Failed to open mapping file {{MAPPING_FILE}}.")
-                            .parameter("{{MAPPING_FILE}}", schemaMappingDefinition).toString(),
+                            .parameter("MAPPING_FILE", schemaMappingDefinition).toString(),
                     exception);
         }
     }
@@ -65,7 +65,7 @@ public class JsonSchemaMappingValidator {
             final Validator validator = Validator.builder().build();
             validator.performValidation(this.schema, schemaMappingDefinition);
         } catch (final ValidationException originalException) {
-            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-EDML-1")
+            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("F-VSD-51")
                     .message("Syntax error in mapping definition {{MAPPING_FILE}}.")
                     .mitigation("See causing exception for details.").parameter("MAPPING_FILE", fileName).toString(),
                     makeValidationExceptionMoreReadable(originalException, fileName));
@@ -86,7 +86,7 @@ public class JsonSchemaMappingValidator {
                 }
             }
             return new ExasolDocumentMappingLanguageException(
-                    ExaError.messageBuilder("E-VSD-EDML-3").message("Syntax validation error: {{VALIDATION_ERROR|uq}}.")
+                    ExaError.messageBuilder("F-VSD-53").message("Syntax validation error: {{VALIDATION_ERROR|uq}}.")
                             .parameter("VALIDATION_ERROR", exception.getMessage()).toString());
         }
     }

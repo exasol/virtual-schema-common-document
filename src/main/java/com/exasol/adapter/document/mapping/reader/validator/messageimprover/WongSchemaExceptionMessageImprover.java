@@ -13,7 +13,7 @@ public class WongSchemaExceptionMessageImprover extends AbstractExceptionMessage
     public Optional<String> tryToImprove(final ValidationException exception) {
         if (exception.getMessage().startsWith("#/$schema:")
                 && exception.getMessage().endsWith("is not a valid enum value")) {
-            return Optional.of(ExaError.messageBuilder("E-VSD-EDML-6").message("Illegal value for $schema.")
+            return Optional.of(ExaError.messageBuilder("F-VSD-56").message("Illegal value for $schema.")
                     .mitigation("Supported schema versions are {{SUPPORTED_SCHEMA}}")
                     .parameter("SUPPORTED_SCHEMA", getAvailableSchemas(exception.getViolatedSchema())).toString());
         } else {

@@ -17,3 +17,4 @@ Code name:
 * #65: Decoupled loading and emitting to improve performance
 * #75: Refactored to scope Akka to this project
 * #77: Removed Akka since it did not lead to the expected performance gain
+* #79: Update error-code-crawler

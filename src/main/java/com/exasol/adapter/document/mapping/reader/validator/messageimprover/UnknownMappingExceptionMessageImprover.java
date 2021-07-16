@@ -22,7 +22,7 @@ public class UnknownMappingExceptionMessageImprover extends AbstractExceptionMes
     private Optional<String> improveMessage(final ValidationException exception) {
         final Set<String> possibleDefinitions = possibleObjectProperties(exception.getViolatedSchema());
         if (!possibleDefinitions.isEmpty()) {
-            return Optional.of(ExaError.messageBuilder("E-VSD-EDML-4").message("{{VALIDATION_ERROR|uq}}.")
+            return Optional.of(ExaError.messageBuilder("F-VSD-54").message("{{VALIDATION_ERROR|uq}}.")
                     .parameter("VALIDATION_ERROR", exception.getMessage())
                     .mitigation("Use one of the following mapping definitions: {{POSSIBLE_DEFINITIONS}}.")
                     .parameter("POSSIBLE_DEFINITIONS", possibleDefinitions).toString());

@@ -82,7 +82,8 @@ public class QueryPredicateToBooleanExpressionConverter {
                         .mitigation("Please change your query.").toString());
             default:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-4")
-                        .message("Converting {{OPERATOR}} is not yet implemented.").ticketMitigation().toString());
+                        .message("Converting {{OPERATOR}} is not yet implemented.", operator).ticketMitigation()
+                        .toString());
             }
         }
 

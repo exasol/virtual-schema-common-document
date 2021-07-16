@@ -137,7 +137,7 @@ class JsonSchemaMappingReaderIT {
             return base;
         }, this.tempDir);
         assertReaderThrowsExceptionMessage(invalidFile, equalTo(
-                "E-VSD-EDML-9: The mapping type 'toVarcharMapping' is not allowed at root level. You probably want to replace it with a 'fields' definition."));
+                "F-VSD-50: The mapping type 'toVarcharMapping' is not allowed at root level. You probably want to replace it with a 'fields' definition."));
     }
 
     @Test
@@ -169,7 +169,7 @@ class JsonSchemaMappingReaderIT {
                 ExasolDocumentMappingLanguageException.class, () -> getMappingDefinitionForFile(invalidFile));
         assertAll(//
                 () -> assertThat(exception.getMessage(),
-                        startsWith("E-VSD-EDML-10: Semantic-validation error in schema mapping '")),
+                        startsWith("F-VSD-81: Semantic-validation error in schema mapping '")),
                 () -> assertThat(exception.getCause().getMessage(), messageMatcher)//
         );
     }

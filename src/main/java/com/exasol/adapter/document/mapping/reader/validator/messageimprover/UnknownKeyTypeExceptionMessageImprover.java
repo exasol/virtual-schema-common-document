@@ -11,7 +11,7 @@ public class UnknownKeyTypeExceptionMessageImprover extends AbstractExceptionMes
     public Optional<String> tryToImprove(final ValidationException exception) {
         if (exception.getPointerToViolation().endsWith("/key")
                 && exception.getMessage().endsWith("is not a valid enum value")) {
-            return Optional.of(ExaError.messageBuilder("E-VSD-EDML-5")
+            return Optional.of(ExaError.messageBuilder("F-VSD-55")
                     .message("{{VIOLATION_POINTER|uq}}: Illegal value for property 'key'.")
                     .parameter("VIOLATION_POINTER", exception.getPointerToViolation(),
                             "Pointer to the property in the document that cause the validation error.")

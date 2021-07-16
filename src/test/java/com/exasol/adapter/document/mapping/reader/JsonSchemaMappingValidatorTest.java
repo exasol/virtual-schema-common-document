@@ -65,11 +65,10 @@ class JsonSchemaMappingValidatorTest {
             final Matcher<String> messageMatcher) throws IOException {
         final File invalidFile = generateInvalidFile(base, invalidator, this.tempDir);
         final ExasolDocumentMappingLanguageException exception = assertThrows(
-                ExasolDocumentMappingLanguageException.class,
-                () -> runValidation(invalidFile));
+                ExasolDocumentMappingLanguageException.class, () -> runValidation(invalidFile));
         assertAll(
                 () -> assertThat(exception.getMessage(),
-                        equalTo("E-VSD-EDML-1: Syntax error in mapping definition '" + invalidFile.getName()
+                        equalTo("F-VSD-51: Syntax error in mapping definition '" + invalidFile.getName()
                                 + "'. See causing exception for details.")),
                 () -> assertThat(exception.getCause().getMessage(), messageMatcher));
     }
@@ -79,7 +78,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.remove("destinationTable");
             return base;
-        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: required key [destinationTable] not found."));
+        }, equalTo("F-VSD-53: Syntax validation error: #: required key [destinationTable] not found."));
     }
 
     @Test
@@ -87,7 +86,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.remove("$schema");
             return base;
-        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: required key [$schema] not found."));
+        }, equalTo("F-VSD-53: Syntax validation error: #: required key [$schema] not found."));
     }
 
     @Test
@@ -95,7 +94,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.put("$schema", "wrongSchema");
             return base;
-        }, startsWith("E-VSD-EDML-6: Illegal value for $schema. Supported schema versions are ["));
+        }, startsWith("F-VSD-56: Illegal value for $schema. Supported schema versions are ["));
     }
 
     @Test
@@ -103,7 +102,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.put("unknownProperty", "someValue");
             return base;
-        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: extraneous key [unknownProperty] is not permitted."));
+        }, equalTo("F-VSD-53: Syntax validation error: #: extraneous key [unknownProperty] is not permitted."));
     }
 
     @Test
@@ -114,7 +113,7 @@ class JsonSchemaMappingValidatorTest {
             isbn.put("toStriiiiiiingMapping", "");
             return base;
         }, startsWith(
-                "E-VSD-EDML-4: #/mapping/fields/isbn: extraneous key [toStriiiiiiingMapping] is not permitted. Use one of the following mapping definitions: ["));
+                "F-VSD-54: #/mapping/fields/isbn: extraneous key [toStriiiiiiingMapping] is not permitted. Use one of the following mapping definitions: ["));
     }
 
     @Test
@@ -126,7 +125,7 @@ class JsonSchemaMappingValidatorTest {
             mapping.put("toStriiiiingMapping", "");
             return base;
         }, startsWith(
-                "E-VSD-EDML-4: #/mapping/fields/chapters/toTableMapping/mapping: extraneous key [toStriiiiingMapping] is not permitted. Use one of the following mapping definitions: ["));
+                "F-VSD-54: #/mapping/fields/chapters/toTableMapping/mapping: extraneous key [toStriiiiingMapping] is not permitted. Use one of the following mapping definitions: ["));
     }
 
     @Test
@@ -136,7 +135,7 @@ class JsonSchemaMappingValidatorTest {
                     .getJSONObject("toTableMapping").getJSONObject("mapping").remove("fields");
             return base;
         }, startsWith(
-                "E-VSD-EDML-2: '#/mapping/fields/chapters/toTableMapping/mapping' is empty. Specify at least one mapping. Possible mappings are ["));
+                "F-VSD-52: '#/mapping/fields/chapters/toTableMapping/mapping' is empty. Specify at least one mapping. Possible mappings are ["));
     }
 
     @Test
@@ -146,7 +145,7 @@ class JsonSchemaMappingValidatorTest {
                     .getJSONObject("toVarcharMapping").put("key", "");
             return base;
         }, equalTo(
-                "E-VSD-EDML-5: #/mapping/fields/name/toVarcharMapping/key: Illegal value for property 'key'. Please set key property to 'local' or 'global'."));
+                "F-VSD-55: #/mapping/fields/name/toVarcharMapping/key: Illegal value for property 'key'. Please set key property to 'local' or 'global'."));
     }
 
     @Test
@@ -154,7 +153,7 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.remove("mapping");
             return base;
-        }, equalTo("E-VSD-EDML-3: Syntax validation error: #: required key [mapping] not found."));
+        }, equalTo("F-VSD-53: Syntax validation error: #: required key [mapping] not found."));
     }
 
     @Test
@@ -162,6 +161,6 @@ class JsonSchemaMappingValidatorTest {
         testInvalid(BASIC_MAPPING, base -> {
             base.getJSONObject("mapping").remove("fields");
             return base;
-        }, startsWith("E-VSD-EDML-2: '#/mapping' is empty. Specify at least one mapping. Possible mappings are ["));
+        }, startsWith("F-VSD-52: '#/mapping' is empty. Specify at least one mapping. Possible mappings are ["));
     }
 }
