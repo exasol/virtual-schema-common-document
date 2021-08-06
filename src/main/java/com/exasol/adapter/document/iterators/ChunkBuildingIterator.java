@@ -8,18 +8,20 @@ import java.util.*;
  * @param <T> type of the wrapped iterator
  */
 public class ChunkBuildingIterator<T> implements Iterator<List<T>> {
-    private static final int CHUNK_SIZE = 100;
+    private final int chunkSize;
     private final Iterator<T> source;
     private boolean hasNext = false;
     private List<T> nextChunk;
 
     /**
      * Create a new instance of {@link ChunkBuildingIterator}.
-     * 
-     * @param source iterator to wrap
+     *
+     * @param source    iterator to wrap
+     * @param chunkSize size of the chunks
      */
-    public ChunkBuildingIterator(final Iterator<T> source) {
+    public ChunkBuildingIterator(final Iterator<T> source, final int chunkSize) {
         this.source = source;
+        this.chunkSize = chunkSize;
         buildChunk();
     }
 
@@ -39,8 +41,8 @@ public class ChunkBuildingIterator<T> implements Iterator<List<T>> {
     }
 
     private void buildChunk() {
-        this.nextChunk = new ArrayList<>(CHUNK_SIZE);
-        for (int counter = 0; counter < CHUNK_SIZE && this.source.hasNext(); counter++) {
+        this.nextChunk = new ArrayList<>(this.chunkSize);
+        for (int counter = 0; counter < this.chunkSize && this.source.hasNext(); counter++) {
             this.nextChunk.add(this.source.next());
         }
         this.hasNext = !this.nextChunk.isEmpty();

@@ -1,9 +1,8 @@
 package com.exasol.adapter.document.iterators;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.junit.jupiter.api.Test;
@@ -20,5 +19,19 @@ class AfterAllCallbackIteratorTest {
         assertFalse(isCalled.get());
         iterator.hasNext();
         assertTrue(isCalled.get());
+    }
+
+    @Test
+    void testNoSuchElementException() {
+        final AfterAllCallbackIterator<Integer> iterator = getEmptyIterator();
+        assertThrows(NoSuchElementException.class, iterator::next);
+    }
+
+    private AfterAllCallbackIterator<Integer> getEmptyIterator() {
+        final AfterAllCallbackIterator<Integer> iterator = new AfterAllCallbackIterator<>(Collections.emptyIterator(),
+                () -> {
+                    // nothing to do
+                });
+        return iterator;
     }
 }
