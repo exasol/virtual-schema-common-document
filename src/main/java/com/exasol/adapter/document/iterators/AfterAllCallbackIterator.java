@@ -1,4 +1,4 @@
-package com.exasol.adapter.document;
+package com.exasol.adapter.document.iterators;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

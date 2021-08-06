@@ -79,6 +79,11 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToCol
             this.result = fitBigDecimalValue(BigDecimal.valueOf(floatingPointValue.getValue()));
         }
 
+        @Override
+        public void visit(final DocumentBinaryValue binaryValue) {
+            this.result = handleNotNumeric("<binary data>");
+        }
+
         private ValueExpression handleNotNumeric(final String value) {
             if (this.column.getNotNumericBehaviour() == MappingErrorBehaviour.ABORT) {
                 throw new ColumnValueExtractorException(

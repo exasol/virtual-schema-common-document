@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>4.0.0</version>
+    <version>5.0.0</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document</url>
@@ -13,8 +13,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>11</java.version>
         <junit.version>5.7.2</junit.version>
-        <jacoco.version>0.8.5</jacoco.version>
-        <vscommon.version>13.0.0</vscommon.version>
+        <jacoco.version>0.8.7</jacoco.version>
+        <vscommon.version>15.2.0</vscommon.version>
         <gpg.skip>true</gpg.skip>
         <surefire.and.failsafe.plugin.version>3.0.0-M4</surefire.and.failsafe.plugin.version>
         <scala.binary.version>2.12</scala.binary.version>
@@ -78,13 +78,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.31</version>
+            <version>1.7.32</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.everit-org.json-schema</groupId>
             <artifactId>org.everit.json.schema</artifactId>
-            <version>1.12.3</version>
+            <version>1.13.0</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.0.2</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -123,7 +123,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.11.1</version>
+            <version>3.11.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -135,7 +135,7 @@
                 <version>${surefire.and.failsafe.plugin.version}</version>
                 <configuration>
                     <!-- Set the highest log level for coverage testing, so that we
-                      have a chance to reach branches in the logging lambdas too. -->
+                                have a chance to reach branches in the logging lambdas too. -->
                     <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties ${argLine}</argLine>
                     <excludes>
                         <exclude>**IT.java</exclude>
@@ -148,7 +148,7 @@
                 <version>${surefire.and.failsafe.plugin.version}</version>
                 <configuration>
                     <!-- Set the highest log level for coverage testing, so that we have a chance to reach branches
-                      <property>	                      in the logging lambdas too. -->
+                                <property>	                      in the logging lambdas too. -->
                     <argLine>-Djava.util.logging.config.file=src/test/resources/logging.properties ${argLine}</argLine>
                     <includes>
                         <include>**IT.java</include>
@@ -405,7 +405,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>error-code-crawler-maven-plugin</artifactId>
-                <version>0.5.0</version>
+                <version>0.5.1</version>
                 <executions>
                     <execution>
                         <goals>

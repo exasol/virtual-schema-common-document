@@ -53,4 +53,11 @@ public interface DocumentNodeVisitor {
      * @param floatingPointValue double value to visit
      */
     public void visit(DocumentFloatingPointValue floatingPointValue);
+
+    /**
+     * Visit a {@link DocumentBinaryValue}.
+     *
+     * @param binaryValue binary data
+     */
+    public void visit(DocumentBinaryValue binaryValue);
 }

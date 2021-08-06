@@ -33,16 +33,6 @@ class PropertyToVarcharColumnValueExtractorTest {
                 .overflowBehaviour(TruncateableMappingErrorBehaviour.ABORT).nonStringBehaviour(CONVERT_OR_ABORT);
     }
 
-    static Stream<Arguments> toStringConversionTestCases() {
-        return Stream.of(//
-                Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_NULL", "123"), //
-                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_NULL", "true"), //
-                Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_ABORT", "123"), //
-                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true"), //
-                Arguments.of(new DoubleHolderNode(12.2), "CONVERT_OR_NULL", "12.2") //
-        );
-    }
-
     static Stream<Arguments> nonConvertibles() {
         return Stream.of(//
                 Arguments.of(new ArrayHolderNode(Collections.emptyList())), //
@@ -85,6 +75,17 @@ class PropertyToVarcharColumnValueExtractorTest {
         final OverflowException overflowException = assertThrows(OverflowException.class,
                 () -> valueExtractor.mapValue(testValue));
         assertThat(overflowException.getMessage(), startsWith("E-VSD-38"));
+    }
+
+    static Stream<Arguments> toStringConversionTestCases() {
+        return Stream.of(//
+                Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_NULL", "123"), //
+                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_NULL", "true"), //
+                Arguments.of(new BinaryHolderNode("abc".getBytes()), "CONVERT_OR_NULL", "YWJj"), //
+                Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_ABORT", "123"), //
+                Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true"), //
+                Arguments.of(new DoubleHolderNode(12.2), "CONVERT_OR_NULL", "12.2") //
+        );
     }
 
     @ParameterizedTest

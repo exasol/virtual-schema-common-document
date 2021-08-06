@@ -4,6 +4,9 @@ import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
 import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.NULL;
 import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.ValueExpression;
@@ -195,6 +198,13 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
         @Override
         public void visit(final DocumentFloatingPointValue floatingPointValue) {
             this.result = new MappedStringResult(String.valueOf(floatingPointValue.getValue()), true);
+        }
+
+        @Override
+        public void visit(final DocumentBinaryValue binaryValue) {
+            final String bas64Encoded = new String(Base64.getEncoder().encode(binaryValue.getBinary()),
+                    StandardCharsets.UTF_8);
+            this.result = new MappedStringResult(bas64Encoded, true);
         }
 
         public ConversionResult getResult() {

@@ -37,7 +37,8 @@ class PropertyToDecimalColumnValueExtractorTest {
                 Arguments.of(new StringHolderNode("test")), //
                 Arguments.of(new BooleanHolderNode(true)), //
                 Arguments.of(new ObjectHolderNode(Collections.emptyMap())), //
-                Arguments.of(new ArrayHolderNode(Collections.emptyList()))//
+                Arguments.of(new ArrayHolderNode(Collections.emptyList())), //
+                Arguments.of(new BinaryHolderNode(new byte[] {}))//
         );
     }
 

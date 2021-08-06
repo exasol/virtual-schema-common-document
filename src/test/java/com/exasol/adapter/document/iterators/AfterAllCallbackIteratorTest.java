@@ -1,4 +1,4 @@
-package com.exasol.adapter.document;
+package com.exasol.adapter.document.iterators;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
