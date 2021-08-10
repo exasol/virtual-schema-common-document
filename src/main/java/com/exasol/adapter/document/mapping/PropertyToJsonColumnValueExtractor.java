@@ -1,5 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 
 import javax.json.*;
@@ -110,6 +112,12 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
         @Override
         public void visit(final DocumentFloatingPointValue floatingPointValue) {
             this.jsonValue = JSON.createValue(floatingPointValue.getValue());
+        }
+
+        @Override
+        public void visit(final DocumentBinaryValue binaryValue) {
+            this.jsonValue = JSON.createValue(
+                    new String(Base64.getEncoder().encode(binaryValue.getBinary()), StandardCharsets.UTF_8));
         }
 
         public JsonValue getJsonValue() {

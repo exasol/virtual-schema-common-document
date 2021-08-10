@@ -1,13 +1,9 @@
 package com.exasol.adapter.document.queryplanning;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.exasol.adapter.AdapterException;
-import com.exasol.adapter.document.mapping.ColumnMapping;
-import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
-import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicateFactory;
 import com.exasol.adapter.metadata.ColumnMetadata;
@@ -32,8 +28,7 @@ public class RemoteTableQueryFactory {
         try {
             selectStatement.accept(visitor);
         } catch (final AdapterException exception) {
-            throw new IllegalStateException(ExaError.messageBuilder("E-VSD-42").message(
-                    "Unexpected AdapterException.")
+            throw new IllegalStateException(ExaError.messageBuilder("E-VSD-42").message("Unexpected AdapterException.")
                     .ticketMitigation().toString(), exception);
         }
         final SchemaMappingToSchemaMetadataConverter converter = new SchemaMappingToSchemaMetadataConverter();
@@ -59,10 +54,8 @@ public class RemoteTableQueryFactory {
 
         @Override
         public Void visit(final SqlSelectList selectList) {
-            if (selectList.isRequestAnyColumn()) {
+            if (!selectList.hasExplicitColumnsList()) {
                 selectAnyColumn();
-            } else if (selectList.isSelectStar()) {
-                selectAllColumns();
             } else {
                 for (final SqlNode selectListExpression : selectList.getExpressions()) {
                     if (!(selectListExpression instanceof SqlColumn)) {
@@ -85,12 +78,6 @@ public class RemoteTableQueryFactory {
                         .mitigation("Define a least on column.").toString());
             }
             addColumnToSelectList(columns.get(0));
-        }
-
-        private void selectAllColumns() {
-            for (final ColumnMetadata columnMetadata : this.tableMetadata.getColumns()) {
-                addColumnToSelectList(columnMetadata);
-            }
         }
 
         private void addColumnToSelectList(final ColumnMetadata columnMetadata) {

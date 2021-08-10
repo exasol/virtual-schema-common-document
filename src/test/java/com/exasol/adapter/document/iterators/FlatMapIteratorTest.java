@@ -1,4 +1,4 @@
-package com.exasol.adapter.document;
+package com.exasol.adapter.document.iterators;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
