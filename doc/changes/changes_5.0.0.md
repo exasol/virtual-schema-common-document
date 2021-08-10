@@ -1,4 +1,4 @@
-# Virtual Schema Common Document 5.0.0, released 2021-08-10
+# Virtual Schema Common Document 5.0.0, released 2021-08-06
 
 Code name: Added interface for binary data
 
