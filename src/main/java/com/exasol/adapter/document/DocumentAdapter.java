@@ -125,9 +125,10 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
 
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
             final RemoteTableQuery remoteTableQuery) {
-        final QueryPlanner queryPlanner = getQueryPlanner(getConnectionInformation(exaMetadata, request));
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
+        final QueryPlanner queryPlanner = getQueryPlanner(getConnectionInformation(exaMetadata, request),
+                adapterProperties);
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
                 documentAdapterProperties, this.thisNodesCoreCount);
@@ -141,9 +142,11 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * Get an data source specific {@link QueryPlanner}.
      * 
      * @param connectionInformation connection details
+     * @param adapterProperties     adapter properties
      * @return source specific {@link QueryPlanner}
      */
-    protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation);
+    protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation,
+            AdapterProperties adapterProperties);
 
     @Override
     public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
