@@ -142,6 +142,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      * Get an data source specific {@link QueryPlanner}.
      * 
      * @param connectionInformation connection details
+     * @param adapterProperties     adapter properties
      * @return source specific {@link QueryPlanner}
      */
     protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation,
