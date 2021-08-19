@@ -1,6 +1,7 @@
-package com.exasol.adapter.document.mapping.reader.validator;
+package com.exasol.adapter.document.edml.validator;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,8 +10,8 @@ import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.exasol.adapter.document.edml.validator.messageimprover.*;
 import com.exasol.adapter.document.mapping.reader.ExasolDocumentMappingLanguageException;
-import com.exasol.adapter.document.mapping.reader.validator.messageimprover.*;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -20,18 +21,18 @@ import com.exasol.errorreporting.ExaError;
  * API.
  * </p>
  */
-public class JsonSchemaMappingValidator {
-    private static final String MAPPING_LANGUAGE_SCHEMA = "schemas/edml-1.2.0.json";
+public class EdmlSchemaValidator {
+    private static final String MAPPING_LANGUAGE_SCHEMA = "schemas/edml-1.2.1.json";
     private static final List<ExceptionMessageImprover> EXCEPTION_MESSAGE_IMPROVER = List.of(
             new UnknownKeyTypeExceptionMessageImprover(), new UnknownMappingExceptionMessageImprover(),
             new NoMappingExceptionMessageImprover(), new WongSchemaExceptionMessageImprover());
     private final Schema schema;
 
     /**
-     * Create an instance of {@link JsonSchemaMappingValidator}.
+     * Create an instance of {@link EdmlSchemaValidator}.
      */
-    public JsonSchemaMappingValidator() {
-        final ClassLoader classLoader = JsonSchemaMappingValidator.class.getClassLoader();
+    public EdmlSchemaValidator() {
+        final ClassLoader classLoader = EdmlSchemaValidator.class.getClassLoader();
         try (final InputStream inputStream = classLoader.getResourceAsStream(MAPPING_LANGUAGE_SCHEMA)) {
             final JSONObject rawSchema = new JSONObject(new JSONTokener(inputStream));
             this.schema = SchemaLoader.load(rawSchema);
@@ -48,36 +49,29 @@ public class JsonSchemaMappingValidator {
      * @param schemaMappingDefinition schema mapping definition to validate
      * @throws ExasolDocumentMappingLanguageException if schema is violated
      */
-    public void validate(final File schemaMappingDefinition) {
-        try (final InputStream inputStream = new FileInputStream(schemaMappingDefinition)) {
-            final JSONObject definitionObject = new JSONObject(new JSONTokener(inputStream));
-            validate(definitionObject, schemaMappingDefinition.getName());
-        } catch (final IOException exception) {
-            throw new IllegalArgumentException(
-                    ExaError.messageBuilder("E-VSD-23").message("Failed to open mapping file {{MAPPING_FILE}}.")
-                            .parameter("MAPPING_FILE", schemaMappingDefinition).toString(),
-                    exception);
-        }
+    public void validate(final String schemaMappingDefinition) {
+        final JSONObject definitionObject = new JSONObject(new JSONTokener(schemaMappingDefinition));
+        validate(definitionObject);
     }
 
-    private void validate(final JSONObject schemaMappingDefinition, final String fileName) {
+    private void validate(final JSONObject schemaMappingDefinition) {
         try {
             final Validator validator = Validator.builder().build();
             validator.performValidation(this.schema, schemaMappingDefinition);
         } catch (final ValidationException originalException) {
-            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("F-VSD-51")
-                    .message("Syntax error in mapping definition {{MAPPING_FILE}}.")
-                    .mitigation("See causing exception for details.").parameter("MAPPING_FILE", fileName).toString(),
-                    makeValidationExceptionMoreReadable(originalException, fileName));
+            throw new ExasolDocumentMappingLanguageException(
+                    ExaError.messageBuilder("F-VSD-51").message("Syntax error in mapping definition.")
+                            .mitigation("See causing exception for details.").toString(),
+                    makeValidationExceptionMoreReadable(originalException));
         }
     }
 
     private ExasolDocumentMappingLanguageException makeValidationExceptionMoreReadable(
-            final ValidationException exception, final String fileName) {
+            final ValidationException exception) {
         final List<ValidationException> causingExceptions = exception.getCausingExceptions();
         if (!causingExceptions.isEmpty()) {
             final ValidationException firstException = causingExceptions.get(0);
-            return makeValidationExceptionMoreReadable(firstException, fileName);
+            return makeValidationExceptionMoreReadable(firstException);
         } else {
             for (final ExceptionMessageImprover improver : EXCEPTION_MESSAGE_IMPROVER) {
                 final Optional<String> improveResult = improver.tryToImprove(exception);

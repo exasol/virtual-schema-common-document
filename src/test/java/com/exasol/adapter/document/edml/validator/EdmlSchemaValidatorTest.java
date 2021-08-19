@@ -1,4 +1,4 @@
-package com.exasol.adapter.document.mapping.reader;
+package com.exasol.adapter.document.edml.validator;
 
 import static com.exasol.adapter.document.mapping.MappingTestFiles.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -7,9 +7,10 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.hamcrest.Matcher;
@@ -19,17 +20,23 @@ import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exasol.adapter.document.mapping.reader.validator.JsonSchemaMappingValidator;
+import com.exasol.adapter.document.mapping.reader.ExasolDocumentMappingLanguageException;
 
-class JsonSchemaMappingValidatorTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonSchemaMappingValidatorTest.class);
+class EdmlSchemaValidatorTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EdmlSchemaValidatorTest.class);
     @TempDir
     Path tempDir;
 
-    void runValidation(final File file) {
-        final JsonSchemaMappingValidator jsonSchemaMappingValidator = new JsonSchemaMappingValidator();
+    private void runValidationWithResource(final String resource) throws IOException {
+        final String schema = new String(
+                Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(resource)).readAllBytes(),
+                StandardCharsets.UTF_8);
+        runValidation(schema);
+    }
+
+    private void runValidation(final String schema) {
         try {
-            jsonSchemaMappingValidator.validate(file);
+            new EdmlSchemaValidator().validate(schema);
         } catch (final IllegalArgumentException exception) {
             LOGGER.info(exception.getMessage());
             throw exception;
@@ -38,38 +45,37 @@ class JsonSchemaMappingValidatorTest {
 
     @Test
     void testValidBasicMapping() throws IOException {
-        runValidation(getMappingAsFile(BASIC_MAPPING, this.tempDir));
+        runValidationWithResource(BASIC_MAPPING);
     }
 
     @Test
     void testValidToJsonMapping() throws IOException {
-        runValidation(getMappingAsFile(TO_JSON_MAPPING, this.tempDir));
+        runValidationWithResource(TO_JSON_MAPPING);
     }
 
     @Test
     void testValidSingleColumnToTableMapping() throws IOException {
-        runValidation(getMappingAsFile(SINGLE_COLUMN_TO_TABLE_MAPPING, this.tempDir));
+        runValidationWithResource(SINGLE_COLUMN_TO_TABLE_MAPPING);
     }
 
     @Test
     void testValidMultiColumnToTableMapping() throws IOException {
-        runValidation(getMappingAsFile(MULTI_COLUMN_TO_TABLE_MAPPING, this.tempDir));
+        runValidationWithResource(MULTI_COLUMN_TO_TABLE_MAPPING);
     }
 
     @Test
     void testValidWholeTableToJsonMapping() throws IOException {
-        runValidation(getMappingAsFile(WHOLE_TABLE_TO_TABLE_MAPPING, this.tempDir));
+        runValidationWithResource(WHOLE_TABLE_TO_TABLE_MAPPING);
     }
 
     private void testInvalid(final String base, final Function<JSONObject, JSONObject> invalidator,
             final Matcher<String> messageMatcher) throws IOException {
-        final File invalidFile = generateInvalidFile(base, invalidator, this.tempDir);
+        final String invalidMapping = generateInvalid(base, invalidator);
         final ExasolDocumentMappingLanguageException exception = assertThrows(
-                ExasolDocumentMappingLanguageException.class, () -> runValidation(invalidFile));
+                ExasolDocumentMappingLanguageException.class, () -> runValidation(invalidMapping));
         assertAll(
                 () -> assertThat(exception.getMessage(),
-                        equalTo("F-VSD-51: Syntax error in mapping definition '" + invalidFile.getName()
-                                + "'. See causing exception for details.")),
+                        equalTo("F-VSD-51: Syntax error in mapping definition. See causing exception for details.")),
                 () -> assertThat(exception.getCause().getMessage(), messageMatcher));
     }
 

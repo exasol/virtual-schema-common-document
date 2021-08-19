@@ -1,12 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
+import java.io.*;
+import java.nio.file.*;
 import java.util.function.Function;
 
 import org.json.JSONObject;
@@ -67,13 +62,19 @@ public class MappingTestFiles {
     public static File generateInvalidFile(final String baseMappingName,
             final Function<JSONObject, JSONObject> invalidator, final Path tempDir) throws IOException {
         final File tempFile = File.createTempFile("schemaTmp", ".json", tempDir.toFile());
-        try (final InputStream inputStream = getMappingAsStream(baseMappingName);
-                final FileWriter fileWriter = new FileWriter(tempFile)) {
-            final JSONObject baseObject = new JSONObject(new JSONTokener(inputStream));
-            final JSONObject invalidObject = invalidator.apply(baseObject);
-            fileWriter.write(invalidObject.toString());
+        try (final FileWriter fileWriter = new FileWriter(tempFile)) {
+            fileWriter.write(generateInvalid(baseMappingName, invalidator));
             fileWriter.close();
             return tempFile;
+        }
+    }
+
+    public static String generateInvalid(final String baseMappingName,
+            final Function<JSONObject, JSONObject> invalidator) throws IOException {
+        try (final InputStream inputStream = getMappingAsStream(baseMappingName)) {
+            final JSONObject baseObject = new JSONObject(new JSONTokener(inputStream));
+            final JSONObject invalidObject = invalidator.apply(baseObject);
+            return invalidObject.toString();
         }
     }
 }

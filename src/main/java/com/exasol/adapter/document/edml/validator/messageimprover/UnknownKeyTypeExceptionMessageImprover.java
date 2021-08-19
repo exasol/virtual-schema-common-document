@@ -1,4 +1,4 @@
-package com.exasol.adapter.document.mapping.reader.validator.messageimprover;
+package com.exasol.adapter.document.edml.validator.messageimprover;
 
 import java.util.Optional;
 
