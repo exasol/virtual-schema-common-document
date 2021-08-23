@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 /**
- * This custom serializer modifies the serialization of {@code to...Mappings}. That's required since they have a special syntax
- * in the EDML that they are identified by a key in an object.
+ * This custom serializer modifies the serialization of {@code to...Mappings}. That's required since they have a special
+ * syntax in the EDML that they are identified by a key in an object.
  */
 class MappingDefinitionSerializer extends JsonSerializer<MappingDefinition> {
     private final JsonSerializer<Object> defaultSerializer;
@@ -28,9 +28,13 @@ class MappingDefinitionSerializer extends JsonSerializer<MappingDefinition> {
             final SerializerProvider serializerProvider) throws IOException {
         jsonGenerator.writeStartObject();
         final String mappingName = mapping.getClass().getSimpleName();
-        final String nameStartingWithLowercase = mappingName.substring(0, 1).toLowerCase() + mappingName.substring(1);
+        final String nameStartingWithLowercase = toLowerCamelCase(mappingName);
         jsonGenerator.writeFieldName(nameStartingWithLowercase);
         this.defaultSerializer.serialize(mapping, jsonGenerator, serializerProvider);
         jsonGenerator.writeEndObject();
+    }
+
+    private String toLowerCamelCase(final String mappingName) {
+        return mappingName.substring(0, 1).toLowerCase() + mappingName.substring(1);
     }
 }

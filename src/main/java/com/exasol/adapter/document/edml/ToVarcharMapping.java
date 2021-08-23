@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Java representation of the EDML toVarcharMapping.
+ * Java representation of the EDML {@code toVarcharMapping}.
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

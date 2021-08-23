@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Java representation of the EDML toJsonMapping.
+ * Java representation of the EDML {@code toJsonMapping}.
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

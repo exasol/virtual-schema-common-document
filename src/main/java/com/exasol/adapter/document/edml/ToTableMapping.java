@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Java representation of the EDML toTableMapping.
+ * Java representation of the EDML {@code toTableMapping}.
  */
 @Builder
 @Jacksonized

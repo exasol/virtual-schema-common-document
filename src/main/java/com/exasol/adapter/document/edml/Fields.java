@@ -5,7 +5,7 @@ import java.util.Map;
 import lombok.*;
 
 /**
- * Java representation of the fields object in the EDML.
+ * Java representation of the {@code fields} object in the EDML.
  */
 @Data
 @Builder
