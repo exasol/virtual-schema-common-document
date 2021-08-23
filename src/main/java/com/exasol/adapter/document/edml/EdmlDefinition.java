@@ -12,6 +12,9 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Data
 public class EdmlDefinition {
+    /**
+     * Reference to the EDML schema.
+     */
     @JsonProperty("$schema")
     private final String schema;
     @NonNull

@@ -314,7 +314,6 @@
                     <serialwarn>true</serialwarn>
                     <failOnError>true</failOnError>
                     <failOnWarnings>true</failOnWarnings>
-                    <sourcepath>target/generated-sources/delombok</sourcepath>
                 </configuration>
             </plugin>
             <plugin>
