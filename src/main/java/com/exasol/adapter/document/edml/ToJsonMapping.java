@@ -16,6 +16,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @SuperBuilder
 @Data
+@SuppressWarnings("java:S1170") // sonar can't deal with Lombok
 public final class ToJsonMapping extends AbstractToVarcharColumnMapping {
     @Builder.Default
     private final MappingErrorBehaviour overflowBehaviour = ABORT;

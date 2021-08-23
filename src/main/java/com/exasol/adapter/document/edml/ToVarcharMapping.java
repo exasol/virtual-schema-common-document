@@ -18,6 +18,7 @@ import lombok.extern.jackson.Jacksonized;
 @Data
 @Jacksonized
 @SuperBuilder
+@SuppressWarnings("java:S1170") // sonar can't deal with Lombok
 public final class ToVarcharMapping extends AbstractToVarcharColumnMapping {
     @lombok.Builder.Default
     private final ConvertableMappingErrorBehaviour nonStringBehaviour = CONVERT_OR_ABORT;

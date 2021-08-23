@@ -431,8 +431,8 @@
                 </executions>
                 <configuration>
                     <sourcePaths>
-                        <sourcePath>target/generated-sources/delombok</sourcePath>
-                        <sourcePath>target/generated-test-sources/delombok</sourcePath>
+                        <sourcePath>target/delombok/main</sourcePath>
+                        <sourcePath>target/delombok/test</sourcePath>
                     </sourcePaths>
                 </configuration>
             </plugin>
@@ -464,6 +464,7 @@
                         <configuration>
                             <addOutputDirectory>false</addOutputDirectory>
                             <sourceDirectory>src/main/java</sourceDirectory>
+                            <outputDirectory>target/delombok/main</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>
@@ -475,6 +476,7 @@
                         <configuration>
                             <addOutputDirectory>false</addOutputDirectory>
                             <sourceDirectory>src/test/java</sourceDirectory>
+                            <outputDirectory>target/delombok/test</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>

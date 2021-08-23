@@ -9,14 +9,12 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Objects;
 import java.util.function.Function;
 
 import org.hamcrest.Matcher;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +22,6 @@ import com.exasol.adapter.document.mapping.reader.ExasolDocumentMappingLanguageE
 
 class EdmlSchemaValidatorTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(EdmlSchemaValidatorTest.class);
-    @TempDir
-    Path tempDir;
 
     private void runValidationWithResource(final String resource) throws IOException {
         final String schema = new String(

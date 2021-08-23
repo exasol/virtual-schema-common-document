@@ -14,6 +14,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @SuperBuilder
 @Data
+@SuppressWarnings("java:S1170") // sonar can't deal with Lombok
 public final class ToDecimalMapping extends AbstractToColumnMapping {
     @Builder.Default
     private final int decimalPrecision = 18;

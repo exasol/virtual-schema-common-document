@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 @EqualsAndHashCode(callSuper = true)
 @SuperBuilder
 @Data
+@SuppressWarnings("java:S1170") // sonar can't deal with Lombok
 class AbstractToVarcharColumnMapping extends AbstractToColumnMapping {
     @Builder.Default
     protected final int varcharColumnSize = 254;

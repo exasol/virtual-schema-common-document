@@ -11,5 +11,6 @@ import lombok.*;
 @Builder
 public class Fields implements MappingDefinition {
     @Singular("mapField")
+    @SuppressWarnings("java:S1700") // name is given by EDML
     private final Map<String, MappingDefinition> fields;
 }
