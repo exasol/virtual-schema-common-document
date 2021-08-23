@@ -4,7 +4,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * Abstract base for EDML mappings that map to an Exasol VARCHAR column.
+ * Abstract base for EDML mappings that map to an Exasol {@code VARCHAR} column.
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)

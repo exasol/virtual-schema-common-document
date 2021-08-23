@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
  * EDML Deserializer for {@link MappingDefinition}s.
  */
 class MappingDefinitionDeserializer extends JsonDeserializer<MappingDefinition> {
+
     @Override
     public MappingDefinition deserialize(final JsonParser jsonParser,
             final DeserializationContext deserializationContext) throws IOException {

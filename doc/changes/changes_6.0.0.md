@@ -5,7 +5,7 @@ Code name: Adapter Properties in Dialects
 ## Features
 
 * #86: Added support for adapter properties in dialects
-* #88: Add Java representation for the EDML
+* #88: Added Java representation for the EDML
 
 ## Dependency Updates
 

@@ -9,9 +9,10 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 /**
- * Deserializer for {@link KeyType}.
+ * EDML Deserializer for {@link KeyType}.
  */
 public class KeyTypeDeserializer extends JsonDeserializer<KeyType> {
+
     @Override
     public KeyType deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext)
             throws IOException {

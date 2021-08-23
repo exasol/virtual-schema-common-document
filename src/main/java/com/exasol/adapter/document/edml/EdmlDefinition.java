@@ -6,7 +6,7 @@ import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Java representation of an EDML definition (file).
+ * Java representation of an EDML definition file.
  */
 @Builder
 @Jacksonized
