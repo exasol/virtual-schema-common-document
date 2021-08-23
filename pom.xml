@@ -101,6 +101,17 @@
             <artifactId>error-reporting-java</artifactId>
             <version>0.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.20</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.11.1</version>
+        </dependency>
         <!-- test dependencies -->
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -374,6 +385,11 @@
                         <module>integration_tests</module>
                         <module>maven_central</module>
                     </modules>
+                    <linkReplacements>
+                        <linkReplacement>
+                            https://awhitford.github.com/lombok.maven/lombok-maven-plugin/|http://anthonywhitford.com/lombok.maven/lombok-maven-plugin/
+                        </linkReplacement>
+                    </linkReplacements>
                 </configuration>
             </plugin>
             <plugin>
@@ -405,7 +421,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>error-code-crawler-maven-plugin</artifactId>
-                <version>0.5.1</version>
+                <version>0.6.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -413,6 +429,12 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <sourcePaths>
+                        <sourcePath>target/delombok/main</sourcePath>
+                        <sourcePath>target/delombok/test</sourcePath>
+                    </sourcePaths>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>io.github.zlika</groupId>
@@ -425,6 +447,37 @@
                         <goals>
                             <goal>strip-jar</goal>
                         </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok-maven-plugin</artifactId>
+                <version>1.18.20.0</version>
+                <executions>
+                    <execution>
+                        <id>delombok-main</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>delombok</goal>
+                        </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>src/main/java</sourceDirectory>
+                            <outputDirectory>target/delombok/main</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>delombok-test</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>testDelombok</goal>
+                        </goals>
+                        <configuration>
+                            <addOutputDirectory>false</addOutputDirectory>
+                            <sourceDirectory>src/test/java</sourceDirectory>
+                            <outputDirectory>target/delombok/test</outputDirectory>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

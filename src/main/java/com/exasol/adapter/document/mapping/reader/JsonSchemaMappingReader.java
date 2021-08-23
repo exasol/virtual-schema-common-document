@@ -1,13 +1,14 @@
 package com.exasol.adapter.document.mapping.reader;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.json.*;
 
+import com.exasol.adapter.document.edml.validator.EdmlSchemaValidator;
 import com.exasol.adapter.document.mapping.*;
-import com.exasol.adapter.document.mapping.reader.validator.JsonSchemaMappingValidator;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -35,17 +36,36 @@ public class JsonSchemaMappingReader implements SchemaMappingReader {
 
     private JsonSchemaMappingReader(final File[] definitionsPaths, final TableKeyFetcher tableKeyFetcher) {
         this.tableKeyFetcher = tableKeyFetcher;
-        final JsonSchemaMappingValidator jsonSchemaMappingValidator = new JsonSchemaMappingValidator();
+        final EdmlSchemaValidator jsonSchemaMappingValidator = new EdmlSchemaValidator();
         for (final File definitionPath : definitionsPaths) {
-            jsonSchemaMappingValidator.validate(definitionPath);
+            try {
+                jsonSchemaMappingValidator.validate(Files.readString(definitionPath.toPath()));
+            } catch (final IOException exception) {
+                throw getOpenFailedException(definitionPath, exception);
+            }
             try {
                 parseFile(definitionPath);
             } catch (final ExasolDocumentMappingLanguageException exception) {
-                throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("F-VSD-81")
-                        .message("Semantic-validation error in schema mapping {{MAPPING_FILE}}.")
-                        .parameter("MAPPING_FILE", definitionPath.toString()).toString(), exception);
+                getParseFailedException(definitionPath, exception);
             }
         }
+    }
+
+    @SuppressWarnings("java:S1192") // mapping file is not a constant
+    private void getParseFailedException(final File definitionPath,
+            final ExasolDocumentMappingLanguageException exception) {
+        throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("F-VSD-81")
+                .message("Semantic-validation error in schema mapping {{mapping file}}.")
+                .parameter("mapping file", definitionPath.toString()).toString(), exception);
+    }
+
+    @SuppressWarnings("java:S1192") // mapping file is not a constant
+    private ExasolDocumentMappingLanguageException getOpenFailedException(final File definitionPath,
+            final IOException exception) {
+        return new ExasolDocumentMappingLanguageException(
+                ExaError.messageBuilder("F-VSD-84").message("Failed to open {{mapping file}}.")
+                        .parameter("mapping file", definitionPath.toString()).toString(),
+                exception);
     }
 
     /**
@@ -76,6 +96,7 @@ public class JsonSchemaMappingReader implements SchemaMappingReader {
         return files;
     }
 
+    @SuppressWarnings("java:S1192") // mapping file is not a constant
     private void parseFile(final File definitionPath) {
         try (final InputStream inputStream = new FileInputStream(definitionPath);
                 final JsonReader reader = Json.createReader(inputStream)) {
@@ -83,8 +104,8 @@ public class JsonSchemaMappingReader implements SchemaMappingReader {
             this.tables.addAll(new RootTableMappingReader(definitionObject, this.tableKeyFetcher).getTables());
         } catch (final IOException exception) {
             throw new IllegalArgumentException(
-                    ExaError.messageBuilder("E-VSD-24").message("Failed to open mapping file {{MAPPING_FILE}}.")
-                            .parameter("MAPPING_FILE", definitionPath).toString(),
+                    ExaError.messageBuilder("E-VSD-24").message("Failed to open mapping file {{mapping file}}.")
+                            .parameter("mapping file", definitionPath).toString(),
                     exception);
         }
     }

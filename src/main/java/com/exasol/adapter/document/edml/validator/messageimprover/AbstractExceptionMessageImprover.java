@@ -1,14 +1,10 @@
-package com.exasol.adapter.document.mapping.reader.validator.messageimprover;
+package com.exasol.adapter.document.edml.validator.messageimprover;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import org.everit.json.schema.ObjectSchema;
-import org.everit.json.schema.ReferenceSchema;
-import org.everit.json.schema.Schema;
+import org.everit.json.schema.*;
 
-import com.exasol.adapter.document.mapping.reader.validator.ExceptionMessageImprover;
+import com.exasol.adapter.document.edml.validator.ExceptionMessageImprover;
 
 /**
  * Abstract basis for {@link ExceptionMessageImprover}s.

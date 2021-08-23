@@ -5,6 +5,7 @@ import java.util.*;
 import javax.json.JsonObject;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.edml.KeyType;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.errorreporting.ExaError;
 
@@ -48,7 +49,7 @@ abstract class AbstractTableMappingReader {
         if (userDefinedKeyColumns.isEmpty()) {
             return generateGlobalKey(visitor.getAllColumns());
         } else {
-            if (visitor.getKeyType().equals(ColumnMappingDefinitionKeyTypeReader.KeyType.LOCAL)) {
+            if (visitor.getKeyType().equals(KeyType.LOCAL)) {
                 return new GlobalKey(getForeignKey(), userDefinedKeyColumns);
             } else {
                 return new GlobalKey(Collections.emptyList(), userDefinedKeyColumns);
@@ -121,13 +122,13 @@ abstract class AbstractTableMappingReader {
         private final Queue<NestedTableReader> nestedTableReaderQueue;
         private final List<ColumnMapping> nonKeyColumns;
         private final List<ColumnMapping> keyColumns;
-        private ColumnMappingDefinitionKeyTypeReader.KeyType keyType;
+        private KeyType keyType;
 
         public SchemaMappingDefinitionLanguageVisitor() {
             this.nestedTableReaderQueue = new LinkedList<>();
             this.nonKeyColumns = new ArrayList<>();
             this.keyColumns = new ArrayList<>();
-            this.keyType = ColumnMappingDefinitionKeyTypeReader.KeyType.NO_KEY;
+            this.keyType = KeyType.NONE;
         }
 
         public final void visitMapping(final JsonObject definition, final DocumentPathExpression.Builder sourcePath,
@@ -146,13 +147,11 @@ abstract class AbstractTableMappingReader {
 
         private void addColumn(final ColumnMapping column, final JsonObject definition,
                 final DocumentPathExpression.Builder sourcePath) {
-            final ColumnMappingDefinitionKeyTypeReader.KeyType columnsKeyType = new ColumnMappingDefinitionKeyTypeReader()
-                    .readKeyType(definition);
-            if (columnsKeyType.equals(ColumnMappingDefinitionKeyTypeReader.KeyType.NO_KEY)) {
+            final KeyType columnsKeyType = new ColumnMappingDefinitionKeyTypeReader().readKeyType(definition);
+            if (columnsKeyType.equals(KeyType.NONE)) {
                 this.nonKeyColumns.add(column);
             } else {
-                if (this.keyType != columnsKeyType
-                        && this.keyType != ColumnMappingDefinitionKeyTypeReader.KeyType.NO_KEY) {
+                if (this.keyType != columnsKeyType && this.keyType != KeyType.NONE) {
                     throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-8").message(
                             "{{VIOLATION_POINTER|uq}}: This table already has a key of a different type (global/local).")
                             .mitigation("Please either define all keys of the table local or global.")
@@ -206,7 +205,7 @@ abstract class AbstractTableMappingReader {
             return this.nonKeyColumns;
         }
 
-        public ColumnMappingDefinitionKeyTypeReader.KeyType getKeyType() {
+        public KeyType getKeyType() {
             return this.keyType;
         }
 
