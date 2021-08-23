@@ -65,6 +65,7 @@
 [6]: https://github.com/exasol/sql-statement-builder
 [32]: http://maven.apache.org/plugins/maven-dependency-plugin/
 [36]: http://www.mojohaus.org/versions-maven-plugin/
+[58]: http://anthonywhitford.com/lombok.maven/lombok-maven-plugin/
 [17]: http://opensource.org/licenses/BSD-3-Clause
 [30]: https://maven.apache.org/plugins/maven-compiler-plugin/
 [42]: http://maven.apache.org/plugins/maven-gpg-plugin/
@@ -79,7 +80,6 @@
 [3]: http://www.opensource.org/licenses/mit-license.php
 [25]: https://www.apache.org/licenses/LICENSE-2.0.txt
 [46]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
-[58]: https://awhitford.github.com/lombok.maven/lombok-maven-plugin/
 [19]: https://www.eclipse.org/legal/epl-v20.html
 [64]: http://maven.apache.org/plugins/maven-install-plugin/
 [18]: https://junit.org/junit5/
