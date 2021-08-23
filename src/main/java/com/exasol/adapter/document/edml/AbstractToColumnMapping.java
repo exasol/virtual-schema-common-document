@@ -10,7 +10,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @Data
 @SuppressWarnings("java:S1170") // sonar can't deal with Lombok
-class AbstractToColumnMapping implements MappingDefinition {
+abstract class AbstractToColumnMapping implements MappingDefinition {
     protected final String destinationName;
     protected final String description;
     @Builder.Default

@@ -7,10 +7,11 @@ import lombok.experimental.SuperBuilder;
  * Abstract base for EDML mappings that map to an Exasol VARCHAR column.
  */
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @SuperBuilder
 @Data
 @SuppressWarnings("java:S1170") // sonar can't deal with Lombok
-class AbstractToVarcharColumnMapping extends AbstractToColumnMapping {
+abstract class AbstractToVarcharColumnMapping extends AbstractToColumnMapping {
     @Builder.Default
     protected final int varcharColumnSize = 254;
 }

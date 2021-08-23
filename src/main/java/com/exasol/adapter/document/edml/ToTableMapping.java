@@ -10,7 +10,7 @@ import lombok.extern.jackson.Jacksonized;
 @Jacksonized
 @Data
 @SuppressWarnings("java:S1170") // sonar can't deal with Lombok
-public class ToTableMapping implements MappingDefinition {
+public final class ToTableMapping implements MappingDefinition {
     private final String destinationTable;
     @NonNull
     private final MappingDefinition mapping;
