@@ -14,7 +14,7 @@ class EdmlSerializerTest {
                 .schema("mySchema")
                 .mapping(Fields.builder().mapField("test", ToVarcharMapping.builder().build()).build()).build();
         final String serialized = new EdmlSerializer().serialize(edmlDefinition);
-        final String expected = "{\"source\":\"test\",\"destinationTable\":\"test\",\"description\":\"\",\"addSourceReferenceColumn\":false,\"mapping\":{\"fields\":{\"test\":{\"toVarcharMapping\":{\"key\":\"none\",\"varcharColumnSize\":254,\"nonStringBehaviour\":\"CONVERT_OR_ABORT\",\"overflowBehaviour\":\"TRUNCATE\"}}}},\"$schema\":\"mySchema\"}";
+        final String expected = "{\"source\":\"test\",\"destinationTable\":\"test\",\"description\":\"\",\"addSourceReferenceColumn\":false,\"mapping\":{\"fields\":{\"test\":{\"toVarcharMapping\":{\"key\":\"none\",\"required\":false,\"varcharColumnSize\":254,\"nonStringBehaviour\":\"CONVERT_OR_ABORT\",\"overflowBehaviour\":\"TRUNCATE\"}}}},\"$schema\":\"mySchema\"}";
         assertThat(serialized, equalTo(expected));
     }
 
@@ -28,7 +28,7 @@ class EdmlSerializerTest {
                         .build())
                 .build();
         final String serialized = new EdmlSerializer().serialize(edmlDefinition);
-        final String expected = "{\"source\":\"test\",\"destinationTable\":\"test\",\"description\":\"\",\"addSourceReferenceColumn\":false,\"mapping\":{\"fields\":{\"test\":{\"toTableMapping\":{\"mapping\":{\"fields\":{\"id\":{\"toVarcharMapping\":{\"key\":\"none\",\"varcharColumnSize\":254,\"nonStringBehaviour\":\"CONVERT_OR_ABORT\",\"overflowBehaviour\":\"TRUNCATE\"}}}},\"description\":\"\"}}}},\"$schema\":\"mySchema\"}";
+        final String expected = "{\"source\":\"test\",\"destinationTable\":\"test\",\"description\":\"\",\"addSourceReferenceColumn\":false,\"mapping\":{\"fields\":{\"test\":{\"toTableMapping\":{\"mapping\":{\"fields\":{\"id\":{\"toVarcharMapping\":{\"key\":\"none\",\"required\":false,\"varcharColumnSize\":254,\"nonStringBehaviour\":\"CONVERT_OR_ABORT\",\"overflowBehaviour\":\"TRUNCATE\"}}}},\"description\":\"\"}}}},\"$schema\":\"mySchema\"}";
         assertThat(serialized, equalTo(expected));
     }
 }

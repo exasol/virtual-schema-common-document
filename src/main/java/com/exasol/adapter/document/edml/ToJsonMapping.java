@@ -20,4 +20,9 @@ import lombok.extern.jackson.Jacksonized;
 public final class ToJsonMapping extends AbstractToVarcharColumnMapping {
     @Builder.Default
     private final MappingErrorBehaviour overflowBehaviour = ABORT;
+
+    @Override
+    public void accept(final MappingDefinitionVisitor visitor) {
+        visitor.visit(this);
+    }
 }

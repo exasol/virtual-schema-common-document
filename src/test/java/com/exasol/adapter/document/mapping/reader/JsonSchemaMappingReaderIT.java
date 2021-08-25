@@ -15,12 +15,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import com.exasol.adapter.AdapterException;
+import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.mapping.*;
 
 @Tag("integration")
@@ -30,16 +30,25 @@ class JsonSchemaMappingReaderIT {
     Path tempDir;
 
     private SchemaMapping getMappingDefinitionForFile(final File mappingFile) throws IOException, AdapterException {
-        final SchemaMappingReader mappingFactory = new JsonSchemaMappingReader(mappingFile,
-                (tableName, mappedColumns) -> {
-                    final List<ColumnMapping> key = mappedColumns.stream()
-                            .filter(column -> column.getExasolColumnName().equals("ISBN")).collect(Collectors.toList());
-                    if (key.isEmpty()) {
-                        throw new TableKeyFetcher.NoKeyFoundException();
-                    }
-                    return key;
-                });
+        final TableKeyFetcher tableKeyFetcherMock = (tableName, mappedColumns) -> {
+            final List<ColumnMapping> key = mappedColumns.stream().filter(this::isIsbnColumn)
+                    .collect(Collectors.toList());
+            if (key.isEmpty()) {
+                throw new TableKeyFetcher.NoKeyFoundException();
+            }
+            return key;
+        };
+        final SchemaMappingReader mappingFactory = new JsonSchemaMappingReader(mappingFile, tableKeyFetcherMock);
         return mappingFactory.getSchemaMapping();
+    }
+
+    private boolean isIsbnColumn(final ColumnMapping column) {
+        if (column instanceof PropertyToColumnMapping) {
+            final PropertyToColumnMapping propertyToColumnMapping = (PropertyToColumnMapping) column;
+            return propertyToColumnMapping.getPathToSourceProperty().toString().endsWith("isbn");
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -129,18 +138,6 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testToStringMappingAtRootLevelException() throws IOException, AdapterException {
-        final File invalidFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
-            final JSONObject newMappings = new JSONObject();
-            newMappings.put("toVarcharMapping", new JSONObject());
-            base.put("mapping", newMappings);
-            return base;
-        }, this.tempDir);
-        assertReaderThrowsExceptionMessage(invalidFile, equalTo(
-                "F-VSD-50: The mapping type 'toVarcharMapping' is not allowed at root level. You probably want to replace it with a 'fields' definition."));
-    }
-
-    @Test
     void testDifferentKeysException() throws IOException {
         final File invalidFile = generateInvalidFile(MappingTestFiles.BASIC_MAPPING, base -> {
             base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("name")
@@ -148,7 +145,7 @@ class JsonSchemaMappingReaderIT {
             return base;
         }, this.tempDir);
         assertReaderThrowsExceptionMessage(invalidFile, equalTo(
-                "E-VSD-8: /name: This table already has a key of a different type (global/local). Please either define all keys of the table local or global."));
+                "E-VSD-8: The table 'BOOKS' specified both local and global key columns: Local keys: ['NAME'], Global keys: ['ISBN']. That is not allowed. Use either a local or a global key."));
     }
 
     @Test
@@ -160,7 +157,7 @@ class JsonSchemaMappingReaderIT {
         }, this.tempDir);
 
         final Matcher<String> messageMatcher = equalTo(
-                "E-VSD-47: Local keys make no sense in root table mapping definitions. Please make this key global.");
+                "E-VSD-47: Invalid local key for column 'ISBN'. Local keys make no sense in root table mapping definitions. Please make this key global.");
         assertReaderThrowsExceptionMessage(invalidFile, messageMatcher);
     }
 

@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exasol.adapter.document.mapping.reader.ExasolDocumentMappingLanguageException;
+import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 
 class EdmlSchemaValidatorTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(EdmlSchemaValidatorTest.class);

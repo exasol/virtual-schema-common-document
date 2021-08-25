@@ -1,14 +1,17 @@
 package com.exasol.adapter.document.mapping.reader;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.json.*;
-
+import com.exasol.adapter.document.edml.EdmlDefinition;
+import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
+import com.exasol.adapter.document.edml.deserializer.EdmlDeserializer;
 import com.exasol.adapter.document.edml.validator.EdmlSchemaValidator;
 import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.converter.MappingConversionPipeline;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -98,10 +101,10 @@ public class JsonSchemaMappingReader implements SchemaMappingReader {
 
     @SuppressWarnings("java:S1192") // mapping file is not a constant
     private void parseFile(final File definitionPath) {
-        try (final InputStream inputStream = new FileInputStream(definitionPath);
-                final JsonReader reader = Json.createReader(inputStream)) {
-            final JsonObject definitionObject = reader.readObject();
-            this.tables.addAll(new RootTableMappingReader(definitionObject, this.tableKeyFetcher).getTables());
+        try (final InputStream inputStream = new FileInputStream(definitionPath)) {
+            final String edmlString = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+            final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
+            this.tables.addAll(new MappingConversionPipeline(this.tableKeyFetcher).convert(edmlDefinition));
         } catch (final IOException exception) {
             throw new IllegalArgumentException(
                     ExaError.messageBuilder("E-VSD-24").message("Failed to open mapping file {{mapping file}}.")
