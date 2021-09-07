@@ -8,7 +8,7 @@ import com.exasol.adapter.document.mapping.converter.StagingTableMapping.Transfo
 
 /**
  * This class is an abstract base for {@link Transformer}s that modify only the columns of an
- * {@link StagingTableMapping} and it's nest tables.
+ * {@link StagingTableMapping} and its nested tables.
  */
 abstract class AbstractColumnModifier implements Transformer {
     @Override

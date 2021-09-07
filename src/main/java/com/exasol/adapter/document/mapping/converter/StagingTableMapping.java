@@ -28,7 +28,7 @@ class StagingTableMapping {
     private final List<StagingTableMapping> nestedTables;
 
     /**
-     * Get if this table mapping has nested table mappings.
+     * Check if this table mapping has nested table mappings.
      * 
      * @return {@code true} if it has
      */
@@ -37,7 +37,7 @@ class StagingTableMapping {
     }
 
     /**
-     * Get if this is a mapping for a nested table.
+     * Check if this is a mapping for a nested table.
      * 
      * @return {@code true} if it is
      */
@@ -70,7 +70,7 @@ class StagingTableMapping {
      * Get a copy of this object with one additional column.
      *
      * @param additionalColumn column to add
-     * @return modified copy or unmodified this
+     * @return modified copy
      */
     public StagingTableMapping withAdditionalColumn(final ColumnWithKeyInfo additionalColumn) {
         final ArrayList<ColumnWithKeyInfo> newColumns = new ArrayList<>(this.columns);

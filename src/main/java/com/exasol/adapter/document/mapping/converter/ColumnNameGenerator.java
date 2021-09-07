@@ -9,7 +9,7 @@ import com.exasol.adapter.document.mapping.PropertyToColumnMapping;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * This class generates tries to auto-generate the names for columns where no name is set.
+ * This class tries to auto-generate the names for columns where no name is set.
  */
 class ColumnNameGenerator extends AbstractColumnModifier {
     @Override
