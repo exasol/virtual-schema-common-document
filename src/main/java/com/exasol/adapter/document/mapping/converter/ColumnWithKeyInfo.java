@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.With;
 
 /**
- * This adds information to a column if it's part of a key.
+ * This class stores a column together with information if it's part of a key.
  */
 @Data
 @With

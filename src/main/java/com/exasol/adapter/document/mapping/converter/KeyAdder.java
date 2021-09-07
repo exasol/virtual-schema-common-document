@@ -11,8 +11,10 @@ import com.exasol.errorreporting.ExaError;
 import lombok.AllArgsConstructor;
 
 /**
- * Every table that has nested tables must have a local / global key. This class tries to auto-generate these keys if
- * they are not present.
+ * This class tries to auto-generate these keys if they are not present.
+ * <p>
+ * Every table that has nested tables must have a local / global key.
+ * </p>
  */
 @AllArgsConstructor
 class KeyAdder implements StagingTableMapping.Transformer {
@@ -51,7 +53,7 @@ class KeyAdder implements StagingTableMapping.Transformer {
             final List<ColumnWithKeyInfo> oldColumns) {
         final List<ColumnWithKeyInfo> newColumns = new ArrayList<>();
         for (final ColumnWithKeyInfo oldColumn : oldColumns) {
-            final Optional<ColumnWithKeyInfo> keyColumn = findColumnWithKeyWithSameColumn(generatedKeyColumns,
+            final Optional<ColumnWithKeyInfo> keyColumn = findColumnWithKeyThatMatchGiven(generatedKeyColumns,
                     oldColumn);
             if (keyColumn.isPresent()) {
                 newColumns.add(keyColumn.get());
@@ -68,15 +70,7 @@ class KeyAdder implements StagingTableMapping.Transformer {
         return newColumns;
     }
 
-    /**
-     * Find a {@link ColumnWithKeyInfo} in a collection that has the same {@link ColumnMapping} than another
-     * {@link ColumnWithKeyInfo}.
-     * 
-     * @param columns     collection if columns
-     * @param otherColumn column to search for
-     * @return {@link ColumnWithKeyInfo} with the same column
-     */
-    private Optional<ColumnWithKeyInfo> findColumnWithKeyWithSameColumn(final List<ColumnWithKeyInfo> columns,
+    private Optional<ColumnWithKeyInfo> findColumnWithKeyThatMatchGiven(final List<ColumnWithKeyInfo> columns,
             final ColumnWithKeyInfo otherColumn) {
         return columns.stream().filter(column -> column.getColumn().equals(otherColumn.getColumn())).findAny();
     }

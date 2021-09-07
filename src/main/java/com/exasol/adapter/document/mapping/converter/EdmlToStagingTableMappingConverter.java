@@ -20,14 +20,14 @@ class EdmlToStagingTableMappingConverter {
      * @return converted
      */
     StagingTableMapping convert(final EdmlDefinition edmlDefinition) {
-        final MappingDefinitionConvertVisitor visitor = new MappingDefinitionConvertVisitor(edmlDefinition.getSource(),
-                edmlDefinition.getDestinationTable(), DocumentPathExpression.builder());
+        final MappingDefinitionConverterVisitor visitor = new MappingDefinitionConverterVisitor(
+                edmlDefinition.getSource(), edmlDefinition.getDestinationTable(), DocumentPathExpression.builder());
         edmlDefinition.getMapping().accept(visitor);
         return new StagingTableMapping(edmlDefinition.getDestinationTable(), edmlDefinition.getSource(),
                 visitor.getColumns(), DocumentPathExpression.empty(), visitor.getNestedTables());
     }
 
-    private static class MappingDefinitionConvertVisitor implements MappingDefinitionVisitor {
+    private static class MappingDefinitionConverterVisitor implements MappingDefinitionVisitor {
         private final String source;
         private final String destinationTableName;
         private final DocumentPathExpression.Builder path;
@@ -36,7 +36,7 @@ class EdmlToStagingTableMappingConverter {
         @Getter
         private final List<StagingTableMapping> nestedTables;
 
-        private MappingDefinitionConvertVisitor(final String source, final String destinationTableName,
+        private MappingDefinitionConverterVisitor(final String source, final String destinationTableName,
                 final DocumentPathExpression.Builder path) {
             this.source = source;
             this.destinationTableName = destinationTableName;
@@ -50,8 +50,8 @@ class EdmlToStagingTableMappingConverter {
             for (final Map.Entry<String, MappingDefinition> field : fields.getFields().entrySet()) {
                 final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                         .addObjectLookup(field.getKey());
-                final MappingDefinitionConvertVisitor childVisitor = new MappingDefinitionConvertVisitor(this.source,
-                        this.destinationTableName, childPath);
+                final MappingDefinitionConverterVisitor childVisitor = new MappingDefinitionConverterVisitor(
+                        this.source, this.destinationTableName, childPath);
                 field.getValue().accept(childVisitor);
                 this.columns.addAll(childVisitor.getColumns());
                 this.nestedTables.addAll(childVisitor.getNestedTables());
@@ -109,7 +109,7 @@ class EdmlToStagingTableMappingConverter {
         public void visit(final ToTableMapping toTableMapping) {
             final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                     .addArrayAll();
-            final MappingDefinitionConvertVisitor visitor = new MappingDefinitionConvertVisitor(this.source,
+            final MappingDefinitionConverterVisitor visitor = new MappingDefinitionConverterVisitor(this.source,
                     this.destinationTableName, childPath);
             toTableMapping.getMapping().accept(visitor);
             final String nestedDestinationName = toTableMapping.getDestinationTable();

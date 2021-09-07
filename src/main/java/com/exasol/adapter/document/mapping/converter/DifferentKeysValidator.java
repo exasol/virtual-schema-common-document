@@ -8,8 +8,10 @@ import com.exasol.adapter.document.edml.KeyType;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * A table can either have a local or a global key. Having local and global columns is not allows. This class checks
- * this condition.
+ * This class is a validator for the keys in table mappings.
+ * <p>
+ * A table can either have a local or a global key. Having local and global columns is not allows.
+ * </p>
  */
 class DifferentKeysValidator implements StagingTableMapping.Validator {
     @Override

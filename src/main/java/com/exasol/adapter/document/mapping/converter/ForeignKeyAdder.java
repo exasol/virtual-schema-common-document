@@ -10,8 +10,11 @@ import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * Each nested table should contain the key of its parent table, so that users can join them together. This class puts
- * the key of each table to all their nested tables.
+ * This class puts the key of each table to all their nested tables.
+ * <p>
+ * This is requires since each nested table should contain the key of its parent table, so that users can join them
+ * together.
+ * </p>
  */
 class ForeignKeyAdder implements StagingTableMapping.Transformer {
 
