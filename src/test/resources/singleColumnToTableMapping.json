@@ -19,7 +19,8 @@
           "varcharColumnSize": 20,
           "overflowBehaviour": "ABORT",
           "required": true,
-          "key": "global"
+          "key": "global",
+          "destinationName": "ISBN"
         }
       },
       "name": {

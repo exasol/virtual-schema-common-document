@@ -16,4 +16,9 @@ public final class ToTableMapping implements MappingDefinition {
     private final MappingDefinition mapping;
     @Builder.Default
     private final String description = "";
+
+    @Override
+    public void accept(final MappingDefinitionVisitor visitor) {
+        visitor.visit(this);
+    }
 }

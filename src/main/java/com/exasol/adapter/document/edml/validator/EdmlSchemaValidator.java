@@ -10,8 +10,8 @@ import org.everit.json.schema.loader.SchemaLoader;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.edml.validator.messageimprover.*;
-import com.exasol.adapter.document.mapping.reader.ExasolDocumentMappingLanguageException;
 import com.exasol.errorreporting.ExaError;
 
 /**

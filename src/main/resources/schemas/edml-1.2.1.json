@@ -97,6 +97,10 @@
             "description": {
               "$ref": "#/definitions/description"
             },
+            "required": {
+              "default": false,
+              "$ref": "#/definitions/required"
+            },
             "key": {
               "$ref": "#/definitions/key"
             }
@@ -139,6 +143,10 @@
             },
             "description": {
               "$ref": "#/definitions/description"
+            },
+            "required": {
+              "default": false,
+              "$ref": "#/definitions/required"
             },
             "key": {
               "$ref": "#/definitions/key"

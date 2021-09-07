@@ -24,4 +24,9 @@ public final class ToDecimalMapping extends AbstractToColumnMapping {
     private final MappingErrorBehaviour overflowBehaviour = MappingErrorBehaviour.ABORT;
     @Builder.Default
     private final MappingErrorBehaviour notNumericBehaviour = MappingErrorBehaviour.ABORT;
+
+    @Override
+    public void accept(final MappingDefinitionVisitor visitor) {
+        visitor.visit(this);
+    }
 }

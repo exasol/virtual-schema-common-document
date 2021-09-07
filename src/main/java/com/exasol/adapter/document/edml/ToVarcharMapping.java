@@ -24,4 +24,9 @@ public final class ToVarcharMapping extends AbstractToVarcharColumnMapping {
     private final ConvertableMappingErrorBehaviour nonStringBehaviour = CONVERT_OR_ABORT;
     @lombok.Builder.Default
     private final TruncateableMappingErrorBehaviour overflowBehaviour = TRUNCATE;
+
+    @Override
+    public void accept(final MappingDefinitionVisitor visitor) {
+        visitor.visit(this);
+    }
 }

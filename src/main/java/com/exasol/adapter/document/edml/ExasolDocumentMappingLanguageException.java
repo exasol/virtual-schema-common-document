@@ -1,4 +1,4 @@
-package com.exasol.adapter.document.mapping.reader;
+package com.exasol.adapter.document.edml;
 
 /**
  * Exception that is thrown on mapping failures.
