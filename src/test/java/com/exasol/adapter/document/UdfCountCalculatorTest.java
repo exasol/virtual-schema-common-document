@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import com.exasol.ExaMetadata;
+import com.exasol.adapter.document.properties.DocumentAdapterProperties;
 
 class UdfCountCalculatorTest {
     private static final BigInteger GB = new BigInteger("1000000000");

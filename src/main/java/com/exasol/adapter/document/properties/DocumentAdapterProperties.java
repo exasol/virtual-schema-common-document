@@ -1,4 +1,6 @@
-package com.exasol.adapter.document;
+package com.exasol.adapter.document.properties;
+
+import java.util.List;
 
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.errorreporting.ExaError;
@@ -9,7 +11,6 @@ import com.exasol.errorreporting.ExaError;
 public class DocumentAdapterProperties {
     private static final String MAPPING_KEY = "MAPPING";
     private static final String MAX_PARALLEL_UDFS_KEY = "MAX_PARALLEL_UDFS";
-    private static final String BUCKETS_PREFIX = "/buckets/";
     private final AdapterProperties properties;
 
     /**
@@ -35,7 +36,7 @@ public class DocumentAdapterProperties {
      *
      * @return String path to mapping definition files in the BucketFS
      */
-    public String getMappingDefinition() {
+    public List<EdmlInput> getMappingDefinition() {
         if (!hasMappingDefinition()) {
             throw new IllegalArgumentException(
                     ExaError.messageBuilder("E-VSD-72").message("Missing mandatory MAPPING property.")
@@ -43,17 +44,7 @@ public class DocumentAdapterProperties {
                             .toString());
         }
         final String property = this.properties.get(MAPPING_KEY);
-        if (property.isEmpty()) {
-            throw new IllegalArgumentException(
-                    ExaError.messageBuilder("E-VSD-20").message("The property MAPPING must not be empty.")
-                            .mitigation("Please set MAPPING to the path to your schema mapping files in the BucketFS.")
-                            .toString());
-        }
-        if (property.startsWith(BUCKETS_PREFIX)) {
-            return property.replaceFirst(BUCKETS_PREFIX, "/");
-        } else {
-            return property;
-        }
+        return new SchemaMappingPropertyReader().readSchemaMappingProperty(property);
     }
 
     /**
@@ -72,8 +63,7 @@ public class DocumentAdapterProperties {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-16")
                     .message("Invalid value {{VALUE}} for property MAX_PARALLEL_UDFS.")
                     .parameter("VALUE", propertyValue)
-                    .mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1 or -1 for no limit.")
-                    .toString());
+                    .mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1 or -1 for no limit.").toString());
         }
     }
 
@@ -87,8 +77,7 @@ public class DocumentAdapterProperties {
                 throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-17")
                         .message("Invalid non-integer value {{VALUE}} for property MAX_PARALLEL_UDFS. ")
                         .parameter("VALUE", propertyValue)
-                        .mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1 or -1 for no limit.")
-                        .toString());
+                        .mitigation("Please set MAX_PARALLEL_UDFS to a number >= 1 or -1 for no limit.").toString());
             }
         }
     }

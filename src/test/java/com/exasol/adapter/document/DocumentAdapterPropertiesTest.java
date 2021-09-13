@@ -1,6 +1,7 @@
 package com.exasol.adapter.document;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -10,41 +11,19 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.AdapterProperties;
+import com.exasol.adapter.document.properties.DocumentAdapterProperties;
+import com.exasol.adapter.document.properties.EdmlInput;
 
 class DocumentAdapterPropertiesTest {
-    private static final String MAPPING_PATH = "/bfsdefault/default/mapping.json";
     private static final String MAPPING_KEY = "MAPPING";
     private static final String MAX_PARALLEL_UDFS_KEY = "MAX_PARALLEL_UDFS";
+    private static final String A_MAPPING = "{\"source\":null}";
 
     @Test
     void testGetMappingDefinition() {
         final DocumentAdapterProperties properties = new DocumentAdapterProperties(
-                new AdapterProperties(Map.of("MAPPING", MAPPING_PATH)));
-        assertThat(properties.getMappingDefinition(), equalTo(MAPPING_PATH));
-    }
-
-    @Test
-    void testGetMappingDefinitionRemovesBucketsPrefix() {
-        final DocumentAdapterProperties properties = new DocumentAdapterProperties(
-                new AdapterProperties(Map.of(MAPPING_KEY, "/buckets" + MAPPING_PATH)));
-        assertThat(properties.getMappingDefinition(), equalTo(MAPPING_PATH));
-    }
-
-    @Test
-    void testGetMappingDefinitionDoesNotRemovesPrefixStartingWithBuckets() {
-        final DocumentAdapterProperties properties = new DocumentAdapterProperties(
-                new AdapterProperties(Map.of(MAPPING_KEY, "/buckets-1" + MAPPING_PATH)));
-        assertThat(properties.getMappingDefinition(), equalTo("/buckets-1" + MAPPING_PATH));
-    }
-
-    @Test
-    void testEmptyMapping() {
-        final DocumentAdapterProperties properties = new DocumentAdapterProperties(
-                new AdapterProperties(Map.of(MAPPING_KEY, "")));
-        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                properties::getMappingDefinition);
-        assertThat(exception.getMessage(), equalTo(
-                "E-VSD-20: The property MAPPING must not be empty. Please set MAPPING to the path to your schema mapping files in the BucketFS."));
+                new AdapterProperties(Map.of(MAPPING_KEY, A_MAPPING)));
+        assertThat(properties.getMappingDefinition(), contains(new EdmlInput(A_MAPPING, "inline")));
     }
 
     @Test
