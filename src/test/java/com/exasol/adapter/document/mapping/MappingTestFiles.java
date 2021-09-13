@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Objects;
 import java.util.function.Function;
 
 import org.json.JSONObject;
@@ -28,24 +30,17 @@ public class MappingTestFiles {
     }
 
     /**
-     * Get a mapping from resources as file.
-     *
-     * @implNote This method does not use the resource directly as file, since the this method only works if the jar is
-     *           unpacked. For that reason this method writes the content of the file to a temporary directory.
+     * Get a mapping from resources as string.
      *
      * @param fileName name of the mapping. Use one of the constants of this class.
-     * @param tempDir  temporary directory for the file. Use @TempDir to create this directory in the test case.
      * @return temporary file with the content of the specified mapping file.
-     * @throws IOException if resource was not found
      */
-    public static File getMappingAsFile(final String fileName, final Path tempDir) throws IOException {
-        final File tempFile = File.createTempFile("schemaTmp", ".json", tempDir.toFile());
+    public static String getMappingAsString(final String fileName) {
         try (final InputStream stream = MappingTestFiles.class.getClassLoader().getResourceAsStream(fileName)) {
-            Files.copy(stream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (final IOException e) {
-            e.printStackTrace();
+            return new String(Objects.requireNonNull(stream).readAllBytes(), StandardCharsets.UTF_8);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(exception);
         }
-        return tempFile;
     }
 
     /**

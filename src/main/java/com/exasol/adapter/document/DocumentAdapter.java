@@ -1,6 +1,5 @@
 package com.exasol.adapter.document;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -10,7 +9,7 @@ import com.exasol.adapter.*;
 import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
-import com.exasol.adapter.document.mapping.reader.SchemaMappingReader;
+import com.exasol.adapter.document.properties.DocumentAdapterProperties;
 import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.queryplanning.RemoteTableQueryFactory;
@@ -18,7 +17,6 @@ import com.exasol.adapter.metadata.SchemaMetadata;
 import com.exasol.adapter.request.*;
 import com.exasol.adapter.response.*;
 import com.exasol.adapter.sql.SqlStatement;
-import com.exasol.bucketfs.BucketfsFileFactory;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -56,11 +54,10 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
-        final File mappingDefinitionFile = getSchemaMappingFile(documentAdapterProperties);
         getConnectionInformation(exaMetadata, request);
         final TableKeyFetcher tableKeyFetcher = getTableKeyFetcher(getConnectionInformation(exaMetadata, request));
-        final SchemaMappingReader mappingFactory = new JsonSchemaMappingReader(mappingDefinitionFile, tableKeyFetcher);
-        return mappingFactory.getSchemaMapping();
+        return new JsonSchemaMappingReader(tableKeyFetcher)
+                .readSchemaMapping(documentAdapterProperties.getMappingDefinition());
     }
 
     /**
@@ -82,19 +79,6 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
                             .message("Could not access the remote databases connection information.").toString(),
                     exception);
         }
-    }
-
-    private File getSchemaMappingFile(final DocumentAdapterProperties documentAdapterProperties) {
-        final String path = documentAdapterProperties.getMappingDefinition();
-        final File file = new BucketfsFileFactory().openFile(path);
-        if (!file.exists()) {
-            throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-14")
-                    .message("Could not open mapping file {{MAPPING_FILE}}.").parameter("MAPPING_FILE", file)
-                    .mitigation(
-                            "Make sure you uploaded your mapping definition to BucketFS and specified the correct BucketFS, bucket and path within the bucket.")
-                    .toString());
-        }
-        return file;
     }
 
     private AdapterProperties getPropertiesFromRequest(final AdapterRequest request) {

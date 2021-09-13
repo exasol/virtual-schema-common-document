@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exasol.ExaMetadata;
+import com.exasol.adapter.document.properties.DocumentAdapterProperties;
 
 /**
  * This class calculates the maximum number of UDFs that can be used to solve a query.

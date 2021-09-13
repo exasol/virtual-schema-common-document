@@ -2,15 +2,15 @@ package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
 
-import com.exasol.adapter.document.mapping.reader.SchemaMappingReader;
+import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
 import com.exasol.adapter.metadata.DataType;
 
 /**
  * This interface defines the mapping for a column in the Virtual Schema.
  *
  * <p>
- * Objects implementing this interface get serialized into the column adapter notes. They are created using a
- * {@link SchemaMappingReader}. Storing the mapping definition is necessary as mapping definition files in BucketFS
+ * Objects implementing this interface get serialized into the column adapter notes. They are created using the
+ * {@link JsonSchemaMappingReader}. Storing the mapping definition is necessary as mapping definition files in BucketFS
  * could be changed, but the mapping must not be changed until a {@code REFRESH} statement is called.
  * </p>
  */
