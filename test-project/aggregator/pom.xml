@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.exasol</groupId>
+    <artifactId>virtual-schema-common-document-aggregator</artifactId>
+    <version>not-versioned</version>
+    <packaging>pom</packaging>
+    <name>aggregator</name>
+    <description>This pom file is a helper for building the mock project with the virtual-schema-common-document as
+        dependency. We can't build the mock-project directly since it can not access the non released / installed
+        virtual-schema-common-document. That only works my maven magic when we use sub modules.
+    </description>
+    <modules>
+        <module>../../</module>
+        <module>../mock-project</module>
+    </modules>
+</project>
