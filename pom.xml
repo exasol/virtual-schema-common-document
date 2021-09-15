@@ -73,6 +73,22 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <!-- When building from the nested build we use a different target directory,
+            so that if the build is executed from the integration tests of this build there are no interferences. -->
+            <id>alternateTargetDir</id>
+            <build>
+                <directory>target/nestedBuild/</directory>
+            </build>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>com.exasol</groupId>

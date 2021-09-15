@@ -35,7 +35,7 @@ class DocumentAdapterIT {
     private static AdapterScript adapterScript;
 
     @BeforeAll
-    static void beforeAll() throws SQLException, BucketAccessException, FileNotFoundException, TimeoutException {
+    static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, FileNotFoundException {
         testSetup = new ExasolTestcontainerTestSetup();
         final UdfTestSetup udfTestSetup = new UdfTestSetup(testSetup);
         exasolObjectFactory = new ExasolObjectFactory(testSetup.createConnection(),
@@ -75,6 +75,7 @@ class DocumentAdapterIT {
             mvnRunner.setSystemProperty("ossindex.skip", "true");
             mvnRunner.setSystemProperty("maven.javadoc.skip", "true");
             mvnRunner.setSystemProperty("lombok.delombok.skip", "true");
+            mvnRunner.addCliOption("-PalternateTargetDir");
             mvnRunner.executeGoal("package");
             LOGGER.info("Done building mock-project");
         } catch (final VerificationException exception) {
