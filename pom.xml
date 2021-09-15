@@ -2,12 +2,16 @@
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>6.1.0-SNAPSHOT</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document</url>
+    <parent>
+        <groupId>com.exasol</groupId>
+        <artifactId>virtual-schema-common-document-parent</artifactId>
+        <version>${revision}</version>
+        <relativePath>./parentPom.xml</relativePath>
+    </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -69,6 +73,22 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+    <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <!-- When building from the nested build we use a different target directory,
+            so that if the build is executed from the integration tests of this build there are no interferences. -->
+            <id>alternateTargetDir</id>
+            <build>
+                <directory>target/nestedBuild/</directory>
+            </build>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -110,7 +130,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <version>2.11.1</version>
+            <version>2.12.5</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
@@ -134,8 +154,53 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.11.2</version>
+            <version>3.12.4</version>
             <scope>test</scope>
+        </dependency>
+        <!-- integration test dependencies -->
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>exasol-test-setup-abstraction-java</artifactId>
+            <version>0.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>test-db-builder-java</artifactId>
+            <version>3.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>udf-debugging-java</artifactId>
+            <version>0.4.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-verifier</artifactId>
+            <version>1.7.2</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Overrides Junit 4.12 which is used in the verifier but contains a security issue: https://ossindex.sonatype.org/vuln/7ea56ad4-8a8b-4e51-8ed9-5aad83d8efb1 -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.exasol</groupId>
+            <artifactId>hamcrest-resultset-matcher</artifactId>
+            <version>1.4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <artifactId>org.jacoco.agent</artifactId>
+            <groupId>org.jacoco</groupId>
+            <version>0.8.7</version>
+            <scope>test</scope>
+            <classifier>runtime</classifier>
         </dependency>
     </dependencies>
     <build>
@@ -165,6 +230,9 @@
                         <include>**IT.java</include>
                     </includes>
                     <failIfNoTests>true</failIfNoTests>
+                    <systemPropertyVariables>
+                        <test.coverage>true</test.coverage>
+                    </systemPropertyVariables>
                 </configuration>
                 <executions>
                     <execution>
@@ -248,6 +316,7 @@
                         </configuration>
                     </execution>
                 </executions>
+                <groupId>org.apache.maven.plugins</groupId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -372,7 +441,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>0.10.0</version>
+                <version>1.2.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -384,6 +453,8 @@
                     <modules>
                         <module>integration_tests</module>
                         <module>maven_central</module>
+                        <module>lombok</module>
+                        <module>udf_coverage</module>
                     </modules>
                     <linkReplacements>
                         <linkReplacement>

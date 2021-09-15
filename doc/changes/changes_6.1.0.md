@@ -6,6 +6,7 @@ Code name:
 
 * #88: Added Java representation for the EDML
 * #93: Added support for inline mapping definitions
+* #95: Added integration tests
 
 ## Refactoring
 
