@@ -28,12 +28,7 @@
 | [Apache Maven Verifier Component][30]    | [Apache License, Version 2.0][31] |
 | [JUnit][32]                              | [Eclipse Public License 1.0][33]  |
 | [Matcher for SQL Result Sets][34]        | [MIT][1]                          |
-
-## Runtime Dependencies
-
-| Dependency            | License                          |
-| --------------------- | -------------------------------- |
-| [JaCoCo :: Agent][36] | [Eclipse Public License 2.0][37] |
+| [JaCoCo :: Agent][36]                    | [Eclipse Public License 2.0][37]  |
 
 ## Plugin Dependencies
 

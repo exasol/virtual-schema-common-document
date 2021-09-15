@@ -1,4 +1,4 @@
-package com.exasol.adapter.document.moc;
+package com.exasol.adapter.document.mock;
 
 import com.exasol.adapter.AdapterFactory;
 import com.exasol.adapter.VirtualSchemaAdapter;

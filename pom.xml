@@ -199,8 +199,8 @@
             <artifactId>org.jacoco.agent</artifactId>
             <groupId>org.jacoco</groupId>
             <version>0.8.7</version>
+            <scope>test</scope>
             <classifier>runtime</classifier>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
     <build>
@@ -441,7 +441,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>1.1.0</version>
+                <version>1.2.0</version>
                 <executions>
                     <execution>
                         <goals>

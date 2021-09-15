@@ -42,7 +42,7 @@ class DocumentAdapterIT {
                 ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         buildMockAdapter();
         final ExasolSchema adapterSchema = exasolObjectFactory.createSchema("ADAPTER");
-        testSetup.getDefaultBucket().uploadFile(Path.of("test-project", "mock-project", "target", MOCK_ADAPTER_JAR),
+        testSetup.getDefaultBucket().uploadFile(Path.of("test-project/mock-project/target", MOCK_ADAPTER_JAR),
                 MOCK_ADAPTER_JAR);
         adapterScript = adapterSchema.createAdapterScriptBuilder("FILES_ADAPTER")
                 .bucketFsContent("com.exasol.adapter.RequestDispatcher",
@@ -75,6 +75,7 @@ class DocumentAdapterIT {
             mvnRunner.setSystemProperty("ossindex.skip", "true");
             mvnRunner.setSystemProperty("maven.javadoc.skip", "true");
             mvnRunner.setSystemProperty("lombok.delombok.skip", "true");
+            mvnRunner.setSystemProperty("project-keeper.skip", "true");
             mvnRunner.addCliOption("-PalternateTargetDir");
             mvnRunner.executeGoal("package");
             LOGGER.info("Done building mock-project");
