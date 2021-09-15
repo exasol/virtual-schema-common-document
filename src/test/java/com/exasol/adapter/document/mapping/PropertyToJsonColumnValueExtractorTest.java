@@ -25,7 +25,7 @@ import com.exasol.sql.expression.literal.StringLiteral;
 
 class PropertyToJsonColumnValueExtractorTest {
 
-    private static PropertyToJsonColumnMapping.Builder getDefaultMappingBuilder() {
+    private static PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> getDefaultMappingBuilder() {
         return configureExampleMapping(PropertyToJsonColumnMapping.builder())//
                 .varcharColumnSize(254)//
                 .overflowBehaviour(ABORT);

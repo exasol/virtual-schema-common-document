@@ -11,6 +11,7 @@ Code name:
 ## Refactoring
 
 * #91: Refactored to use Java representation for EDML for reading schema mapping
+* #98: Refactored propertyToXxxReaderClasses to use Lombok
 
 ## Dependency Updates
 

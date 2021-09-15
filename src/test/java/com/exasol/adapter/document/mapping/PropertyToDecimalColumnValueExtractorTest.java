@@ -24,7 +24,7 @@ import com.exasol.sql.expression.literal.NullLiteral;
 
 class PropertyToDecimalColumnValueExtractorTest {
 
-    private static PropertyToDecimalColumnMapping.Builder commonMappingBuilder() {
+    private static PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> commonMappingBuilder() {
         return configureExampleMapping(PropertyToDecimalColumnMapping.builder())//
                 .overflowBehaviour(ABORT)//
                 .notNumericBehaviour(ABORT)//

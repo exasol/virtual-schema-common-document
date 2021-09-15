@@ -24,6 +24,7 @@ import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.testcontainers.ExasolTestcontainerTestSetup;
 import com.exasol.udfdebugging.UdfTestSetup;
 
+@Tag("integration")
 class DocumentAdapterIT {
     private static final String MY_VIRTUAL_SCHEMA = "MY_VIRTUAL_SCHEMA";
     private static final String ADAPTER_NAME = "FIXED_DATA_ADAPTER";
