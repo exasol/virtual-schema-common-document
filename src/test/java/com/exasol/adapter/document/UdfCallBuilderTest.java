@@ -51,7 +51,7 @@ class UdfCallBuilderTest {
     }
 
     private RemoteTableQuery getRemoteTableQueryWithOneColumns() {
-        final ColumnMapping column = new PropertyToJsonColumnMapping.Builder().exasolColumnName("TEST_COLUMN")
+        final ColumnMapping column = PropertyToJsonColumnMapping.builder().exasolColumnName("TEST_COLUMN")
                 .varcharColumnSize(123).build();
         final TableMapping tableMapping = new TableMapping("TEST", "test", List.of(column),
                 DocumentPathExpression.empty());

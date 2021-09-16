@@ -27,7 +27,7 @@ import com.exasol.sql.expression.literal.StringLiteral;
 class PropertyToVarcharColumnValueExtractorTest {
     private static final String TEST_STRING = "test";
 
-    private static PropertyToVarcharColumnMapping.Builder getDefaultMappingBuilder() {
+    private static PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> getDefaultMappingBuilder() {
         return configureExampleMapping(PropertyToVarcharColumnMapping.builder())//
                 .varcharColumnSize(TEST_STRING.length())//
                 .overflowBehaviour(TruncateableMappingErrorBehaviour.ABORT).nonStringBehaviour(CONVERT_OR_ABORT);
