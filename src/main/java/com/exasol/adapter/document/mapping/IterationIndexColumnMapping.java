@@ -15,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class IterationIndexColumnMapping extends AbstractColumnMapping {
-    private static final long serialVersionUID = -5720702055496015560L;//
+    private static final long serialVersionUID = -5720702055496015560L;
     /** @serial */
     private final DocumentPathExpression tablesPath;
 

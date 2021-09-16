@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping implements PropertyToColumnMapping {
-    private static final long serialVersionUID = 5820053202696971898L;//
+    private static final long serialVersionUID = 5820053202696971898L;
     private final DocumentPathExpression pathToSourceProperty;
     private final MappingErrorBehaviour lookupFailBehaviour;
 

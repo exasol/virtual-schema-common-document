@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToDecimalColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = 6_021_806_680_404_016_342L;//
+    private static final long serialVersionUID = 6021806680404016343L;
     /** @serial */
     private final int decimalPrecision;
     /** @serial */
