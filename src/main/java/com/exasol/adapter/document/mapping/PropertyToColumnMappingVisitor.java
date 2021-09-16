@@ -24,4 +24,11 @@ public interface PropertyToColumnMappingVisitor {
      * @param columnDefinition {@link PropertyToDecimalColumnMapping} to visit
      */
     void visit(PropertyToDecimalColumnMapping columnDefinition);
+
+    /**
+     * Visits a {@link PropertyToDoubleColumnMapping}.
+     *
+     * @param columnDefinition {@link PropertyToDoubleColumnMapping} to visit
+     */
+    void visit(PropertyToDoubleColumnMapping columnDefinition);
 }

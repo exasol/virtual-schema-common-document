@@ -36,6 +36,8 @@ class MappingDefinitionDeserializer extends JsonDeserializer<MappingDefinition> 
             return jsonParser.readValueAs(ToJsonMapping.class);
         case "toTableMapping":
             return jsonParser.readValueAs(ToTableMapping.class);
+        case "toDoubleMapping":
+            return jsonParser.readValueAs(ToDoubleMapping.class);
         default:
             throw new IllegalStateException(
                     ExaError.messageBuilder("E-VSD-82").message("Unsupported mapping type {{type}}.", nextFieldName)

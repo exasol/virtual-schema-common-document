@@ -6,9 +6,9 @@ package com.exasol.adapter.document.mapping;
  */
 public enum ConvertableMappingErrorBehaviour {
 
-    /** Try to convert the value to string and return NULL if that is not possible. */
+    /** Try to convert the value and return NULL if that is not possible. */
     CONVERT_OR_NULL,
-    /** Try to convert the value to string and abort if that is not possible. */
+    /** Try to convert the value and abort if that is not possible. */
     CONVERT_OR_ABORT,
     /** Abort the whole query */
     ABORT,

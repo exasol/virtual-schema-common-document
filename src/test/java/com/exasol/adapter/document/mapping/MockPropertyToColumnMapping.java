@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = -2761342146945740872L;//
+    private static final long serialVersionUID = -2761342146945740872L;
 
     public MockPropertyToColumnMapping(final String destinationName, final DocumentPathExpression sourcePath,
             final MappingErrorBehaviour lookupFailBehaviour) {

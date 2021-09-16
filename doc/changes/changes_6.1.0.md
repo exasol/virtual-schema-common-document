@@ -1,12 +1,19 @@
 # Common Virtual Schema for document data 6.1.0, released 2021-XX-XX
 
-Code name:
+Code name: New Mapping Types
+
+## Summary
+
+In this release we added the following new mapping types:
+
+* `toDoubleMapping`
 
 ## Features
 
 * #88: Added Java representation for the EDML
 * #93: Added support for inline mapping definitions
 * #95: Added integration tests
+* #57: Added toDoubleMapping
 
 ## Refactoring
 

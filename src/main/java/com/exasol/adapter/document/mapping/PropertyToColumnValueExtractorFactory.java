@@ -40,6 +40,11 @@ public class PropertyToColumnValueExtractorFactory {
             this.result = new PropertyToDecimalColumnValueExtractor(columnDefinition);
         }
 
+        @Override
+        public void visit(final PropertyToDoubleColumnMapping columnDefinition) {
+            this.result = new PropertyToDoubleColumnValueExtractor(columnDefinition);
+        }
+
         /**
          * Get the result.
          * 

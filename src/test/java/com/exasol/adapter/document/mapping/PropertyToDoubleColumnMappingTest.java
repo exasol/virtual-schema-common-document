@@ -8,18 +8,16 @@ import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.metadata.DataType;
 
-class PropertyToDecimalColumnMappingTest {
-    private static final PropertyToDecimalColumnMapping TEST_OBJECT = configureExampleMapping(
-            PropertyToDecimalColumnMapping.builder())//
-                    .decimalPrecision(12)//
-                    .decimalScale(1)//
+class PropertyToDoubleColumnMappingTest {
+    private static final PropertyToDoubleColumnMapping TEST_OBJECT = configureExampleMapping(
+            PropertyToDoubleColumnMapping.builder())//
                     .overflowBehaviour(MappingErrorBehaviour.NULL)//
                     .notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL)//
                     .build();
 
     @Test
     void testGetExasolDataType() {
-        assertThat(TEST_OBJECT.getExasolDataType(), equalTo(DataType.createDecimal(12, 1)));
+        assertThat(TEST_OBJECT.getExasolDataType(), equalTo(DataType.createDouble()));
     }
 
     @Test

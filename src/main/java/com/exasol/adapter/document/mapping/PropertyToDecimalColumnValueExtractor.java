@@ -1,23 +1,20 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.ValueExpression;
 import com.exasol.sql.expression.literal.BigDecimalLiteral;
 import com.exasol.sql.expression.literal.NullLiteral;
 
+import lombok.RequiredArgsConstructor;
+
 /**
- * This class extracts DECIMAL values from document data. The extraction is defined using a
+ * This class extracts {@code DECIMAL} values from document data. The extraction is defined using a
  * {@link PropertyToDecimalColumnMapping}.
  */
-@java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
-public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToColumnValueExtractor {
-    private final PropertyToDecimalColumnMapping column;
+public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToNumberColumnValueExtractor {
 
     /**
      * Create an instance of {@link PropertyToDecimalColumnValueExtractor}.
@@ -25,78 +22,31 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToCol
      * @param column {@link PropertyToDecimalColumnMapping} defining the mapping
      */
     public PropertyToDecimalColumnValueExtractor(final PropertyToDecimalColumnMapping column) {
-        super(column);
-        this.column = column;
+        super(column, new ToDecimalNumberConverter(column));
     }
 
-    @Override
-    protected final ValueExpression mapValue(final DocumentNode documentValue) {
-        final ConversionVisitor conversionVisitor = new ConversionVisitor(this.column);
-        documentValue.accept(conversionVisitor);
-        return conversionVisitor.getResult();
-    }
-
-    private static class ConversionVisitor implements DocumentNodeVisitor {
+    @RequiredArgsConstructor
+    private static class ToDecimalNumberConverter implements NumberConverter {
         private final PropertyToDecimalColumnMapping column;
-        private ValueExpression result;
 
-        private ConversionVisitor(final PropertyToDecimalColumnMapping column) {
-            this.column = column;
+        @Override
+        public ValueExpression convertString(final String stringValue) {
+            return BigDecimalLiteral.of(new BigDecimal(stringValue));
         }
 
         @Override
-        public void visit(final DocumentObject jsonObjectNode) {
-            this.result = handleNotNumeric("<object>");
+        public ValueExpression convertBoolean(final boolean boolValue) {
+            return BigDecimalLiteral.of(BigDecimal.valueOf(boolValue ? 1L : 0L));
         }
 
         @Override
-        public void visit(final DocumentArray jsonArrayNode) {
-            this.result = handleNotNumeric("<array>");
+        public ValueExpression convertDouble(final double doubleValue) {
+            return fitBigDecimalValue(BigDecimal.valueOf(doubleValue));
         }
 
         @Override
-        public void visit(final DocumentStringValue stringNode) {
-            this.result = handleNotNumeric(stringNode.getValue());
-        }
-
-        @Override
-        public void visit(final DocumentDecimalValue numberNode) {
-            this.result = fitBigDecimalValue(numberNode.getValue());
-        }
-
-        @Override
-        public void visit(final DocumentNullValue nullNode) {
-            this.result = NullLiteral.nullLiteral();
-        }
-
-        @Override
-        public void visit(final DocumentBooleanValue booleanNode) {
-            this.result = handleNotNumeric("<" + (booleanNode.getValue() ? "true" : "false") + ">");
-        }
-
-        @Override
-        public void visit(final DocumentFloatingPointValue floatingPointValue) {
-            this.result = fitBigDecimalValue(BigDecimal.valueOf(floatingPointValue.getValue()));
-        }
-
-        @Override
-        public void visit(final DocumentBinaryValue binaryValue) {
-            this.result = handleNotNumeric("<binary data>");
-        }
-
-        private ValueExpression handleNotNumeric(final String value) {
-            if (this.column.getNotNumericBehaviour() == MappingErrorBehaviour.ABORT) {
-                throw new ColumnValueExtractorException(
-                        ExaError.messageBuilder("E-VSD-33")
-                                .message("Could not convert {{VALUE}} to decimal column ({{COLUMN_NAME}}).")
-                                .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
-                                .parameter("COLUMN_NAME", this.column.getExasolColumnName())
-                                .mitigation("Try using a different mapping.")
-                                .mitigation("Ignore this error by setting 'notNumericBehaviour' to 'null'.").toString(),
-                        this.column);
-            } else {
-                return NullLiteral.nullLiteral();
-            }
+        public ValueExpression convertDecimal(final BigDecimal decimalValue) {
+            return fitBigDecimalValue(decimalValue);
         }
 
         private ValueExpression fitBigDecimalValue(final BigDecimal decimalValue) {
@@ -119,15 +69,6 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToCol
             } else {
                 return NullLiteral.nullLiteral();
             }
-        }
-
-        /**
-         * Get the result of the conversion.
-         *
-         * @return result of the conversion
-         */
-        public ValueExpression getResult() {
-            return this.result;
         }
     }
 }

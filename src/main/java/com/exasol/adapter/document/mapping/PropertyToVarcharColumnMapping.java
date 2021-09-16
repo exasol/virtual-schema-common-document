@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = -8517627343996328336L;//
+    private static final long serialVersionUID = -8517627343996328336L;
     /** @serial */
     private final int varcharColumnSize;
     /** @serial */

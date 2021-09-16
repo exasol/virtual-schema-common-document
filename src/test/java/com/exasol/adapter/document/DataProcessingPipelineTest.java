@@ -42,7 +42,8 @@ class DataProcessingPipelineTest {
     private DataProcessingPipeline getPipeline() {
         final PropertyToColumnMapping columnMapping = PropertyToDecimalColumnMapping.builder().exasolColumnName("TEST")
                 .decimalPrecision(10).decimalScale(0).lookupFailBehaviour(MappingErrorBehaviour.ABORT)
-                .notNumericBehaviour(MappingErrorBehaviour.ABORT).overflowBehaviour(MappingErrorBehaviour.ABORT)
+                .notNumericBehaviour(ConvertableMappingErrorBehaviour.ABORT)
+                .overflowBehaviour(MappingErrorBehaviour.ABORT)
                 .pathToSourceProperty(DocumentPathExpression.builder().build()).build();
         final SchemaMappingRequest schemaMappingRequest = new SchemaMappingRequest(DocumentPathExpression.empty(),
                 List.of(columnMapping));
@@ -76,7 +77,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = 8489721427702208566L;
+        private static final long serialVersionUID = -7759133518353709829L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {

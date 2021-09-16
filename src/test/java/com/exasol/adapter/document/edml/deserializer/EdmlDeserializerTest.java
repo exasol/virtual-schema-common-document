@@ -12,7 +12,7 @@ class EdmlDeserializerTest {
     @Test
     void testDeserialization() {
         final EdmlDefinition expected = EdmlDefinition.builder().source("test").destinationTable("test")
-                .schema("https://schemas.exasol.com/edml-1.2.1.json").mapping(Fields.builder()//
+                .schema("https://schemas.exasol.com/edml-1.3.0.json").mapping(Fields.builder()//
                         .mapField("text", ToVarcharMapping.builder().build())
                         .mapField("number", ToDecimalMapping.builder().build())
                         .mapField("object", ToJsonMapping.builder().build()).build())
