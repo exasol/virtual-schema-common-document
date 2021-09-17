@@ -20,6 +20,10 @@ In this release we added the following new mapping types:
 * #91: Refactored to use Java representation for EDML for reading schema mapping
 * #98: Refactored propertyToXxxReaderClasses to use Lombok
 
+# Bug Fixes
+
+* #101: Fix integration test setup
+
 ## Dependency Updates
 
 ### Compile Dependency Updates
