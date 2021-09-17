@@ -6,12 +6,14 @@ import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
@@ -26,6 +28,7 @@ import com.exasol.dbbuilder.dialects.exasol.udf.UdfScript;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.testcontainers.ExasolTestcontainerTestSetup;
+import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 import com.exasol.udfdebugging.UdfTestSetup;
 
 @Tag("integration")
@@ -34,13 +37,16 @@ class DocumentAdapterIT {
     private static final String ADAPTER_NAME = "FIXED_DATA_ADAPTER";
     private static final String MOCK_ADAPTER_JAR = "mock-adapter.jar";
     private static final Logger LOGGER = Logger.getLogger(DocumentAdapterIT.class.getSimpleName());
+    private static final String VS_COMMON_DOCUMENT_VERSION_PROPERTY = "vs-common-document-version";
+    private static final Pattern VS_COMMON_DOCUMENT_VERSION_PROPERTY_PATTERN = Pattern.compile(
+            "<" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">([^<]++)</" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">");
     private static ExasolTestSetup testSetup;
     private static ExasolObjectFactory exasolObjectFactory;
     private static ConnectionDefinition nullConnection;
     private static AdapterScript adapterScript;
 
     @BeforeAll
-    static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, FileNotFoundException {
+    static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, IOException {
         testSetup = new ExasolTestcontainerTestSetup();
         final UdfTestSetup udfTestSetup = new UdfTestSetup(testSetup);
         exasolObjectFactory = new ExasolObjectFactory(testSetup.createConnection(),
@@ -71,7 +77,8 @@ class DocumentAdapterIT {
                 .build();
     }
 
-    private static void buildMockAdapter() {
+    private static void buildMockAdapter() throws IOException {
+        writeCurrentVersionToMockProjectPom();
         try {
             LOGGER.info("Building mock-project");
             final Verifier mvnRunner = new Verifier(Path.of("test-project", "aggregator").toAbsolutePath().toString());
@@ -89,6 +96,16 @@ class DocumentAdapterIT {
                     .message("Failed to build mock-project. The project is used for the integration testing.")
                     .toString(), exception);
         }
+    }
+
+    private static void writeCurrentVersionToMockProjectPom() throws IOException {
+        final Path mockProjectPom = Path.of("test-project/mock-project/pom.xml");
+        final String mockProjectPomContent = Files.readString(mockProjectPom);
+        final String vsCommonDocumentVersion = MavenProjectVersionGetter.getCurrentProjectVersion();
+        final String updatedPom = VS_COMMON_DOCUMENT_VERSION_PROPERTY_PATTERN.matcher(mockProjectPomContent)
+                .replaceAll("<" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">" + vsCommonDocumentVersion + "</"
+                        + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">");
+        Files.writeString(mockProjectPom, updatedPom);
     }
 
     @Test
