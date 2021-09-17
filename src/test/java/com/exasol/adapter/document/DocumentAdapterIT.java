@@ -135,6 +135,16 @@ class DocumentAdapterIT {
         assertVirtualSchemaQuery(mapping, query, expectedResult);
     }
 
+    @Test
+    void testToBoolMapping() throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("name", ToBoolMapping.builder().notBooleanBehavior(CONVERT_OR_ABORT).build())//
+                .build();
+        final String query = "SELECT NAME FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        final Matcher<ResultSet> expectedResult = table("BOOLEAN").row(false).matches(NO_JAVA_TYPE_CHECK);
+        assertVirtualSchemaQuery(mapping, query, expectedResult);
+    }
+
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult) throws SQLException {
         final EdmlDefinition edml = EdmlDefinition.builder().schema("https://schemas.exasol.com/edml-1.3.0.json")

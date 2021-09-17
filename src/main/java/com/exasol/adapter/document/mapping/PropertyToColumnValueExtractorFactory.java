@@ -45,6 +45,11 @@ public class PropertyToColumnValueExtractorFactory {
             this.result = new PropertyToDoubleColumnValueExtractor(columnDefinition);
         }
 
+        @Override
+        public void visit(final PropertyToBoolColumnMapping columnDefinition) {
+            this.result = new PropertyToBoolColumnValueExtractor(columnDefinition);
+        }
+
         /**
          * Get the result.
          * 

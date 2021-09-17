@@ -31,4 +31,11 @@ public interface PropertyToColumnMappingVisitor {
      * @param columnDefinition {@link PropertyToDoubleColumnMapping} to visit
      */
     void visit(PropertyToDoubleColumnMapping columnDefinition);
+
+    /**
+     * Visits a {@link PropertyToBoolColumnMapping}.
+     *
+     * @param columnDefinition {@link PropertyToBoolColumnMapping} to visit
+     */
+    void visit(PropertyToBoolColumnMapping columnDefinition);
 }

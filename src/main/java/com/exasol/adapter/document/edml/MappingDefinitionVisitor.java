@@ -46,4 +46,11 @@ public interface MappingDefinitionVisitor {
      * @param toDoubleMapping object to visit
      */
     void visit(ToDoubleMapping toDoubleMapping);
+
+    /**
+     * Visit {@link ToBoolMapping}.
+     *
+     * @param toBooleanMapping object to visit
+     */
+    void visit(ToBoolMapping toBooleanMapping);
 }

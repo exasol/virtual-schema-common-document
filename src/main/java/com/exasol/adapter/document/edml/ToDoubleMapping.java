@@ -5,14 +5,13 @@ import lombok.experimental.SuperBuilder;
 import lombok.extern.jackson.Jacksonized;
 
 /**
- * Java representation of the EDML {@code toDecimalMapping}.
+ * Java representation of the EDML {@code toDoubleMapping}.
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Jacksonized
 @SuperBuilder
 @Data
-@SuppressWarnings("java:S1170") // sonar can't deal with Lombok
 public final class ToDoubleMapping extends AbstractToNumberMapping {
 
     @Override

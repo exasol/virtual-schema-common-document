@@ -118,6 +118,17 @@ class EdmlToStagingTableMappingConverter {
         }
 
         @Override
+        public void visit(final ToBoolMapping source) {
+            final PropertyToBoolColumnMapping column = PropertyToBoolColumnMapping.builder()//
+                    .pathToSourceProperty(this.path.build())//
+                    .exasolColumnName(source.getDestinationName())//
+                    .notBooleanBehavior(source.getNotBooleanBehavior())//
+                    .lookupFailBehaviour(convertRequired(source.isRequired()))//
+                    .build();
+            this.columns.add(new ColumnWithKeyInfo(column, source.getKey()));
+        }
+
+        @Override
         public void visit(final ToTableMapping toTableMapping) {
             final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                     .addArrayAll();
