@@ -1,6 +1,7 @@
 package com.exasol.adapter.document;
 
 import static com.exasol.adapter.document.UdfEntryPoint.*;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -14,8 +15,11 @@ import java.util.logging.Logger;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 
+import com.exasol.adapter.document.edml.*;
+import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.dbbuilder.dialects.exasol.udf.UdfScript;
@@ -98,6 +102,34 @@ class DocumentAdapterIT {
                     .executeQuery("SELECT ISBN, NAME FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;");
             assertThat(resultSet,
                     table("VARCHAR", "VARCHAR").row("123456789", "Tom Sawyer").matches(NO_JAVA_TYPE_CHECK));
+        } finally {
+            virtualSchema.drop();
+        }
+    }
+
+    @Test
+    void testToDoubleMapping() throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
+                .build();
+        final String query = "SELECT ISBN FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        final Matcher<ResultSet> expectedResult = table("DOUBLE PRECISION").row("123456789")
+                .matches(NO_JAVA_TYPE_CHECK);
+        assertVirtualSchemaQuery(mapping, query, expectedResult);
+    }
+
+    private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
+            final Matcher<ResultSet> expectedResult) throws SQLException {
+        final EdmlDefinition edml = EdmlDefinition.builder().schema("https://schemas.exasol.com/edml-1.3.0.json")
+                .source("")//
+                .destinationTable("BOOKS")//
+                .mapping(mapping).build();
+        final String edmlString = new EdmlSerializer().serialize(edml);
+        final VirtualSchema virtualSchema = createVirtualSchema(edmlString);
+        try {
+            final Statement statement = testSetup.createConnection().createStatement();
+            final ResultSet resultSet = statement.executeQuery(query);
+            assertThat(resultSet, expectedResult);
         } finally {
             virtualSchema.drop();
         }

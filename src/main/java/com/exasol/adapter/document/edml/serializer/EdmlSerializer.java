@@ -47,7 +47,8 @@ public class EdmlSerializer {
     private static class Installer extends BeanSerializerModifier {
 
         private static final Set<Class<? extends MappingDefinition>> MAPPING_DEFINITIONS_WITH_SPECIAL_SERIALIZATION = Set
-                .of(ToVarcharMapping.class, ToDecimalMapping.class, ToJsonMapping.class, ToTableMapping.class);
+                .of(ToVarcharMapping.class, ToDecimalMapping.class, ToJsonMapping.class, ToTableMapping.class,
+                        ToDoubleMapping.class);
 
         @Override
         public JsonSerializer<?> modifySerializer(final SerializationConfig config, final BeanDescription beanDesc,

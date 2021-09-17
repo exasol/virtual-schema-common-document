@@ -22,7 +22,7 @@ import com.exasol.errorreporting.ExaError;
  * </p>
  */
 public class EdmlSchemaValidator {
-    private static final String MAPPING_LANGUAGE_SCHEMA = "schemas/edml-1.2.1.json";
+    private static final String MAPPING_LANGUAGE_SCHEMA = "schemas/edml-1.3.0.json";
     private static final List<ExceptionMessageImprover> EXCEPTION_MESSAGE_IMPROVER = List.of(
             new UnknownKeyTypeExceptionMessageImprover(), new UnknownMappingExceptionMessageImprover(),
             new NoMappingExceptionMessageImprover(), new WongSchemaExceptionMessageImprover());

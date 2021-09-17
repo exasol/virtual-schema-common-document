@@ -106,6 +106,18 @@ class EdmlToStagingTableMappingConverter {
         }
 
         @Override
+        public void visit(final ToDoubleMapping source) {
+            final PropertyToDoubleColumnMapping column = PropertyToDoubleColumnMapping.builder()//
+                    .pathToSourceProperty(this.path.build())//
+                    .exasolColumnName(source.getDestinationName())//
+                    .notNumericBehaviour(source.getNotNumericBehaviour())//
+                    .overflowBehaviour(source.getOverflowBehaviour())//
+                    .lookupFailBehaviour(convertRequired(source.isRequired()))//
+                    .build();
+            this.columns.add(new ColumnWithKeyInfo(column, source.getKey()));
+        }
+
+        @Override
         public void visit(final ToTableMapping toTableMapping) {
             final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                     .addArrayAll();

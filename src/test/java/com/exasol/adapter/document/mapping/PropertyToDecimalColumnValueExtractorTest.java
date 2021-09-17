@@ -27,7 +27,7 @@ class PropertyToDecimalColumnValueExtractorTest {
     private static PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> commonMappingBuilder() {
         return configureExampleMapping(PropertyToDecimalColumnMapping.builder())//
                 .overflowBehaviour(ABORT)//
-                .notNumericBehaviour(ABORT)//
+                .notNumericBehaviour(ConvertableMappingErrorBehaviour.ABORT)//
                 .decimalPrecision(8)//
                 .decimalScale(3);
     }
@@ -97,11 +97,20 @@ class PropertyToDecimalColumnValueExtractorTest {
         assertThat(result, instanceOf(NullLiteral.class));
     }
 
+    static Stream<Arguments> convertNonNumericCases() {
+        return Stream.of(//
+                Arguments.of(new StringHolderNode("123"), 123), //
+                Arguments.of(new StringHolderNode("12.3"), 12.3), //
+                Arguments.of(new BooleanHolderNode(true), 1), //
+                Arguments.of(new BooleanHolderNode(false), 0) //
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("getNonNumericTypes")
     void testNonNumericsThrowException(final DocumentNode nonNumericNode) {
         final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
-                commonMappingBuilder().notNumericBehaviour(ABORT).build());
+                commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.ABORT).build());
         final Exception exception = assertThrows(ColumnValueExtractorException.class,
                 () -> valueExtractor.mapValue(nonNumericNode));
         assertThat(exception.getMessage(), startsWith("E-VSD-33"));
@@ -111,17 +120,26 @@ class PropertyToDecimalColumnValueExtractorTest {
     @MethodSource("getNonNumericTypes")
     void testNonNumericsConvertsToNull(final DocumentNode nonNumericNode) {
         final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
-                commonMappingBuilder().notNumericBehaviour(NULL).build());
+                commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL).build());
         final ValueExpression result = valueExtractor.mapValue(nonNumericNode);
         assertThat(result, instanceOf(NullLiteral.class));
     }
 
     @ParameterizedTest
     @CsvSource({ "NULL", "ABORT" })
-    void testNullIsAlwaysConvertedToNull(final MappingErrorBehaviour behaviour) {
+    void testNullIsAlwaysConvertedToNull(final ConvertableMappingErrorBehaviour behaviour) {
         final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(behaviour).build());
         final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
         assertThat(result, instanceOf(NullLiteral.class));
+    }
+
+    @ParameterizedTest
+    @MethodSource("convertNonNumericCases")
+    void testConvertNonNumeric(final DocumentNode nonNumericNode, final double expectedResult) {
+        final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
+                commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build());
+        final BigDecimalLiteral result = (BigDecimalLiteral) valueExtractor.mapValue(nonNumericNode);
+        assertThat(result.getValue().doubleValue(), equalTo(expectedResult));
     }
 }

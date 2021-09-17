@@ -19,7 +19,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     public static final String DEFAULT_COLUMN_NAME = "SOURCE_REFERENCE";
-    private static final long serialVersionUID = -5340069183615064215L;//
+    private static final long serialVersionUID = -5340069183615064215L;
 
     /**
      * Create an instance of {@link SourceReferenceColumnMapping}.

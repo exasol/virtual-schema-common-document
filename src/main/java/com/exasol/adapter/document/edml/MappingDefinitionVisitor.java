@@ -39,4 +39,11 @@ public interface MappingDefinitionVisitor {
      * @param toVarcharMapping object to visit
      */
     void visit(ToVarcharMapping toVarcharMapping);
+
+    /**
+     * Visit {@link ToDoubleMapping}.
+     *
+     * @param toDoubleMapping object to visit
+     */
+    void visit(ToDoubleMapping toDoubleMapping);
 }
