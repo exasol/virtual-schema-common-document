@@ -27,7 +27,7 @@
       "description": "Name of the Exasol column.\n\nDefault: name of the document property"
     },
     "convertAbleMappingErrorBehaviour": {
-      "description": "Behaviour to apply in case a value is not a the expected type:\n- `NULL`: use NULL instead\n- `ABORT`: abort whole query\n- `CONVERT_OR_NULL`: try to convert the value. If not possible use NULL.\n- `CONVERT_OR_ABORT`: try to convert the value. If not possible abort the whole query.",
+      "description": "Behaviour to apply in case a value is not the expected type:\n- `NULL`: use NULL instead\n- `ABORT`: abort whole query\n- `CONVERT_OR_NULL`: try to convert the value. If not possible use NULL.\n- `CONVERT_OR_ABORT`: try to convert the value. If not possible abort the whole query.",
       "default": "CONVERT_OR_ABORT",
       "enum": [
         "NULL",

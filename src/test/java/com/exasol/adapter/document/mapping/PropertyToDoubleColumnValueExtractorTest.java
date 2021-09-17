@@ -84,7 +84,6 @@ class PropertyToDoubleColumnValueExtractorTest {
 
     @ParameterizedTest
     @MethodSource("getNonNumericTypes")
-
     void testNonNumericsThrowException(final DocumentNode nonNumericNode) {
         final PropertyToDoubleColumnValueExtractor valueExtractor = new PropertyToDoubleColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.ABORT).build());

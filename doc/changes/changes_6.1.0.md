@@ -13,7 +13,7 @@ In this release we added the following new mapping types:
 * #88: Added Java representation for the EDML
 * #93: Added support for inline mapping definitions
 * #95: Added integration tests
-* #57: Added toDoubleMapping
+* #57: Added `toDoubleMapping` mapping type
 
 ## Refactoring
 
