@@ -7,6 +7,9 @@ Code name: New Mapping Types
 In this release we added the following new mapping types:
 
 * `toDoubleMapping`
+* `toBoolMapping`
+
+In order to use the new features, please update you EDML definitions to version `1.3.0` (no breaking changes).
 
 ## Features
 
@@ -14,6 +17,7 @@ In this release we added the following new mapping types:
 * #93: Added support for inline mapping definitions
 * #95: Added integration tests
 * #57: Added `toDoubleMapping` mapping type
+* #104: Added `toBoolMapping` mapping type
 
 ## Refactoring
 

@@ -143,7 +143,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
             if (this.column.getNotNumericBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
                 throw new ColumnValueExtractorException(
                         ExaError.messageBuilder("E-VSD-33")
-                                .message("Could not convert {{VALUE}} to decimal column ({{COLUMN_NAME}}).")
+                                .message("Could not convert {{VALUE}} to numeric column ({{COLUMN_NAME}}).")
                                 .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
                                 .parameter("COLUMN_NAME", this.column.getExasolColumnName())
                                 .mitigation("Try using a different mapping.")
