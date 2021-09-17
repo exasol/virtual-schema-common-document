@@ -6,8 +6,8 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 /**
- * This class defines a mapping that extracts a decimal number from the remote document and maps it to an Exasol
- * {@code DECIMAL} column.
+ * This class defines a mapping that extracts a boolean value from the remote document and maps it to an Exasol
+ * {@code BOOLEAN} column.
  */
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
