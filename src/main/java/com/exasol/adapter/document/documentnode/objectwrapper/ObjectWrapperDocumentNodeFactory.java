@@ -1,6 +1,8 @@
 package com.exasol.adapter.document.documentnode.objectwrapper;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,10 @@ public class ObjectWrapperDocumentNodeFactory {
             return new StringHolderNode((String) object);
         } else if (object instanceof Boolean) {
             return new BooleanHolderNode((Boolean) object);
+        } else if (object instanceof java.sql.Date) {
+            return new DateHolderNode((Date) object);
+        } else if (object instanceof java.sql.Timestamp) {
+            return new TimestampHolderNode((Timestamp) object);
         } else if (object == null) {
             return new NullHolderNode();
         } else {

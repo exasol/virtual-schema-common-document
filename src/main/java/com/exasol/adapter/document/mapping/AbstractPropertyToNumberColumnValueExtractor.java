@@ -131,6 +131,16 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
             this.result = handleNotNumeric("<binary data>");
         }
 
+        @Override
+        public void visit(final DocumentDateValue dateValue) {
+            this.result = handleNotNumeric("<date>");
+        }
+
+        @Override
+        public void visit(final DocumentTimestampValue timestampValue) {
+            this.result = handleNotNumeric("<timestamp>");
+        }
+
         private ValueExpression handleNotNumericButConvertAble(final ValueExpression converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotNumericBehaviour())) {
                 return converted;

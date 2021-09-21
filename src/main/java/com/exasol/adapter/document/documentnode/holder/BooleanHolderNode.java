@@ -2,11 +2,13 @@ package com.exasol.adapter.document.documentnode.holder;
 
 import com.exasol.adapter.document.documentnode.DocumentBooleanValue;
 
+import lombok.EqualsAndHashCode;
+
 /**
- * Implementation of {@link DocumentBooleanValue} that simply holds the boolean value value in a variable.
+ * Implementation of {@link DocumentBooleanValue} that simply holds the boolean value in a variable.
  */
+@EqualsAndHashCode
 public class BooleanHolderNode implements DocumentBooleanValue {
-    /** @serial */
     private final boolean booleanValue;
 
     /**

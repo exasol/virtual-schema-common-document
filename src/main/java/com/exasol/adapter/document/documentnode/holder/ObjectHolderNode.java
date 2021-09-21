@@ -5,12 +5,13 @@ import java.util.Map;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.DocumentObject;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Implementation of {@link DocumentObject} that simply holds the object properties as a map.
  */
+@EqualsAndHashCode
 public class ObjectHolderNode implements DocumentObject {
-    private static final long serialVersionUID = -8862311988922376399L;
-    /** @serial */
     private final Map<String, DocumentNode> value;
 
     /**

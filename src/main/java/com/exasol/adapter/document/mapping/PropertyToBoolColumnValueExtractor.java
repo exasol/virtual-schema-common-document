@@ -92,6 +92,16 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
             this.result = handleNotBoolean("<binary>");
         }
 
+        @Override
+        public void visit(final DocumentDateValue dateValue) {
+            this.result = handleNotBoolean("<date>");
+        }
+
+        @Override
+        public void visit(final DocumentTimestampValue timestampValue) {
+            this.result = handleNotBoolean("<timestamp>");
+        }
+
         private ValueExpression handleNotBooleanButConvertAble(final ValueExpression converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotBooleanBehavior())) {
                 return converted;

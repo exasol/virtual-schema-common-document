@@ -4,11 +4,13 @@ import java.math.BigDecimal;
 
 import com.exasol.adapter.document.documentnode.DocumentDecimalValue;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Implementation of {@link DocumentDecimalValue} that simply holds the big decimal value in a variable.
  */
+@EqualsAndHashCode
 public class BigDecimalHolderNode implements DocumentDecimalValue {
-    /** @serial */
     private final BigDecimal numberValue;
 
     /**

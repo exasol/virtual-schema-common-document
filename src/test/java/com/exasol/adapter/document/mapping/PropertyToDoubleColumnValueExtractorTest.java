@@ -7,6 +7,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.stream.Stream;
 
@@ -35,7 +37,9 @@ class PropertyToDoubleColumnValueExtractorTest {
                 Arguments.of(new BooleanHolderNode(true)), //
                 Arguments.of(new ObjectHolderNode(Collections.emptyMap())), //
                 Arguments.of(new ArrayHolderNode(Collections.emptyList())), //
-                Arguments.of(new BinaryHolderNode(new byte[] {}))//
+                Arguments.of(new BinaryHolderNode(new byte[] {})), //
+                Arguments.of(new DateHolderNode(new Date(123))), //
+                Arguments.of(new TimestampHolderNode(new Timestamp(123)))//
         );
     }
 
