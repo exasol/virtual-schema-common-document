@@ -2,12 +2,13 @@ package com.exasol.adapter.document.documentnode.holder;
 
 import com.exasol.adapter.document.documentnode.DocumentStringValue;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Implementation of {@link DocumentStringValue} that simply holds the string value in a variable.
  */
+@EqualsAndHashCode
 public class StringHolderNode implements DocumentStringValue {
-    private static final long serialVersionUID = -6356072467161635811L;
-    /** @serial */
     private final String stringValue;
 
     /**

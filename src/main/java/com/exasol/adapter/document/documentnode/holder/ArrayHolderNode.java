@@ -5,11 +5,13 @@ import java.util.List;
 import com.exasol.adapter.document.documentnode.DocumentArray;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Implementation of {@link DocumentArray} that simply holds the list elements as array.
  */
+@EqualsAndHashCode
 public class ArrayHolderNode implements DocumentArray {
-    /** @serial */
     private final List<DocumentNode> value;
 
     /**

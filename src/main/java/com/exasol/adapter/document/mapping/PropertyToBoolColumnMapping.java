@@ -14,7 +14,8 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = 8152641376669139474L;
+    private static final long serialVersionUID = 4835013551698610917L;
+    /** @serial */
     private final ConvertableMappingErrorBehaviour notBooleanBehavior;
 
     @Override

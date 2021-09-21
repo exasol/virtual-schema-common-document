@@ -8,6 +8,8 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -42,7 +44,9 @@ class PropertyToJsonColumnValueExtractorTest {
                 Arguments.of(new ArrayHolderNode(List.of(new StringHolderNode("test"))), "[\"test\"]"), //
                 Arguments.of(new ArrayHolderNode(List.of(new NullHolderNode())), "[null]"), //
                 Arguments.of(new ObjectHolderNode(Map.of("test", new BooleanHolderNode(false))), "{\"test\":false}"), //
-                Arguments.of(new ObjectHolderNode(Map.of("test", new NullHolderNode())), "{\"test\":null}")//
+                Arguments.of(new ObjectHolderNode(Map.of("test", new NullHolderNode())), "{\"test\":null}"), //
+                Arguments.of(new DateHolderNode(new Date(1632212318000L)), "\"2021-09-21\""), //
+                Arguments.of(new TimestampHolderNode(new Timestamp(1632212318000L)), "\"2021-09-21T08:18:38Z\"") //
         );
     }
 

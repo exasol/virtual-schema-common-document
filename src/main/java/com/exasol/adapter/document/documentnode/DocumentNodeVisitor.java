@@ -60,4 +60,18 @@ public interface DocumentNodeVisitor {
      * @param binaryValue binary data
      */
     public void visit(DocumentBinaryValue binaryValue);
+
+    /**
+     * Visit a {@link DocumentDateValue}.
+     *
+     * @param dateValue date value
+     */
+    public void visit(DocumentDateValue dateValue);
+
+    /**
+     * Visit a {@link DocumentTimestampValue}.
+     *
+     * @param timestampValue timestamp value
+     */
+    public void visit(DocumentTimestampValue timestampValue);
 }

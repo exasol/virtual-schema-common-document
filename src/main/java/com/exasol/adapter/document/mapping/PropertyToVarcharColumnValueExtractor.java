@@ -207,6 +207,16 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
             this.result = new MappedStringResult(bas64Encoded, true);
         }
 
+        @Override
+        public void visit(final DocumentDateValue dateValue) {
+            this.result = new MappedStringResult(dateValue.getValue().toString(), true);
+        }
+
+        @Override
+        public void visit(final DocumentTimestampValue timestampValue) {
+            this.result = new MappedStringResult(timestampValue.getValue().toInstant().toString(), true);
+        }
+
         public ConversionResult getResult() {
             return this.result;
         }

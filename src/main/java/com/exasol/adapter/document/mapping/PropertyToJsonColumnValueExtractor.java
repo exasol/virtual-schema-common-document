@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Map;
 
@@ -118,6 +119,17 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
         public void visit(final DocumentBinaryValue binaryValue) {
             this.jsonValue = JSON.createValue(
                     new String(Base64.getEncoder().encode(binaryValue.getBinary()), StandardCharsets.UTF_8));
+        }
+
+        @Override
+        public void visit(final DocumentDateValue dateValue) {
+            this.jsonValue = JSON.createValue(dateValue.getValue().toString());
+        }
+
+        @Override
+        public void visit(final DocumentTimestampValue timestampValue) {
+            final Timestamp timestamp = timestampValue.getValue();
+            this.jsonValue = JSON.createValue(timestamp.toInstant().toString());
         }
 
         public JsonValue getJsonValue() {

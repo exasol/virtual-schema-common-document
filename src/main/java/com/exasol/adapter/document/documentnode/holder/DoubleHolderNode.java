@@ -2,11 +2,13 @@ package com.exasol.adapter.document.documentnode.holder;
 
 import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
 
+import lombok.EqualsAndHashCode;
+
 /**
  * Implementation of {@link DocumentFloatingPointValue} that simply holds the double value in a variable.
  */
+@EqualsAndHashCode
 public class DoubleHolderNode implements DocumentFloatingPointValue {
-    /** @serial */
     private final double value;
 
     /**

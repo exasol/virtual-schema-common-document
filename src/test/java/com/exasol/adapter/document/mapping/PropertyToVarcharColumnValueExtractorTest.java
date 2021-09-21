@@ -10,6 +10,8 @@ import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -84,7 +86,10 @@ class PropertyToVarcharColumnValueExtractorTest {
                 Arguments.of(new BinaryHolderNode("abc".getBytes()), "CONVERT_OR_NULL", "YWJj"), //
                 Arguments.of(new BigDecimalHolderNode(new BigDecimal("123")), "CONVERT_OR_ABORT", "123"), //
                 Arguments.of(new BooleanHolderNode(true), "CONVERT_OR_ABORT", "true"), //
-                Arguments.of(new DoubleHolderNode(12.2), "CONVERT_OR_NULL", "12.2") //
+                Arguments.of(new DoubleHolderNode(12.2), "CONVERT_OR_NULL", "12.2"), //
+                Arguments.of(new DateHolderNode(new Date(1632212318000L)), "CONVERT_OR_NULL", "2021-09-21"), //
+                Arguments.of(new TimestampHolderNode(new Timestamp(1632212318000L)), "CONVERT_OR_NULL",
+                        "2021-09-21T08:18:38Z") //
         );
     }
 
@@ -92,7 +97,8 @@ class PropertyToVarcharColumnValueExtractorTest {
     @MethodSource("toStringConversionTestCases")
     void testToStringConversion(final DocumentNode nonStringNode, final ConvertableMappingErrorBehaviour behaviour,
             final String expectedResult) {
-        final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().nonStringBehaviour(behaviour).build();
+        final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().nonStringBehaviour(behaviour)
+                .varcharColumnSize(20).build();
         final StringLiteral result = (StringLiteral) new PropertyToVarcharColumnValueExtractor(column)
                 .mapValue(nonStringNode);
         assertThat(result.toString(), equalTo(expectedResult));
