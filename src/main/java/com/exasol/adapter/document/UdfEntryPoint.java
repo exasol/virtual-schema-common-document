@@ -2,6 +2,7 @@ package com.exasol.adapter.document;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.TimeZone;
 
 import com.exasol.*;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
@@ -31,6 +32,11 @@ public class UdfEntryPoint {
      */
     @SuppressWarnings("java:S112") // Exception is too generic. This signature is however given by the UDF framework
     public static void run(final ExaMetadata exaMetadata, final ExaIterator exaIterator) throws Exception {
+        /*
+         * Set the timezone to UTC so that timestamps are converted using the UTC timezone. Default seems to be
+         * europe/berlin.
+         */
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         final ExaConnectionInformation connectionInformation = exaMetadata
                 .getConnection(exaIterator.getString(PARAMETER_CONNECTION_NAME));
         final SchemaMappingRequest schemaMappingRequest = deserializeSchemaMappingRequest(exaIterator);

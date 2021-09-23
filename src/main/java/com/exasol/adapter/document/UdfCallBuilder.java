@@ -111,9 +111,12 @@ public class UdfCallBuilder {
     }
 
     private Select getSelectForColumns(final List<ColumnMapping> selectList) {
-        final String[] selectListStrings = selectList.stream().map(ColumnMapping::getExasolColumnName)
-                .toArray(String[]::new);
-        return StatementFactory.getInstance().select().field(selectListStrings);
+        final Select select = StatementFactory.getInstance().select();
+        for (final ColumnMapping columnMapping : selectList) {
+            final String exasolColumnName = columnMapping.getExasolColumnName();
+            select.field(exasolColumnName);
+        }
+        return select;
     }
 
     /**
@@ -200,7 +203,8 @@ public class UdfCallBuilder {
         case DATE:
             return new Date();
         case TIMESTAMP:
-            return adapterDataType.isWithLocalTimezone() ? new TimestampWithLocalTimezone() : new Timestamp();
+            return new Timestamp(); // we ignore with local timezone here since UDF don't support it. That's ok as long
+                                    // as we return the date in UTC
         case BOOLEAN:
             return new Boolean();
         default:

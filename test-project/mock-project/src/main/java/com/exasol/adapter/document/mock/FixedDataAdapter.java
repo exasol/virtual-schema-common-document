@@ -1,5 +1,7 @@
 package com.exasol.adapter.document.mock;
 
+import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.*;
 
 import com.exasol.ExaConnectionInformation;
@@ -9,8 +11,7 @@ import com.exasol.adapter.document.DocumentAdapter;
 import com.exasol.adapter.document.QueryPlanner;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
-import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
-import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
+import com.exasol.adapter.document.documentnode.holder.*;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.queryplan.FetchQueryPlan;
 import com.exasol.adapter.document.queryplan.QueryPlan;
@@ -59,9 +60,12 @@ public class FixedDataAdapter extends DocumentAdapter {
     }
 
     private static class StaticDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -9186805026959181579L;
+        private static final long serialVersionUID = -7976836360280664237L;
         private static final ObjectHolderNode STATIC_VALUE = new ObjectHolderNode(
-                Map.of("isbn", new StringHolderNode("123456789"), "name", new StringHolderNode("Tom Sawyer")));
+                Map.of("isbn", new StringHolderNode("123456789"), //
+                        "name", new StringHolderNode("Tom Sawyer"), //
+                        "publication_date", new DateHolderNode(new Date(1632297287000L)), //
+                        "my_timestamp", new TimestampHolderNode(new Timestamp(1632297287000L))));
 
         @Override
         public Iterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {

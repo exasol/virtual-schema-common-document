@@ -53,4 +53,18 @@ public interface MappingDefinitionVisitor {
      * @param toBooleanMapping object to visit
      */
     void visit(ToBoolMapping toBooleanMapping);
+
+    /**
+     * Visit {@link ToDateMapping}.
+     *
+     * @param toDateMapping object to visit
+     */
+    void visit(ToDateMapping toDateMapping);
+
+    /**
+     * Visit {@link ToTimestampMapping}.
+     *
+     * @param toTimestampMapping object to visit
+     */
+    void visit(ToTimestampMapping toTimestampMapping);
 }

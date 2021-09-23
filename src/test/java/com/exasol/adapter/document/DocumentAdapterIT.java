@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -19,6 +20,8 @@ import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
@@ -145,8 +148,59 @@ class DocumentAdapterIT {
         assertVirtualSchemaQuery(mapping, query, expectedResult);
     }
 
+    @Test
+    void testToDateMapping() throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("publication_date", ToDateMapping.builder().notDateBehavior(CONVERT_OR_ABORT).build())//
+                .build();
+        final String query = "SELECT PUBLICATION_DATE FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        final Matcher<ResultSet> expectedResult = table("DATE").row(new Date(1632297287000L))//
+                .withUtcCalendar()//
+                .matches(NO_JAVA_TYPE_CHECK);
+        assertVirtualSchemaQuery(mapping, query, expectedResult);
+    }
+
+    @Test
+    void testToTimestampMapping() throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("my_timestamp",
+                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
+                                .useTimestampWithLocalTimezoneType(false).build())//
+                .build();
+        final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
+                .withUtcCalendar()//
+                .matches(NO_JAVA_TYPE_CHECK);
+        assertVirtualSchemaQuery(mapping, query, expectedResult);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
+    void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("my_timestamp",
+                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
+                                .useTimestampWithLocalTimezoneType(true).build())//
+                .build();
+        try (final Statement statement = testSetup.createConnection().createStatement()) {
+            statement.executeUpdate("ALTER SESSION SET TIME_ZONE = '" + sessionTimezone + "';");
+            final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+            final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
+                    .withCalendar(Calendar.getInstance(TimeZone.getTimeZone(sessionTimezone)))//
+                    .matches(NO_JAVA_TYPE_CHECK);
+            assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
+        }
+    }
+
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult) throws SQLException {
+        try (final Statement statement = testSetup.createConnection().createStatement()) {
+            assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
+        }
+    }
+
+    private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
+            final Matcher<ResultSet> expectedResult, final Statement statement) throws SQLException {
         final EdmlDefinition edml = EdmlDefinition.builder().schema("https://schemas.exasol.com/edml-1.3.0.json")
                 .source("")//
                 .destinationTable("BOOKS")//
@@ -154,7 +208,6 @@ class DocumentAdapterIT {
         final String edmlString = new EdmlSerializer().serialize(edml);
         final VirtualSchema virtualSchema = createVirtualSchema(edmlString);
         try {
-            final Statement statement = testSetup.createConnection().createStatement();
             final ResultSet resultSet = statement.executeQuery(query);
             assertThat(resultSet, expectedResult);
         } finally {

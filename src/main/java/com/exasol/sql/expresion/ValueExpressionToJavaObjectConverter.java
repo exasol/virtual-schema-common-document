@@ -80,6 +80,16 @@ public class ValueExpressionToJavaObjectConverter {
         }
 
         @Override
+        public void visit(final DateLiteral literal) {
+            this.result = literal.toDate();
+        }
+
+        @Override
+        public void visit(final TimestampLiteral literal) {
+            this.result = literal.toTimestamp();
+        }
+
+        @Override
         public void visit(final ColumnReference columnReference) {
             throwUnsupportedException("ColumnReference");
         }

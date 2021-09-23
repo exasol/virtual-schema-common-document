@@ -50,6 +50,16 @@ public class PropertyToColumnValueExtractorFactory {
             this.result = new PropertyToBoolColumnValueExtractor(columnDefinition);
         }
 
+        @Override
+        public void visit(final PropertyToDateColumnMapping columnDefinition) {
+            this.result = new PropertyToDateColumnValueExtractor(columnDefinition);
+        }
+
+        @Override
+        public void visit(final PropertyToTimestampColumnMapping columnDefinition) {
+            this.result = new PropertyToTimestampColumnValueExtractor(columnDefinition);
+        }
+
         /**
          * Get the result.
          * 
