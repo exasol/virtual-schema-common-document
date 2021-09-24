@@ -17,9 +17,6 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
-import com.exasol.sql.expression.literal.TimestampLiteral;
 
 class PropertyToTimestampColumnValueExtractorTest {
     private static PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> commonMappingBuilder() {
@@ -51,9 +48,9 @@ class PropertyToTimestampColumnValueExtractorTest {
     void testConvertTimestamp() {
         final Timestamp timestamp = new Timestamp(123456789L);
         final TimestampHolderNode numberNode = new TimestampHolderNode(timestamp);
-        final TimestampLiteral result = (TimestampLiteral) new PropertyToTimestampColumnValueExtractor(
-                commonMappingBuilder().build()).mapValue(numberNode);
-        assertThat(result.toTimestamp(), equalTo(timestamp));
+        final Object result = new PropertyToTimestampColumnValueExtractor(commonMappingBuilder().build())
+                .mapValue(numberNode);
+        assertThat(result, equalTo(timestamp));
     }
 
     @ParameterizedTest
@@ -71,8 +68,8 @@ class PropertyToTimestampColumnValueExtractorTest {
     void testNonNumericsConvertsToNull(final DocumentNode nonNumericNode) {
         final PropertyToTimestampColumnValueExtractor valueExtractor = new PropertyToTimestampColumnValueExtractor(
                 commonMappingBuilder().notTimestampBehaviour(ConvertableMappingErrorBehaviour.NULL).build());
-        final ValueExpression result = valueExtractor.mapValue(nonNumericNode);
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -80,8 +77,8 @@ class PropertyToTimestampColumnValueExtractorTest {
     void testNullIsAlwaysConvertedToNull(final ConvertableMappingErrorBehaviour behaviour) {
         final PropertyToTimestampColumnValueExtractor valueExtractor = new PropertyToTimestampColumnValueExtractor(
                 commonMappingBuilder().notTimestampBehaviour(behaviour).build());
-        final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(new NullHolderNode());
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -89,7 +86,7 @@ class PropertyToTimestampColumnValueExtractorTest {
     void testConvertNonNumeric(final DocumentNode nonNumericNode) {
         final PropertyToTimestampColumnValueExtractor valueExtractor = new PropertyToTimestampColumnValueExtractor(
                 commonMappingBuilder().notTimestampBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build());
-        final TimestampLiteral result = (TimestampLiteral) valueExtractor.mapValue(nonNumericNode);
-        assertThat(result.toTimestamp(), equalTo(new Timestamp(12345678L)));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, equalTo(new Timestamp(12345678L)));
     }
 }

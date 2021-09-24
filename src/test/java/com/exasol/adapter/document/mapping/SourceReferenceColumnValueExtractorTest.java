@@ -14,6 +14,6 @@ class SourceReferenceColumnValueExtractorTest {
     void test() {
         final String sourcePath = "test source";
         final FetchedDocument document = new FetchedDocument(null, sourcePath);
-        assertThat(EXTRACTOR.extractColumnValue(document, null).toString(), equalTo(sourcePath));
+        assertThat(EXTRACTOR.extractColumnValue(document, null), equalTo(sourcePath));
     }
 }

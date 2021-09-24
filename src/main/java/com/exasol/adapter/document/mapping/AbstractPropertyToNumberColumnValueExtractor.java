@@ -9,9 +9,8 @@ import java.util.Set;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
@@ -35,7 +34,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
     }
 
     @Override
-    protected final ValueExpression mapValue(final DocumentNode documentValue) {
+    protected final Object mapValue(final DocumentNode documentValue) {
         final ConversionVisitor conversionVisitor = new ConversionVisitor(this.column, this.numberConverter);
         documentValue.accept(conversionVisitor);
         return conversionVisitor.getResult();
@@ -46,41 +45,42 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
          * Convert a string value to number.
          * 
          * @param stringValue string value to convert
-         * @return number literal
+         * @return number
          * @throws NumberFormatException if the string is not a number
          */
-        public ValueExpression convertString(final String stringValue) throws NumberFormatException;
+        public Object convertString(final String stringValue) throws NumberFormatException;
 
         /**
          * Convert a boolean to number.
          * 
          * @param boolValue boolean value to convert
-         * @return number literal
+         * @return number
          */
-        public ValueExpression convertBoolean(final boolean boolValue);
+        public Object convertBoolean(final boolean boolValue);
 
         /**
          * Convert a double value to number.
          * 
          * @param doubleValue double value to convert
-         * @return number literal
+         * @return number
          */
-        public ValueExpression convertDouble(final double doubleValue);
+        public Object convertDouble(final double doubleValue);
 
         /**
          * Convert a decimal value to number.
          * 
          * @param decimalValue decimal value to convert
-         * @return number literal
+         * @return number
          */
-        public ValueExpression convertDecimal(final BigDecimal decimalValue);
+        public Object convertDecimal(final BigDecimal decimalValue);
     }
 
     @RequiredArgsConstructor
     private static class ConversionVisitor implements DocumentNodeVisitor {
         private final AbstractPropertyToNumberColumnMapping column;
         private final NumberConverter numberConverter;
-        private ValueExpression result;
+        @Getter
+        private Object result;
 
         @Override
         public void visit(final DocumentObject jsonObjectNode) {
@@ -96,7 +96,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
         public void visit(final DocumentStringValue stringNode) {
             final String stringValue = stringNode.getValue();
             try {
-                final ValueExpression converted = this.numberConverter.convertString(stringValue);
+                final Object converted = this.numberConverter.convertString(stringValue);
                 this.result = handleNotNumericButConvertAble(converted, stringValue);
             } catch (final NumberFormatException exception) {
                 this.result = handleNotNumeric(stringValue);
@@ -111,7 +111,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
 
         @Override
         public void visit(final DocumentNullValue nullNode) {
-            this.result = NullLiteral.nullLiteral();
+            this.result = null;
         }
 
         @Override
@@ -141,7 +141,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
             this.result = handleNotNumeric("<timestamp>");
         }
 
-        private ValueExpression handleNotNumericButConvertAble(final ValueExpression converted, final String value) {
+        private Object handleNotNumericButConvertAble(final Object converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotNumericBehaviour())) {
                 return converted;
             } else {
@@ -149,7 +149,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
             }
         }
 
-        private ValueExpression handleNotNumeric(final String value) {
+        private Object handleNotNumeric(final String value) {
             if (this.column.getNotNumericBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
                 throw new ColumnValueExtractorException(
                         ExaError.messageBuilder("E-VSD-33")
@@ -160,17 +160,8 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
                                 .mitigation("Ignore this error by setting 'notNumericBehaviour' to 'null'.").toString(),
                         this.column);
             } else {
-                return NullLiteral.nullLiteral();
+                return null;
             }
-        }
-
-        /**
-         * Get the result of the conversion.
-         *
-         * @return result of the conversion
-         */
-        public ValueExpression getResult() {
-            return this.result;
         }
     }
 }

@@ -19,9 +19,6 @@ import org.junit.jupiter.params.provider.*;
 import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.DoubleLiteral;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 class PropertyToDoubleColumnValueExtractorTest {
 
@@ -62,17 +59,17 @@ class PropertyToDoubleColumnValueExtractorTest {
     @Test
     void testConvertDouble() {
         final DocumentFloatingPointValue numberNode = new DoubleHolderNode(1.23);
-        final DoubleLiteral result = (DoubleLiteral) new PropertyToDoubleColumnValueExtractor(
-                commonMappingBuilder().build()).mapValue(numberNode);
-        assertThat(result.getValue(), equalTo(1.23));
+        final Object result = new PropertyToDoubleColumnValueExtractor(commonMappingBuilder().build())
+                .mapValue(numberNode);
+        assertThat(result, equalTo(1.23));
     }
 
     @Test
     void testConvertBigDecimal() {
         final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(BigDecimal.valueOf(1.23));
-        final DoubleLiteral result = (DoubleLiteral) new PropertyToDoubleColumnValueExtractor(
-                commonMappingBuilder().build()).mapValue(numberNode);
-        assertThat(result.getValue(), equalTo(1.23));
+        final Object result = new PropertyToDoubleColumnValueExtractor(commonMappingBuilder().build())
+                .mapValue(numberNode);
+        assertThat(result, equalTo(1.23));
     }
 
     @ParameterizedTest
@@ -101,8 +98,8 @@ class PropertyToDoubleColumnValueExtractorTest {
     void testNonNumericsConvertsToNull(final DocumentNode nonNumericNode) {
         final PropertyToDoubleColumnValueExtractor valueExtractor = new PropertyToDoubleColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL).build());
-        final ValueExpression result = valueExtractor.mapValue(nonNumericNode);
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -110,8 +107,8 @@ class PropertyToDoubleColumnValueExtractorTest {
     void testNullIsAlwaysConvertedToNull(final ConvertableMappingErrorBehaviour behaviour) {
         final PropertyToDoubleColumnValueExtractor valueExtractor = new PropertyToDoubleColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(behaviour).build());
-        final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(new NullHolderNode());
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -119,7 +116,7 @@ class PropertyToDoubleColumnValueExtractorTest {
     void testConvertNonNumeric(final DocumentNode nonNumericNode, final double expectedResult) {
         final PropertyToDoubleColumnValueExtractor valueExtractor = new PropertyToDoubleColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build());
-        final DoubleLiteral result = (DoubleLiteral) valueExtractor.mapValue(nonNumericNode);
-        assertThat(result.getValue(), equalTo(expectedResult));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, equalTo(expectedResult));
     }
 }

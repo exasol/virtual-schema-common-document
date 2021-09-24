@@ -3,13 +3,14 @@ package com.exasol.adapter.document.mapping;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.math.BigDecimal;
+
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
-import com.exasol.sql.expression.literal.IntegerLiteral;
 
 class IterationIndexColumnValueExtractorTest {
     private static final DocumentPathExpression TABLES_PATH = DocumentPathExpression.builder().addObjectLookup("test")
@@ -29,8 +30,8 @@ class IterationIndexColumnValueExtractorTest {
 
     @Test
     void testExtractColumnValue() {
-        final IntegerLiteral intValue = (IntegerLiteral) EXTRACTOR
+        final BigDecimal intValue = (BigDecimal) EXTRACTOR
                 .extractColumnValue(new FetchedDocument(new StringHolderNode(""), ""), this.ITERATION_STATE_PROVIDER);
-        assertThat(intValue.getValue(), equalTo(ITERATION_INDEX));
+        assertThat(intValue.longValue(), equalTo((long) ITERATION_INDEX));
     }
 }

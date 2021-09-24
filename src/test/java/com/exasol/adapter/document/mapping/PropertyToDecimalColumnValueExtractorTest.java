@@ -20,9 +20,6 @@ import org.junit.jupiter.params.provider.*;
 import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.BigDecimalLiteral;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 class PropertyToDecimalColumnValueExtractorTest {
 
@@ -49,26 +46,25 @@ class PropertyToDecimalColumnValueExtractorTest {
     @Test
     void testConvertDouble() {
         final DocumentFloatingPointValue numberNode = new DoubleHolderNode(1.23);
-        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(
-                commonMappingBuilder().build()).mapValue(numberNode);
-        assertThat(result.getValue(), equalTo(new BigDecimal("1.230")));
+        final Object result = new PropertyToDecimalColumnValueExtractor(commonMappingBuilder().build())
+                .mapValue(numberNode);
+        assertThat(result, equalTo(new BigDecimal("1.230")));
     }
 
     @Test
     void testConvertBigDecimal() {
         final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(BigDecimal.valueOf(1.23));
-        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(
-                commonMappingBuilder().build()).mapValue(numberNode);
-        assertThat(result.getValue(), equalTo(new BigDecimal("1.230")));
+        final Object result = new PropertyToDecimalColumnValueExtractor(commonMappingBuilder().build())
+                .mapValue(numberNode);
+        assertThat(result, equalTo(new BigDecimal("1.230")));
     }
 
     @Test
     void testConvertBigDecimalWithScaleReduction() {
         final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(BigDecimal.valueOf(1.23));
         final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).build();
-        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(column)
-                .mapValue(numberNode);
-        assertThat(result.getValue(), equalTo(new BigDecimal("1")));
+        final Object result = new PropertyToDecimalColumnValueExtractor(column).mapValue(numberNode);
+        assertThat(result, equalTo(new BigDecimal("1")));
     }
 
     @Test
@@ -76,9 +72,8 @@ class PropertyToDecimalColumnValueExtractorTest {
         final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(new BigDecimal("12"));
         final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).decimalPrecision(2)
                 .build();
-        final BigDecimalLiteral result = (BigDecimalLiteral) new PropertyToDecimalColumnValueExtractor(column)
-                .mapValue(numberNode);
-        assertThat(result.getValue(), equalTo(new BigDecimal("12")));
+        final Object result = new PropertyToDecimalColumnValueExtractor(column).mapValue(numberNode);
+        assertThat(result, equalTo(new BigDecimal("12")));
     }
 
     @Test
@@ -97,8 +92,8 @@ class PropertyToDecimalColumnValueExtractorTest {
         final BigDecimalHolderNode numberNode = new BigDecimalHolderNode(new BigDecimal("12"));
         final PropertyToDecimalColumnMapping column = commonMappingBuilder().decimalScale(0).decimalPrecision(1)
                 .overflowBehaviour(NULL).build();
-        final ValueExpression result = new PropertyToDecimalColumnValueExtractor(column).mapValue(numberNode);
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = new PropertyToDecimalColumnValueExtractor(column).mapValue(numberNode);
+        assertThat(result, is(nullValue()));
     }
 
     static Stream<Arguments> convertNonNumericCases() {
@@ -125,8 +120,8 @@ class PropertyToDecimalColumnValueExtractorTest {
     void testNonNumericsConvertsToNull(final DocumentNode nonNumericNode) {
         final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL).build());
-        final ValueExpression result = valueExtractor.mapValue(nonNumericNode);
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -134,8 +129,8 @@ class PropertyToDecimalColumnValueExtractorTest {
     void testNullIsAlwaysConvertedToNull(final ConvertableMappingErrorBehaviour behaviour) {
         final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(behaviour).build());
-        final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(new NullHolderNode());
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -143,7 +138,7 @@ class PropertyToDecimalColumnValueExtractorTest {
     void testConvertNonNumeric(final DocumentNode nonNumericNode, final double expectedResult) {
         final PropertyToDecimalColumnValueExtractor valueExtractor = new PropertyToDecimalColumnValueExtractor(
                 commonMappingBuilder().notNumericBehaviour(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build());
-        final BigDecimalLiteral result = (BigDecimalLiteral) valueExtractor.mapValue(nonNumericNode);
-        assertThat(result.getValue().doubleValue(), equalTo(expectedResult));
+        final BigDecimal result = (BigDecimal) valueExtractor.mapValue(nonNumericNode);
+        assertThat(result.doubleValue(), equalTo(expectedResult));
     }
 }

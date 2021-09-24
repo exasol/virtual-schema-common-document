@@ -21,9 +21,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
-import com.exasol.sql.expression.literal.StringLiteral;
 
 class PropertyToJsonColumnValueExtractorTest {
 
@@ -53,16 +50,16 @@ class PropertyToJsonColumnValueExtractorTest {
     @ParameterizedTest
     @MethodSource("conversionTestCases")
     void testConversion(final DocumentNode input, final String expectedOutput) {
-        final StringLiteral result = (StringLiteral) new PropertyToJsonColumnValueExtractor(
-                getDefaultMappingBuilder().build()).mapValue(input);
-        assertThat(result.toString(), equalTo(expectedOutput));
+        final Object result = new PropertyToJsonColumnValueExtractor(getDefaultMappingBuilder().build())
+                .mapValue(input);
+        assertThat(result, equalTo(expectedOutput));
     }
 
     @Test
     void testConvertNull() {
-        final ValueExpression result = new PropertyToJsonColumnValueExtractor(getDefaultMappingBuilder().build())
+        final Object result = new PropertyToJsonColumnValueExtractor(getDefaultMappingBuilder().build())
                 .mapValue(new NullHolderNode());
-        assertThat(result, instanceOf(NullLiteral.class));
+        assertThat(result, is(nullValue()));
     }
 
     @Test
@@ -81,6 +78,6 @@ class PropertyToJsonColumnValueExtractorTest {
                 .overflowBehaviour(NULL).build();
         final PropertyToJsonColumnValueExtractor valueExtractor = new PropertyToJsonColumnValueExtractor(column);
         final StringHolderNode testValue = new StringHolderNode("test");
-        assertThat(valueExtractor.mapValue(testValue), instanceOf(NullLiteral.class));
+        assertThat(valueExtractor.mapValue(testValue), is(nullValue()));
     }
 }

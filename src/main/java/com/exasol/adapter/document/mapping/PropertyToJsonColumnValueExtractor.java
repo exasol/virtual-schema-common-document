@@ -10,9 +10,6 @@ import javax.json.spi.JsonProvider;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
-import com.exasol.sql.expression.literal.StringLiteral;
 
 /**
  * {@link ColumnValueExtractor} for {@link PropertyToJsonColumnMapping}.
@@ -33,25 +30,25 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
     }
 
     @Override
-    protected final ValueExpression mapValue(final DocumentNode documentValue) {
+    protected final Object mapValue(final DocumentNode documentValue) {
         final JsonValue jsonResult = ToJsonVisitor.convert(documentValue);
         if (jsonResult == JsonValue.NULL) {
-            return NullLiteral.nullLiteral();
+            return null;
         } else {
-            return wrapInStringLiteral(jsonResult);
+            return handleOverflowIfRequired(jsonResult);
         }
     }
 
-    private ValueExpression wrapInStringLiteral(final JsonValue jsonResult) {
+    private Object handleOverflowIfRequired(final JsonValue jsonResult) {
         final String jsonString = jsonResult.toString();
         if (jsonString.length() > this.column.getVarcharColumnSize()) {
             return handleOverflow();
         } else {
-            return StringLiteral.of(jsonString);
+            return jsonString;
         }
     }
 
-    private NullLiteral handleOverflow() {
+    private Object handleOverflow() {
         if (this.column.getOverflowBehaviour().equals(MappingErrorBehaviour.ABORT)) {
             throw new OverflowException(ExaError.messageBuilder("E-VSD-35")
                     .message("A generated JSON did exceed the configured maximum size of the column {{COLUMN_NAME}}.")
@@ -59,7 +56,7 @@ public class PropertyToJsonColumnValueExtractor extends AbstractPropertyToColumn
                     .mitigation("Increase the 'varcharColumnSize' in your mapping definition.")
                     .mitigation("Set the 'overflowBehaviour' to 'NULL'.").toString(), this.column);
         } else {
-            return NullLiteral.nullLiteral();
+            return null;
         }
     }
 
