@@ -34,7 +34,7 @@ public class UdfEntryPoint {
     public static void run(final ExaMetadata exaMetadata, final ExaIterator exaIterator) throws Exception {
         /*
          * Set the timezone to UTC so that timestamps are converted using the UTC timezone. Default seems to be
-         * europe/berlin.
+         * Europe/Berlin.
          */
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         final ExaConnectionInformation connectionInformation = exaMetadata

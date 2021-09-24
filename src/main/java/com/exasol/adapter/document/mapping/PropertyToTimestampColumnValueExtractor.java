@@ -116,7 +116,7 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
                                 .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
                                 .parameter("COLUMN_NAME", this.column.getExasolColumnName())
                                 .mitigation("Try using a different mapping.")
-                                .mitigation("Ignore this error by setting 'notDateBehavior' to 'null'.").toString(),
+                                .mitigation("Ignore this error by setting 'notTimestampBehavior' to 'null'.").toString(),
                         this.column);
             } else {
                 return NullLiteral.nullLiteral();
