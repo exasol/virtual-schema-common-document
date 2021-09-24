@@ -129,6 +129,29 @@ class EdmlToStagingTableMappingConverter {
         }
 
         @Override
+        public void visit(final ToDateMapping source) {
+            final PropertyToDateColumnMapping column = PropertyToDateColumnMapping.builder()//
+                    .pathToSourceProperty(this.path.build())//
+                    .exasolColumnName(source.getDestinationName())//
+                    .notDateBehaviour(source.getNotDateBehavior())//
+                    .lookupFailBehaviour(convertRequired(source.isRequired()))//
+                    .build();
+            this.columns.add(new ColumnWithKeyInfo(column, source.getKey()));
+        }
+
+        @Override
+        public void visit(final ToTimestampMapping source) {
+            final PropertyToTimestampColumnMapping column = PropertyToTimestampColumnMapping.builder()//
+                    .pathToSourceProperty(this.path.build())//
+                    .exasolColumnName(source.getDestinationName())//
+                    .notTimestampBehaviour(source.getNotTimestampBehavior())//
+                    .useTimestampWithLocalTimezoneType(source.isUseTimestampWithLocalTimezoneType())
+                    .lookupFailBehaviour(convertRequired(source.isRequired()))//
+                    .build();
+            this.columns.add(new ColumnWithKeyInfo(column, source.getKey()));
+        }
+
+        @Override
         public void visit(final ToTableMapping toTableMapping) {
             final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                     .addArrayAll();

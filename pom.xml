@@ -51,22 +51,15 @@
     </scm>
     <repositories>
         <repository>
-            <id>maven.exasol.com</id>
-            <url>https://maven.exasol.com/artifactory/exasol-releases</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
-            <id>maven.exasol.com-snapshots</id>
-            <url>https://maven.exasol.com/artifactory/exasol-snapshots</url>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-        </repository>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     <profiles>
@@ -105,7 +98,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>sql-statement-builder</artifactId>
-            <version>4.4.1</version>
+            <version>4.5.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.logicng</groupId>
@@ -188,7 +181,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.4.1</version>
+            <version>1.5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>

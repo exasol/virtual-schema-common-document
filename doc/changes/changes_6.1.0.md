@@ -8,6 +8,8 @@ In this release we added the following new mapping types:
 
 * `toDoubleMapping`
 * `toBoolMapping`
+* `toDateMapping`
+* `toTimestampMapping`
 
 In order to use the new features, please update you EDML definitions to version `1.3.0` (no breaking changes).
 
@@ -19,6 +21,7 @@ In order to use the new features, please update you EDML definitions to version 
 * #57: Added `toDoubleMapping` mapping type
 * #104: Added `toBoolMapping` mapping type
 * #106: Added support for date, time and timestamp input values
+* #58: Added `toDate` and `toTimestamp` mapping types
 
 ## Refactoring
 

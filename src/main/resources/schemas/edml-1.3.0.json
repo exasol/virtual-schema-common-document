@@ -207,6 +207,57 @@
           },
           "additionalProperties": false
         },
+        "toDateMapping": {
+          "title": "toDate mapping definition",
+          "description": "Maps the selected document property to an Exasol `DATE` column.",
+          "properties": {
+            "notDateBehavior": {
+              "$ref": "#/definitions/convertableMappingErrorBehaviour"
+            },
+            "destinationName": {
+              "$ref": "#/definitions/destinationName"
+            },
+            "description": {
+              "$ref": "#/definitions/description"
+            },
+            "required": {
+              "default": false,
+              "$ref": "#/definitions/required"
+            },
+            "key": {
+              "$ref": "#/definitions/key"
+            }
+          },
+          "additionalProperties": false
+        },
+        "toTimestampMapping": {
+          "title": "toTimestamp mapping definition",
+          "description": "Maps the selected document property to an Exasol `TIMESTAMP` or `TIMESTAMP WITH LOCAL TIMEZONE` column.",
+          "properties": {
+            "notTimestampBehavior": {
+              "$ref": "#/definitions/convertableMappingErrorBehaviour"
+            },
+            "useTimestampWithLocalTimezoneType": {
+              "description": "If set to `true` the adapter will use a `TIMESTAMP WITH LOCAL TIMEZONE` Exasol column instead of a `TIMEZONE` column.",
+              "type": "boolean",
+              "default": true
+            },
+            "destinationName": {
+              "$ref": "#/definitions/destinationName"
+            },
+            "description": {
+              "$ref": "#/definitions/description"
+            },
+            "required": {
+              "default": false,
+              "$ref": "#/definitions/required"
+            },
+            "key": {
+              "$ref": "#/definitions/key"
+            }
+          },
+          "additionalProperties": false
+        },
         "toTableMapping": {
           "title": "toTable mapping definition",
           "description": "This mapping is used for normalizing documents to table structures. It creates a new table in the resulting virtual schema named: \\<NAME_OF_PARENT\\>_\\<GIVEN_NAME\\>.\n\n You can define the columns of this table using the mapping property. If the parent table defines a key using one or more `toVarcharMappings` for a key or secondary index in the document database, this will be used as foreign key.",

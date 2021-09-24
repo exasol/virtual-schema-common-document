@@ -38,4 +38,18 @@ public interface PropertyToColumnMappingVisitor {
      * @param columnDefinition {@link PropertyToBoolColumnMapping} to visit
      */
     void visit(PropertyToBoolColumnMapping columnDefinition);
+
+    /**
+     * Visits a {@link PropertyToDateColumnMapping}.
+     *
+     * @param columnDefinition {@link PropertyToDateColumnMapping} to visit
+     */
+    void visit(PropertyToDateColumnMapping columnDefinition);
+
+    /**
+     * Visits a {@link PropertyToTimestampColumnMapping}.
+     *
+     * @param columnDefinition {@link PropertyToTimestampColumnMapping} to visit
+     */
+    void visit(PropertyToTimestampColumnMapping columnDefinition);
 }
