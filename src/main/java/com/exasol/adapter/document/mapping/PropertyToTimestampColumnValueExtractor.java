@@ -68,7 +68,7 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
 
         @Override
         public void visit(final DocumentDecimalValue bigDecimalValue) {
-            this.result = handleNotTimestampButConvertAble(
+            this.result = handleNotTimestampButConvertable(
                     TimestampLiteral.of(new Timestamp(bigDecimalValue.getValue().longValue())), "<decimal value>");
         }
 
@@ -79,7 +79,7 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
 
         @Override
         public void visit(final DocumentFloatingPointValue floatingPointValue) {
-            this.result = handleNotTimestampButConvertAble(
+            this.result = handleNotTimestampButConvertable(
                     TimestampLiteral.of(new Timestamp((long) floatingPointValue.getValue())), "<floating point value>");
         }
 
@@ -91,7 +91,7 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
         @Override
         public void visit(final DocumentDateValue dateValue) {
             final TimestampLiteral converted = TimestampLiteral.of(new Timestamp(dateValue.getValue().getTime()));
-            this.result = handleNotTimestampButConvertAble(converted,
+            this.result = handleNotTimestampButConvertable(converted,
                     "<date: " + dateValue.getValue().toString() + ">");
         }
 
@@ -100,7 +100,7 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
             this.result = TimestampLiteral.of(timestampValue.getValue());
         }
 
-        private ValueExpression handleNotTimestampButConvertAble(final ValueExpression converted, final String value) {
+        private ValueExpression handleNotTimestampButConvertable(final ValueExpression converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotTimestampBehaviour())) {
                 return converted;
             } else {
@@ -110,13 +110,12 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
 
         private ValueExpression handleNotTimestamp(final String value) {
             if (this.column.getNotTimestampBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
-                throw new ColumnValueExtractorException(
-                        ExaError.messageBuilder("E-VSD-80")
-                                .message("Could not convert {{VALUE}} to timestamp column ({{COLUMN_NAME}}).")
-                                .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
-                                .parameter("COLUMN_NAME", this.column.getExasolColumnName())
-                                .mitigation("Try using a different mapping.")
-                                .mitigation("Ignore this error by setting 'notTimestampBehavior' to 'null'.").toString(),
+                throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-80")
+                        .message("Could not convert {{VALUE}} to timestamp column ({{COLUMN_NAME}}).")
+                        .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
+                        .parameter("COLUMN_NAME", this.column.getExasolColumnName())
+                        .mitigation("Try using a different mapping.")
+                        .mitigation("Ignore this error by setting 'notTimestampBehavior' to 'null'.").toString(),
                         this.column);
             } else {
                 return NullLiteral.nullLiteral();
