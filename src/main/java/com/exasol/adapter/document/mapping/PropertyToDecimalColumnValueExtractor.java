@@ -4,9 +4,6 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.BigDecimalLiteral;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,36 +27,36 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToNum
         private final PropertyToDecimalColumnMapping column;
 
         @Override
-        public ValueExpression convertString(final String stringValue) {
-            return BigDecimalLiteral.of(new BigDecimal(stringValue));
+        public Object convertString(final String stringValue) {
+            return new BigDecimal(stringValue);
         }
 
         @Override
-        public ValueExpression convertBoolean(final boolean boolValue) {
-            return BigDecimalLiteral.of(BigDecimal.valueOf(boolValue ? 1L : 0L));
+        public Object convertBoolean(final boolean boolValue) {
+            return BigDecimal.valueOf(boolValue ? 1L : 0L);
         }
 
         @Override
-        public ValueExpression convertDouble(final double doubleValue) {
+        public Object convertDouble(final double doubleValue) {
             return fitBigDecimalValue(BigDecimal.valueOf(doubleValue));
         }
 
         @Override
-        public ValueExpression convertDecimal(final BigDecimal decimalValue) {
+        public Object convertDecimal(final BigDecimal decimalValue) {
             return fitBigDecimalValue(decimalValue);
         }
 
-        private ValueExpression fitBigDecimalValue(final BigDecimal decimalValue) {
+        private Object fitBigDecimalValue(final BigDecimal decimalValue) {
             final BigDecimal decimalWithDestinationScale = decimalValue.setScale(this.column.getDecimalScale(),
                     RoundingMode.FLOOR);
             if (decimalWithDestinationScale.precision() > this.column.getDecimalPrecision()) {
                 return handleOverflow();
             } else {
-                return BigDecimalLiteral.of(decimalWithDestinationScale);
+                return decimalWithDestinationScale;
             }
         }
 
-        private ValueExpression handleOverflow() {
+        private Object handleOverflow() {
             if (this.column.getOverflowBehaviour() == MappingErrorBehaviour.ABORT) {
                 throw new OverflowException(ExaError.messageBuilder("E-VSD-34")
                         .message("An input value exceeded the size of the DECIMAL column {{COLUMN_NAME}}.")
@@ -67,7 +64,7 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToNum
                         .mitigation("Increase the decimalPrecision of this column in your mapping definition.")
                         .mitigation("Set the overflow behaviour to NULL.").toString(), this.column);
             } else {
-                return NullLiteral.nullLiteral();
+                return null;
             }
         }
     }

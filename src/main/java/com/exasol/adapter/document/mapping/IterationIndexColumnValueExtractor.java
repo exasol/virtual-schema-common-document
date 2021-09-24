@@ -1,9 +1,10 @@
 package com.exasol.adapter.document.mapping;
 
+import java.math.BigDecimal;
+
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.IntegerLiteral;
 
 /**
  * This class extracts the current array all iteration index as {@link ValueExpression}.
@@ -22,9 +23,8 @@ public class IterationIndexColumnValueExtractor implements ColumnValueExtractor 
     }
 
     @Override
-    public ValueExpression extractColumnValue(final FetchedDocument document,
+    public Object extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
-        final int arrayIndex = arrayAllIterationState.getIndexFor(this.column.getTablesPath());
-        return IntegerLiteral.of(arrayIndex);
+        return BigDecimal.valueOf(arrayAllIterationState.getIndexFor(this.column.getTablesPath()));
     }
 }

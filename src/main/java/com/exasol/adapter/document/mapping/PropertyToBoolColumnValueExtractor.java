@@ -10,8 +10,6 @@ import java.util.Set;
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.BooleanLiteral;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +33,7 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
     }
 
     @Override
-    protected ValueExpression mapValue(final DocumentNode documentValue) {
+    protected Object mapValue(final DocumentNode documentValue) {
         final ConvertVisitor visitor = new ConvertVisitor(this.column);
         documentValue.accept(visitor);
         return visitor.getResult();
@@ -45,7 +43,7 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
     private static class ConvertVisitor implements DocumentNodeVisitor {
         private final PropertyToBoolColumnMapping column;
         @Getter
-        private ValueExpression result;
+        private Object result;
 
         @Override
         public void visit(final DocumentArray array) {
@@ -59,32 +57,30 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
 
         @Override
         public void visit(final DocumentNullValue nullValue) {
-            this.result = NullLiteral.nullLiteral();
+            this.result = null;
         }
 
         @Override
         public void visit(final DocumentStringValue stringValue) {
-            final BooleanLiteral converted = BooleanLiteral.of("true".equalsIgnoreCase(stringValue.getValue()));
+            final boolean converted = "true".equalsIgnoreCase(stringValue.getValue());
             this.result = handleNotBooleanButConvertAble(converted, stringValue.getValue());
         }
 
         @Override
         public void visit(final DocumentDecimalValue bigDecimalValue) {
             final boolean converted = bigDecimalValue.getValue().compareTo(BigDecimal.ZERO) != 0;
-            this.result = handleNotBooleanButConvertAble(BooleanLiteral.of(converted),
-                    bigDecimalValue.getValue().toString());
+            this.result = handleNotBooleanButConvertAble(converted, bigDecimalValue.getValue().toString());
         }
 
         @Override
         public void visit(final DocumentBooleanValue booleanValue) {
-            this.result = BooleanLiteral.of(booleanValue.getValue());
+            this.result = booleanValue.getValue();
         }
 
         @Override
         public void visit(final DocumentFloatingPointValue floatingPointValue) {
             final boolean converted = floatingPointValue.getValue() != 0;
-            this.result = handleNotBooleanButConvertAble(BooleanLiteral.of(converted),
-                    String.valueOf(floatingPointValue.getValue()));
+            this.result = handleNotBooleanButConvertAble(converted, String.valueOf(floatingPointValue.getValue()));
         }
 
         @Override
@@ -102,7 +98,7 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
             this.result = handleNotBoolean("<timestamp>");
         }
 
-        private ValueExpression handleNotBooleanButConvertAble(final ValueExpression converted, final String value) {
+        private Object handleNotBooleanButConvertAble(final boolean converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotBooleanBehavior())) {
                 return converted;
             } else {
@@ -121,7 +117,7 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
                                 .mitigation("Ignore this error by setting 'notBooleanBehavior' to 'null'.").toString(),
                         this.column);
             } else {
-                return NullLiteral.nullLiteral();
+                return null;
             }
         }
     }

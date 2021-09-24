@@ -1,10 +1,10 @@
 package com.exasol.adapter.document.mapping;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
 
 import java.util.Map;
 
@@ -16,8 +16,6 @@ import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
 import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.StaticDocumentPathIterator;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 class AbstractPropertyToColumnValueExtractorTest {
 
@@ -43,9 +41,8 @@ class AbstractPropertyToColumnValueExtractorTest {
         final MockPropertyToColumnMapping columnMappingDefinition = new MockPropertyToColumnMapping("d", sourcePath,
                 MappingErrorBehaviour.NULL);
         final AbstractPropertyToColumnValueExtractor extractor = getMock(columnMappingDefinition);
-        final ValueExpression valueExpression = extractor.extractColumnValue(STUB_DOCUMENT,
-                new StaticDocumentPathIterator());
-        assertThat(valueExpression, instanceOf(NullLiteral.class));
+        final Object result = extractor.extractColumnValue(STUB_DOCUMENT, new StaticDocumentPathIterator());
+        assertThat(result, is(nullValue()));
     }
 
     @Test

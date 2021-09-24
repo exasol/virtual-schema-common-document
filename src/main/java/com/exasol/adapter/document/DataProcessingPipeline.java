@@ -1,20 +1,18 @@
 package com.exasol.adapter.document;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.List;
 
 import com.exasol.ExaConnectionInformation;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.mapping.SchemaMapper;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
-import com.exasol.sql.expresion.ValueExpressionToJavaObjectConverter;
-import com.exasol.sql.expression.ValueExpression;
 
 /**
  * This class implements the data processing in the UDF.
  */
 public class DataProcessingPipeline {
-    private final ValueExpressionToJavaObjectConverter valueExpressionToJavaObjectConverter;
     private final SchemaMapper schemaMapper;
 
     /**
@@ -23,7 +21,6 @@ public class DataProcessingPipeline {
      * @param schemaMappingRequest schema mapping request
      */
     public DataProcessingPipeline(final SchemaMappingRequest schemaMappingRequest) {
-        this.valueExpressionToJavaObjectConverter = new ValueExpressionToJavaObjectConverter();
         this.schemaMapper = new SchemaMapper(schemaMappingRequest);
     }
 
@@ -39,17 +36,8 @@ public class DataProcessingPipeline {
             final RowHandler rowHandler) throws InterruptedException {
         final Iterator<FetchedDocument> documentIterator = documentFetcher.run(connectionInformation);
         while (documentIterator.hasNext()) {
-            this.schemaMapper.mapRow(documentIterator.next(),
-                    row -> rowHandler.acceptRow(convertRowToJavaObjects(row)));
+            this.schemaMapper.mapRow(documentIterator.next(), rowHandler::acceptRow);
         }
-    }
-
-    private List<Object> convertRowToJavaObjects(final List<ValueExpression> row) {
-        final List<Object> result = new ArrayList<>(row.size());
-        for (final ValueExpression item : row) {
-            result.add(this.valueExpressionToJavaObjectConverter.convert(item));
-        }
-        return result;
     }
 
     @FunctionalInterface

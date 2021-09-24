@@ -8,7 +8,6 @@ import com.exasol.adapter.document.documentpath.DocumentPathWalker;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 /**
  * This class is the abstract basis for mapping a property of a document to an Exasol column. It provides functionality
@@ -30,14 +29,14 @@ public abstract class AbstractPropertyToColumnValueExtractor implements ColumnVa
     }
 
     @Override
-    public ValueExpression extractColumnValue(final FetchedDocument document,
+    public Object extractColumnValue(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
         final DocumentPathWalker walker = new DocumentPathWalker(this.column.getPathToSourceProperty(),
                 arrayAllIterationState);
-        final Optional<DocumentNode> dynamodbProperty = walker.walkThroughDocument(document.getRootDocumentNode());
-        if (dynamodbProperty.isEmpty()) {
+        final Optional<DocumentNode> documentNode = walker.walkThroughDocument(document.getRootDocumentNode());
+        if (documentNode.isEmpty()) {
             if (this.column.getLookupFailBehaviour() == MappingErrorBehaviour.NULL) {
-                return NullLiteral.nullLiteral();
+                return null;
             } else {
                 throw new SchemaMappingException(ExaError.messageBuilder("E-VSD-7")
                         .message("Could not find required property {{PROPERTY}} in the source document.")
@@ -45,7 +44,7 @@ public abstract class AbstractPropertyToColumnValueExtractor implements ColumnVa
                         .toString());
             }
         } else {
-            return mapValue(dynamodbProperty.get());
+            return mapValue(documentNode.get());
         }
     }
 
@@ -56,5 +55,5 @@ public abstract class AbstractPropertyToColumnValueExtractor implements ColumnVa
      * @return the conversion result
      * @throws ColumnValueExtractorException if the value can't be mapped
      */
-    protected abstract ValueExpression mapValue(DocumentNode documentValue);
+    protected abstract Object mapValue(DocumentNode documentValue);
 }

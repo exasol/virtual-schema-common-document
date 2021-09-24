@@ -9,14 +9,10 @@ import java.util.Base64;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
-import com.exasol.sql.expression.literal.StringLiteral;
 
 /**
  * ValueMapper for {@link PropertyToVarcharColumnMapping}
  */
-@java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToColumnValueExtractor {
     private final PropertyToVarcharColumnMapping column;
 
@@ -31,14 +27,9 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
     }
 
     @Override
-    protected final ValueExpression mapValue(final DocumentNode documentValue) {
+    protected final Object mapValue(final DocumentNode documentValue) {
         final ConversionResult result = mapStringValue(documentValue);
-        final String stringResult = handleResult(result);
-        if (stringResult == null) {
-            return NullLiteral.nullLiteral();
-        } else {
-            return StringLiteral.of(stringResult);
-        }
+        return handleResult(result);
     }
 
     private String handleResult(final ConversionResult result) {

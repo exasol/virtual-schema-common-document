@@ -16,9 +16,6 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.BooleanLiteral;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 class PropertyToBoolColumnValueExtractorTest {
     private static PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> commonMappingBuilder() {
@@ -56,9 +53,9 @@ class PropertyToBoolColumnValueExtractorTest {
     @ValueSource(booleans = { true, false })
     void testConvertBoolean(final boolean boolValue) {
         final BooleanHolderNode numberNode = new BooleanHolderNode(boolValue);
-        final BooleanLiteral result = (BooleanLiteral) new PropertyToBoolColumnValueExtractor(
-                commonMappingBuilder().build()).mapValue(numberNode);
-        assertThat(result.toBoolean(), equalTo(boolValue));
+        final Object result = new PropertyToBoolColumnValueExtractor(commonMappingBuilder().build())
+                .mapValue(numberNode);
+        assertThat(result, equalTo(boolValue));
     }
 
     @ParameterizedTest
@@ -76,8 +73,8 @@ class PropertyToBoolColumnValueExtractorTest {
     void testNonNumericsConvertsToNull(final DocumentNode nonNumericNode) {
         final PropertyToBoolColumnValueExtractor valueExtractor = new PropertyToBoolColumnValueExtractor(
                 commonMappingBuilder().notBooleanBehavior(ConvertableMappingErrorBehaviour.NULL).build());
-        final ValueExpression result = valueExtractor.mapValue(nonNumericNode);
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -85,8 +82,8 @@ class PropertyToBoolColumnValueExtractorTest {
     void testNullIsAlwaysConvertedToNull(final ConvertableMappingErrorBehaviour behaviour) {
         final PropertyToBoolColumnValueExtractor valueExtractor = new PropertyToBoolColumnValueExtractor(
                 commonMappingBuilder().notBooleanBehavior(behaviour).build());
-        final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(new NullHolderNode());
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -94,7 +91,7 @@ class PropertyToBoolColumnValueExtractorTest {
     void testConvertNonNumeric(final DocumentNode nonNumericNode, final boolean expectedResult) {
         final PropertyToBoolColumnValueExtractor valueExtractor = new PropertyToBoolColumnValueExtractor(
                 commonMappingBuilder().notBooleanBehavior(ConvertableMappingErrorBehaviour.CONVERT_OR_NULL).build());
-        final BooleanLiteral result = (BooleanLiteral) valueExtractor.mapValue(nonNumericNode);
-        assertThat(result.toBoolean(), equalTo(expectedResult));
+        final Object result = valueExtractor.mapValue(nonNumericNode);
+        assertThat(result, equalTo(expectedResult));
     }
 }

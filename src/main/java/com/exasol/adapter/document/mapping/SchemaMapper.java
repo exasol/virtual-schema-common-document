@@ -7,12 +7,10 @@ import java.util.function.Consumer;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.DocumentPathIteratorFactory;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
-import com.exasol.sql.expression.ValueExpression;
 
 /**
  * This class extracts Exasol the column values from document data.
  */
-@java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public class SchemaMapper {
     private final SchemaMappingRequest request;
     private final ColumnValueExtractorFactory columnValueExtractorFactory;
@@ -34,20 +32,20 @@ public class SchemaMapper {
      * @param document       document to map
      * @param resultConsumer function that consumes the rows
      */
-    public void mapRow(final FetchedDocument document, final Consumer<List<ValueExpression>> resultConsumer) {
+    public void mapRow(final FetchedDocument document, final Consumer<List<Object>> resultConsumer) {
         final DocumentPathIteratorFactory arrayAllCombinationIterable = new DocumentPathIteratorFactory(
                 this.request.getPathInRemoteTable(), document.getRootDocumentNode());
         arrayAllCombinationIterable
                 .forEach(iterationState -> resultConsumer.accept(mapColumns(document, iterationState)));
     }
 
-    private List<ValueExpression> mapColumns(final FetchedDocument document,
+    private List<Object> mapColumns(final FetchedDocument document,
             final PathIterationStateProvider arrayAllIterationState) {
-        final List<ValueExpression> resultValues = new ArrayList<>(this.request.getColumns().size());
+        final List<Object> resultValues = new ArrayList<>(this.request.getColumns().size());
         for (final ColumnMapping resultColumn : this.request.getColumns()) {
             final ColumnValueExtractor columnValueExtractor = this.columnValueExtractorFactory
                     .getValueExtractorForColumn(resultColumn);
-            final ValueExpression result = columnValueExtractor.extractColumnValue(document, arrayAllIterationState);
+            final Object result = columnValueExtractor.extractColumnValue(document, arrayAllIterationState);
             resultValues.add(result);
         }
         return resultValues;

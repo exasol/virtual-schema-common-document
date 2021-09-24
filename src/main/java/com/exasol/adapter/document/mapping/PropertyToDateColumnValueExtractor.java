@@ -9,9 +9,6 @@ import java.util.Set;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.DateLiteral;
-import com.exasol.sql.expression.literal.NullLiteral;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +31,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
     }
 
     @Override
-    protected ValueExpression mapValue(final DocumentNode documentValue) {
+    protected Object mapValue(final DocumentNode documentValue) {
         final ConvertVisitor visitor = new ConvertVisitor(this.column);
         documentValue.accept(visitor);
         return visitor.getResult();
@@ -44,7 +41,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
     private static class ConvertVisitor implements DocumentNodeVisitor {
         private final PropertyToDateColumnMapping column;
         @Getter
-        private ValueExpression result;
+        private Object result;
 
         @Override
         public void visit(final DocumentArray array) {
@@ -58,7 +55,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
 
         @Override
         public void visit(final DocumentNullValue nullValue) {
-            this.result = NullLiteral.nullLiteral();
+            this.result = null;
         }
 
         @Override
@@ -68,7 +65,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
 
         @Override
         public void visit(final DocumentDecimalValue bigDecimalValue) {
-            this.result = handleNotDateButConvertable(DateLiteral.of(new Date(bigDecimalValue.getValue().longValue())),
+            this.result = handleNotDateButConvertable(new Date(bigDecimalValue.getValue().longValue()),
                     "<decimal value>");
         }
 
@@ -79,7 +76,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
 
         @Override
         public void visit(final DocumentFloatingPointValue floatingPointValue) {
-            this.result = handleNotDateButConvertable(DateLiteral.of(new Date((long) floatingPointValue.getValue())),
+            this.result = handleNotDateButConvertable(new Date((long) floatingPointValue.getValue()),
                     "<floating point value>");
         }
 
@@ -90,16 +87,16 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
 
         @Override
         public void visit(final DocumentDateValue dateValue) {
-            this.result = DateLiteral.of(dateValue.getValue());
+            this.result = dateValue.getValue();
         }
 
         @Override
         public void visit(final DocumentTimestampValue timestampValue) {
-            this.result = handleNotDateButConvertable(DateLiteral.of(new Date(timestampValue.getValue().getTime())),
+            this.result = handleNotDateButConvertable(new Date(timestampValue.getValue().getTime()),
                     "<timestamp: " + timestampValue.getValue() + ">");
         }
 
-        private ValueExpression handleNotDateButConvertable(final ValueExpression converted, final String value) {
+        private Object handleNotDateButConvertable(final Date converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotDateBehaviour())) {
                 return converted;
             } else {
@@ -107,7 +104,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
             }
         }
 
-        private ValueExpression handleNotDate(final String value) {
+        private Object handleNotDate(final String value) {
             if (this.column.getNotDateBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
                 throw new ColumnValueExtractorException(
                         ExaError.messageBuilder("E-VSD-79")
@@ -118,7 +115,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
                                 .mitigation("Ignore this error by setting 'notDateBehavior' to 'null'.").toString(),
                         this.column);
             } else {
-                return NullLiteral.nullLiteral();
+                return null;
             }
         }
     }

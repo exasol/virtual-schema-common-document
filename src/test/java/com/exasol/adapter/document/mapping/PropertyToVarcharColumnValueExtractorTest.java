@@ -3,10 +3,8 @@ package com.exasol.adapter.document.mapping;
 import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
 import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
@@ -22,9 +20,6 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
-import com.exasol.sql.expression.ValueExpression;
-import com.exasol.sql.expression.literal.NullLiteral;
-import com.exasol.sql.expression.literal.StringLiteral;
 
 class PropertyToVarcharColumnValueExtractorTest {
     private static final String TEST_STRING = "test";
@@ -45,27 +40,24 @@ class PropertyToVarcharColumnValueExtractorTest {
     @Test
     void testWithString() {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().build();
-        final StringLiteral result = (StringLiteral) new PropertyToVarcharColumnValueExtractor(column)
-                .mapValue(new StringHolderNode("test"));
-        assertThat(result.toString(), equalTo("test"));
+        final Object result = new PropertyToVarcharColumnValueExtractor(column).mapValue(new StringHolderNode("test"));
+        assertThat(result, equalTo("test"));
     }
 
     @Test
     void testWithStringOverflowTruncate() {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().overflowBehaviour(TRUNCATE)
                 .varcharColumnSize(2).build();
-        final StringLiteral result = (StringLiteral) new PropertyToVarcharColumnValueExtractor(column)
-                .mapValue(new StringHolderNode("test"));
-        assertThat(result.toString(), equalTo("te"));
+        final Object result = new PropertyToVarcharColumnValueExtractor(column).mapValue(new StringHolderNode("test"));
+        assertThat(result, equalTo("te"));
     }
 
     @Test
     void testWithStringOverflowNull() {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder()
                 .overflowBehaviour(TruncateableMappingErrorBehaviour.NULL).varcharColumnSize(2).build();
-        final ValueExpression result = new PropertyToVarcharColumnValueExtractor(column)
-                .mapValue(new StringHolderNode("test"));
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = new PropertyToVarcharColumnValueExtractor(column).mapValue(new StringHolderNode("test"));
+        assertThat(result, is(nullValue()));
     }
 
     @Test
@@ -99,9 +91,8 @@ class PropertyToVarcharColumnValueExtractorTest {
             final String expectedResult) {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().nonStringBehaviour(behaviour)
                 .varcharColumnSize(20).build();
-        final StringLiteral result = (StringLiteral) new PropertyToVarcharColumnValueExtractor(column)
-                .mapValue(nonStringNode);
-        assertThat(result.toString(), equalTo(expectedResult));
+        final Object result = new PropertyToVarcharColumnValueExtractor(column).mapValue(nonStringNode);
+        assertThat(result, equalTo(expectedResult));
     }
 
     @Test
@@ -118,8 +109,8 @@ class PropertyToVarcharColumnValueExtractorTest {
     void testConversionPossibleButNull() {
         final PropertyToVarcharColumnMapping column = getDefaultMappingBuilder().nonStringBehaviour(NULL).build();
         final PropertyToVarcharColumnValueExtractor valueExtractor = new PropertyToVarcharColumnValueExtractor(column);
-        final ValueExpression result = valueExtractor.mapValue(new BooleanHolderNode(true));
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(new BooleanHolderNode(true));
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -127,8 +118,8 @@ class PropertyToVarcharColumnValueExtractorTest {
     void testNullIsAlwaysConvertedToNull(final ConvertableMappingErrorBehaviour behaviour) {
         final PropertyToVarcharColumnValueExtractor valueExtractor = new PropertyToVarcharColumnValueExtractor(
                 getDefaultMappingBuilder().nonStringBehaviour(behaviour).build());
-        final ValueExpression result = valueExtractor.mapValue(new NullHolderNode());
-        assertThat(result, instanceOf(NullLiteral.class));
+        final Object result = valueExtractor.mapValue(new NullHolderNode());
+        assertThat(result, is(nullValue()));
     }
 
     @ParameterizedTest
@@ -137,8 +128,8 @@ class PropertyToVarcharColumnValueExtractorTest {
         for (final var behaviour : Set.of(NULL, CONVERT_OR_NULL)) {
             final PropertyToVarcharColumnValueExtractor valueExtractor = new PropertyToVarcharColumnValueExtractor(
                     getDefaultMappingBuilder().nonStringBehaviour(NULL).build());
-            final ValueExpression result = valueExtractor.mapValue(nonConvertibleNode);
-            assertThat(result, instanceOf(NullLiteral.class));
+            final Object result = valueExtractor.mapValue(nonConvertibleNode);
+            assertThat(result, is(nullValue()));
         }
     }
 
