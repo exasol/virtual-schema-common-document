@@ -28,6 +28,7 @@ In order to use the new features, please update you EDML definitions to version 
 * #91: Refactored to use Java representation for EDML for reading schema mapping
 * #98: Refactored propertyToXxxReaderClasses to use Lombok
 * #110: Replaced SQL statement builder literals by native data types
+* #112: Refactored PropertyToVarcharColumnValueExtractor
 
 ## Bug Fixes
 

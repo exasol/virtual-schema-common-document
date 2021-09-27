@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_NULL;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
 import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
 
 import java.sql.Date;
@@ -105,7 +104,7 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
         }
 
         private Object handleNotDate(final String value) {
-            if (this.column.getNotDateBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
+            if (Set.of(ABORT, CONVERT_OR_ABORT).contains(this.column.getNotDateBehaviour())) {
                 throw new ColumnValueExtractorException(
                         ExaError.messageBuilder("E-VSD-79")
                                 .message("Could not convert {{VALUE}} to date column ({{COLUMN_NAME}}).")

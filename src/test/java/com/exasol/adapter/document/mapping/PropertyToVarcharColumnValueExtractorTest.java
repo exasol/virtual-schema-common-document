@@ -127,7 +127,7 @@ class PropertyToVarcharColumnValueExtractorTest {
     void testNonConvertiblesAreConvertedToNull(final DocumentNode nonConvertibleNode) {
         for (final var behaviour : Set.of(NULL, CONVERT_OR_NULL)) {
             final PropertyToVarcharColumnValueExtractor valueExtractor = new PropertyToVarcharColumnValueExtractor(
-                    getDefaultMappingBuilder().nonStringBehaviour(NULL).build());
+                    getDefaultMappingBuilder().nonStringBehaviour(behaviour).build());
             final Object result = valueExtractor.mapValue(nonConvertibleNode);
             assertThat(result, is(nullValue()));
         }
@@ -141,7 +141,7 @@ class PropertyToVarcharColumnValueExtractorTest {
                     getDefaultMappingBuilder().nonStringBehaviour(behaviour).build());
             final ColumnValueExtractorException columnValueExtractorException = assertThrows(
                     ColumnValueExtractorException.class, () -> valueExtractor.mapValue(nonConvertibleNode));
-            assertThat(columnValueExtractorException.getMessage(), startsWith("E-VSD-37"));
+            assertThat(columnValueExtractorException.getMessage(), startsWith("E-VSD-36"));
         }
     }
 }

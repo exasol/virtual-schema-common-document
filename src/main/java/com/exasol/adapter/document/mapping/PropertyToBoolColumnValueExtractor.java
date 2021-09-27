@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_NULL;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
 import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
 
 import java.math.BigDecimal;
@@ -9,7 +8,6 @@ import java.util.Set;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.ValueExpression;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -106,8 +104,8 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
             }
         }
 
-        private ValueExpression handleNotBoolean(final String value) {
-            if (this.column.getNotBooleanBehavior() == ConvertableMappingErrorBehaviour.ABORT) {
+        private Object handleNotBoolean(final String value) {
+            if (Set.of(ABORT, CONVERT_OR_ABORT).contains(this.column.getNotBooleanBehavior())) {
                 throw new ColumnValueExtractorException(
                         ExaError.messageBuilder("E-VSD-78")
                                 .message("Could not convert {{VALUE}} to boolean column ({{COLUMN_NAME}}).")

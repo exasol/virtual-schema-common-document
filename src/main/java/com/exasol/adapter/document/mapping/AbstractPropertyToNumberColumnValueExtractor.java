@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_NULL;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
 import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
 
 import java.math.BigDecimal;
@@ -154,7 +153,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
         }
 
         private Object handleNotNumeric(final String value) {
-            if (this.column.getNotNumericBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
+            if (Set.of(ABORT, CONVERT_OR_ABORT).contains(this.column.getNotNumericBehaviour())) {
                 throw new ColumnValueExtractorException(
                         ExaError.messageBuilder("E-VSD-33")
                                 .message("Could not convert {{VALUE}} to numeric column ({{COLUMN_NAME}}).")

@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_NULL;
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
 import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
 
 import java.sql.Timestamp;
@@ -106,7 +105,7 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
         }
 
         private Object handleNotTimestamp(final String value) {
-            if (this.column.getNotTimestampBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
+            if (Set.of(ABORT, CONVERT_OR_ABORT).contains(this.column.getNotTimestampBehaviour())) {
                 throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-80")
                         .message("Could not convert {{VALUE}} to timestamp column ({{COLUMN_NAME}}).")
                         .parameter("VALUE", getExcerpt(value), "An excerpt of that value.")//
