@@ -250,17 +250,16 @@ All mappings pass through null values. That means, if the source value is a null
 
 ### ToVarcharMapping Conversions
 
-* String: No conversion needed
 * Nested object: Not convertable
 * Nested list: Not convertable
+* String: No conversion needed
 * Decimal value: String representation of decimal (e.g: `"1.23"`)
 * Double value: String representation of decimal (e.g: `"1.23"`)
 * Boolean value: `"true"` or `"false"`
-* Binary data: Base64 encoded
+* Binary data: Converted to Base64 encoded data string
 * Date: Date as string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
-For details, you can also check the implementation of the converter: [PropertyToVarcharColumnValueExtractor.java](../../src/main/java/com/exasol/adapter/document/mapping/PropertyToVarcharColumnValueExtractor.java)
 
 ### ToDecimalMapping Conversions
 
@@ -268,10 +267,10 @@ For details, you can also check the implementation of the converter: [PropertyTo
 * Nested list: Not convertable
 * String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertable.
 * Decimal value: No conversion needed
-* Double value: converted to decimal
+* Double value: Converted to decimal
 * Boolean value: `true` -> 1, `false` -> 0
 * Binary data: Not convertable
-* Date: Date as UTC timestamp in milliseconds
+* Date: Date as UTC milliseconds time value
 * Timestamp: Timestamp as UTC timestamp in milliseconds
 
 ### ToDoubleMapping Conversions
@@ -283,7 +282,7 @@ For details, you can also check the implementation of the converter: [PropertyTo
 * Double value: No conversion needed
 * Boolean value: `true` -> 1, `false` -> 0
 * Binary data: Not convertable
-* Date: Date as UTC timestamp in milliseconds
+* Date: Date as UTC milliseconds time value
 * Timestamp: Timestamp as UTC timestamp in milliseconds
 
 ### ToDateMapping Conversions
@@ -319,8 +318,8 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 * String: Converted to JSON string
 * Decimal value: Converted to JSON number
 * Double value: Converted to JSON number
-* Boolean value: converted to JSON boolean
-* Binary data: Converted to JSON string with base 64 encoded data
+* Boolean value: Converted to JSON boolean
+* Binary data: Converted to JSON string with Base64 encoded data
 * Date: Date as JSON string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 

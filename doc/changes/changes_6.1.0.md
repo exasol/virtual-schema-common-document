@@ -35,7 +35,7 @@ In order to use the new features, please update you EDML definitions to version 
 
 ## Documentation
 
-* #103: Documented conversions
+* #103: Documented data type conversions
 
 ## Dependency Updates
 
