@@ -22,6 +22,7 @@ In order to use the new features, please update you EDML definitions to version 
 * #104: Added `toBoolMapping` mapping type
 * #106: Added support for date, time and timestamp input values
 * #58: Added `toDate` and `toTimestamp` mapping types
+* #96: Add integration test for inline mapping definitions
 
 ## Refactoring
 
