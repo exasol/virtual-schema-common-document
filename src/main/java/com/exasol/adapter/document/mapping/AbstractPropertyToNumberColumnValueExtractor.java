@@ -133,12 +133,16 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
 
         @Override
         public void visit(final DocumentDateValue dateValue) {
-            this.result = handleNotNumeric("<date>");
+            final Object converted = this.numberConverter
+                    .convertDecimal(BigDecimal.valueOf(dateValue.getValue().getTime()));
+            this.result = handleNotNumericButConvertAble(converted, "<date>");
         }
 
         @Override
         public void visit(final DocumentTimestampValue timestampValue) {
-            this.result = handleNotNumeric("<timestamp>");
+            final Object converted = this.numberConverter
+                    .convertDecimal(BigDecimal.valueOf(timestampValue.getValue().getTime()));
+            this.result = handleNotNumericButConvertAble(converted, "<timestamp>");
         }
 
         private Object handleNotNumericButConvertAble(final Object converted, final String value) {

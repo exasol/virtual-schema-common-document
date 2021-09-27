@@ -101,7 +101,9 @@ class PropertyToDecimalColumnValueExtractorTest {
                 Arguments.of(new StringHolderNode("123"), 123), //
                 Arguments.of(new StringHolderNode("12.3"), 12.3), //
                 Arguments.of(new BooleanHolderNode(true), 1), //
-                Arguments.of(new BooleanHolderNode(false), 0) //
+                Arguments.of(new BooleanHolderNode(false), 0), //
+                Arguments.of(new DateHolderNode(new Date(12345)), 12345), //
+                Arguments.of(new TimestampHolderNode(new Timestamp(12345)), 12345) //
         );
     }
 

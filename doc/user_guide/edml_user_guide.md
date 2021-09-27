@@ -229,9 +229,100 @@ Some dialects support reading one table from multiple sources. For example the [
 
 To do so, set `addSourceReferenceColumn: true` in the root object of your EDML definition. The adapter will then automatically add a column named `SOURCE_REFERENCE` to the end of the table.
 
-You can use this property for all dialects. Typically it will, however, only give you additional information, if you load data from multiple sources.
+You can use this property for all dialects. Typically, it will, however, only give you additional information, if you load data from multiple sources.
 
 The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. In case a source reference should exceed this, the adapter will throw an exception.
+
+## Supported Conversion
+
+This adapter can convert input data to the requested column type. For example if the input is a number and the requested column is a string the adapter can convert the number to string.
+
+The conversion is done per value. That means that it's ok if in one row the input value is an int-value in the next row it's a bool value. That adapter can convert both to the requested output column.
+
+That's, however, not always the best option. For that reason, you can configure how the adapter should behave if the input data does not match the requested column format. You can configure this for example using the `nonStringBehaviour`:
+
+* `ABORT`: Abort the whole query with an exception
+* `NULL`: Return `NULL` instead
+* `CONVERT_OR_ABORT` try to convert and abort the query if not convertable
+* `CONVERT_OR_NULL` try to convert and return `NULL` if not convertable
+
+All mappings pass through null values. That means, if the source value is a null-value, the adapter converts it to `NULL`. The only exception is the `toJsonMapping` which converts null values to JSON null values.
+
+### ToVarcharMapping Conversions
+
+* String: No conversion needed
+* Nested object: Not convertable
+* Nested list: Not convertable
+* Decimal value: String representation of decimal (e.g: `"1.23"`)
+* Double value: String representation of decimal (e.g: `"1.23"`)
+* Boolean value: `"true"` or `"false"`
+* Binary data: Base64 encoded
+* Date: Date as string (e.g: `"2021-09-27"`)
+* Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
+
+For details, you can also check the implementation of the converter: [PropertyToVarcharColumnValueExtractor.java](../../src/main/java/com/exasol/adapter/document/mapping/PropertyToVarcharColumnValueExtractor.java)
+
+### ToDecimalMapping Conversions
+
+* Nested object: Not convertable
+* Nested list: Not convertable
+* String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertable.
+* Decimal value: No conversion needed
+* Double value: converted to decimal
+* Boolean value: `true` -> 1, `false` -> 0
+* Binary data: Not convertable
+* Date: Date as UTC timestamp in milliseconds
+* Timestamp: Timestamp as UTC timestamp in milliseconds
+
+### ToDoubleMapping Conversions
+
+* Nested object: Not convertable
+* Nested list: Not convertable
+* String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertable.
+* Decimal value: Converted to floating-point.
+* Double value: No conversion needed
+* Boolean value: `true` -> 1, `false` -> 0
+* Binary data: Not convertable
+* Date: Date as UTC timestamp in milliseconds
+* Timestamp: Timestamp as UTC timestamp in milliseconds
+
+### ToDateMapping Conversions
+
+* Nested object: Not convertable
+* Nested list: Not convertable
+* String: Not convertable
+* Decimal value: Interpreted as UTC timestamp in milliseconds
+* Double value: Interpreted as UTC timestamp in milliseconds
+* Boolean value: Not convertable
+* Binary data: Not convertable
+* Date: No conversion needed
+* Timestamp: Converted to date (looses time information)
+
+### ToTimestampMapping Conversions
+
+* Nested object: Not convertable
+* Nested list: Not convertable
+* String: Not convertable
+* Decimal value: Interpreted as UTC timestamp in milliseconds
+* Double value: Interpreted as UTC timestamp in milliseconds
+* Boolean value: Not convertable
+* Binary data: Not convertable
+* Date: Converted to timestamp
+* Timestamp: No conversion needed
+
+### ToJsonMapping Conversions
+
+The `toJsonMapping` always converts the input value to a JSON string. For that reason there is no property like `nonStringBehaviour`.
+
+* Nested object: Converted to JSON string
+* Nested list: Converted to JSON string
+* String: Converted to JSON string
+* Decimal value: Converted to JSON number
+* Double value: Converted to JSON number
+* Boolean value: converted to JSON boolean
+* Binary data: Converted to JSON string with base 64 encoded data
+* Date: Date as JSON string (e.g: `"2021-09-27"`)
+* Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
 ## Reference
 
