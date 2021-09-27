@@ -29,9 +29,13 @@ In order to use the new features, please update you EDML definitions to version 
 * #98: Refactored propertyToXxxReaderClasses to use Lombok
 * #110: Replaced SQL statement builder literals by native data types
 
-# Bug Fixes
+## Bug Fixes
 
 * #101: Fix integration test setup
+
+## Documentation
+
+* #103: Documented data type conversions
 
 ## Dependency Updates
 

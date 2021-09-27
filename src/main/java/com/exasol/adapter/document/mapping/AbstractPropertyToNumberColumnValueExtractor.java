@@ -97,7 +97,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
             final String stringValue = stringNode.getValue();
             try {
                 final Object converted = this.numberConverter.convertString(stringValue);
-                this.result = handleNotNumericButConvertAble(converted, stringValue);
+                this.result = handleNotNumericButConvertable(converted, stringValue);
             } catch (final NumberFormatException exception) {
                 this.result = handleNotNumeric(stringValue);
             }
@@ -116,7 +116,7 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
 
         @Override
         public void visit(final DocumentBooleanValue booleanNode) {
-            this.result = handleNotNumericButConvertAble(this.numberConverter.convertBoolean(booleanNode.getValue()),
+            this.result = handleNotNumericButConvertable(this.numberConverter.convertBoolean(booleanNode.getValue()),
                     "<" + (booleanNode.getValue() ? "true" : "false") + ">");
         }
 
@@ -133,15 +133,19 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
 
         @Override
         public void visit(final DocumentDateValue dateValue) {
-            this.result = handleNotNumeric("<date>");
+            final Object converted = this.numberConverter
+                    .convertDecimal(BigDecimal.valueOf(dateValue.getValue().getTime()));
+            this.result = handleNotNumericButConvertable(converted, "<date>");
         }
 
         @Override
         public void visit(final DocumentTimestampValue timestampValue) {
-            this.result = handleNotNumeric("<timestamp>");
+            final Object converted = this.numberConverter
+                    .convertDecimal(BigDecimal.valueOf(timestampValue.getValue().getTime()));
+            this.result = handleNotNumericButConvertable(converted, "<timestamp>");
         }
 
-        private Object handleNotNumericButConvertAble(final Object converted, final String value) {
+        private Object handleNotNumericButConvertable(final Object converted, final String value) {
             if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNotNumericBehaviour())) {
                 return converted;
             } else {
