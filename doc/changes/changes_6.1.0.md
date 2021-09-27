@@ -1,4 +1,4 @@
-# Common Virtual Schema for document data 6.1.0, released 2021-XX-XX
+# Common Virtual Schema for document data 6.1.0, released 2021-09-28
 
 Code name: New Mapping Types
 
