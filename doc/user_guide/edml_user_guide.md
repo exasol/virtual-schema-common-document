@@ -1,9 +1,23 @@
 # Getting Started With the Exasol Document Mapping Language (EDML)
 
 For creating a Virtual Schema for document data you have to define a mapping from the document structure to a relational structure. This is done using the Exasol Document Mapping Language (EDML)
-([reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)). You have to define a mapping in a JSON document, upload it to a bucket in BucketFS and reference in the `CREATE VIRTUAL SCHEMA` call.
+([reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)).
 
-This guide explains how to define these mappings in general. For data source specifics, check the corresponding virtual schema. Different data sources use different data formats. In this guide we use JSON.
+You can then use this mapping definition when creating the virtual schema. For that you typically upload the mapping definition as a file to BucketFS. Then you set the property `MAPPING` in the `CREATE VIRTUAL SCHEMA` command to the path of the mapping definition in BucketFS. You can also upload multiple mapping definitions into one folder and point to this folder. The adapter will then pick the all definitions.
+
+For testing and automated creation of Virtual Schemas its also possible to inline the EDML definition into the `MAPPING` property. Our tip: Don't use this if you're manipulating the EDML definitions by hand. Instead, use a proper editor with JSON-Schema support and upload the files. Editing inlined files is just too confusing. To inline the definitions you simply provide the mapping definition instead of the BucketFS path:
+
+```
+MAPPING = '{ "$schema": ... }'
+```
+
+If you want to provide multiple mapping definitions inline you can use a JSON array:
+
+```
+MAPPING = '[{ "$schema": ... }, { "$schema": ... }]'
+```
+
+This guide explains how to define EDML mappings in general. For data source specifics, check the corresponding virtual schema. Different data sources use different data formats. In this guide we use JSON.
 
 For mapping multiple document sets, you can create multiple files, upload them to a folder and BucketFS and reference this folder.
 
@@ -11,7 +25,7 @@ The structure of the mapping follows the structure of the document data.
 
 ## Simple Example
 
-Given a DynamoDB table called `MY_BOOKS` that contains the following objects:
+Given the following document :
 
 ```json
 {

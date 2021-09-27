@@ -43,6 +43,7 @@ class DocumentAdapterIT {
     private static final String VS_COMMON_DOCUMENT_VERSION_PROPERTY = "vs-common-document-version";
     private static final Pattern VS_COMMON_DOCUMENT_VERSION_PROPERTY_PATTERN = Pattern.compile(
             "<" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">([^<]++)</" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">");
+    private static final String SCHEMA = "https://schemas.exasol.com/edml-1.3.0.json";
     private static ExasolTestSetup testSetup;
     private static ExasolObjectFactory exasolObjectFactory;
     private static ConnectionDefinition nullConnection;
@@ -201,8 +202,7 @@ class DocumentAdapterIT {
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult, final Statement statement) throws SQLException {
-        final EdmlDefinition edml = EdmlDefinition.builder().schema("https://schemas.exasol.com/edml-1.3.0.json")
-                .source("")//
+        final EdmlDefinition edml = EdmlDefinition.builder().schema(SCHEMA).source("")//
                 .destinationTable("BOOKS")//
                 .mapping(mapping).build();
         final String edmlString = new EdmlSerializer().serialize(edml);
@@ -219,5 +219,28 @@ class DocumentAdapterIT {
         return exasolObjectFactory.createVirtualSchemaBuilder(MY_VIRTUAL_SCHEMA).connectionDefinition(nullConnection)
                 .adapterScript(adapterScript).dialectName(ADAPTER_NAME).properties(Map.of("MAPPING", mappingProperty))
                 .build();
+    }
+
+    @Test
+    void testInlineMappingArray() throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
+                .build();
+        final EdmlDefinition t1 = EdmlDefinition.builder().schema(SCHEMA).source("")//
+                .destinationTable("T1")//
+                .mapping(mapping).build();
+        final EdmlDefinition t2 = EdmlDefinition.builder().schema(SCHEMA).source("")//
+                .destinationTable("T2")//
+                .mapping(mapping).build();
+        final EdmlSerializer edmlSerializer = new EdmlSerializer();
+        final String mappingString = "[" + edmlSerializer.serialize(t1) + ", " + edmlSerializer.serialize(t2) + "]";
+        final VirtualSchema virtualSchema = createVirtualSchema(mappingString);
+        try (final Statement statement = testSetup.createConnection().createStatement()) {
+            final ResultSet resultSet = statement.executeQuery(
+                    "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1 UNION ALL SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T2");
+            assertThat(resultSet, table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));
+        } finally {
+            virtualSchema.drop();
+        }
     }
 }
