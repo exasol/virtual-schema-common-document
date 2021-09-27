@@ -3,6 +3,8 @@
 For creating a Virtual Schema for document data you have to define a mapping from the document structure to a relational structure. This is done using the Exasol Document Mapping Language (EDML)
 ([reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)).
 
+Usually you write these definitions by hand. An exception are parquet input files where you can use our [generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize. For writing the files we recommend using an editor with JSON-Schema support. This makes it easier to write the definitions.
+
 You can then use this mapping definition when creating the virtual schema. For that you typically upload the mapping definition as a file to BucketFS. Then you set the property `MAPPING` in the `CREATE VIRTUAL SCHEMA` command to the path of the mapping definition in BucketFS. You can also upload multiple mapping definitions into one folder and point to this folder. The adapter will then pick the all definitions.
 
 For testing and automated creation of Virtual Schemas its also possible to inline the EDML definition into the `MAPPING` property. Our tip: Don't use this if you're manipulating the EDML definitions by hand. Instead, use a proper editor with JSON-Schema support and upload the files. Editing inlined files is just too confusing. To inline the definitions you simply provide the mapping definition instead of the BucketFS path:
