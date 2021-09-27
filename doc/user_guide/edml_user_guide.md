@@ -260,7 +260,6 @@ All mappings pass through null values. That means, if the source value is a null
 * Date: Date as string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
-
 ### ToDecimalMapping Conversions
 
 * Nested object: Not convertable
@@ -271,7 +270,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Boolean value: `true` -> 1, `false` -> 0
 * Binary data: Not convertable
 * Date: Date as UTC milliseconds time value
-* Timestamp: Timestamp as UTC timestamp in milliseconds
+* Timestamp: Timestamp as UTC timestamp in milliseconds (floored)
 
 ### ToDoubleMapping Conversions
 
@@ -283,7 +282,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Boolean value: `true` -> 1, `false` -> 0
 * Binary data: Not convertable
 * Date: Date as UTC milliseconds time value
-* Timestamp: Timestamp as UTC timestamp in milliseconds
+* Timestamp: Timestamp as UTC timestamp in milliseconds (floored)
 
 ### ToDateMapping Conversions
 
