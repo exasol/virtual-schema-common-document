@@ -1,14 +1,19 @@
 package com.exasol.adapter.document.mapping;
 
+import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
 import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
 import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.NULL;
 import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Set;
 
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
+
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * ValueMapper for {@link PropertyToVarcharColumnMapping}
@@ -28,47 +33,9 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
 
     @Override
     protected final Object mapValue(final DocumentNode documentValue) {
-        final ConversionResult result = mapStringValue(documentValue);
-        return handleResult(result);
-    }
-
-    private String handleResult(final ConversionResult result) {
-        if (result instanceof MappedStringResult) {
-            return handleConvertedResult((MappedStringResult) result);
-        } else {
-            return handleNotConvertedResult((FailedConversionResult) result);
-        }
-    }
-
-    private String handleConvertedResult(final MappedStringResult stringValue) {
-        if (stringValue.isConverted()
-                && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.ABORT)) {
-            throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-36").message(
-                    "The input value {{VALUE}} is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.")
-                    .parameter("VALUE", getExcerpt(stringValue.getValue()), "An excerpt of the input value.")
-                    .mitigation("Set 'nonStringBehaviour' to CONVERT_OR_ABORT or CONVERT_OR_NULL.")
-                    .mitigation("Change your input data to strings.").toString(), this.column);
-        } else if (stringValue.isConverted()
-                && this.column.getNonStringBehaviour().equals(ConvertableMappingErrorBehaviour.NULL)) {
-            return null;
-        } else {
-            return handleOverflowIfNecessary(stringValue.getValue());
-        }
-    }
-
-    private String handleNotConvertedResult(final FailedConversionResult result) {
-        if (this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT
-                || this.column.getNonStringBehaviour() == ConvertableMappingErrorBehaviour.ABORT) {
-            throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-37")
-                    .message("An input value of type {{TYPE}} for column {{COLUMN}} could not be converted to string.")
-                    .parameter("TYPE", result.getTypeName())//
-                    .parameter("COLUMN", this.column.getExasolColumnName())
-                    .mitigation("Change the value in your input data")
-                    .mitigation("Change the nonStringBehaviour of the column to NULL or CONVERT_OR_NULL.").toString(),
-                    this.column);
-        } else {
-            return null;
-        }
+        final ToStringVisitor visitor = new ToStringVisitor(this.column);
+        documentValue.accept(visitor);
+        return handleOverflowIfNecessary(visitor.getResult());
     }
 
     private String handleOverflowIfNecessary(final String sourceString) {
@@ -97,119 +64,85 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
         }
     }
 
-    private ConversionResult mapStringValue(final DocumentNode property) {
-        final ToStringVisitor toStringVisitor = new ToStringVisitor();
-        property.accept(toStringVisitor);
-        return toStringVisitor.getResult();
-    }
-
-    /**
-     * This interface is used to pass the result of {@link #mapStringValue(DocumentNode)} from the concrete
-     * implementation to this abstract class.
-     *
-     * @implNote public so that it is accessible from test code
-     */
-    private interface ConversionResult {
-
-    }
-
-    private static class MappedStringResult implements ConversionResult {
-        private final String value;
-        private final boolean isConverted;
-
-        public MappedStringResult(final String value, final boolean isConverted) {
-            this.value = value;
-            this.isConverted = isConverted;
-        }
-
-        public String getValue() {
-            return this.value;
-        }
-
-        public boolean isConverted() {
-            return this.isConverted;
-        }
-    }
-
-    private static class FailedConversionResult implements ConversionResult {
-        private final String typeName;
-
-        /**
-         * Create a new instance of {@link FailedConversionResult}.
-         *
-         * @param typeName name of the unsupported type
-         */
-        public FailedConversionResult(final String typeName) {
-            this.typeName = typeName;
-        }
-
-        /**
-         * Get the name of the unsupported type.
-         *
-         * @return name of the unsupported type
-         */
-        public String getTypeName() {
-            return this.typeName;
-        }
-    }
-
+    @RequiredArgsConstructor
     private static class ToStringVisitor implements DocumentNodeVisitor {
-        private ConversionResult result;
+        private final PropertyToVarcharColumnMapping column;
+        @Getter
+        private String result;
 
         @Override
         public void visit(final DocumentObject objectNode) {
-            this.result = new FailedConversionResult("object");
+            this.result = handleNotString("<object>");
         }
 
         @Override
         public void visit(final DocumentArray arrayNode) {
-            this.result = new FailedConversionResult("array");
+            this.result = handleNotString("<array>");
         }
 
         @Override
         public void visit(final DocumentStringValue stringNode) {
-            this.result = new MappedStringResult(stringNode.getValue(), false);
+            this.result = stringNode.getValue();
         }
 
         @Override
         public void visit(final DocumentDecimalValue numberNode) {
-            this.result = new MappedStringResult(numberNode.getValue().toString(), true);
+            final String converted = numberNode.getValue().toString();
+            this.result = handleNotStringButConvertable(converted);
         }
 
         @Override
         public void visit(final DocumentNullValue nullNode) {
-            this.result = new MappedStringResult(null, false);
+            this.result = null;
         }
 
         @Override
         public void visit(final DocumentBooleanValue booleanNode) {
-            this.result = new MappedStringResult(booleanNode.getValue() ? "true" : "false", true);
+            this.result = handleNotStringButConvertable(booleanNode.getValue() ? "true" : "false");
         }
 
         @Override
         public void visit(final DocumentFloatingPointValue floatingPointValue) {
-            this.result = new MappedStringResult(String.valueOf(floatingPointValue.getValue()), true);
+            final String converted = String.valueOf(floatingPointValue.getValue());
+            this.result = handleNotStringButConvertable(converted);
         }
 
         @Override
         public void visit(final DocumentBinaryValue binaryValue) {
             final String bas64Encoded = new String(Base64.getEncoder().encode(binaryValue.getBinary()),
                     StandardCharsets.UTF_8);
-            this.result = new MappedStringResult(bas64Encoded, true);
+            this.result = handleNotStringButConvertable(bas64Encoded);
         }
 
         @Override
         public void visit(final DocumentDateValue dateValue) {
-            this.result = new MappedStringResult(dateValue.getValue().toString(), true);
+            this.result = handleNotStringButConvertable(dateValue.getValue().toString());
         }
 
         @Override
         public void visit(final DocumentTimestampValue timestampValue) {
-            this.result = new MappedStringResult(timestampValue.getValue().toInstant().toString(), true);
+            this.result = handleNotStringButConvertable(timestampValue.getValue().toInstant().toString());
         }
 
-        public ConversionResult getResult() {
-            return this.result;
+        private String handleNotStringButConvertable(final String converted) {
+            if (Set.of(CONVERT_OR_ABORT, CONVERT_OR_NULL).contains(this.column.getNonStringBehaviour())) {
+                return converted;
+            } else {
+                return handleNotString(converted);
+            }
+        }
+
+        private String handleNotString(final String value) {
+            if (Set.of(ABORT, CONVERT_OR_ABORT).contains(this.column.getNonStringBehaviour())) {
+                throw new ColumnValueExtractorException(ExaError.messageBuilder("E-VSD-36").message(
+                        "The input value {{VALUE}} is not a string. This adapter could convert it to string, but it is disabled because 'nonStringBehaviour' setting is set to ABORT.")
+                        .parameter("VALUE", getExcerpt(value), "An excerpt of the input value.")
+                        .mitigation("Set 'nonStringBehaviour' to CONVERT_OR_ABORT or CONVERT_OR_NULL.")
+                        .mitigation("Change your input data to strings.").mitigation("Use a different mapping.")
+                        .toString(), this.column);
+            } else {
+                return null;
+            }
         }
     }
 }
