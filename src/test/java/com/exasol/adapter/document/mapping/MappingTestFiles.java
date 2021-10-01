@@ -45,7 +45,7 @@ public class MappingTestFiles {
 
     /**
      * This method generates a invalid file from a valid using an invalidator function. It uses the org.json api because
-     * it provides modifiable objects in contrast to the projects default javax.json api.
+     * it provides modifiable objects in contrast to the projects default jakarta.json api.
      *
      * @param baseMappingName Definition to use as basis
      * @param invalidator     Function that modifies / invalidates the definition.

@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.json.*;
-
 import com.exasol.bucketfs.BucketFsFileResolver;
 import com.exasol.bucketfs.BucketFsFileResolverImpl;
 import com.exasol.errorreporting.ExaError;
+
+import jakarta.json.*;
 
 /**
  * This class resolves the {@code MAPPING} property.
