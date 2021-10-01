@@ -5,11 +5,11 @@ import java.sql.Timestamp;
 import java.util.Base64;
 import java.util.Map;
 
-import javax.json.*;
-import javax.json.spi.JsonProvider;
-
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
+
+import jakarta.json.*;
+import jakarta.json.spi.JsonProvider;
 
 /**
  * {@link ColumnValueExtractor} for {@link PropertyToJsonColumnMapping}.

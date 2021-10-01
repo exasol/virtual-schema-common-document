@@ -1,8 +1,8 @@
 package com.exasol.adapter.document.mapping;
 
-import javax.json.JsonObject;
-
 import com.exasol.adapter.document.edml.KeyType;
+
+import jakarta.json.JsonObject;
 
 /**
  * This class reads the {@code key} property of an Exasol document mapping language column mapping definition.

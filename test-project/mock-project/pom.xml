@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- this property is automatically updated by the DocumentAdapterIT -->
-        <vs-common-document-version>6.1.0-SNAPSHOT</vs-common-document-version>
+        <vs-common-document-version>6.1.1-SNAPSHOT</vs-common-document-version>
     </properties>
     <dependencies>
         <dependency>
