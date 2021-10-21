@@ -21,6 +21,11 @@ public interface PropertyToColumnMapping extends ColumnMapping {
      */
     MappingErrorBehaviour getLookupFailBehaviour();
 
+    /**
+     * Accept a {@link PropertyToColumnMappingVisitor}.
+     * 
+     * @param visitor visitor to accept
+     */
     void accept(PropertyToColumnMappingVisitor visitor);
 
     @Override

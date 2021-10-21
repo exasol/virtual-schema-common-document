@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
  * This class represents a {@code AND} or {@code OR} logical operator.
  */
 public final class LogicalOperator implements QueryPredicate {
-    private static final long serialVersionUID = -8351558984178219419L;
     private final Set<QueryPredicate> operands;
     private final Operator operator;
 
@@ -86,6 +85,10 @@ public final class LogicalOperator implements QueryPredicate {
      * Possible operators.
      */
     public enum Operator {
-        AND, OR
+
+        /** AND operator */
+        AND,
+        /** OR operator */
+        OR
     }
 }

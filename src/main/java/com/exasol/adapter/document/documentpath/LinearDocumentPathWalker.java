@@ -8,8 +8,7 @@ import com.exasol.errorreporting.ExaError;
 /**
  * This class is a simplified version of {@link DocumentPathWalker} for linear paths.
  */
-@java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
-public class LinearDocumentPathWalker<VisitorType> {
+public class LinearDocumentPathWalker {
 
     private final DocumentPathWalker documentPathWalker;
 

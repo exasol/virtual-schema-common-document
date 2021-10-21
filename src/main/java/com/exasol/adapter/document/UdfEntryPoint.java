@@ -14,9 +14,20 @@ import com.exasol.utils.StringSerializer;
  * Main UDF entry point.
  */
 public class UdfEntryPoint {
+    /** Prefix of the UDF names of the document virtual schemas. */
     public static final String UDF_PREFIX = "IMPORT_FROM_";
+    /**
+     * UDF-Parameter name for the {@link DocumentFetcher}. It's not named {@code DOCUMENT_FETCHER} for not breaking the
+     * public API.
+     */
     public static final String PARAMETER_DOCUMENT_FETCHER = "DATA_LOADER";
+    /**
+     * UDF-Parameter name for the {@link SchemaMappingRequest}.
+     */
     public static final String PARAMETER_SCHEMA_MAPPING_REQUEST = "SCHEMA_MAPPING_REQUEST";
+    /**
+     * UDF-Parameter name for the connection name.
+     */
     public static final String PARAMETER_CONNECTION_NAME = "CONNECTION_NAME";
 
     private UdfEntryPoint() {

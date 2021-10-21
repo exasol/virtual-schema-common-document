@@ -6,6 +6,13 @@ import java.util.List;
  * This class converts a {@link DocumentPathExpression} to string like {@code "/books/topics[1]"}.
  */
 public class DocumentPathToStringConverter {
+
+    /**
+     * Convert a {@link DocumentPathExpression} to string like {@code "/books/topics[1]"}.
+     * 
+     * @param pathExpression {@link DocumentPathExpression} to convert
+     * @return string result
+     */
     public String convertToString(final DocumentPathExpression pathExpression) {
         final List<PathSegment> path = pathExpression.getSegments();
         if (path.isEmpty()) {

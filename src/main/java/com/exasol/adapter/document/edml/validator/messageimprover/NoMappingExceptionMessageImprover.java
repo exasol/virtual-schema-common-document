@@ -5,8 +5,13 @@ import java.util.Set;
 
 import org.everit.json.schema.ValidationException;
 
+import com.exasol.adapter.document.edml.validator.ExceptionMessageImprover;
 import com.exasol.errorreporting.ExaError;
 
+/**
+ * This {@link ExceptionMessageImprover} improves exception message of the JSON schema validator for mapping definitions
+ * where they don't specify a mapping for a property.
+ */
 public class NoMappingExceptionMessageImprover extends AbstractExceptionMessageImprover {
     @Override
     public Optional<String> tryToImprove(final ValidationException exception) {

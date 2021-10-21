@@ -5,8 +5,12 @@ import java.util.Set;
 
 import org.everit.json.schema.ValidationException;
 
+import com.exasol.adapter.document.edml.validator.ExceptionMessageImprover;
 import com.exasol.errorreporting.ExaError;
 
+/**
+ * This {@link ExceptionMessageImprover} improves the exception message for unknown mapping types.
+ */
 public class UnknownMappingExceptionMessageImprover extends AbstractExceptionMessageImprover {
 
     @Override

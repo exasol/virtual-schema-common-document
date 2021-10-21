@@ -13,9 +13,8 @@ import com.exasol.errorreporting.ExaError;
  * For paths with multiple {@link ArrayAllPathSegment}s one object of this class only handles the first one and
  * delegates the remaining path to another instance ({@link #nestedIterator}).
  */
-@java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
-public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathIterationStateProvider> {
-    protected final DocumentPathExpression pathOfThisIterator;
+public class LoopDocumentPathIterator implements Iterator<PathIterationStateProvider> {
+    private final DocumentPathExpression pathOfThisIterator;
     private final int arraySize;
     private final DocumentPathExpression pathOfNextIterator;
     private final DocumentArray arrayToIterate;
@@ -38,7 +37,7 @@ public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathItera
     }
 
     private DocumentArray getArrayToIterate(final DocumentNode document, final DocumentPathExpression pathToThisArray) {
-        final Optional<DocumentNode> documentArray = new LinearDocumentPathWalker<VisitorType>(pathToThisArray)
+        final Optional<DocumentNode> documentArray = new LinearDocumentPathWalker(pathToThisArray)
                 .walkThroughDocument(document);
         if (documentArray.isEmpty()) {
             return null;

@@ -40,8 +40,16 @@ public class DataProcessingPipeline {
         }
     }
 
+    /**
+     * Interface for classes that consume rows.
+     */
     @FunctionalInterface
     public interface RowHandler {
+        /**
+         * Accept a row.
+         * 
+         * @param row row as list of standard Java objects like {@link String} for VARCHAR values
+         */
         void acceptRow(List<Object> row);
     }
 }

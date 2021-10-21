@@ -9,7 +9,6 @@ import com.exasol.adapter.document.documentnode.DocumentNode;
 /**
  * This factory creates a fitting {@link Iterator} for a given path and document.
  */
-@java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
 public class DocumentPathIteratorFactory implements Iterable<PathIterationStateProvider> {
 
     private final DocumentPathExpression path;
@@ -31,7 +30,7 @@ public class DocumentPathIteratorFactory implements Iterable<PathIterationStateP
         if (this.path.indexOfFirstArrayAllSegment() == -1) {
             return new StaticDocumentPathIterator();
         } else {
-            return new LoopDocumentPathIterator<>(this.path, this.document);
+            return new LoopDocumentPathIterator(this.path, this.document);
         }
     }
 

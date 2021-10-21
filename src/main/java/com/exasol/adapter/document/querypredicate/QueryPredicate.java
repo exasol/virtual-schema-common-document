@@ -5,6 +5,11 @@ package com.exasol.adapter.document.querypredicate;
  * modeled.
  */
 public interface QueryPredicate {
+    /**
+     * Accept a {@link QueryPredicateVisitor}.
+     * 
+     * @param visitor visitor to accept
+     */
     void accept(QueryPredicateVisitor visitor);
 
     /**

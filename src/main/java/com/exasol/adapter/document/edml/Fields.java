@@ -14,6 +14,11 @@ public class Fields implements MappingDefinition {
     @SuppressWarnings("java:S1700") // name is given by EDML
     private final LinkedHashMap<String, MappingDefinition> fields;
 
+    /**
+     * Create a builder for {@link Fields}.
+     * 
+     * @return {@link FieldsBuilder}
+     */
     public static FieldsBuilder builder() {
         return new FieldsBuilder();
     }
@@ -23,14 +28,29 @@ public class Fields implements MappingDefinition {
         visitor.visit(this);
     }
 
+    /**
+     * Builder for {@link Fields}.
+     */
     public static class FieldsBuilder {
         private final LinkedHashMap<String, MappingDefinition> fields = new LinkedHashMap<>();
 
-        public FieldsBuilder mapField(final String filedName, final MappingDefinition fieldMapping) {
-            this.fields.put(filedName, fieldMapping);
+        /**
+         * Add a field mapping.
+         * 
+         * @param fieldName    name of the property in the document
+         * @param fieldMapping {@link MappingDefinition}
+         * @return self for fluent programming
+         */
+        public FieldsBuilder mapField(final String fieldName, final MappingDefinition fieldMapping) {
+            this.fields.put(fieldName, fieldMapping);
             return this;
         }
 
+        /**
+         * Build the {@link Fields}.
+         * 
+         * @return built {@link Fields}
+         */
         public Fields build() {
             return new Fields(this.fields);
         }

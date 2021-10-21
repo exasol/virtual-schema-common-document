@@ -1,19 +1,20 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+
+import lombok.RequiredArgsConstructor;
 
 /**
  * Definition of a table mapping from DynamoDB table to Exasol Virtual Schema. Each instance of this class represents a
  * table in the Exasol Virtual Schema. Typically it also represents a DynamoDB table. But it can also represent the data
  * from a nested list or object. See {@link #isRootTable()} for details.
  */
+@RequiredArgsConstructor
 public class TableMapping implements Serializable {
-    private static final long serialVersionUID = 4768289714640213806L;
+    private static final long serialVersionUID = -8647175683915939405L;
     /** @serial */
     private final String exasolName;
     /** @serial */
@@ -23,14 +24,15 @@ public class TableMapping implements Serializable {
     /** @serial */
     private final DocumentPathExpression pathInRemoteTable;
 
-    public TableMapping(final String exasolName, final String remoteName, final List<ColumnMapping> columns,
-            final DocumentPathExpression pathInRemoteTable) {
-        this.exasolName = exasolName;
-        this.remoteName = remoteName;
-        this.pathInRemoteTable = pathInRemoteTable;
-        this.columns = columns;
-    }
-
+    /**
+     * Create a new instance of {@link TableMapping} from serialized data.
+     * <p>
+     * The {@link #columns} are transient and for that reason must be added separately again here.
+     * </p>
+     * 
+     * @param deserialized deserialized {@link TableMapping} (without columns since they are transient)
+     * @param columns      separately deserialized columns
+     */
     TableMapping(final TableMapping deserialized, final List<ColumnMapping> columns) {
         this.exasolName = deserialized.exasolName;
         this.remoteName = deserialized.remoteName;

@@ -22,7 +22,7 @@ class LinearDocumentPathWalkerTest {
     @Test
     void testWalk() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addObjectLookup("key").build();
-        final Optional<DocumentNode> result = new LinearDocumentPathWalker<>(pathExpression)
+        final Optional<DocumentNode> result = new LinearDocumentPathWalker(pathExpression)
                 .walkThroughDocument(TEST_OBJECT_NODE);
         assertThat(result.orElse(null), equalTo(NESTED_VALUE));
     }
@@ -31,7 +31,7 @@ class LinearDocumentPathWalkerTest {
     void testNonLinearPath() {
         final DocumentPathExpression pathExpression = DocumentPathExpression.builder().addArrayAll().build();
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> new LinearDocumentPathWalker<>(pathExpression));
+                () -> new LinearDocumentPathWalker(pathExpression));
         assertThat(exception.getMessage(), startsWith("F-VSD-28: The given path is not a linear path."));
     }
 }
