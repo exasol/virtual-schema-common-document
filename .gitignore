@@ -29,3 +29,10 @@ Scripts
 venv/
 pom.xml.versionsBackup
 log.txt
+
+~*
+*.lock
+*.bak
+*.orig
+*.old
+*.md.html
