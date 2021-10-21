@@ -6,9 +6,13 @@ import java.util.Objects;
  * This class represents a {@code NOT}.
  */
 public final class NotPredicate implements QueryPredicate {
-    private static final long serialVersionUID = -1358113690298643292L;
     private final QueryPredicate predicate;
 
+    /**
+     * Create a new instance of {@link NotPredicate}.
+     *
+     * @param predicate the predicate
+     */
     public NotPredicate(final QueryPredicate predicate) {
         this.predicate = predicate;
     }

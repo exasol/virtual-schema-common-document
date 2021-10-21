@@ -14,10 +14,16 @@ import com.exasol.sql.expression.literal.BooleanLiteral;
 
 /**
  * This class converts a {@link QueryPredicate} class structure to a {@link BooleanExpression} for the
- * sql-statement-builder
+ * sql-statement-builder.
  */
 public class QueryPredicateToBooleanExpressionConverter {
 
+    /**
+     * Convert a {@link QueryPredicate} into a {@link BooleanExpression}.
+     * 
+     * @param queryPredicate predicate to convert
+     * @return converted {@link BooleanExpression}
+     */
     public BooleanExpression convert(final QueryPredicate queryPredicate) {
         final Visitor visitor = new Visitor();
         queryPredicate.accept(visitor);

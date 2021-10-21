@@ -34,6 +34,9 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     private static final Set<ScalarFunctionCapability> SUPPORTED_SCALAR_FUNCTION_CAPABILITIES = Set.of();
     private final int thisNodesCoreCount;
 
+    /**
+     * Create a new instance of {@link DocumentAdapter}.
+     */
     protected DocumentAdapter() {
         this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
     }
@@ -154,6 +157,11 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
      */
     protected abstract String getAdapterName();
 
+    /**
+     * Get the capabilities of the dialect.
+     * 
+     * @return capabilities
+     */
     protected abstract Capabilities getCapabilities();
 
     @Override

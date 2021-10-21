@@ -78,6 +78,21 @@ public abstract class AbstractComparisonPredicate implements ComparisonPredicate
      * Possible comparision operators.
      */
     public enum Operator {
-        NOT_EQUAL, EQUAL, LESS, LESS_EQUAL, GREATER, GREATER_EQUAL, LIKE, NOT_LIKE
+        /** Not equals operator */
+        NOT_EQUAL,
+        /** Equals operator */
+        EQUAL,
+        /** Less operator */
+        LESS,
+        /** Less or equal operator */
+        LESS_EQUAL,
+        /** Greater operator */
+        GREATER,
+        /** Greater or equals operator */
+        GREATER_EQUAL,
+        /** Like operator */
+        LIKE,
+        /** Not like operator */
+        NOT_LIKE
     }
 }

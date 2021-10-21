@@ -6,8 +6,12 @@ import java.util.stream.Collectors;
 
 import org.everit.json.schema.*;
 
+import com.exasol.adapter.document.edml.validator.ExceptionMessageImprover;
 import com.exasol.errorreporting.ExaError;
 
+/**
+ * This {@link ExceptionMessageImprover} improves the exception message for unsupported values for {@code $schema}.
+ */
 public class WongSchemaExceptionMessageImprover extends AbstractExceptionMessageImprover {
     @Override
     public Optional<String> tryToImprove(final ValidationException exception) {

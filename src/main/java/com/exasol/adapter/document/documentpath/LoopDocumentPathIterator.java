@@ -15,7 +15,7 @@ import com.exasol.errorreporting.ExaError;
  */
 @java.lang.SuppressWarnings("squid:S119") // VisitorType does not fit naming conventions.
 public class LoopDocumentPathIterator<VisitorType> implements Iterator<PathIterationStateProvider> {
-    protected final DocumentPathExpression pathOfThisIterator;
+    private final DocumentPathExpression pathOfThisIterator;
     private final int arraySize;
     private final DocumentPathExpression pathOfNextIterator;
     private final DocumentArray arrayToIterate;

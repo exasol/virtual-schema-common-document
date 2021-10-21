@@ -45,5 +45,10 @@ public interface ColumnMapping extends Serializable {
      */
     ColumnMapping withNewExasolName(String newExasolName);
 
+    /**
+     * Accept a {@link ColumnMappingVisitor}.
+     * 
+     * @param visitor visitor to accept
+     */
     void accept(ColumnMappingVisitor visitor);
 }

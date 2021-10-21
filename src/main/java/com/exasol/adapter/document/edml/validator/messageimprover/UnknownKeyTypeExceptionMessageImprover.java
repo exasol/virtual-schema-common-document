@@ -4,8 +4,12 @@ import java.util.Optional;
 
 import org.everit.json.schema.ValidationException;
 
+import com.exasol.adapter.document.edml.validator.ExceptionMessageImprover;
 import com.exasol.errorreporting.ExaError;
 
+/**
+ * This {@link ExceptionMessageImprover} improves the message for illegal values for the key property.
+ */
 public class UnknownKeyTypeExceptionMessageImprover extends AbstractExceptionMessageImprover {
     @Override
     public Optional<String> tryToImprove(final ValidationException exception) {
