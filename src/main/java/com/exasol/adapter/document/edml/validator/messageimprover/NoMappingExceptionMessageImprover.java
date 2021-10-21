@@ -10,7 +10,7 @@ import com.exasol.errorreporting.ExaError;
 
 /**
  * This {@link ExceptionMessageImprover} improves exception message of the JSON schema validator for mapping definitions
- * where that don't specify a mapping for a property.
+ * where they don't specify a mapping for a property.
  */
 public class NoMappingExceptionMessageImprover extends AbstractExceptionMessageImprover {
     @Override

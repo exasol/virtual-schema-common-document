@@ -15,7 +15,7 @@ public class Fields implements MappingDefinition {
     private final LinkedHashMap<String, MappingDefinition> fields;
 
     /**
-     * Get a builder for {@link Fields}.
+     * Create a builder for {@link Fields}.
      * 
      * @return {@link FieldsBuilder}
      */
@@ -37,12 +37,12 @@ public class Fields implements MappingDefinition {
         /**
          * Add a field mapping.
          * 
-         * @param filedName    name of the property in the document
+         * @param fieldName    name of the property in the document
          * @param fieldMapping {@link MappingDefinition}
          * @return self for fluent programming
          */
-        public FieldsBuilder mapField(final String filedName, final MappingDefinition fieldMapping) {
-            this.fields.put(filedName, fieldMapping);
+        public FieldsBuilder mapField(final String fieldName, final MappingDefinition fieldMapping) {
+            this.fields.put(fieldName, fieldMapping);
             return this;
         }
 

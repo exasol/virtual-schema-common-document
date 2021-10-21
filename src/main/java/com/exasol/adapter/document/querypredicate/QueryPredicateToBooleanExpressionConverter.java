@@ -19,7 +19,7 @@ import com.exasol.sql.expression.literal.BooleanLiteral;
 public class QueryPredicateToBooleanExpressionConverter {
 
     /**
-     * Convert a {@link QueryPredicate} into a {@link BooleanExpression}.
+     * Convert a {@link QueryPredicate} to a {@link BooleanExpression}.
      * 
      * @param queryPredicate predicate to convert
      * @return converted {@link BooleanExpression}
