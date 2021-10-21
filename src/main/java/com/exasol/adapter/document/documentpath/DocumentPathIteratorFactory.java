@@ -31,7 +31,7 @@ public class DocumentPathIteratorFactory implements Iterable<PathIterationStateP
         if (this.path.indexOfFirstArrayAllSegment() == -1) {
             return new StaticDocumentPathIterator();
         } else {
-            return new LoopDocumentPathIterator<>(this.path, this.document);
+            return new LoopDocumentPathIterator(this.path, this.document);
         }
     }
 
