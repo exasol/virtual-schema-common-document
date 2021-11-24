@@ -38,11 +38,6 @@ public class FilteringIterator<T> implements CloseableIterator<T> {
     }
 
     @Override
-    public boolean hasNext() {
-        return this.hasNext;
-    }
-
-    @Override
     public T next() {
         if (!this.hasNext) {
             throw new NoSuchElementException();
@@ -50,6 +45,11 @@ public class FilteringIterator<T> implements CloseableIterator<T> {
         final T nextCache = this.next;
         loadNext();
         return nextCache;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return this.hasNext;
     }
 
     @Override

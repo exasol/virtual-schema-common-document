@@ -1,6 +1,6 @@
 # Common Virtual Schema for document data 7.0.0, released 2021-11-24
 
-Code name: Closable Iterators
+Code name: Refactored Closable Iterators
 
 ## Refactoring
 

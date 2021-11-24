@@ -18,7 +18,7 @@ public class CloseableIteratorWrapper<T> implements CloseableIterator<T> {
     private final Closeable closeFunction;
 
     /**
-     * Create a {@link CloseableIterator} for an iterator that does not need to be closed.
+     * Create a {@link CloseableIterator} for an iterator that does not need the close callback.
      * 
      * @param source iterator to wrap.
      */
