@@ -1,9 +1,9 @@
 package com.exasol.adapter.document.documentfetcher;
 
 import java.io.Serializable;
-import java.util.Iterator;
 
 import com.exasol.ExaConnectionInformation;
+import com.exasol.adapter.document.iterators.CloseableIterator;
 
 /**
  * This interface fetches document data from a remote database.
@@ -16,5 +16,5 @@ public interface DocumentFetcher extends Serializable {
      * @param connectionInformation for creating a connection to the remote database
      * @return result of the operation.
      */
-    Iterator<FetchedDocument> run(ExaConnectionInformation connectionInformation);
+    CloseableIterator<FetchedDocument> run(ExaConnectionInformation connectionInformation);
 }

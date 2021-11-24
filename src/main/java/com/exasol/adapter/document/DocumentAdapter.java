@@ -43,7 +43,7 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
 
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
-            final CreateVirtualSchemaRequest request) throws AdapterException {
+            final CreateVirtualSchemaRequest request) {
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, request);
         return CreateVirtualSchemaResponse.builder().schemaMetadata(schemaMetadata).build();
     }

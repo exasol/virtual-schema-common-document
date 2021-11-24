@@ -10,21 +10,20 @@ import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-class TransformingIteratorTest {
-
+class FilteringIteratorTest {
     @Test
-    void testTransformation() {
+    void testFiltering() {
         final List<Integer> result = new ArrayList<>();
-        new TransformingIterator<>(new CloseableIteratorWrapper<>(List.of(1, 2).iterator()), x -> x * 2)
+        new FilteringIterator<>(new CloseableIteratorWrapper<>(List.of(1, 2, 3, 4).iterator()), x -> x % 2 == 0)
                 .forEachRemaining(result::add);
         assertThat(result, Matchers.contains(2, 4));
     }
 
     @Test
     void testClose() {
-        final CloseableIterator<Integer> spy = spy(new CloseableIteratorWrapper<>(List.of(1, 2).iterator()));
-        final TransformingIterator<Integer, Integer> transformingIterator = new TransformingIterator<>(spy, x -> x + 1);
-        transformingIterator.close();
+        final CloseableIterator<Integer> spy = spy(new CloseableIteratorWrapper<>(List.of(1, 2, 3, 4).iterator()));
+        final FilteringIterator<Integer> filteringIterator = new FilteringIterator<>(spy, x -> x % 2 == 0);
+        filteringIterator.close();
         verify(spy).close();
     }
 }

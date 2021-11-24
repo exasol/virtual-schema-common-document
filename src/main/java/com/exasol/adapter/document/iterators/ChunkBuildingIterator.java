@@ -7,9 +7,9 @@ import java.util.*;
  * 
  * @param <T> type of the wrapped iterator
  */
-public class ChunkBuildingIterator<T> implements Iterator<List<T>> {
+public class ChunkBuildingIterator<T> implements CloseableIterator<List<T>> {
     private final int chunkSize;
-    private final Iterator<T> source;
+    private final CloseableIterator<T> source;
     private boolean hasNext = false;
     private List<T> nextChunk;
 
@@ -19,7 +19,7 @@ public class ChunkBuildingIterator<T> implements Iterator<List<T>> {
      * @param source    iterator to wrap
      * @param chunkSize size of the chunks
      */
-    public ChunkBuildingIterator(final Iterator<T> source, final int chunkSize) {
+    public ChunkBuildingIterator(final CloseableIterator<T> source, final int chunkSize) {
         this.source = source;
         this.chunkSize = chunkSize;
         buildChunk();
@@ -46,5 +46,10 @@ public class ChunkBuildingIterator<T> implements Iterator<List<T>> {
             this.nextChunk.add(this.source.next());
         }
         this.hasNext = !this.nextChunk.isEmpty();
+    }
+
+    @Override
+    public void close() {
+        this.source.close();
     }
 }
