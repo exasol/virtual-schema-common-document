@@ -1,6 +1,5 @@
 package com.exasol.adapter.document.iterators;
 
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
@@ -12,10 +11,10 @@ import java.util.function.Function;
  * @param <T> result type
  * @param <S> input iterator type
  */
-public class FlatMapIterator<T, S> implements Iterator<T> {
-    private final Iterator<S> source;
-    private final Function<S, Iterator<T>> mapFunction;
-    private Iterator<T> currentIterator = null;
+public class FlatMapIterator<T, S> implements CloseableIterator<T> {
+    private final CloseableIterator<S> source;
+    private final Function<S, CloseableIterator<T>> mapFunction;
+    private CloseableIterator<T> currentIterator = null;
     private T next = null;
     private boolean hasNext = false;
 
@@ -25,7 +24,7 @@ public class FlatMapIterator<T, S> implements Iterator<T> {
      * @param source      source iterator
      * @param mapFunction map function
      */
-    public FlatMapIterator(final Iterator<S> source, final Function<S, Iterator<T>> mapFunction) {
+    public FlatMapIterator(final CloseableIterator<S> source, final Function<S, CloseableIterator<T>> mapFunction) {
         this.source = source;
         this.mapFunction = mapFunction;
         loadNext();
@@ -38,6 +37,10 @@ public class FlatMapIterator<T, S> implements Iterator<T> {
                 this.hasNext = true;
                 return;
             } else {
+                if (this.currentIterator != null) {
+                    this.currentIterator.close();
+                    this.currentIterator = null;
+                }
                 if (this.source.hasNext()) {
                     this.currentIterator = this.mapFunction.apply(this.source.next());
                 } else {
@@ -61,5 +64,13 @@ public class FlatMapIterator<T, S> implements Iterator<T> {
         final T nextCache = this.next;
         loadNext();
         return nextCache;
+    }
+
+    @Override
+    public void close() {
+        if (this.currentIterator != null) {
+            this.currentIterator.close();
+        }
+        this.source.close();
     }
 }

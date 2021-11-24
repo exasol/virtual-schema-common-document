@@ -9,8 +9,8 @@ import java.util.function.Function;
  * @param <T> input type
  * @param <R> output type
  */
-public class TransformingIterator<T, R> implements Iterator<R> {
-    private final Iterator<T> source;
+public class TransformingIterator<T, R> implements CloseableIterator<R> {
+    private final CloseableIterator<T> source;
     private final Function<T, R> mapFunction;
 
     /**
@@ -19,7 +19,7 @@ public class TransformingIterator<T, R> implements Iterator<R> {
      * @param source      source iterator
      * @param mapFunction transformation function
      */
-    public TransformingIterator(final Iterator<T> source, final Function<T, R> mapFunction) {
+    public TransformingIterator(final CloseableIterator<T> source, final Function<T, R> mapFunction) {
         this.source = source;
         this.mapFunction = mapFunction;
     }
@@ -32,5 +32,10 @@ public class TransformingIterator<T, R> implements Iterator<R> {
     @Override
     public R next() {
         return this.mapFunction.apply(this.source.next());
+    }
+
+    @Override
+    public void close() {
+        this.source.close();
     }
 }

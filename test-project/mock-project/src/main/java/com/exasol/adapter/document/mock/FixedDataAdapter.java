@@ -12,6 +12,8 @@ import com.exasol.adapter.document.QueryPlanner;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.iterators.CloseableIterator;
+import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.queryplan.FetchQueryPlan;
 import com.exasol.adapter.document.queryplan.QueryPlan;
@@ -60,7 +62,7 @@ public class FixedDataAdapter extends DocumentAdapter {
     }
 
     private static class StaticDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -7976836360280664237L;
+        private static final long serialVersionUID = 7502407909281382595L;
         private static final ObjectHolderNode STATIC_VALUE = new ObjectHolderNode(
                 Map.of("isbn", new StringHolderNode("123456789"), //
                         "name", new StringHolderNode("Tom Sawyer"), //
@@ -68,8 +70,9 @@ public class FixedDataAdapter extends DocumentAdapter {
                         "my_timestamp", new TimestampHolderNode(new Timestamp(1632297287000L))));
 
         @Override
-        public Iterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
-            return List.of(new FetchedDocument(STATIC_VALUE, "staticFromTestCode")).iterator();
+        public CloseableIterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
+            return new CloseableIteratorWrapper<>(
+                    List.of(new FetchedDocument(STATIC_VALUE, "staticFromTestCode")).iterator());
         }
     }
 }

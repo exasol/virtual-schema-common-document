@@ -14,6 +14,8 @@ import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.BigDecimalHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.iterators.CloseableIterator;
+import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
 import com.exasol.adapter.document.mapping.*;
 
 class DataProcessingPipelineTest {
@@ -77,7 +79,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -7759133518353709829L;
+        private static final long serialVersionUID = -6285929025079393858L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {
@@ -85,8 +87,8 @@ class DataProcessingPipelineTest {
         }
 
         @Override
-        public Iterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
-            return new HelperIterator(this.onNext);
+        public CloseableIterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
+            return new CloseableIteratorWrapper<>(new HelperIterator(this.onNext));
         }
     }
 }

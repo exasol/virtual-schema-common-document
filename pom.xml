@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>6.1.1</version>
+    <version>7.0.0</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document</url>
@@ -103,12 +103,12 @@
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.1.0</version>
+            <version>2.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>error-reporting-java</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -154,7 +154,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>4.0.0</version>
+            <version>4.1.0</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
@@ -446,7 +446,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>1.3.1</version>
+                <version>1.3.2</version>
                 <executions>
                     <execution>
                         <goals>
