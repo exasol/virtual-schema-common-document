@@ -12,14 +12,14 @@ public interface PropertyToColumnMapping extends ColumnMapping {
      *
      * @return path to the property to extract
      */
-    DocumentPathExpression getPathToSourceProperty();
+    public DocumentPathExpression getPathToSourceProperty();
 
     /**
      * Get the {@link MappingErrorBehaviour} used in case that the path does not exist in the document.
      *
      * @return {@link MappingErrorBehaviour}
      */
-    MappingErrorBehaviour getLookupFailBehaviour();
+    public MappingErrorBehaviour getLookupFailBehaviour();
 
     /**
      * Accept a {@link PropertyToColumnMappingVisitor}.
@@ -32,4 +32,5 @@ public interface PropertyToColumnMapping extends ColumnMapping {
     default void accept(final ColumnMappingVisitor visitor) {
         visitor.visit(this);
     }
+
 }
