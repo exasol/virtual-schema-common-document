@@ -10,6 +10,11 @@ public class ConnectionStringReader {
     private static final String USER_GUIDE_MITIGATION = "Please check the user-guide at: {{user guide url|uq}}.";
     private final String userGuideUrl;
 
+    /**
+     * Create a new instance of {@link ConnectionStringReader}.
+     * 
+     * @param userGuideUrl URL to the user-guide (for exception messages)
+     */
     public ConnectionStringReader(final String userGuideUrl) {
         this.userGuideUrl = userGuideUrl;
     }

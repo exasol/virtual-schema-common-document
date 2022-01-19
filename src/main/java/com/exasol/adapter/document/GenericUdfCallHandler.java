@@ -33,6 +33,11 @@ public class GenericUdfCallHandler {
     public static final String PARAMETER_CONNECTION_NAME = "CONNECTION_NAME";
     private final String userGuideUrl;
 
+    /**
+     * Create a new instance of {@link GenericUdfCallHandler}.
+     * 
+     * @param userGuideUrl URL to the dialect specific user-guide
+     */
     public GenericUdfCallHandler(final String userGuideUrl) {
         this.userGuideUrl = userGuideUrl;
     }
@@ -73,8 +78,6 @@ public class GenericUdfCallHandler {
      *
      * @param exaMetadata exasol metadata
      * @param exaIterator iterator
-     * @throws ExaIterationException
-     * @throws
      */
     public void run(final ExaMetadata exaMetadata, final ExaIterator exaIterator) {
         /*

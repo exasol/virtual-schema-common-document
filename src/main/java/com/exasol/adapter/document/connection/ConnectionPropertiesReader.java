@@ -6,16 +6,31 @@ import com.exasol.errorreporting.ExaError;
 
 import jakarta.json.*;
 
+/**
+ * This class reads connection properties from a JSON string.
+ */
 public class ConnectionPropertiesReader {
     private static final String USER_GUIDE_MITIGATION = "Please check the user-guide at: {{user guide url}}.";
     private final String userGuideUrl;
     private final JsonObject input;
 
+    /**
+     * Create a new instance of {@link ConnectionPropertiesReader}.
+     * 
+     * @param jsonString   JSON string to read
+     * @param userGuideUrl link to the user guide (for exception messages)
+     */
     public ConnectionPropertiesReader(final String jsonString, final String userGuideUrl) {
         this.userGuideUrl = userGuideUrl;
         this.input = readConnectionJson(jsonString);
     }
 
+    /**
+     * Read a required string property.
+     * 
+     * @param propertyName property name
+     * @return property value
+     */
     public String readRequiredString(final String propertyName) {
         final String result = readString(propertyName);
         if (result == null || result.isBlank()) {
@@ -24,6 +39,12 @@ public class ConnectionPropertiesReader {
         return result;
     }
 
+    /**
+     * Read a non required string property.
+     * 
+     * @param propertyName name of the property to read
+     * @return property value
+     */
     public String readString(final String propertyName) {
         final JsonValue result = this.input.get(propertyName);
         if (result == null) {
@@ -37,6 +58,13 @@ public class ConnectionPropertiesReader {
         return ((JsonString) result).getString();
     }
 
+    /**
+     * Read a boolean property.
+     * 
+     * @param propertyName name of the property
+     * @param defaultValue default value to use if property is not set
+     * @return property value
+     */
     public boolean readBooleanWithDefault(final String propertyName, final boolean defaultValue) {
         final JsonValue result = this.input.get(propertyName);
         if (result == null) {

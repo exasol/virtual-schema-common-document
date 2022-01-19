@@ -5,6 +5,9 @@ import com.exasol.adapter.capabilities.Capabilities;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 
+/**
+ * Interface for document dialects.
+ */
 public interface DocumentAdapterDialect {
 
     /**
