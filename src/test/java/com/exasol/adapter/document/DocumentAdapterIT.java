@@ -1,6 +1,6 @@
 package com.exasol.adapter.document;
 
-import static com.exasol.adapter.document.UdfEntryPoint.*;
+import static com.exasol.adapter.document.GenericUdfCallHandler.*;
 import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
@@ -48,12 +48,14 @@ class DocumentAdapterIT {
     private static ExasolObjectFactory exasolObjectFactory;
     private static ConnectionDefinition nullConnection;
     private static AdapterScript adapterScript;
+    private static Connection connection;
 
     @BeforeAll
     static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, IOException {
         testSetup = new ExasolTestcontainerTestSetup();
-        final UdfTestSetup udfTestSetup = new UdfTestSetup(testSetup);
-        exasolObjectFactory = new ExasolObjectFactory(testSetup.createConnection(),
+        connection = testSetup.createConnection();
+        final UdfTestSetup udfTestSetup = new UdfTestSetup(testSetup, connection);
+        exasolObjectFactory = new ExasolObjectFactory(connection,
                 ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         buildMockAdapter();
         final ExasolSchema adapterSchema = exasolObjectFactory.createSchema("ADAPTER");
@@ -63,7 +65,7 @@ class DocumentAdapterIT {
                 .bucketFsContent("com.exasol.adapter.RequestDispatcher",
                         "/buckets/bfsdefault/default/" + MOCK_ADAPTER_JAR)
                 .language(AdapterScript.Language.JAVA).build();
-        nullConnection = exasolObjectFactory.createConnectionDefinition("NULL_CONNECTION", "nowhere", "user", "pass");
+        nullConnection = exasolObjectFactory.createConnectionDefinition("NULL_CONNECTION", "", "", "{ }");
         createUdf(adapterSchema);
     }
 
@@ -77,7 +79,8 @@ class DocumentAdapterIT {
                 .inputType(UdfScript.InputType.SET).parameter(PARAMETER_DOCUMENT_FETCHER, "VARCHAR(2000000)")
                 .parameter(PARAMETER_SCHEMA_MAPPING_REQUEST, "VARCHAR(2000000)")
                 .parameter(PARAMETER_CONNECTION_NAME, "VARCHAR(500)").emits()
-                .bucketFsContent(UdfEntryPoint.class.getName(), "/buckets/bfsdefault/default/" + MOCK_ADAPTER_JAR)
+                .bucketFsContent("com.exasol.adapter.document.UdfEntryPoint",
+                        "/buckets/bfsdefault/default/" + MOCK_ADAPTER_JAR)
                 .build();
     }
 
@@ -118,7 +121,7 @@ class DocumentAdapterIT {
                 () -> getClass().getClassLoader().getResourceAsStream("basicMapping.json"), "mapping.json");
         final VirtualSchema virtualSchema = createVirtualSchema("/bfsdefault/default/mapping.json");
         try {
-            final Statement statement = testSetup.createConnection().createStatement();
+            final Statement statement = connection.createStatement();
             final ResultSet resultSet = statement
                     .executeQuery("SELECT ISBN, NAME FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;");
             assertThat(resultSet,
@@ -183,7 +186,7 @@ class DocumentAdapterIT {
                         ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
                                 .useTimestampWithLocalTimezoneType(true).build())//
                 .build();
-        try (final Statement statement = testSetup.createConnection().createStatement()) {
+        try (final Statement statement = connection.createStatement()) {
             statement.executeUpdate("ALTER SESSION SET TIME_ZONE = '" + sessionTimezone + "';");
             final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
             final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
@@ -195,7 +198,7 @@ class DocumentAdapterIT {
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult) throws SQLException {
-        try (final Statement statement = testSetup.createConnection().createStatement()) {
+        try (final Statement statement = connection.createStatement()) {
             assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
         }
     }
@@ -235,7 +238,7 @@ class DocumentAdapterIT {
         final EdmlSerializer edmlSerializer = new EdmlSerializer();
         final String mappingString = "[" + edmlSerializer.serialize(t1) + ", " + edmlSerializer.serialize(t2) + "]";
         final VirtualSchema virtualSchema = createVirtualSchema(mappingString);
-        try (final Statement statement = testSetup.createConnection().createStatement()) {
+        try (final Statement statement = connection.createStatement()) {
             final ResultSet resultSet = statement.executeQuery(
                     "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1 UNION ALL SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T2");
             assertThat(resultSet, table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));

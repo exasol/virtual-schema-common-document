@@ -29,7 +29,7 @@ import com.exasol.sql.expression.literal.NullLiteral;
 import com.exasol.sql.rendering.StringRendererConfig;
 
 /**
- * This class builds push down SQL statement with a UDF call to {@link UdfEntryPoint}.
+ * This class builds push down SQL statement with a UDF call to {@link GenericUdfCallHandler}.
  * 
  * <p>
  * The push down statement consists of three cascaded statements.
@@ -67,9 +67,9 @@ public class UdfCallBuilder {
     }
 
     /**
-     * Build push down SQL statement with a UDF call to {@link UdfEntryPoint}. Each document fetcher gets a row that is
-     * passed to a UDF. Since it is not possible to pass data to all UDF calls also the query is added to each row, even
-     * though it is the same for all rows.
+     * Build push down SQL statement with a UDF call to {@link GenericUdfCallHandler}. Each document fetcher gets a row
+     * that is passed to a UDF. Since it is not possible to pass data to all UDF calls also the query is added to each
+     * row, even though it is the same for all rows.
      * 
      * @param queryPlan plan for the query
      * @param query     document query that is passed to the UDF
@@ -127,7 +127,7 @@ public class UdfCallBuilder {
         final Select udfCallSelect = StatementFactory.getInstance().select();
         final List<ColumnMapping> requiredColumns = getRequiredColumns(query, queryPlan);
         final List<Column> emitsColumns = buildColumnDefinitions(requiredColumns, udfCallSelect);
-        udfCallSelect.udf("\"" + this.adapterSchema + "\"." + UdfEntryPoint.UDF_PREFIX + this.adapterName,
+        udfCallSelect.udf("\"" + this.adapterSchema + "\"." + GenericUdfCallHandler.UDF_PREFIX + this.adapterName,
                 new ColumnsDefinition(emitsColumns), column(DATA_LOADER_COLUMN), column(SCHEMA_MAPPING_REQUEST_COLUMN),
                 column(CONNECTION_NAME_COLUMN));
         final SchemaMappingRequest schemaMappingRequest = new SchemaMappingRequest(

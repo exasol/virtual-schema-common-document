@@ -2,7 +2,7 @@ package com.exasol.adapter.document;
 
 import java.util.List;
 
-import com.exasol.ExaConnectionInformation;
+import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.iterators.CloseableIterator;
@@ -30,10 +30,9 @@ public class DataProcessingPipeline {
      * @param documentFetcher       document fetcher
      * @param connectionInformation connection information
      * @param rowHandler            handler for the read rows
-     * @throws InterruptedException if interrupted during execution
      */
-    public void run(final DocumentFetcher documentFetcher, final ExaConnectionInformation connectionInformation,
-            final RowHandler rowHandler) throws InterruptedException {
+    public void run(final DocumentFetcher documentFetcher, final ConnectionPropertiesReader connectionInformation,
+            final RowHandler rowHandler) {
         try (final CloseableIterator<FetchedDocument> documentIterator = documentFetcher.run(connectionInformation)) {
             while (documentIterator.hasNext()) {
                 this.schemaMapper.mapRow(documentIterator.next(), rowHandler::acceptRow);

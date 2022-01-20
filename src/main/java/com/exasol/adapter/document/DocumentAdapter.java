@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import com.exasol.*;
 import com.exasol.adapter.*;
 import com.exasol.adapter.capabilities.*;
+import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
+import com.exasol.adapter.document.connection.ConnectionStringReader;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
 import com.exasol.adapter.document.properties.DocumentAdapterProperties;
@@ -20,9 +22,9 @@ import com.exasol.adapter.sql.SqlStatement;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * This class is the abstract basis for Virtual Schema adapter for document data.
+ * This class is the basis for Virtual Schema adapter for document data.
  */
-public abstract class DocumentAdapter implements VirtualSchemaAdapter {
+public class DocumentAdapter implements VirtualSchemaAdapter {
     private static final Set<MainCapability> SUPPORTED_MAIN_CAPABILITIES = Set.of(MainCapability.SELECTLIST_PROJECTION,
             MainCapability.FILTER_EXPRESSIONS);
     private static final Set<PredicateCapability> SUPPORTED_PREDICATE_CAPABILITIES = Set.of(PredicateCapability.EQUAL,
@@ -33,11 +35,15 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
     private static final Set<AggregateFunctionCapability> SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES = Set.of();
     private static final Set<ScalarFunctionCapability> SUPPORTED_SCALAR_FUNCTION_CAPABILITIES = Set.of();
     private final int thisNodesCoreCount;
+    private final DocumentAdapterDialect dialect;
 
     /**
      * Create a new instance of {@link DocumentAdapter}.
+     * 
+     * @param dialect dialect implementation
      */
-    protected DocumentAdapter() {
+    public DocumentAdapter(final DocumentAdapterDialect dialect) {
+        this.dialect = dialect;
         this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
     }
 
@@ -58,24 +64,20 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
                 request.getSchemaMetadataInfo().getProperties());
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         getConnectionInformation(exaMetadata, request);
-        final TableKeyFetcher tableKeyFetcher = getTableKeyFetcher(getConnectionInformation(exaMetadata, request));
+        final TableKeyFetcher tableKeyFetcher = this.dialect
+                .getTableKeyFetcher(getConnectionInformation(exaMetadata, request));
         return new JsonSchemaMappingReader(tableKeyFetcher)
                 .readSchemaMapping(documentAdapterProperties.getMappingDefinition());
     }
 
-    /**
-     * Get a database specific {@link TableKeyFetcher}.
-     * 
-     * @param connectionInformation connection details
-     * @return database specific {@link TableKeyFetcher}
-     */
-    protected abstract TableKeyFetcher getTableKeyFetcher(ExaConnectionInformation connectionInformation);
-
-    private ExaConnectionInformation getConnectionInformation(final ExaMetadata exaMetadata,
+    private ConnectionPropertiesReader getConnectionInformation(final ExaMetadata exaMetadata,
             final AdapterRequest request) {
         try {
+            final String userGuideUrl = this.dialect.getUserGuideUrl();
             final AdapterProperties properties = getPropertiesFromRequest(request);
-            return exaMetadata.getConnection(properties.getConnectionName());
+            final ExaConnectionInformation connection = exaMetadata.getConnection(properties.getConnectionName());
+            final String connectionString = new ConnectionStringReader(userGuideUrl).read(connection);
+            return new ConnectionPropertiesReader(connectionString, userGuideUrl);
         } catch (final ExaConnectionAccessException exception) {
             throw new IllegalStateException(
                     ExaError.messageBuilder("E-VSD-15")
@@ -114,26 +116,16 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
             final RemoteTableQuery remoteTableQuery) {
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
-        final QueryPlanner queryPlanner = getQueryPlanner(getConnectionInformation(exaMetadata, request),
+        final QueryPlanner queryPlanner = this.dialect.getQueryPlanner(getConnectionInformation(exaMetadata, request),
                 adapterProperties);
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
                 documentAdapterProperties, this.thisNodesCoreCount);
         final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery, availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
-        return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), getAdapterName())
+        return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), this.dialect.getAdapterName())
                 .getUdfCallSql(queryPlan, remoteTableQuery);
     }
-
-    /**
-     * Get an data source specific {@link QueryPlanner}.
-     * 
-     * @param connectionInformation connection details
-     * @param adapterProperties     adapter properties
-     * @return source specific {@link QueryPlanner}
-     */
-    protected abstract QueryPlanner getQueryPlanner(ExaConnectionInformation connectionInformation,
-            AdapterProperties adapterProperties);
 
     @Override
     public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
@@ -150,24 +142,10 @@ public abstract class DocumentAdapter implements VirtualSchemaAdapter {
                 .mitigation("Drop and recreate the virtual schema instead.").toString());
     }
 
-    /**
-     * Get the name of the database-specific adapter.
-     * 
-     * @return name of the database-specific adapter
-     */
-    protected abstract String getAdapterName();
-
-    /**
-     * Get the capabilities of the dialect.
-     * 
-     * @return capabilities
-     */
-    protected abstract Capabilities getCapabilities();
-
     @Override
     public final GetCapabilitiesResponse getCapabilities(final ExaMetadata metadata,
             final GetCapabilitiesRequest request) throws AdapterException {
-        final Capabilities capabilities = getCapabilities();
+        final Capabilities capabilities = this.dialect.getCapabilities();
         checkThatCapabilitiesAreSupported(capabilities.getMainCapabilities(), SUPPORTED_MAIN_CAPABILITIES, "main");
         checkThatCapabilitiesAreSupported(capabilities.getPredicateCapabilities(), SUPPORTED_PREDICATE_CAPABILITIES,
                 "predicate");

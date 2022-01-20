@@ -9,7 +9,7 @@ import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.ExaConnectionInformation;
+import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.BigDecimalHolderNode;
@@ -79,7 +79,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -6285929025079393858L;
+        private static final long serialVersionUID = -4530093130173839392L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {
@@ -87,7 +87,7 @@ class DataProcessingPipelineTest {
         }
 
         @Override
-        public CloseableIterator<FetchedDocument> run(final ExaConnectionInformation connectionInformation) {
+        public CloseableIterator<FetchedDocument> run(final ConnectionPropertiesReader connectionInformation) {
             return new CloseableIteratorWrapper<>(new HelperIterator(this.onNext));
         }
     }
