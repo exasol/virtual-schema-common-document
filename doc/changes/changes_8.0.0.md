@@ -6,7 +6,7 @@ Code name: Unified connection definition
 
 This release added common implementation parts for switching to unified connection definition specified in: https://github.com/exasol/connection-parameter-specification/.
 
-This release has a breaking API changes:
+**This release has breaking API changes:**
 
 * The dialects must now implement `UdfEntryPoint` and call `GenericUdfCallHandler`.
 * The dialect Java API changed

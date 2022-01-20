@@ -10,7 +10,7 @@ import jakarta.json.*;
  * This class reads connection properties from a JSON string.
  */
 public class ConnectionPropertiesReader {
-    private static final String USER_GUIDE_MITIGATION = "Please check the user-guide at: {{user guide url}}.";
+    private static final String USER_GUIDE_MITIGATION = "Please check the user-guide at: {{user guide url|uq}}.";
     private final String userGuideUrl;
     private final JsonObject input;
 

@@ -22,7 +22,7 @@ import com.exasol.adapter.sql.SqlStatement;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * This class is the abstract basis for Virtual Schema adapter for document data.
+ * This class is the basis for Virtual Schema adapter for document data.
  */
 public class DocumentAdapter implements VirtualSchemaAdapter {
     private static final Set<MainCapability> SUPPORTED_MAIN_CAPABILITIES = Set.of(MainCapability.SELECTLIST_PROJECTION,

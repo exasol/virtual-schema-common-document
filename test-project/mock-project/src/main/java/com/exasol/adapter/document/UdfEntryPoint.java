@@ -16,7 +16,7 @@ public class UdfEntryPoint {
     }
 
     /**
-     * This method is called by the Exasol database when the IMPORT_FROM_ UDF is called.
+     * This method is called by the Exasol database when the {@code IMPORT_FROM_*} UDF is called.
      *
      * @param exaMetadata exasol metadata
      * @param exaIterator iterator

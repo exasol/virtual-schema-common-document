@@ -13,7 +13,7 @@ public interface DocumentFetcher extends Serializable {
     /**
      * Executes the planed operation.
      *
-     * @param connectionPropertiesReader for reading connection details fpr a connection to the remote database
+     * @param connectionPropertiesReader for reading connection details for a connection to the remote database
      * @return result of the operation.
      */
     public CloseableIterator<FetchedDocument> run(final ConnectionPropertiesReader connectionPropertiesReader);

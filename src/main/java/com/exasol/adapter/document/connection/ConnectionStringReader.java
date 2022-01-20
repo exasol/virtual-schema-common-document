@@ -13,7 +13,7 @@ public class ConnectionStringReader {
     /**
      * Create a new instance of {@link ConnectionStringReader}.
      * 
-     * @param userGuideUrl URL to the user-guide (for exception messages)
+     * @param userGuideUrl URL to the user-guide for exception messages
      */
     public ConnectionStringReader(final String userGuideUrl) {
         this.userGuideUrl = userGuideUrl;

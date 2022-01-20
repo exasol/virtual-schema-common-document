@@ -19,7 +19,7 @@ public interface DocumentAdapterDialect {
     public TableKeyFetcher getTableKeyFetcher(final ConnectionPropertiesReader connectionInformation);
 
     /**
-     * Get an data source specific {@link QueryPlanner}.
+     * Get a data source specific {@link QueryPlanner}.
      *
      * @param connectionInformation connection details
      * @param adapterProperties     adapter properties
