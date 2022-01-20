@@ -36,7 +36,6 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     private static final Set<ScalarFunctionCapability> SUPPORTED_SCALAR_FUNCTION_CAPABILITIES = Set.of();
     private final int thisNodesCoreCount;
     private final DocumentAdapterDialect dialect;
-    private final String userGuideUrl;
 
     /**
      * Create a new instance of {@link DocumentAdapter}.
@@ -45,7 +44,6 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
      */
     public DocumentAdapter(final DocumentAdapterDialect dialect) {
         this.dialect = dialect;
-        this.userGuideUrl = dialect.getUserGuideUrl();
         this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
     }
 
@@ -75,10 +73,11 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     private ConnectionPropertiesReader getConnectionInformation(final ExaMetadata exaMetadata,
             final AdapterRequest request) {
         try {
+            final String userGuideUrl = this.dialect.getUserGuideUrl();
             final AdapterProperties properties = getPropertiesFromRequest(request);
             final ExaConnectionInformation connection = exaMetadata.getConnection(properties.getConnectionName());
-            final String connectionString = new ConnectionStringReader(this.userGuideUrl).read(connection);
-            return new ConnectionPropertiesReader(connectionString, this.userGuideUrl);
+            final String connectionString = new ConnectionStringReader(userGuideUrl).read(connection);
+            return new ConnectionPropertiesReader(connectionString, userGuideUrl);
         } catch (final ExaConnectionAccessException exception) {
             throw new IllegalStateException(
                     ExaError.messageBuilder("E-VSD-15")

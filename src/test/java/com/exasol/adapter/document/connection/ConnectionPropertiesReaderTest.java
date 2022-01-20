@@ -23,13 +23,13 @@ class ConnectionPropertiesReaderTest {
     void testReadString() {
         final ConnectionPropertiesReader reader = new ConnectionPropertiesReader("{\"key\": \"value\"}",
                 USER_GUIDE_EXAMPLE);
-        assertThat(reader.readString("key"), equalTo("value"));
+        assertThat(reader.readString("key").orElseThrow(), equalTo("value"));
     }
 
     @Test
     void testReadStringDefault() {
         final ConnectionPropertiesReader reader = new ConnectionPropertiesReader(EMPTY_JSON_OBJECT, USER_GUIDE_EXAMPLE);
-        assertThat(reader.readString("key"), equalTo(null));
+        assertThat(reader.readString("key").isEmpty(), equalTo(true));
     }
 
     @ParameterizedTest
@@ -53,7 +53,7 @@ class ConnectionPropertiesReaderTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> reader.readRequiredString("key"));
         assertThat(exception.getMessage(), equalTo(
-                "E-VSD-93: Invalid connection. The connection definition does not specify the required property 'key'. Please check the user-guide at: 'http://example.com'."));
+                "E-VSD-93: Invalid connection. The connection definition does not specify the required property 'key'. Please check the user-guide at: http://example.com."));
     }
 
     @Test
@@ -62,16 +62,18 @@ class ConnectionPropertiesReaderTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> reader.readRequiredString("key"));
         assertThat(exception.getMessage(), equalTo(
-                "E-VSD-91: Invalid connection. The value of the property 'key' must be of type string (written in quotes). Please check the user-guide at: 'http://example.com'."));
+                "E-VSD-91: Invalid connection. The value of the property 'key' must be of type string (written in quotes). Please check the user-guide at: http://example.com."));
     }
 
-    @Test
-    void testWrongDataTypeForBoolean() {
-        final ConnectionPropertiesReader reader = new ConnectionPropertiesReader("{\"key\": 123}", USER_GUIDE_EXAMPLE);
+    @ParameterizedTest()
+    @ValueSource(strings = { "null", "\"aString\"" })
+    void testWrongDataTypeForBoolean(final String input) {
+        final ConnectionPropertiesReader reader = new ConnectionPropertiesReader("{\"key\": " + input + "}",
+                USER_GUIDE_EXAMPLE);
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> reader.readBooleanWithDefault("key", true));
         assertThat(exception.getMessage(), equalTo(
-                "E-VSD-92: Invalid connection. The value of the property 'key' must be of type boolean (true or false without quotes). Please check the user-guide at: 'http://example.com'."));
+                "E-VSD-92: Invalid connection. The value of the property 'key' must be of type boolean (true or false without quotes). Please check the user-guide at: http://example.com."));
     }
 
     @Test
@@ -79,6 +81,6 @@ class ConnectionPropertiesReaderTest {
         final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> new ConnectionPropertiesReader("{", USER_GUIDE_EXAMPLE));
         assertThat(exception.getMessage(), equalTo(
-                "E-VSD-94: Invalid connection. The connection definition has a invalid syntax. Please check the user-guide at: 'http://example.com'."));
+                "E-VSD-94: Invalid connection. The connection definition has a invalid syntax. Please check the user-guide at: http://example.com."));
     }
 }

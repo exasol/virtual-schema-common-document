@@ -74,7 +74,10 @@ public class GenericUdfCallHandler {
     }
 
     /**
-     * This method is called by the Exasol database when the ImportFromDynamodb UDF is called.
+     * This method is called by the {@code UdfEntryPoint} class that each dialect defines.
+     * <p>
+     * The dialect should directly call this method without any further processing.
+     * </p>
      *
      * @param exaMetadata exasol metadata
      * @param exaIterator iterator

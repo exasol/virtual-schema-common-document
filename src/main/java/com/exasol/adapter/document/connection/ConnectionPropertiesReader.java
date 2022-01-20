@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.connection;
 
 import java.io.StringReader;
+import java.util.Optional;
 
 import com.exasol.errorreporting.ExaError;
 
@@ -32,30 +33,36 @@ public class ConnectionPropertiesReader {
      * @return property value
      */
     public String readRequiredString(final String propertyName) {
-        final String result = readString(propertyName);
-        if (result == null || result.isBlank()) {
+        final Optional<String> result = readString(propertyName);
+        if (result.isEmpty()) {
             throw getMissingPropertyException(propertyName);
+        } else {
+            return result.get();
         }
-        return result;
     }
 
     /**
      * Read a non required string property.
      * 
      * @param propertyName name of the property to read
-     * @return property value
+     * @return optional property value
      */
-    public String readString(final String propertyName) {
+    public Optional<String> readString(final String propertyName) {
         final JsonValue result = this.input.get(propertyName);
         if (result == null) {
-            return null;
+            return Optional.empty();
         }
         if (!(result instanceof JsonString)) {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-91").message(
                     "Invalid connection. The value of the property {{property name}} must be of type string (written in quotes).",
                     propertyName).mitigation(USER_GUIDE_MITIGATION, this.userGuideUrl).toString());
         }
-        return ((JsonString) result).getString();
+        final String stringResult = ((JsonString) result).getString();
+        if (stringResult.isBlank()) {
+            return Optional.empty();
+        } else {
+            return Optional.of(stringResult);
+        }
     }
 
     /**
