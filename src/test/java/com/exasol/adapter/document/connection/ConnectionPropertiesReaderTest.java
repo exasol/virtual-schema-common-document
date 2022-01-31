@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.nio.charset.StandardCharsets;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -45,6 +47,23 @@ class ConnectionPropertiesReaderTest {
     void testReadBooleanDefault(final boolean defaultValue) {
         final ConnectionPropertiesReader reader = new ConnectionPropertiesReader(EMPTY_JSON_OBJECT, USER_GUIDE_EXAMPLE);
         assertThat(reader.readBooleanWithDefault("key", defaultValue), equalTo(defaultValue));
+    }
+
+    @Test
+    void testReadJson() {
+        final ConnectionPropertiesReader reader = new ConnectionPropertiesReader("{\"key\": {\"a\": 2} }",
+                USER_GUIDE_EXAMPLE);
+        final byte[] result = reader.readRequiredJsonProperty("key");
+        assertThat(new String(result, StandardCharsets.UTF_8), equalTo("{\"a\":2}"));
+    }
+
+    @Test
+    void testRequiredJsonMissing() {
+        final ConnectionPropertiesReader reader = new ConnectionPropertiesReader(EMPTY_JSON_OBJECT, USER_GUIDE_EXAMPLE);
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> reader.readRequiredJsonProperty("key"));
+        assertThat(exception.getMessage(), equalTo(
+                "E-VSD-93: Invalid connection. The connection definition does not specify the required property 'key'. Please check the user-guide at: http://example.com."));
     }
 
     @Test

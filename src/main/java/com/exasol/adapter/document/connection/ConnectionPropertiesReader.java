@@ -1,6 +1,6 @@
 package com.exasol.adapter.document.connection;
 
-import java.io.StringReader;
+import java.io.*;
 import java.util.Optional;
 
 import com.exasol.errorreporting.ExaError;
@@ -38,6 +38,34 @@ public class ConnectionPropertiesReader {
             throw getMissingPropertyException(propertyName);
         } else {
             return result.get();
+        }
+    }
+
+    /**
+     * Read a JSON formatted property.
+     * 
+     * @param propertyName name of the property
+     * @return JSON bytes
+     */
+    public byte[] readRequiredJsonProperty(final String propertyName) {
+        final JsonValue propertyValue = this.input.get(propertyName);
+        if (propertyValue == null) {
+            throw getMissingPropertyException(propertyName);
+        } else {
+            return toJson(propertyValue);
+        }
+    }
+
+    private byte[] toJson(final JsonValue propertyValue) {
+        try (final ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            try (final JsonWriter jsonWriter = Json.createWriter(outputStream)) {
+                jsonWriter.write(propertyValue);
+            }
+            return outputStream.toByteArray();
+        } catch (final IOException exception) {
+            throw new UncheckedIOException(
+                    ExaError.messageBuilder("E-VSD-98").message("Failed to re-serialize JSON property.").toString(),
+                    exception);
         }
     }
 
