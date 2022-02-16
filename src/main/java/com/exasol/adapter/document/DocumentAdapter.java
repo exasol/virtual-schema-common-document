@@ -172,7 +172,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
                     "This dialect specified {{capabilityType|uq}}-capabilities ({{listOfUnsupported}}) that are not supported by the abstract DocumentAdapter.")
                     .parameter("listOfUnsupported", listOfUnsupported)
                     .mitigation("Please remove the capability from the specific adapter implementation. "
-                            + "Supported {{capabilityType|uq}}-capabilities are [{{listOfSupported}}].")
+                            + "Supported {{capabilityType|uq}}-capabilities are [{{listOfSupported|uq}}].")
                     .parameter("capabilityType", capabilityType).parameter("listOfSupported", listOfSupported)
                     .toString());
         }

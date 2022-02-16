@@ -31,7 +31,7 @@ If you specify a different escape character like in the following example the Vi
 SELECT * FROM FAMILY WHERE NAME LIKE 'T?' ESCAPE ':';
 ```
 
-If you specify a different escape character by setting `DEFAULT_LIKE_ESCAPE_CHARACTER` the Virtual Schema will ignor it and still use `\`.
+If you specify a different escape character by setting `DEFAULT_LIKE_ESCAPE_CHARACTER` the Virtual Schema will ignore it and still use `\`.
 
 ## Information for Users
 

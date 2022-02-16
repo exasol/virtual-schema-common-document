@@ -233,8 +233,7 @@ class DocumentAdapterIT {
                 .destinationTable("BOOKS")//
                 .mapping(mapping).build();
         final String edmlString = new EdmlSerializer().serialize(edml);
-        final VirtualSchema virtualSchema = createVirtualSchema(edmlString);
-        return virtualSchema;
+        return createVirtualSchema(edmlString);
     }
 
     private VirtualSchema createVirtualSchema(final String mappingProperty) {
