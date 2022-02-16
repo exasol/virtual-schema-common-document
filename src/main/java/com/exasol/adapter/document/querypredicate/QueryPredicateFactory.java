@@ -89,7 +89,7 @@ public class QueryPredicateFactory {
                         .mitigation("Please change your query.").toString());
             }
             final SqlNode escapeChar = sqlPredicateLike.getEscapeChar();
-            if (!escapeChar.toString().equals(LIKE_ESCAPE_CHAR)) {
+            if (escapeChar != null && !escapeChar.toString().equals(LIKE_ESCAPE_CHAR)) {
                 throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-99")
                         .message("This virtual-schema only supports LIKE predicates with '\\' as escape character.")
                         .mitigation("Please add ESCAPE '\\'.").toString());
