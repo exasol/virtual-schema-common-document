@@ -8,6 +8,7 @@ import com.exasol.errorreporting.ExaError;
  * This class represents a comparison between two values.
  */
 public abstract class AbstractComparisonPredicate implements ComparisonPredicate {
+    public static final String LIKE_ESCAPE_CHAR = "\\";
     private final Operator operator;
 
     /**

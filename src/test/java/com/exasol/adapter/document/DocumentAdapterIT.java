@@ -5,6 +5,8 @@ import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehavio
 import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -153,6 +155,18 @@ class DocumentAdapterIT {
     }
 
     @Test
+    void testLikeWithIllegalEscapeChar() {
+        final Fields mapping = Fields.builder()//
+                .mapField("name", ToBoolMapping.builder().notBooleanBehavior(CONVERT_OR_ABORT).build())//
+                .build();
+        final String query = "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS WHERE NAME LIKE 'test' ESCAPE ':';";
+        final SQLException exception = assertThrows(SQLException.class,
+                () -> assertVirtualSchemaQuery(mapping, query, null));
+        assertThat(exception.getMessage(), containsString(
+                "E-VSD-99: This virtual-schema only supports LIKE predicates with '\\' as escape character. Please add ESCAPE '\\'."));
+    }
+
+    @Test
     void testToDateMapping() throws SQLException {
         final Fields mapping = Fields.builder()//
                 .mapField("publication_date", ToDateMapping.builder().notDateBehavior(CONVERT_OR_ABORT).build())//
@@ -205,17 +219,22 @@ class DocumentAdapterIT {
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult, final Statement statement) throws SQLException {
-        final EdmlDefinition edml = EdmlDefinition.builder().schema(SCHEMA).source("")//
-                .destinationTable("BOOKS")//
-                .mapping(mapping).build();
-        final String edmlString = new EdmlSerializer().serialize(edml);
-        final VirtualSchema virtualSchema = createVirtualSchema(edmlString);
+        final VirtualSchema virtualSchema = createVirtualSchema(mapping);
         try {
             final ResultSet resultSet = statement.executeQuery(query);
             assertThat(resultSet, expectedResult);
         } finally {
             virtualSchema.drop();
         }
+    }
+
+    private VirtualSchema createVirtualSchema(final MappingDefinition mapping) {
+        final EdmlDefinition edml = EdmlDefinition.builder().schema(SCHEMA).source("")//
+                .destinationTable("BOOKS")//
+                .mapping(mapping).build();
+        final String edmlString = new EdmlSerializer().serialize(edml);
+        final VirtualSchema virtualSchema = createVirtualSchema(edmlString);
+        return virtualSchema;
     }
 
     private VirtualSchema createVirtualSchema(final String mappingProperty) {

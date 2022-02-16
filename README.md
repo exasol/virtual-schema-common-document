@@ -17,6 +17,22 @@
 
 This repository contains common parts for Virtual Schema adapters for document data sources.
 
+## Push Down Selection
+
+This Virtual Schema adapter supports pushing-down certain filters from the `WHERE` clause to the data source. Which filters are supported specifically depends on the dialect.
+
+### Like
+
+When pushing down `LIKE` expressions this adapter only supports `\` as escape character.
+
+If you specify a different escape character like in the following example the Virtual Schema will throw an Exception.
+
+```sql
+SELECT * FROM FAMILY WHERE NAME LIKE 'T?' ESCAPE ':';
+```
+
+If you specify a different escape character by setting `DEFAULT_LIKE_ESCAPE_CHARACTER` the Virtual Schema will ignor it and still use `\`.
+
 ## Information for Users
 
 * [EDML User Guide](doc/user_guide/edml_user_guide.md)

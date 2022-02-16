@@ -13,10 +13,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.mapping.ColumnMapping;
-import com.exasol.adapter.document.mapping.MappingErrorBehaviour;
-import com.exasol.adapter.document.mapping.PropertyToJsonColumnMapping;
-import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.metadata.ColumnMetadata;
 import com.exasol.adapter.sql.*;
 
@@ -93,8 +90,8 @@ class QueryPredicateFactoryTest {
                 new SqlColumn(1, columnMetadata));
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> FACTORY.buildPredicateFor(predicate));
-        assertThat(exception.getMessage(),
-                equalTo("E-VSD-40: Predicates on two columns are not yet supported in this Virtual Schema version. Change your query."));
+        assertThat(exception.getMessage(), equalTo(
+                "E-VSD-40: Predicates on two columns are not yet supported in this Virtual Schema version. Change your query."));
     }
 
     @Test
@@ -102,8 +99,8 @@ class QueryPredicateFactoryTest {
         final SqlPredicateEqual predicate = new SqlPredicateEqual(LITERAL, LITERAL);
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> FACTORY.buildPredicateFor(predicate));
-        assertThat(exception.getMessage(),
-                equalTo("E-VSD-41: Predicates on two literals are not yet supported in this Virtual Schema version. Change your query."));
+        assertThat(exception.getMessage(), equalTo(
+                "E-VSD-41: Predicates on two literals are not yet supported in this Virtual Schema version. Change your query."));
     }
 
     @Test
@@ -184,5 +181,15 @@ class QueryPredicateFactoryTest {
                         equalTo(COLUMN_MAPPING.getExasolColumnName())),
                 () -> assertThat(predicate.getOperator(), equalTo(AbstractComparisonPredicate.Operator.LIKE))//
         );
+    }
+
+    @Test
+    void testBuildLikeWithIllegalEscapeChar() {
+        final SqlPredicateLike sqlPredicate = new SqlPredicateLike(new SqlColumn(0, columnMetadata), LITERAL,
+                new SqlLiteralString(";"));
+        final IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> FACTORY.buildPredicateFor(sqlPredicate));
+        assertThat(exception.getMessage(), equalTo(
+                "E-VSD-99: This virtual-schema only supports LIKE predicates with '\\' as escape character. Please add ESCAPE '\\'."));
     }
 }
