@@ -29,7 +29,8 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
             MainCapability.FILTER_EXPRESSIONS);
     private static final Set<PredicateCapability> SUPPORTED_PREDICATE_CAPABILITIES = Set.of(PredicateCapability.EQUAL,
             PredicateCapability.NOTEQUAL, PredicateCapability.LESS, PredicateCapability.LESSEQUAL,
-            PredicateCapability.LIKE, PredicateCapability.AND, PredicateCapability.OR, PredicateCapability.NOT);
+            PredicateCapability.LIKE, PredicateCapability.LIKE_ESCAPE, PredicateCapability.AND, PredicateCapability.OR,
+            PredicateCapability.NOT);
     private static final Set<LiteralCapability> SUPPORTED_LITERAL_CAPABILITIES = Set.of(LiteralCapability.STRING,
             LiteralCapability.NULL, LiteralCapability.BOOL, LiteralCapability.DOUBLE, LiteralCapability.EXACTNUMERIC);
     private static final Set<AggregateFunctionCapability> SUPPORTED_AGGREGATE_FUNCTION_CAPABILITIES = Set.of();
@@ -167,11 +168,13 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
                     .sorted(String::compareTo).collect(Collectors.joining(", "));
             final String listOfSupported = supportedCapabilities.stream().map(Enum::toString).sorted(String::compareTo)
                     .collect(Collectors.joining(", "));
-            throw new UnsupportedOperationException(
-                    "F-VSD-3: This dialect specified " + capabilityType + "-capabilities (" + listOfUnsupported
-                            + ") that are not supported by the abstract DocumentAdapter. "
-                            + "Please remove the capability from the specific adapter implementation. " + "Supported "
-                            + capabilityType + "-capabilities are [" + listOfSupported + "].");
+            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-3").message(
+                    "This dialect specified {{capabilityType|uq}}-capabilities ({{listOfUnsupported}}) that are not supported by the abstract DocumentAdapter.")
+                    .parameter("listOfUnsupported", listOfUnsupported)
+                    .mitigation("Please remove the capability from the specific adapter implementation. "
+                            + "Supported {{capabilityType|uq}}-capabilities are [{{listOfSupported|uq}}].")
+                    .parameter("capabilityType", capabilityType).parameter("listOfSupported", listOfSupported)
+                    .toString());
         }
     }
 }

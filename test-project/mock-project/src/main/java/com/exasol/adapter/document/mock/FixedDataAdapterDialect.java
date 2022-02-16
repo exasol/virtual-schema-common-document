@@ -5,7 +5,7 @@ import java.sql.Timestamp;
 import java.util.*;
 
 import com.exasol.adapter.AdapterProperties;
-import com.exasol.adapter.capabilities.Capabilities;
+import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.DocumentAdapterDialect;
 import com.exasol.adapter.document.QueryPlanner;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
@@ -52,7 +52,10 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
 
     @Override
     public Capabilities getCapabilities() {
-        return Capabilities.builder().build();
+        return Capabilities.builder().addMain(MainCapability.SELECTLIST_PROJECTION, MainCapability.FILTER_EXPRESSIONS)
+                .addPredicate(PredicateCapability.EQUAL, PredicateCapability.LIKE, PredicateCapability.LIKE_ESCAPE,
+                        PredicateCapability.AND, PredicateCapability.OR, PredicateCapability.NOT)
+                .addLiteral(LiteralCapability.STRING).build();
     }
 
     @Override
@@ -69,7 +72,7 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
     }
 
     private static class StaticDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = 7502407909281382595L;
+        private static final long serialVersionUID = -5714529636662210400L;
         private static final ObjectHolderNode STATIC_VALUE = new ObjectHolderNode(
                 Map.of("isbn", new StringHolderNode("123456789"), //
                         "name", new StringHolderNode("Tom Sawyer"), //
