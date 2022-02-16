@@ -27,7 +27,7 @@ class DocumentAdapterTest {
         final UnsupportedOperationException exception = assertThrows(UnsupportedOperationException.class,
                 () -> documentAdapter.getCapabilities(null, null));
         assertThat(exception.getMessage(), matchesPattern(Pattern.quote(
-                "F-VSD-3: This dialect specified main-capabilities (AGGREGATE_HAVING) that are not supported by the abstract DocumentAdapter. Please remove the capability from the specific adapter implementation. Supported main-capabilities are [")
+                "F-VSD-3: This dialect specified main-capabilities ('AGGREGATE_HAVING') that are not supported by the abstract DocumentAdapter. Please remove the capability from the specific adapter implementation. Supported main-capabilities are [")
                 + "[^]]*\\]\\."));
     }
 
