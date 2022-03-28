@@ -1,0 +1,11 @@
+sources:
+  - type: maven
+    path: pom.xml
+    modules:
+      - integration_tests
+      - maven_central
+      - lombok
+      - udf_coverage
+linkReplacements:
+  - "https://awhitford.github.com/lombok.maven/lombok-maven-plugin/|http://anthonywhitford.com/lombok.maven/lombok-maven-plugin/"
+
