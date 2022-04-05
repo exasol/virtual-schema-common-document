@@ -45,7 +45,6 @@ class DocumentAdapterIT {
     private static final String VS_COMMON_DOCUMENT_VERSION_PROPERTY = "vs-common-document-version";
     private static final Pattern VS_COMMON_DOCUMENT_VERSION_PROPERTY_PATTERN = Pattern.compile(
             "<" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">([^<]++)</" + VS_COMMON_DOCUMENT_VERSION_PROPERTY + ">");
-    private static final String SCHEMA = "https://schemas.exasol.com/edml-1.3.0.json";
     private static ExasolTestSetup testSetup;
     private static ExasolObjectFactory exasolObjectFactory;
     private static ConnectionDefinition nullConnection;
@@ -229,7 +228,7 @@ class DocumentAdapterIT {
     }
 
     private VirtualSchema createVirtualSchema(final MappingDefinition mapping) {
-        final EdmlDefinition edml = EdmlDefinition.builder().schema(SCHEMA).source("")//
+        final EdmlDefinition edml = EdmlDefinition.builder().source("")//
                 .destinationTable("BOOKS")//
                 .mapping(mapping).build();
         final String edmlString = new EdmlSerializer().serialize(edml);
@@ -247,10 +246,10 @@ class DocumentAdapterIT {
         final Fields mapping = Fields.builder()//
                 .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
                 .build();
-        final EdmlDefinition t1 = EdmlDefinition.builder().schema(SCHEMA).source("")//
+        final EdmlDefinition t1 = EdmlDefinition.builder().source("")//
                 .destinationTable("T1")//
                 .mapping(mapping).build();
-        final EdmlDefinition t2 = EdmlDefinition.builder().schema(SCHEMA).source("")//
+        final EdmlDefinition t2 = EdmlDefinition.builder().source("")//
                 .destinationTable("T2")//
                 .mapping(mapping).build();
         final EdmlSerializer edmlSerializer = new EdmlSerializer();

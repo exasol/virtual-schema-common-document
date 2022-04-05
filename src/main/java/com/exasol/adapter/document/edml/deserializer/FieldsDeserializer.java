@@ -1,27 +1,29 @@
 package com.exasol.adapter.document.edml.deserializer;
 
-import java.io.IOException;
+import java.util.Map;
 
 import com.exasol.adapter.document.edml.Fields;
 import com.exasol.adapter.document.edml.MappingDefinition;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
+
+import jakarta.json.JsonObject;
+import jakarta.json.JsonValue;
 
 /**
- * EDML Deserializer for {@link Fields}.
+ * Deserializer for {@link Fields}.
  */
-class FieldsDeserializer extends JsonDeserializer<Fields> {
-
+class FieldsDeserializer implements MappingDefinitionDeserializer {
     @Override
-    public Fields deserialize(final JsonParser jsonParser, final DeserializationContext deserializationContext)
-            throws IOException {
+    public MappingDefinition deserialize(final JsonObject json) {
         final Fields.FieldsBuilder builder = Fields.builder();
-        String nextFieldName;
-        while ((nextFieldName = jsonParser.nextFieldName()) != null) {
-            jsonParser.nextValue();
-            builder.mapField(nextFieldName, jsonParser.readValueAs(MappingDefinition.class));
+        for (final Map.Entry<String, JsonValue> entry : json.entrySet()) {
+            builder.mapField(entry.getKey(),
+                    new MappingDeserializer().deserializeMapping(entry.getValue().asJsonObject()));
         }
         return builder.build();
+    }
+
+    @Override
+    public Class<?> ofClass() {
+        return Fields.class;
     }
 }
