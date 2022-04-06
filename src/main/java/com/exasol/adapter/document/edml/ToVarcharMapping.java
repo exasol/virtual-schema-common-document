@@ -8,7 +8,6 @@ import com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import lombok.extern.jackson.Jacksonized;
 
 /**
  * Java representation of the EDML {@code toVarcharMapping}.
@@ -16,7 +15,7 @@ import lombok.extern.jackson.Jacksonized;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Data
-@Jacksonized
+
 @SuperBuilder
 @SuppressWarnings("java:S1170") // sonar can't deal with Lombok
 public final class ToVarcharMapping extends AbstractToVarcharColumnMapping {

@@ -1,21 +1,22 @@
-# Common Virtual Schema for document data 8.1.2, released 2022-??-??
+# Common Virtual Schema for document data 9.0.0, released 2022-??-??
 
 Code name:
 
-## Features
+## Refactoring
 
-* ISSUE_NUMBER: description
+* #132: Removed Jackson databind dependency
 
 ## Dependency Updates
 
 ### Compile Dependency Updates
 
-* Updated `com.fasterxml.jackson.core:jackson-databind:2.13.1` to `2.13.2.1`
+* Removed `com.fasterxml.jackson.core:jackson-databind:2.13.1`
 
 ### Test Dependency Updates
 
 * Updated `com.exasol:test-db-builder-java:3.3.0` to `3.3.1`
 * Updated `com.exasol:udf-debugging-java:0.5.0` to `0.6.0`
+* Added `nl.jqno.equalsverifier:equalsverifier:3.10`
 * Updated `org.apache.maven.shared:maven-verifier:1.7.2` to `1.8.0`
 * Updated `org.jacoco:org.jacoco.agent:0.8.7` to `0.8.5`
 
