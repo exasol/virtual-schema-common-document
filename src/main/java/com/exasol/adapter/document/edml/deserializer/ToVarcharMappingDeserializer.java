@@ -12,7 +12,7 @@ import com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour;
 import jakarta.json.JsonObject;
 
 /**
- * Deserializer for {@link ToJsonMapping}.
+ * Deserializer for {@link ToVarcharMapping}.
  */
 class ToVarcharMappingDeserializer implements MappingDefinitionDeserializer {
     @Override
