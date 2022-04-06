@@ -16,6 +16,7 @@ Code name:
 
 * Updated `com.exasol:test-db-builder-java:3.3.0` to `3.3.1`
 * Updated `com.exasol:udf-debugging-java:0.5.0` to `0.6.0`
+* Added `nl.jqno.equalsverifier:equalsverifier:3.10`
 * Updated `org.apache.maven.shared:maven-verifier:1.7.2` to `1.8.0`
 * Updated `org.jacoco:org.jacoco.agent:0.8.7` to `0.8.5`
 
