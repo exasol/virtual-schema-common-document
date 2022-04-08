@@ -1,5 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
+import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
+import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.*;
@@ -13,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = -8517627343996328336L;
+    private static final long serialVersionUID = 331013763747038031L;
     /** @serial */
     private final int varcharColumnSize;
     /** @serial */

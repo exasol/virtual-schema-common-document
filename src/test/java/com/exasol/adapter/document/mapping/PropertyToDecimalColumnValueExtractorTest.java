@@ -1,7 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.ABORT;
-import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.NULL;
+import static com.exasol.adapter.document.edml.MappingErrorBehaviour.ABORT;
+import static com.exasol.adapter.document.edml.MappingErrorBehaviour.NULL;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -20,6 +20,7 @@ import org.junit.jupiter.params.provider.*;
 import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 
 class PropertyToDecimalColumnValueExtractorTest {
 

@@ -1,9 +1,9 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
+import static com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour.*;
+import static com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour.NULL;
+import static com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour.TRUNCATE;
 import static com.exasol.adapter.document.mapping.ExcerptGenerator.getExcerpt;
-import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.NULL;
-import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

@@ -51,10 +51,6 @@
     </scm>
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
             <snapshots>
@@ -91,11 +87,6 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.everit-org.json-schema</groupId>
-            <artifactId>org.everit.json.schema</artifactId>
-            <version>1.14.0</version>
-        </dependency>
-        <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>sql-statement-builder</artifactId>
             <version>4.5.0</version>
@@ -117,15 +108,9 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>jakarta.json</groupId>
-            <artifactId>jakarta.json-api</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>jakarta.json</artifactId>
-            <version>2.0.1</version>
-            <scope>runtime</scope>
+            <groupId>com.exasol</groupId>
+            <artifactId>edml-java</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
@@ -201,12 +186,6 @@
             <groupId>com.exasol</groupId>
             <artifactId>maven-project-version-getter</artifactId>
             <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>nl.jqno.equalsverifier</groupId>
-            <artifactId>equalsverifier</artifactId>
-            <version>3.10</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

@@ -16,6 +16,7 @@ import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
 import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.documentpath.StaticDocumentPathIterator;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 
 class AbstractPropertyToColumnValueExtractorTest {
 

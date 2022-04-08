@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.*;
@@ -11,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = -2761342146945740872L;
+    private static final long serialVersionUID = 5927405036134725056L;
 
     public MockPropertyToColumnMapping(final String destinationName, final DocumentPathExpression sourcePath,
             final MappingErrorBehaviour lookupFailBehaviour) {

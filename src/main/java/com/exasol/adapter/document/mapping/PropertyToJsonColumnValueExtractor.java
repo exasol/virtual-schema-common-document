@@ -6,6 +6,7 @@ import java.util.Base64;
 import java.util.Map;
 
 import com.exasol.adapter.document.documentnode.*;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.errorreporting.ExaError;
 
 import jakarta.json.*;

@@ -16,7 +16,7 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
+import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.properties.EdmlInput;
 

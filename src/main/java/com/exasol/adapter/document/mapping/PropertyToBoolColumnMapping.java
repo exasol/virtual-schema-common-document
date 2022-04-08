@@ -1,5 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
+import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.*;
@@ -14,7 +15,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = 4835013551698610917L;
+    private static final long serialVersionUID = 7665762375515945443L;
     /** @serial */
     private final ConvertableMappingErrorBehaviour notBooleanBehavior;
 

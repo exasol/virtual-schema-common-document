@@ -1,7 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.ABORT;
-import static com.exasol.adapter.document.mapping.MappingErrorBehaviour.NULL;
+import static com.exasol.adapter.document.edml.MappingErrorBehaviour.ABORT;
+import static com.exasol.adapter.document.edml.MappingErrorBehaviour.NULL;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;

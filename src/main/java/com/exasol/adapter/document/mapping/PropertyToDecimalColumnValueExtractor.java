@@ -3,6 +3,7 @@ package com.exasol.adapter.document.mapping;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.errorreporting.ExaError;
 
 import lombok.RequiredArgsConstructor;
