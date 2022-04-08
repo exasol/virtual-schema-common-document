@@ -14,6 +14,8 @@ import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.holder.BigDecimalHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.document.iterators.CloseableIterator;
 import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
 import com.exasol.adapter.document.mapping.*;
@@ -79,7 +81,7 @@ class DataProcessingPipelineTest {
     }
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
-        private static final long serialVersionUID = -4530093130173839392L;
+        private static final long serialVersionUID = 3777440484106526521L;
         private final Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {

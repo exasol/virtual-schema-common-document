@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 
 public class PropertyToColumnMappingBuilderQuickAccess {
     public static final String DEFAULT_EXASOL_COLUMN_NAME = "EXASOL_COLUMN";

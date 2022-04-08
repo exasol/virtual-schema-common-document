@@ -5,18 +5,25 @@ Code name:
 ## Refactoring
 
 * #132: Removed Jackson databind dependency
+* #134: Moved EDML model to dedicated repo
 
 ## Dependency Updates
 
 ### Compile Dependency Updates
 
+* Added `com.exasol:edml-java:1.0.0`
 * Removed `com.fasterxml.jackson.core:jackson-databind:2.13.1`
+* Removed `com.github.everit-org.json-schema:org.everit.json.schema:1.14.0`
+* Removed `jakarta.json:jakarta.json-api:2.0.1`
+
+### Runtime Dependency Updates
+
+* Removed `org.glassfish:jakarta.json:2.0.1`
 
 ### Test Dependency Updates
 
 * Updated `com.exasol:test-db-builder-java:3.3.0` to `3.3.1`
 * Updated `com.exasol:udf-debugging-java:0.5.0` to `0.6.0`
-* Added `nl.jqno.equalsverifier:equalsverifier:3.10`
 * Updated `org.apache.maven.shared:maven-verifier:1.7.2` to `1.8.0`
 * Updated `org.jacoco:org.jacoco.agent:0.8.7` to `0.8.5`
 

@@ -1,5 +1,6 @@
 package com.exasol.adapter.document.mapping;
 
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.*;
@@ -13,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = -929338332900021301L;
+    private static final long serialVersionUID = -6633690614095755071L;
     /** @serial */
     private final int varcharColumnSize;
     /** @serial */

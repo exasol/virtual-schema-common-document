@@ -2,6 +2,7 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 
 /**
  * Interface for extracting a value specified in a {@link ColumnMapping} from a document.

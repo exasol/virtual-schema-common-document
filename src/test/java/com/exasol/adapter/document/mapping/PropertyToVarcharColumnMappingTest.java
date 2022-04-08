@@ -1,8 +1,8 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.NULL;
+import static com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour.NULL;
+import static com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour.TRUNCATE;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
-import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
 import static com.exasol.adapter.metadata.DataType.ExaCharset.UTF8;
 import static org.hamcrest.MatcherAssert.assertThat;
 

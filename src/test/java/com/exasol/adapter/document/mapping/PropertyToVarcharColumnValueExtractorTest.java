@@ -1,8 +1,8 @@
 package com.exasol.adapter.document.mapping;
 
-import static com.exasol.adapter.document.mapping.ConvertableMappingErrorBehaviour.*;
+import static com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour.*;
+import static com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour.TRUNCATE;
 import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilderQuickAccess.configureExampleMapping;
-import static com.exasol.adapter.document.mapping.TruncateableMappingErrorBehaviour.TRUNCATE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,6 +20,8 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
+import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
 
 class PropertyToVarcharColumnValueExtractorTest {
     private static final String TEST_STRING = "test";

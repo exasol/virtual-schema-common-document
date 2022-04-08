@@ -6,6 +6,7 @@ import com.exasol.adapter.document.documentfetcher.FetchedDocument;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentpath.DocumentPathWalker;
 import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.sql.expression.ValueExpression;
 

@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 
 class PropertyToTimestampColumnValueExtractorTest {
     private static PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> commonMappingBuilder() {

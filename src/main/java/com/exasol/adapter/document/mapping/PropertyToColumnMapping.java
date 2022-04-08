@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 
 /**
  * This interface defines the mapping from a property in the remote document to an Exasol column.
