@@ -1,18 +1,20 @@
-# Common Virtual Schema for document data 9.0.0, released 2022-??-??
+# Common Virtual Schema for document data 9.0.0, released 2022-05-10
 
-Code name:
+Code name: Extracted EDML model
 
 ## Refactoring
 
 * #132: Removed Jackson databind dependency
 * #134: Moved EDML model to dedicated repo
 * #136: Removed adapterNotes bug comment
+* #130: Added CloseInjectIterator
 
 ## Dependency Updates
 
 ### Compile Dependency Updates
 
 * Added `com.exasol:edml-java:1.0.0`
+* Updated `com.exasol:sql-statement-builder:4.5.0` to `4.5.1`
 * Removed `com.fasterxml.jackson.core:jackson-databind:2.13.1`
 * Removed `com.github.everit-org.json-schema:org.everit.json.schema:1.14.0`
 * Removed `jakarta.json:jakarta.json-api:2.0.1`
@@ -23,10 +25,11 @@ Code name:
 
 ### Test Dependency Updates
 
-* Updated `com.exasol:test-db-builder-java:3.3.0` to `3.3.1`
+* Updated `com.exasol:test-db-builder-java:3.3.0` to `3.3.2`
 * Updated `com.exasol:udf-debugging-java:0.5.0` to `0.6.0`
 * Updated `org.apache.maven.shared:maven-verifier:1.7.2` to `1.8.0`
 * Updated `org.jacoco:org.jacoco.agent:0.8.7` to `0.8.5`
+* Updated `org.mockito:mockito-junit-jupiter:4.3.1` to `4.5.1`
 
 ### Plugin Dependency Updates
 
