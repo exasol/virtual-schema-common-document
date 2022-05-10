@@ -86,10 +86,10 @@ public class SchemaMappingToSchemaMetadataConverter {
      * Deserializes a {@link TableMapping} from {@link TableMetadata}.
      *
      * <p>
-     * We use the adapter notes of the schema here since in the past there was a bug (SPOT-9952) that did not allow use
+     * We use the adapter notes of the schema here since in the past there was a bug (SPOT-9952) that did not allow us
      * to store the metadata with the table. However we did not change it now since in the future it might make sense to
      * move also the Column metadata into the Schema metadata. By that we would have all persistent information in one
-     * place. That makes testing this part a lot easier. Another reason is that it has no downside to do it in that way
+     * place. That makes testing this part a lot easier. Another reason is that it has no downside to do it that way
      * and for that reason is not worth a refactoring.
      * </p>
      * 
