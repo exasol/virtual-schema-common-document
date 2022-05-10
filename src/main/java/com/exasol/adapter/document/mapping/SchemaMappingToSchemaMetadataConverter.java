@@ -4,13 +4,9 @@ import static com.exasol.utils.StringSerializer.serializeToString;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import com.exasol.adapter.metadata.ColumnMetadata;
-import com.exasol.adapter.metadata.SchemaMetadata;
-import com.exasol.adapter.metadata.TableMetadata;
+import com.exasol.adapter.metadata.*;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.utils.StringSerializer;
 
@@ -89,8 +85,16 @@ public class SchemaMappingToSchemaMetadataConverter {
     /**
      * Deserializes a {@link TableMapping} from {@link TableMetadata}.
      *
+     * <p>
+     * We use the adapter notes of the schema here since in the past there was a bug (SPOT-9952) that did not allow use
+     * to store the metadata with the table. However we did not change it now since in the future it might make sense to
+     * move also the Column metadata into the Schema metadata. By that we would have all persistent information in one
+     * place. That makes testing this part a lot easier. Another reason is that it has no downside to do it in that way
+     * and for that reason is not worth a refactoring.
+     * </p>
+     * 
      * @param tableMetadata      metadata for the table to be deserialized
-     * @param schemaAdapterNotes needed because the tables can't be serialized into the TableMetadata due to a bug
+     * @param schemaAdapterNotes adapter notes of the schema
      * @return deserialized {@link TableMapping}
      * @throws IllegalStateException if deserialization fails
      */
@@ -118,8 +122,7 @@ public class SchemaMappingToSchemaMetadataConverter {
     }
 
     /**
-     * Workaround as tables cant be serialized to {@link TableMetadata} due to a bug in Exasol.
-     * {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25}
+     * See comment on {@link #convertBackTable(TableMetadata, String)}
      */
     private TableMapping findTableInSchemaMetadata(final String tableName, final String schemaAdapterNotes)
             throws IOException, ClassNotFoundException {
@@ -151,7 +154,7 @@ public class SchemaMappingToSchemaMetadataConverter {
      * stores a map that gives the {@link TableMapping} for its Exasol table name.
      */
     private static class TableMappings implements Serializable {
-        private static final long serialVersionUID = -8073968119043863037L;
+        private static final long serialVersionUID = 5951740683817686929L;
         private final HashMap<String, TableMapping> mappings;
 
         private TableMappings(final HashMap<String, TableMapping> mappings) {
