@@ -23,7 +23,7 @@
 | [JUnit Jupiter Params][18]               | [Eclipse Public License v2.0][19] |
 | [mockito-junit-jupiter][22]              | [The MIT License][23]             |
 | [exasol-test-setup-abstraction-java][24] | [MIT][1]                          |
-| [Test Database Builder for Java][26]     | [MIT][1]                          |
+| [Test Database Builder for Java][26]     | [MIT License][27]                 |
 | [udf-debugging-java][28]                 | [MIT][1]                          |
 | [Apache Maven Verifier Component][30]    | [Apache License, Version 2.0][31] |
 | [Apache Commons IO][32]                  | [Apache License, Version 2.0][31] |
@@ -72,6 +72,7 @@
 [52]: http://www.mojohaus.org/versions-maven-plugin/
 [17]: http://opensource.org/licenses/BSD-3-Clause
 [40]: https://maven.apache.org/plugins/maven-compiler-plugin/
+[27]: https://github.com/exasol/test-db-builder-java/blob/main/LICENSE
 [34]: http://junit.org
 [39]: https://www.eclipse.org/legal/epl-2.0/
 [54]: https://maven.apache.org/plugins/maven-deploy-plugin/
@@ -90,10 +91,10 @@
 [2]: http://www.slf4j.org
 [80]: http://maven.apache.org/plugins/maven-resources-plugin/
 [24]: https://github.com/exasol/exasol-test-setup-abstraction-java
+[26]: https://github.com/exasol/test-db-builder-java/
 [62]: http://www.sonatype.com/public-parent/nexus-maven-plugins/nexus-staging/nexus-staging-maven-plugin/
 [72]: https://maven.apache.org/surefire/maven-failsafe-plugin/
 [6]: http://www.logicng.org
-[26]: https://github.com/exasol/test-db-builder-java
 [4]: https://github.com/exasol/sql-statement-builder
 [66]: http://anthonywhitford.com/lombok.maven/lombok-maven-plugin/
 [35]: http://www.eclipse.org/legal/epl-v10.html
