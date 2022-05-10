@@ -6,7 +6,7 @@ Code name:
 
 * #132: Removed Jackson databind dependency
 * #134: Moved EDML model to dedicated repo
-* #25: Removed adapterNotes bug comment
+* #136: Removed adapterNotes bug comment
 
 ## Dependency Updates
 
