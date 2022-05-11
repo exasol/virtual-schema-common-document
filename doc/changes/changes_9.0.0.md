@@ -1,4 +1,4 @@
-# Common Virtual Schema for document data 9.0.0, released 2022-05-10
+# Common Virtual Schema for document data 9.0.0, released 2022-05-11
 
 Code name: Extracted EDML model
 
@@ -8,6 +8,7 @@ Code name: Extracted EDML model
 * #134: Moved EDML model to dedicated repo
 * #136: Removed adapterNotes bug comment
 * #130: Added CloseInjectIterator
+* #50: Improved Push down SQL building
 
 ## Dependency Updates
 
