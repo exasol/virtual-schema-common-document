@@ -1,6 +1,7 @@
 package com.exasol.adapter.document;
 
 import static com.exasol.sql.expression.ExpressionTerm.column;
+import static com.exasol.sql.expression.ExpressionTerm.stringLiteral;
 import static com.exasol.utils.StringSerializer.serializeToString;
 
 import java.io.IOException;
@@ -46,8 +47,6 @@ import com.exasol.sql.rendering.StringRendererConfig;
  */
 public class UdfCallBuilder {
     private static final String DATA_LOADER_COLUMN = "DATA_LOADER";
-    private static final String SCHEMA_MAPPING_REQUEST_COLUMN = "REMOTE_TABLE_QUERY";
-    private static final String CONNECTION_NAME_COLUMN = "CONNECTION_NAME";
     private static final String FRAGMENT_ID_COLUMN = "FRAGMENT_ID";
     private final String connectionName;
     private final String adapterSchema;
@@ -127,15 +126,14 @@ public class UdfCallBuilder {
         final Select udfCallSelect = StatementFactory.getInstance().select();
         final List<ColumnMapping> requiredColumns = getRequiredColumns(query, queryPlan);
         final List<Column> emitsColumns = buildColumnDefinitions(requiredColumns, udfCallSelect);
-        udfCallSelect.udf("\"" + this.adapterSchema + "\"." + GenericUdfCallHandler.UDF_PREFIX + this.adapterName,
-                new ColumnsDefinition(emitsColumns), column(DATA_LOADER_COLUMN), column(SCHEMA_MAPPING_REQUEST_COLUMN),
-                column(CONNECTION_NAME_COLUMN));
         final SchemaMappingRequest schemaMappingRequest = new SchemaMappingRequest(
                 query.getFromTable().getPathInRemoteTable(), requiredColumns);
-        final ValueTable valueTable = buildValueTable(queryPlan.getDocumentFetcher(), schemaMappingRequest,
-                udfCallSelect);
-        udfCallSelect.from().valueTableAs(valueTable, "T", DATA_LOADER_COLUMN, SCHEMA_MAPPING_REQUEST_COLUMN,
-                CONNECTION_NAME_COLUMN, FRAGMENT_ID_COLUMN);
+        final String serializedSchemaMappingRequest = serializeSchemaMappingRequest(schemaMappingRequest);
+        udfCallSelect.udf("\"" + this.adapterSchema + "\"." + GenericUdfCallHandler.UDF_PREFIX + this.adapterName,
+                new ColumnsDefinition(emitsColumns), column(DATA_LOADER_COLUMN),
+                stringLiteral(serializedSchemaMappingRequest), stringLiteral(this.connectionName));
+        final ValueTable valueTable = buildValueTable(queryPlan.getDocumentFetcher(), udfCallSelect);
+        udfCallSelect.from().valueTableAs(valueTable, "T", DATA_LOADER_COLUMN, FRAGMENT_ID_COLUMN);
         udfCallSelect.groupBy(column(FRAGMENT_ID_COLUMN));
         return udfCallSelect;
     }
@@ -152,17 +150,12 @@ public class UdfCallBuilder {
                 convertDataType(column.getExasolDataType()))).collect(Collectors.toList());
     }
 
-    private ValueTable buildValueTable(final List<DocumentFetcher> documentFetchers,
-            final SchemaMappingRequest schemaMappingRequest, final Select select) {
+    private ValueTable buildValueTable(final List<DocumentFetcher> documentFetchers, final Select select) {
         final ValueTable valueTable = new ValueTable(select);
         int rowCounter = 0;
-        final String serializedSchemaMappingRequest = serializeSchemaMappingRequest(schemaMappingRequest);
         for (final DocumentFetcher documentFetcher : documentFetchers) {
             final String serializeDocumentFetcher = serializeDocumentFetcher(documentFetcher);
-            final ValueTableRow row = ValueTableRow.builder(select).add(serializeDocumentFetcher)
-                    .add(serializedSchemaMappingRequest) //
-                    .add(this.connectionName) //
-                    .add(rowCounter) //
+            final ValueTableRow row = ValueTableRow.builder(select).add(serializeDocumentFetcher).add(rowCounter) //
                     .build();
             valueTable.appendRow(row);
             ++rowCounter;
