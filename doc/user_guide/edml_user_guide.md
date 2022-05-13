@@ -3,11 +3,13 @@
 For creating a Virtual Schema for document data you have to define a mapping from the document structure to a relational structure. This is done using the Exasol Document Mapping Language (EDML)
 ([reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)).
 
-Usually you write these definitions by hand. An exception are parquet input files where you can use our [generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize. For writing the files we recommend using an editor with JSON-Schema support. This makes it easier to write the definitions.
+Usually you write these definitions by hand. An exception are parquet input files for which you can use our [generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize further.  
+We recommend  using an editor with JSON-Schema support for creating the files. This makes it easier to write the definition.
 
-You can then use this mapping definition when creating the virtual schema. For that you typically upload the mapping definition as a file to BucketFS. Then you set the property `MAPPING` in the `CREATE VIRTUAL SCHEMA` command to the path of the mapping definition in BucketFS. You can also upload multiple mapping definitions into one folder and point to this folder. The adapter will then pick the all definitions.
+You can then use this mapping definition when creating the virtual schema. For that you upload the mapping definition as a file to BucketFS. Afterwards you set the property `MAPPING` in the `CREATE VIRTUAL SCHEMA` command to the path of the mapping definition in BucketFS.  
+You can also upload multiple mapping definitions into one folder and point to this folder. The adapter will then pick up all definitions.
 
-For testing and automated creation of Virtual Schemas its also possible to inline the EDML definition into the `MAPPING` property. Our tip: Don't use this if you're manipulating the EDML definitions by hand. Instead, use a proper editor with JSON-Schema support and upload the files. Editing inlined files is just too confusing. To inline the definitions you simply provide the mapping definition instead of the BucketFS path:
+For testing and automated creation of Virtual Schemas it's also possible to inline the EDML definition into the `MAPPING` property. Our tip: Don't use this if you're manipulating the EDML definitions by hand. Instead, use a proper editor with JSON-Schema support and upload the files. Editing inlined files is just too confusing. To inline the definitions you simply provide the mapping definition instead of the BucketFS path:
 
 ```
 MAPPING = '{ "$schema": ... }'
@@ -92,7 +94,8 @@ In order to let this adapter create the described mapping we create the followin
 }
 ```
 
-The `source` property describes the source of the data. It's syntax and meaning is different for the different Virtual Schemas for different data sources. Check the corresponding user guide for details.
+The `source` property describes the source of the data. Its syntax and meaning is different for the different Virtual Schemas for different data sources.  
+Check the corresponding user guide for details.
 
 Next we save this definition to a file, upload it to a bucket in BucketFS and reference it in the `CREATE VIRTUAL SCHEMA` call.
 
@@ -104,7 +107,7 @@ SELECT * FROM BOOKSHOP.BOOKS;
 
 ## Example of `toJsonMapping`
 
-Document data can contain nested lists. Consider for example the following document.
+Document data can contain nested lists. Consider for example the following document:
 
 ```json
 {
@@ -228,7 +231,7 @@ The Virtual Schema adapter automatically adds a foreign key to the table. In the
 
 ### Key Types
 
-There are two different types of key: `global` and `local`. The difference only plays a role when mapping multi level nested lists.
+There are two different key types: `global` and `local`. The difference only plays a role when mapping multi level nested lists.
 
 Consider the following example:
 A book contains multiple chapters and a chapter again can contain multiple figures. If in that example a chapter has a global key, that means, it is unique over all existing chapters (also across books). If it defines a local key, it is only unique over all chapters of that book.
@@ -247,13 +250,13 @@ To do so, set `addSourceReferenceColumn: true` in the root object of your EDML d
 
 You can use this property for all dialects. Typically, it will, however, only give you additional information, if you load data from multiple sources.
 
-The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. In case a source reference should exceed this, the adapter will throw an exception.
+The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. The adapter will throw an exception when a source reference exceeds this.
 
 ## Supported Conversion
 
 This adapter can convert input data to the requested column type. For example if the input is a number and the requested column is a string the adapter can convert the number to string.
 
-The conversion is done per value. That means that it's ok if in one row the input value is an int-value in the next row it's a bool value. That adapter can convert both to the requested output column.
+The conversion is done per value. That means that it's ok if in one row the input value is an int-value and the next row is a bool value. The adapter can convert both to the requested output column.
 
 That's, however, not always the best option. For that reason, you can configure how the adapter should behave if the input data does not match the requested column format. You can configure this for example using the `nonStringBehaviour`:
 
