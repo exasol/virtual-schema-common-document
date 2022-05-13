@@ -4,20 +4,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>9.0.0</version>
+    <version>9.0.1</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
-    <url>https://github.com/exasol/virtual-schema-common-document</url>
+    <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>11</java.version>
         <junit.version>5.8.2</junit.version>
-        <jacoco.version>0.8.7</jacoco.version>
         <vscommon.version>15.3.1</vscommon.version>
-        <gpg.skip>true</gpg.skip>
-        <surefire.and.failsafe.plugin.version>3.0.0-M4</surefire.and.failsafe.plugin.version>
-        <scala.binary.version>2.12</scala.binary.version>
     </properties>
     <licenses>
         <license>
@@ -210,7 +203,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.1.0</version>
+                <version>2.3.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -237,7 +230,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>9.0.0</version>
+        <version>9.0.1</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
