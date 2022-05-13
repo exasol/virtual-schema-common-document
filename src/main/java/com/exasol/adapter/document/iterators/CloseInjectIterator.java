@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
  * @param <T> iterator type
  */
 @RequiredArgsConstructor
-class CloseInjectIterator<T> implements CloseableIterator<T> {
+public class CloseInjectIterator<T> implements CloseableIterator<T> {
     private final CloseableIterator<T> source;
     private final Runnable onClose;
 
