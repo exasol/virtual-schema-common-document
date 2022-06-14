@@ -35,6 +35,7 @@ public class SchemaMappingToSchemaMetadataConverter {
         /*
          * Actually the tables should be serialized into TableSchema adapter notes. But as these do not work due to a
          * bug, they are added here. {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25}
+         * -> this got fixed in 7.1 see https://github.com/exasol/virtual-schema-common-document/issues/136
          */
         final String serialized = serializeTableMapping(tableMappings);
         return new SchemaMetadata(serialized, tableMetadata);
@@ -55,7 +56,7 @@ public class SchemaMappingToSchemaMetadataConverter {
         for (final ColumnMapping column : tableMapping.getColumns()) {
             columnDefinitions.add(convertColumn(column));
         }
-        final String adapterNotes = "";// Due to a bug in exasol core adapter notes are not stored for tables
+        final String adapterNotes = "";// Due to a bug in exasol core adapter notes are not stored for tables -> this got fixed!
         return new TableMetadata(tableMapping.getExasolName(), adapterNotes, columnDefinitions, "");
     }
 

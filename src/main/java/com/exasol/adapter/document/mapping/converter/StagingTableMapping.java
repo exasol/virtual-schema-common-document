@@ -84,12 +84,12 @@ class StagingTableMapping {
      * @return generated {@link TableMapping}s
      */
     public List<TableMapping> asToTableMappings() {
-        final List<TableMapping> result = new ArrayList<>();
-        result.add(asTableMapping());
+        final List<TableMapping> tableMappings = new ArrayList<>();
+        tableMappings.add(asTableMapping());
         for (final StagingTableMapping nestedTable : this.nestedTables) {
-            result.addAll(nestedTable.asToTableMappings());
+            tableMappings.addAll(nestedTable.asToTableMappings());
         }
-        return result;
+        return tableMappings;
     }
 
     private TableMapping asTableMapping() {

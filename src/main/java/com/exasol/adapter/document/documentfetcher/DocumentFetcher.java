@@ -11,7 +11,7 @@ import com.exasol.adapter.document.iterators.CloseableIterator;
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public interface DocumentFetcher extends Serializable {
     /**
-     * Executes the planed operation.
+     * Executes the planned operation.
      *
      * @param connectionPropertiesReader for reading connection details for a connection to the remote database
      * @return result of the operation.
