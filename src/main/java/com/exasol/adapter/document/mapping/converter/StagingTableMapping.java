@@ -23,6 +23,7 @@ import lombok.With;
 class StagingTableMapping {
     private final String exasolName;
     private final String remoteName;
+    private final String additionalConfiguration;
     private final List<ColumnWithKeyInfo> columns;
     private final DocumentPathExpression pathInRemoteTable;
     private final List<StagingTableMapping> nestedTables;
@@ -93,7 +94,7 @@ class StagingTableMapping {
     }
 
     private TableMapping asTableMapping() {
-        return new TableMapping(this.exasolName, this.remoteName, getColumnsWithoutKeyInfo(), this.pathInRemoteTable);
+        return new TableMapping(this.exasolName, this.remoteName, getColumnsWithoutKeyInfo(), this.pathInRemoteTable, this.additionalConfiguration);
     }
 
     private List<ColumnMapping> getColumnsWithoutKeyInfo() {

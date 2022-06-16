@@ -22,7 +22,7 @@
 | [JUnit Jupiter Engine][18]               | [Eclipse Public License v2.0][19] |
 | [JUnit Jupiter Params][18]               | [Eclipse Public License v2.0][19] |
 | [mockito-junit-jupiter][22]              | [The MIT License][23]             |
-| [exasol-test-setup-abstraction-java][24] | [MIT][1]                          |
+| [exasol-test-setup-abstraction-java][24] | [MIT License][25]                 |
 | [Test Database Builder for Java][26]     | [MIT License][27]                 |
 | [udf-debugging-java][28]                 | [MIT][1]                          |
 | [Apache Maven Verifier Component][30]    | [Apache License, Version 2.0][31] |
@@ -69,12 +69,15 @@
 [30]: https://maven.apache.org/shared/maven-verifier/
 [1]: https://opensource.org/licenses/MIT
 [22]: https://github.com/mockito/mockito
+[46]: https://www.mojohaus.org/flatten-maven-plugin/
 [14]: https://github.com/exasol/maven-project-version-getter
 [54]: http://www.mojohaus.org/versions-maven-plugin/
 [72]: https://github.com/exasol/project-keeper/
+[12]: https://github.com/exasol/edml-java/
 [17]: http://opensource.org/licenses/BSD-3-Clause
 [42]: https://maven.apache.org/plugins/maven-compiler-plugin/
 [27]: https://github.com/exasol/test-db-builder-java/blob/main/LICENSE
+[24]: https://github.com/exasol/exasol-test-setup-abstraction-java/
 [34]: http://junit.org
 [39]: https://www.eclipse.org/legal/epl-2.0/
 [56]: https://maven.apache.org/plugins/maven-deploy-plugin/
@@ -85,15 +88,15 @@
 [32]: https://commons.apache.org/proper/commons-io/
 [36]: https://github.com/exasol/hamcrest-resultset-matcher
 [50]: http://zlika.github.io/reproducible-build-maven-plugin
+[25]: https://github.com/exasol/exasol-test-setup-abstraction-java/blob/main/LICENSE
 [3]: http://www.opensource.org/licenses/mit-license.php
 [40]: http://sonarsource.github.io/sonar-scanner-maven/
+[28]: https://github.com/exasol/udf-debugging-java/
 [18]: https://junit.org/junit5/
-[46]: https://www.mojohaus.org/flatten-maven-plugin/flatten-maven-plugin
 [60]: https://maven.apache.org/plugins/maven-source-plugin/
 [16]: http://hamcrest.org/JavaHamcrest/
 [2]: http://www.slf4j.org
 [82]: http://maven.apache.org/plugins/maven-resources-plugin/
-[24]: https://github.com/exasol/exasol-test-setup-abstraction-java
 [26]: https://github.com/exasol/test-db-builder-java/
 [64]: http://www.sonatype.com/public-parent/nexus-maven-plugins/nexus-staging/nexus-staging-maven-plugin/
 [74]: https://maven.apache.org/surefire/maven-failsafe-plugin/
@@ -105,13 +108,11 @@
 [73]: https://github.com/exasol/project-keeper/blob/main/LICENSE
 [70]: http://maven.apache.org/plugins/maven-jar-plugin/
 [31]: https://www.apache.org/licenses/LICENSE-2.0.txt
-[12]: https://github.com/exasol/edml-java
 [44]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
 [19]: https://www.eclipse.org/legal/epl-v20.html
 [84]: http://maven.apache.org/plugins/maven-install-plugin/
 [48]: https://sonatype.github.io/ossindex-maven/maven-plugin/
 [58]: https://maven.apache.org/plugins/maven-gpg-plugin/
-[28]: https://github.com/exasol/udf-debugging-java
 [86]: http://maven.apache.org/plugins/maven-site-plugin/
 [62]: https://maven.apache.org/plugins/maven-javadoc-plugin/
 [0]: https://github.com/exasol/virtual-schema-common-java

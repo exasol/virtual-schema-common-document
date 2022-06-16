@@ -18,7 +18,7 @@ class RemoteTableQueryTest {
     @Test
     void testSetAndGetColumns() {
         final MockPropertyToColumnMapping columnDefinition = new MockPropertyToColumnMapping("", null, null);
-        final TableMapping tableDefinition = TableMapping.rootTableBuilder("", "")
+        final TableMapping tableDefinition = TableMapping.rootTableBuilder("", "",null)
                 .withColumnMappingDefinition(columnDefinition).build();
         final QueryPredicate selection = new NoPredicate();
         final RemoteTableQuery remoteTableQuery = new RemoteTableQuery(tableDefinition, List.of(columnDefinition),

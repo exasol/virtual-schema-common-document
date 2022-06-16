@@ -20,7 +20,7 @@ import com.exasol.adapter.sql.*;
 class RemoteTableQueryFactoryTest {
     @Test
     void testBuildForAnyValueSelectList() throws IOException, AdapterException {
-        final TableMapping table = TableMapping.rootTableBuilder("testTable", "source")
+        final TableMapping table = TableMapping.rootTableBuilder("testTable", "source",null)
                 .withColumnMappingDefinition(getColumnMappingExample().build()).build();
         final SchemaMapping schemaMapping = new SchemaMapping(List.of(table));
         final SchemaMetadata schemaMetadata = new SchemaMappingToSchemaMetadataConverter().convert(schemaMapping);

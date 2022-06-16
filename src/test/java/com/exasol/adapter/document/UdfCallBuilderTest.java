@@ -54,7 +54,7 @@ class UdfCallBuilderTest {
         final ColumnMapping column = PropertyToJsonColumnMapping.builder().exasolColumnName("TEST_COLUMN")
                 .varcharColumnSize(123).build();
         final TableMapping tableMapping = new TableMapping("TEST", "test", List.of(column),
-                DocumentPathExpression.empty());
+                DocumentPathExpression.empty(),null);
         return new RemoteTableQuery(tableMapping, List.of(column), new NoPredicate());
     }
 }

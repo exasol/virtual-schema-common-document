@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>9.0.1</version>
+    <version>9.1.0</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
@@ -87,7 +86,7 @@
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.2.0</version>
+            <version>2.2.1</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -103,7 +102,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
@@ -127,14 +126,14 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>4.5.1</version>
+            <version>4.6.1</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>0.2.2</version>
+            <version>0.3.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -146,7 +145,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>udf-debugging-java</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -184,6 +183,24 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.sonatype.ossindex.maven</groupId>
+                <artifactId>ossindex-maven-plugin</artifactId>
+                <configuration>
+                    <excludeVulnerabilityIds>
+                        <!-- com.google.guava:guava: https://ossindex.sonatype.org/vulnerability/sonatype-2020-0926
+                        Excluded because we assume that the attacker does not have local access to the machine. -->
+                        <!--                        <exclude>sonatype-2020-0926</exclude>-->
+                        <!-- io.netty:netty-handler: https://ossindex.sonatype.org/vulnerability/sonatype-2020-0026
+                        Not a vulnerability in netty but how it is configured by the client com.azure:azure-core-http-netty. -->
+                        <exclude>sonatype-2020-0026</exclude>
+                        <!-- io.netty:netty-codec-http: https://ossindex.sonatype.org/vulnerability/CVE-2022-24823
+                        Excluded because we assume that the attacker does not have local access to the machine.
+                        Can be removed once com.azure:azure-core-http-netty upgrades to a newer netty version. -->
+                        <!--                        <exclude>CVE-2022-24823</exclude>-->
+                    </excludeVulnerabilityIds>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.2</version>
@@ -203,7 +220,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.4.6</version>
                 <executions>
                     <execution>
                         <goals>
@@ -230,7 +247,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>9.0.1</version>
+        <version>9.1.0</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
