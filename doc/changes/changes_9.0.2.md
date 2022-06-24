@@ -1,8 +1,10 @@
-# Common Virtual Schema for document data 9.0.2, released 2022-??-??
+# Common Virtual Schema for document data 9.0.2, released 2022-06-24
 
-Code name:
+Code name: Dependency updates
 
 ## Summary
+
+This release fixes the following vulnerabilities by updating dependencies: CVE-2016-5002, CVE-2016-5003, CVE-2016-5004, CVE-2022-24823, sonatype-2012-0050, sonatype-2012-0050, sonatype-2020-0026, sonatype-2020-0026.
 
 ## Bugfixes
 
