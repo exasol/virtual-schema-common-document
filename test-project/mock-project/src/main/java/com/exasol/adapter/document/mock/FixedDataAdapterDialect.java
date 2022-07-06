@@ -17,6 +17,10 @@ import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 
+import java.util.*;
+import com.exasol.adapter.capabilities.*;
+import com.exasol.adapter.document.documentnode.holder.*;
+
 /**
  * This class is a mock implementation of the interface that the virtual-schema-common-document defines.
  * <p>
