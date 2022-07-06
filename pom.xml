@@ -183,24 +183,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.sonatype.ossindex.maven</groupId>
-                <artifactId>ossindex-maven-plugin</artifactId>
-                <configuration>
-                    <excludeVulnerabilityIds>
-                        <!-- com.google.guava:guava: https://ossindex.sonatype.org/vulnerability/sonatype-2020-0926
-                        Excluded because we assume that the attacker does not have local access to the machine. -->
-                        <!--                        <exclude>sonatype-2020-0926</exclude>-->
-                        <!-- io.netty:netty-handler: https://ossindex.sonatype.org/vulnerability/sonatype-2020-0026
-                        Not a vulnerability in netty but how it is configured by the client com.azure:azure-core-http-netty. -->
-                        <exclude>sonatype-2020-0026</exclude>
-                        <!-- io.netty:netty-codec-http: https://ossindex.sonatype.org/vulnerability/CVE-2022-24823
-                        Excluded because we assume that the attacker does not have local access to the machine.
-                        Can be removed once com.azure:azure-core-http-netty upgrades to a newer netty version. -->
-                        <!--                        <exclude>CVE-2022-24823</exclude>-->
-                    </excludeVulnerabilityIds>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.2</version>
