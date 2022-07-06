@@ -5,14 +5,14 @@
 
 | Dependency                                            | License                              |
 | ----------------------------------------------------- | ------------------------------------ |
-| [Common module of Exasol Virtual Schemas Adapters][0] | [MIT][1]                             |
+| [Common module of Exasol Virtual Schemas Adapters][0] | [The MIT License (MIT)][1]           |
 | [SLF4J JDK14 Binding][2]                              | [MIT License][3]                     |
-| [Exasol SQL Statement Builder][4]                     | [MIT][1]                             |
+| [Exasol SQL Statement Builder][4]                     | [MIT][5]                             |
 | [LogicNG][6]                                          | [The Apache License, Version 2.0][7] |
-| [error-reporting-java][8]                             | [MIT][1]                             |
+| [error-reporting-java][8]                             | [MIT][5]                             |
 | [Project Lombok][10]                                  | [The MIT License][11]                |
-| [EDML Java][12]                                       | [MIT][1]                             |
-| [Maven Project Version Getter][14]                    | [MIT][1]                             |
+| [EDML Java][12]                                       | [MIT][5]                             |
+| [Maven Project Version Getter][14]                    | [MIT][5]                             |
 
 ## Test Dependencies
 
@@ -24,11 +24,11 @@
 | [mockito-junit-jupiter][22]              | [The MIT License][23]             |
 | [exasol-test-setup-abstraction-java][24] | [MIT License][25]                 |
 | [Test Database Builder for Java][26]     | [MIT License][27]                 |
-| [udf-debugging-java][28]                 | [MIT][1]                          |
+| [udf-debugging-java][28]                 | [MIT][5]                          |
 | [Apache Maven Verifier Component][30]    | [Apache License, Version 2.0][31] |
 | [Apache Commons IO][32]                  | [Apache License, Version 2.0][31] |
 | [JUnit][34]                              | [Eclipse Public License 1.0][35]  |
-| [Matcher for SQL Result Sets][36]        | [MIT][1]                          |
+| [Matcher for SQL Result Sets][36]        | [MIT][5]                          |
 | [JaCoCo :: Agent][38]                    | [Eclipse Public License 2.0][39]  |
 
 ## Plugin Dependencies
@@ -49,12 +49,12 @@
 | [Apache Maven Javadoc Plugin][62]                       | [Apache License, Version 2.0][31]             |
 | [Nexus Staging Maven Plugin][64]                        | [Eclipse Public License][35]                  |
 | [Apache Maven Dependency Plugin][66]                    | [Apache License, Version 2.0][31]             |
-| [Lombok Maven Plugin][68]                               | [The MIT License][1]                          |
+| [Lombok Maven Plugin][68]                               | [The MIT License][5]                          |
 | [Maven Jar Plugin][70]                                  | [The Apache Software License, Version 2.0][7] |
 | [Project keeper maven plugin][72]                       | [The MIT License][73]                         |
 | [Maven Failsafe Plugin][74]                             | [Apache License, Version 2.0][31]             |
 | [JaCoCo :: Maven Plugin][76]                            | [Eclipse Public License 2.0][39]              |
-| [error-code-crawler-maven-plugin][78]                   | [MIT][1]                                      |
+| [error-code-crawler-maven-plugin][78]                   | [MIT][5]                                      |
 | [Maven Clean Plugin][80]                                | [The Apache Software License, Version 2.0][7] |
 | [Maven Resources Plugin][82]                            | [The Apache Software License, Version 2.0][7] |
 | [Maven Install Plugin][84]                              | [The Apache Software License, Version 2.0][7] |
@@ -62,12 +62,13 @@
 
 [38]: https://www.eclemma.org/jacoco/index.html
 [8]: https://github.com/exasol/error-reporting-java
+[1]: https://github.com/exasol/virtual-schema-common-java/blob/main/LICENSE
 [7]: http://www.apache.org/licenses/LICENSE-2.0.txt
 [10]: https://projectlombok.org
 [52]: https://maven.apache.org/surefire/maven-surefire-plugin/
 [80]: http://maven.apache.org/plugins/maven-clean-plugin/
 [30]: https://maven.apache.org/shared/maven-verifier/
-[1]: https://opensource.org/licenses/MIT
+[5]: https://opensource.org/licenses/MIT
 [22]: https://github.com/mockito/mockito
 [46]: https://www.mojohaus.org/flatten-maven-plugin/
 [14]: https://github.com/exasol/maven-project-version-getter
@@ -114,6 +115,6 @@
 [48]: https://sonatype.github.io/ossindex-maven/maven-plugin/
 [58]: https://maven.apache.org/plugins/maven-gpg-plugin/
 [86]: http://maven.apache.org/plugins/maven-site-plugin/
+[0]: https://github.com/exasol/virtual-schema-common-java/
 [62]: https://maven.apache.org/plugins/maven-javadoc-plugin/
-[0]: https://github.com/exasol/virtual-schema-common-java
 [78]: https://github.com/exasol/error-code-crawler-maven-plugin

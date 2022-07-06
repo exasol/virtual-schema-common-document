@@ -9,7 +9,7 @@
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
         <junit.version>5.8.2</junit.version>
-        <vscommon.version>15.3.1</vscommon.version>
+        <vscommon.version>15.3.2</vscommon.version>
     </properties>
     <licenses>
         <license>
@@ -139,7 +139,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.3.2</version>
+            <version>3.3.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -235,6 +235,16 @@
                 <configuration>
                     <!-- fix for "TestEngine with ID 'junit-jupiter' failed to discover tests" -->
                     <forkCount>0</forkCount>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.ossindex.maven</groupId>
+                <artifactId>ossindex-maven-plugin</artifactId>
+                <configuration>
+                    <excludeVulnerabilityIds>
+                        <!-- This issue is mitigated in the AWS SDK. See https://github.com/aws/aws-sdk-java-v2/issues/3263 -->
+                        <excludeVulnerabilityId>sonatype-2020-0026</excludeVulnerabilityId>
+                    </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
         </plugins>
