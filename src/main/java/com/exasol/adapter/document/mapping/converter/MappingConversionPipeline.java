@@ -26,9 +26,8 @@ public class MappingConversionPipeline {
      * @param edmlDefinition EDML definition to convert
      * @return resulting schema mapping definition
      */
-    //transformation pipeline on the mappings
+    // transformation pipeline on the mappings
     public List<TableMapping> convert(final EdmlDefinition edmlDefinition) {
-        //Probably need to alter this here and add it to a new field in the mapping
         final StagingTableMapping stagingMapping = new EdmlToStagingTableMappingConverter().convert(edmlDefinition);
         return stagingMapping//
                 .transformedBy(new ColumnNameGenerator())//
@@ -38,6 +37,6 @@ public class MappingConversionPipeline {
                 .transformedBy(new KeyAdder(this.tableKeyFetcher))//
                 .transformedBy(new ForeignKeyAdder())//
                 .transformedBy(new SourceRefColumnAdder(edmlDefinition))//
-                .asToTableMappings(); // finally convert it to the target data structure, so also need to alter it here
+                .asToTableMappings();
     }
 }

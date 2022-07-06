@@ -2,16 +2,13 @@ package com.exasol.adapter.document.mock;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.*;
 
 import com.exasol.adapter.AdapterProperties;
-import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.DocumentAdapterDialect;
 import com.exasol.adapter.document.QueryPlanner;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
-import com.exasol.adapter.document.documentnode.holder.*;
 import com.exasol.adapter.document.iterators.CloseableIterator;
 import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;

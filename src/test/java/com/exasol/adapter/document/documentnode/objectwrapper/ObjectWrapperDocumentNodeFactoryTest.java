@@ -15,7 +15,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.documentnode.*;
-import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.documentnode.holder.BooleanHolderNode;
+import com.exasol.adapter.document.documentnode.holder.DateHolderNode;
+import com.exasol.adapter.document.documentnode.holder.TimestampHolderNode;
 
 class ObjectWrapperDocumentNodeFactoryTest {
 

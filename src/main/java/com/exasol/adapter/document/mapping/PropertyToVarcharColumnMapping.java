@@ -4,7 +4,9 @@ import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**

@@ -52,9 +52,8 @@ class SelectionExtractorTest {
 
     @Test
     void testExtractIndexAndNonIndexColumnFromAnd() {
-        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(
-                new LogicalOperator(Set.of(MATCHING_COMPARISON, NON_MATCHING_COMPARISON),
-                        LogicalOperator.Operator.AND));
+        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(new LogicalOperator(
+                Set.of(MATCHING_COMPARISON, NON_MATCHING_COMPARISON), LogicalOperator.Operator.AND));
         assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(MATCHING_COMPARISON)),
                 () -> assertThat(result.getRemainingSelection().asQueryPredicate(), equalTo(NON_MATCHING_COMPARISON)));
     }
@@ -71,12 +70,10 @@ class SelectionExtractorTest {
 
     @Test
     void testExtractFromAndAndOr() {
-        final SelectionExtractor.Result result = EXTRACTOR
-                .extractIndexColumnSelection(new LogicalOperator(
-                        Set.of(MATCHING_COMPARISON,
-                                new LogicalOperator(Set.of(NON_MATCHING_COMPARISON, NON_MATCHING_COMPARISON_2),
-                                        LogicalOperator.Operator.OR)),
-                        LogicalOperator.Operator.AND));
+        final SelectionExtractor.Result result = EXTRACTOR.extractIndexColumnSelection(new LogicalOperator(
+                Set.of(MATCHING_COMPARISON, new LogicalOperator(
+                        Set.of(NON_MATCHING_COMPARISON, NON_MATCHING_COMPARISON_2), LogicalOperator.Operator.OR)),
+                LogicalOperator.Operator.AND));
         assertAll(() -> assertThat(result.getSelectedSelection().asQueryPredicate(), equalTo(MATCHING_COMPARISON)),
                 () -> assertThat(result.getRemainingSelection().asQueryPredicate(),
                         equalTo(new LogicalOperator(Set.of(NON_MATCHING_COMPARISON_2, NON_MATCHING_COMPARISON),

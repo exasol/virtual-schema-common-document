@@ -8,7 +8,9 @@ import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.documentnode.holder.ArrayHolderNode;
+import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
+import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 
 class DocumentPathIteratorTest {
     private static final String KEY = "key";

@@ -13,14 +13,21 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.AdapterException;
-import com.exasol.adapter.document.mapping.*;
-import com.exasol.adapter.metadata.*;
-import com.exasol.adapter.sql.*;
+import com.exasol.adapter.document.mapping.ColumnMapping;
+import com.exasol.adapter.document.mapping.SchemaMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
+import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.metadata.ColumnMetadata;
+import com.exasol.adapter.metadata.SchemaMetadata;
+import com.exasol.adapter.metadata.TableMetadata;
+import com.exasol.adapter.sql.SqlSelectList;
+import com.exasol.adapter.sql.SqlStatementSelect;
+import com.exasol.adapter.sql.SqlTable;
 
 class RemoteTableQueryFactoryTest {
     @Test
     void testBuildForAnyValueSelectList() throws IOException, AdapterException {
-        final TableMapping table = TableMapping.rootTableBuilder("testTable", "source",null)
+        final TableMapping table = TableMapping.rootTableBuilder("testTable", "source", null)
                 .withColumnMappingDefinition(getColumnMappingExample().build()).build();
         final SchemaMapping schemaMapping = new SchemaMapping(List.of(table));
         final SchemaMetadata schemaMetadata = new SchemaMappingToSchemaMetadataConverter().convert(schemaMapping);

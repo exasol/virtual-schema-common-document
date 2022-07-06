@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 
@@ -25,6 +27,7 @@ public class TableMapping implements Serializable {
     private final DocumentPathExpression pathInRemoteTable;
     /** @serial */
     private final String additionalConfiguration;
+
     /**
      * Create a new instance of {@link TableMapping} from serialized data.
      * <p>
@@ -38,36 +41,37 @@ public class TableMapping implements Serializable {
         this.exasolName = deserialized.exasolName;
         this.remoteName = deserialized.remoteName;
         this.pathInRemoteTable = deserialized.pathInRemoteTable;
-        this.additionalConfiguration=deserialized.additionalConfiguration;
+        this.additionalConfiguration = deserialized.additionalConfiguration;
         this.columns = columns;
     }
 
     /**
      * Get an instance of the Builder for {@link TableMapping}. This version of the builder is used for root tables.
      *
-     * @param destinationName Name of the Exasol table
-     * @param remoteName      Name of the remote table that is mapped
+     * @param destinationName         Name of the Exasol table
+     * @param remoteName              Name of the remote table that is mapped
      * @param additionalConfiguration Additional Configuration
      * @return {@link TableMapping.Builder}
      */
-    public static Builder rootTableBuilder(final String destinationName, final String remoteName,final String additionalConfiguration) {
+    public static Builder rootTableBuilder(final String destinationName, final String remoteName,
+            final String additionalConfiguration) {
         final DocumentPathExpression emptyPath = DocumentPathExpression.empty();
-        return new Builder(destinationName, remoteName, emptyPath,additionalConfiguration);
+        return new Builder(destinationName, remoteName, emptyPath, additionalConfiguration);
     }
 
     /**
      * Get an instance of the builder for {@link TableMapping}. This version of the builder is used to create tables
      * extracted from nested lists.
      *
-     * @param destinationName   Name of the Exasol table
-     * @param remoteName        Name of the remote table
-     * @param pathInRemoteTable Path expression within the document to a nested list that is mapped to a table
+     * @param destinationName         Name of the Exasol table
+     * @param remoteName              Name of the remote table
+     * @param pathInRemoteTable       Path expression within the document to a nested list that is mapped to a table
      * @param additionalConfiguration Additional Configuration
      * @return Builder for {@link TableMapping}
      */
     public static Builder nestedTableBuilder(final String destinationName, final String remoteName,
-            final DocumentPathExpression pathInRemoteTable,final String additionalConfiguration) {
-        return new Builder(destinationName, remoteName, pathInRemoteTable,additionalConfiguration);
+            final DocumentPathExpression pathInRemoteTable, final String additionalConfiguration) {
+        return new Builder(destinationName, remoteName, pathInRemoteTable, additionalConfiguration);
     }
 
     /**
@@ -136,8 +140,9 @@ public class TableMapping implements Serializable {
         private final List<ColumnMapping> columns = new ArrayList<>();
         private final DocumentPathExpression pathToNestedTable;
         private final String additionalConfiguration;
+
         private Builder(final String exasolName, final String remoteName,
-                final DocumentPathExpression pathToNestedTable,final String additionalConfiguration) {
+                final DocumentPathExpression pathToNestedTable, final String additionalConfiguration) {
             this.exasolName = exasolName;
             this.remoteName = remoteName;
             this.pathToNestedTable = pathToNestedTable;
@@ -162,7 +167,7 @@ public class TableMapping implements Serializable {
          */
         public TableMapping build() {
             return new TableMapping(this.exasolName, this.remoteName, Collections.unmodifiableList(this.columns),
-                    this.pathToNestedTable,this.additionalConfiguration);
+                    this.pathToNestedTable, this.additionalConfiguration);
         }
     }
 }

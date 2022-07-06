@@ -1,9 +1,13 @@
 package com.exasol.adapter.document.queryplanning;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.exasol.adapter.AdapterException;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.ColumnMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
+import com.exasol.adapter.document.mapping.TableMapping;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicateFactory;
 import com.exasol.adapter.metadata.ColumnMetadata;

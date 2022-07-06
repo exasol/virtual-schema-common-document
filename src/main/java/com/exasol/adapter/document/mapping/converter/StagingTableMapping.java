@@ -94,7 +94,8 @@ class StagingTableMapping {
     }
 
     private TableMapping asTableMapping() {
-        return new TableMapping(this.exasolName, this.remoteName, getColumnsWithoutKeyInfo(), this.pathInRemoteTable, this.additionalConfiguration);
+        return new TableMapping(this.exasolName, this.remoteName, getColumnsWithoutKeyInfo(), this.pathInRemoteTable,
+                this.additionalConfiguration);
     }
 
     private List<ColumnMapping> getColumnsWithoutKeyInfo() {

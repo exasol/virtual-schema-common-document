@@ -9,7 +9,9 @@ import com.exasol.adapter.document.documentnode.*;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.errorreporting.ExaError;
 
-import jakarta.json.*;
+import jakarta.json.JsonArrayBuilder;
+import jakarta.json.JsonObjectBuilder;
+import jakarta.json.JsonValue;
 import jakarta.json.spi.JsonProvider;
 
 /**

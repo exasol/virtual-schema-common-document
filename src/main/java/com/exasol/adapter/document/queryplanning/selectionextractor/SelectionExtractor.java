@@ -5,7 +5,10 @@ import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.mapping.IterationIndexColumnMapping;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
-import com.exasol.adapter.document.querypredicate.normalizer.*;
+import com.exasol.adapter.document.querypredicate.normalizer.DnfAnd;
+import com.exasol.adapter.document.querypredicate.normalizer.DnfComparison;
+import com.exasol.adapter.document.querypredicate.normalizer.DnfNormalizer;
+import com.exasol.adapter.document.querypredicate.normalizer.DnfOr;
 import com.exasol.errorreporting.ExaError;
 
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,9 @@
 package com.exasol.adapter.document.iterators;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * This class is a wrapper for {@link Iterator} that groups the data in chunks.
