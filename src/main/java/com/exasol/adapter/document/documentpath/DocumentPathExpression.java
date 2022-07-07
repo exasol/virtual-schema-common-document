@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.documentpath;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * This class allows to express path through a document.

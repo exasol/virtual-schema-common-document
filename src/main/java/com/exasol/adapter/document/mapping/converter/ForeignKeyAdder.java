@@ -2,7 +2,9 @@ package com.exasol.adapter.document.mapping.converter;
 
 import static com.exasol.adapter.document.ListUtils.union;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.edml.KeyType;

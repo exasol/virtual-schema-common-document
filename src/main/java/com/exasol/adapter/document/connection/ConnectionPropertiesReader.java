@@ -1,6 +1,9 @@
 package com.exasol.adapter.document.connection;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.UncheckedIOException;
 import java.util.Optional;
 
 import com.exasol.errorreporting.ExaError;

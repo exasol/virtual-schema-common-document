@@ -7,13 +7,15 @@ import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.edml.deserializer.EdmlDeserializer;
 import com.exasol.adapter.document.edml.validator.EdmlSchemaValidator;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.SchemaMapping;
+import com.exasol.adapter.document.mapping.TableKeyFetcher;
+import com.exasol.adapter.document.mapping.TableMapping;
 import com.exasol.adapter.document.mapping.converter.MappingConversionPipeline;
 import com.exasol.adapter.document.properties.EdmlInput;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * This class reads a {@link SchemaMapping} from JSON files.
+ * EDML: This class reads a {@link SchemaMapping} from JSON files.
  * <p>
  * The JSON files must follow the schema defined in {@code resources/schemas/edml-1.0.0.json}. Documentation of schema
  * mapping definitions can be found at {@code /doc/gettingStartedWithSchemaMappingLanguage.md}.
@@ -41,6 +43,7 @@ public class JsonSchemaMappingReader {
     public SchemaMapping readSchemaMapping(final List<EdmlInput> edmlInputs) {
         final EdmlSchemaValidator jsonSchemaMappingValidator = new EdmlSchemaValidator();
         final List<TableMapping> tables = new ArrayList<>();
+        // validate the schema for all the edml inputs
         for (final EdmlInput edmlInput : edmlInputs) {
             jsonSchemaMappingValidator.validate(edmlInput.getEdmlString());
             try {
@@ -59,8 +62,10 @@ public class JsonSchemaMappingReader {
                 exception);
     }
 
+    // make a list of tablemapping(s) from the EDML string
     private List<TableMapping> parseDefinition(final String edmlString) {
         final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
+        // pipeline architecture here
         return new MappingConversionPipeline(this.tableKeyFetcher).convert(edmlDefinition);
     }
 }

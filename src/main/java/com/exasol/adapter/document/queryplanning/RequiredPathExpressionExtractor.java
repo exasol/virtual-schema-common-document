@@ -21,8 +21,7 @@ public class RequiredPathExpressionExtractor {
      * @return set of required properties
      */
     public Set<DocumentPathExpression> getRequiredProperties(final Stream<? extends ColumnMapping> requiredColumns) {
-        return requiredColumns.map(this::getRequiredProperty).filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        return requiredColumns.map(this::getRequiredProperty).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     private DocumentPathExpression getRequiredProperty(final ColumnMapping columnMapping) {

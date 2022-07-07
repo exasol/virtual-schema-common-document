@@ -74,6 +74,7 @@
 [14]: https://github.com/exasol/maven-project-version-getter
 [54]: http://www.mojohaus.org/versions-maven-plugin/
 [72]: https://github.com/exasol/project-keeper/
+[12]: https://github.com/exasol/edml-java/
 [17]: http://opensource.org/licenses/BSD-3-Clause
 [42]: https://maven.apache.org/plugins/maven-compiler-plugin/
 [27]: https://github.com/exasol/test-db-builder-java/blob/main/LICENSE
@@ -108,7 +109,6 @@
 [73]: https://github.com/exasol/project-keeper/blob/main/LICENSE
 [70]: http://maven.apache.org/plugins/maven-jar-plugin/
 [31]: https://www.apache.org/licenses/LICENSE-2.0.txt
-[12]: https://github.com/exasol/edml-java
 [44]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
 [19]: https://www.eclipse.org/legal/epl-v20.html
 [84]: http://maven.apache.org/plugins/maven-install-plugin/

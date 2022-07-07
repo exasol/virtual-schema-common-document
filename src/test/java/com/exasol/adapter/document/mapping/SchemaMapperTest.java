@@ -6,12 +6,16 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
-import com.exasol.adapter.document.documentnode.holder.*;
+import com.exasol.adapter.document.documentnode.holder.ArrayHolderNode;
+import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
+import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 
 class SchemaMapperTest {

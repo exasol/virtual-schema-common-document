@@ -4,9 +4,13 @@ import static com.exasol.utils.StringSerializer.serializeToString;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
-import com.exasol.adapter.metadata.*;
+import com.exasol.adapter.metadata.ColumnMetadata;
+import com.exasol.adapter.metadata.SchemaMetadata;
+import com.exasol.adapter.metadata.TableMetadata;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.utils.StringSerializer;
 
@@ -34,7 +38,8 @@ public class SchemaMappingToSchemaMetadataConverter {
         @SuppressWarnings("java:S125") // not commented out code
         /*
          * Actually the tables should be serialized into TableSchema adapter notes. But as these do not work due to a
-         * bug, they are added here. {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25}
+         * bug, they are added here. {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25} -> this got
+         * fixed in 7.1 see https://github.com/exasol/virtual-schema-common-document/issues/136
          */
         final String serialized = serializeTableMapping(tableMappings);
         return new SchemaMetadata(serialized, tableMetadata);
@@ -55,7 +60,8 @@ public class SchemaMappingToSchemaMetadataConverter {
         for (final ColumnMapping column : tableMapping.getColumns()) {
             columnDefinitions.add(convertColumn(column));
         }
-        final String adapterNotes = "";// Due to a bug in exasol core adapter notes are not stored for tables
+        final String adapterNotes = "";// Due to a bug in exasol core adapter notes are not stored for tables -> this
+                                       // got fixed!
         return new TableMetadata(tableMapping.getExasolName(), adapterNotes, columnDefinitions, "");
     }
 
@@ -89,8 +95,8 @@ public class SchemaMappingToSchemaMetadataConverter {
      * We use the adapter notes of the schema here since in the past there was a bug (SPOT-9952) that did not allow us
      * to store the metadata with the table. However we did not change it now since in the future it might make sense to
      * move also the Column metadata into the Schema metadata. By that we would have all persistent information in one
-     * place. That makes testing this part a lot easier. Another reason is that it has no downside to do it that way
-     * and for that reason is not worth a refactoring.
+     * place. That makes testing this part a lot easier. Another reason is that it has no downside to do it that way and
+     * for that reason is not worth a refactoring.
      * </p>
      * 
      * @param tableMetadata      metadata for the table to be deserialized

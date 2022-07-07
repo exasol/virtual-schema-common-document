@@ -5,7 +5,9 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.lessThan;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +20,9 @@ import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.document.iterators.CloseableIterator;
 import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.PropertyToColumnMapping;
+import com.exasol.adapter.document.mapping.PropertyToDecimalColumnMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingRequest;
 
 class DataProcessingPipelineTest {
     private static final int TEST_SIZE = 100000;

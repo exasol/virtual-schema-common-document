@@ -19,7 +19,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.sql.SqlLiteralString;
 import com.exasol.sql.expression.*;
-import com.exasol.sql.expression.comparison.*;
+import com.exasol.sql.expression.comparison.Comparison;
+import com.exasol.sql.expression.comparison.ComparisonOperator;
+import com.exasol.sql.expression.comparison.SimpleComparisonOperator;
 import com.exasol.sql.expression.literal.BooleanLiteral;
 
 class QueryPredicateToBooleanExpressionConverterTest {

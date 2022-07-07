@@ -3,7 +3,9 @@ package com.exasol.adapter.document.documentpath;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import com.exasol.adapter.document.documentnode.*;
+import com.exasol.adapter.document.documentnode.DocumentArray;
+import com.exasol.adapter.document.documentnode.DocumentNode;
+import com.exasol.adapter.document.documentnode.DocumentObject;
 
 /**
  * This class walks a given path defined in {@link DocumentPathExpression} through a {@link DocumentNode} structure.

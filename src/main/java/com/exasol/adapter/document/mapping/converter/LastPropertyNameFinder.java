@@ -3,7 +3,9 @@ package com.exasol.adapter.document.mapping.converter;
 import java.util.List;
 import java.util.Optional;
 
-import com.exasol.adapter.document.documentpath.*;
+import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.exasol.adapter.document.documentpath.ObjectLookupPathSegment;
+import com.exasol.adapter.document.documentpath.PathSegment;
 
 /**
  * This class finds the name of the last property in a path.

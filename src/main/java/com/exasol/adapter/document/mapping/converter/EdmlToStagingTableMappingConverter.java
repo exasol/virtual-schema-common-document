@@ -1,6 +1,8 @@
 package com.exasol.adapter.document.mapping.converter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.edml.*;
@@ -21,15 +23,18 @@ class EdmlToStagingTableMappingConverter {
      */
     StagingTableMapping convert(final EdmlDefinition edmlDefinition) {
         final MappingDefinitionConverterVisitor visitor = new MappingDefinitionConverterVisitor(
-                edmlDefinition.getSource(), edmlDefinition.getDestinationTable(), DocumentPathExpression.builder());
+                edmlDefinition.getSource(), edmlDefinition.getDestinationTable(), DocumentPathExpression.builder(),
+                edmlDefinition.getAdditionalConfiguration());
         edmlDefinition.getMapping().accept(visitor);
         return new StagingTableMapping(edmlDefinition.getDestinationTable(), edmlDefinition.getSource(),
-                visitor.getColumns(), DocumentPathExpression.empty(), visitor.getNestedTables());
+                edmlDefinition.getAdditionalConfiguration(), visitor.getColumns(), DocumentPathExpression.empty(),
+                visitor.getNestedTables());
     }
 
     private static class MappingDefinitionConverterVisitor implements MappingDefinitionVisitor {
         private final String source;
         private final String destinationTableName;
+        private final String additionalConfiguration;
         private final DocumentPathExpression.Builder path;
         @Getter
         private final List<ColumnWithKeyInfo> columns;
@@ -37,9 +42,10 @@ class EdmlToStagingTableMappingConverter {
         private final List<StagingTableMapping> nestedTables;
 
         private MappingDefinitionConverterVisitor(final String source, final String destinationTableName,
-                final DocumentPathExpression.Builder path) {
+                final DocumentPathExpression.Builder path, String additionalConfiguration) {
             this.source = source;
             this.destinationTableName = destinationTableName;
+            this.additionalConfiguration = additionalConfiguration;
             this.path = path;
             this.columns = new ArrayList<>();
             this.nestedTables = new ArrayList<>();
@@ -51,7 +57,7 @@ class EdmlToStagingTableMappingConverter {
                 final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                         .addObjectLookup(field.getKey());
                 final MappingDefinitionConverterVisitor childVisitor = new MappingDefinitionConverterVisitor(
-                        this.source, this.destinationTableName, childPath);
+                        this.source, this.destinationTableName, childPath, this.additionalConfiguration);
                 field.getValue().accept(childVisitor);
                 this.columns.addAll(childVisitor.getColumns());
                 this.nestedTables.addAll(childVisitor.getNestedTables());
@@ -156,11 +162,12 @@ class EdmlToStagingTableMappingConverter {
             final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                     .addArrayAll();
             final MappingDefinitionConverterVisitor visitor = new MappingDefinitionConverterVisitor(this.source,
-                    this.destinationTableName, childPath);
+                    this.destinationTableName, childPath, this.additionalConfiguration);
             toTableMapping.getMapping().accept(visitor);
             final String nestedDestinationName = toTableMapping.getDestinationTable();
-            this.nestedTables.add(new StagingTableMapping(nestedDestinationName, this.source, visitor.getColumns(),
-                    childPath.build(), visitor.getNestedTables()));
+            this.nestedTables.add(new StagingTableMapping(nestedDestinationName, this.source,
+                    this.additionalConfiguration, visitor.getColumns(), childPath.build(), visitor.getNestedTables()));
+
         }
     }
 }

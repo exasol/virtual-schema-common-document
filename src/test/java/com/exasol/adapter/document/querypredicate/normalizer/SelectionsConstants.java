@@ -5,7 +5,10 @@ import static com.exasol.adapter.document.mapping.PropertyToColumnMappingBuilder
 import java.util.Set;
 
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
-import com.exasol.adapter.document.querypredicate.*;
+import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate;
+import com.exasol.adapter.document.querypredicate.ColumnLiteralComparisonPredicate;
+import com.exasol.adapter.document.querypredicate.LogicalOperator;
+import com.exasol.adapter.document.querypredicate.NotPredicate;
 import com.exasol.adapter.sql.SqlLiteralString;
 
 class SelectionsConstants {

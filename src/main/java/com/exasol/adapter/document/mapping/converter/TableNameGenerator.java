@@ -1,6 +1,8 @@
 package com.exasol.adapter.document.mapping.converter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;

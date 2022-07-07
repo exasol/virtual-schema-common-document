@@ -14,7 +14,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.ColumnMapping;
+import com.exasol.adapter.document.mapping.PropertyToJsonColumnMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
 import com.exasol.adapter.metadata.ColumnMetadata;
 import com.exasol.adapter.sql.*;
 

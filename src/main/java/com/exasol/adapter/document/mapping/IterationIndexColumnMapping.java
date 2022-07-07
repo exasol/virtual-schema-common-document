@@ -3,7 +3,9 @@ package com.exasol.adapter.document.mapping;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**

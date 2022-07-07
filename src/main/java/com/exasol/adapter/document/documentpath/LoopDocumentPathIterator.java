@@ -1,6 +1,8 @@
 package com.exasol.adapter.document.documentpath;
 
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 import com.exasol.adapter.document.documentnode.DocumentArray;
 import com.exasol.adapter.document.documentnode.DocumentNode;

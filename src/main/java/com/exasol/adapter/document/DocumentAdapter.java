@@ -4,12 +4,18 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.exasol.*;
-import com.exasol.adapter.*;
+import com.exasol.ExaConnectionAccessException;
+import com.exasol.ExaConnectionInformation;
+import com.exasol.ExaMetadata;
+import com.exasol.adapter.AdapterException;
+import com.exasol.adapter.AdapterProperties;
+import com.exasol.adapter.VirtualSchemaAdapter;
 import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.connection.ConnectionStringReader;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.SchemaMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
+import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
 import com.exasol.adapter.document.properties.DocumentAdapterProperties;
 import com.exasol.adapter.document.queryplan.QueryPlan;
@@ -43,6 +49,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
      * 
      * @param dialect dialect implementation
      */
+    // public class DocumentFilesAdapter implements DocumentAdapterDialect { (in virtual-schema-common-documents-files)
     public DocumentAdapter(final DocumentAdapterDialect dialect) {
         this.dialect = dialect;
         this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
@@ -51,22 +58,32 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
             final CreateVirtualSchemaRequest request) {
+        // EDML-reading happening here
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, request);
+        // stores it as a list of table mappings
         return CreateVirtualSchemaResponse.builder().schemaMetadata(schemaMetadata).build();
     }
 
     private SchemaMetadata getSchemaMetadata(final ExaMetadata exaMetadata, final AdapterRequest request) {
+        // EDML-reader
         final SchemaMapping schemaMapping = getSchemaMappingDefinition(exaMetadata, request);
+        // transforms EDML schemaMapping to SchemaMetaData (writes the serialized tableMapping(s) to the adapternotes
+        // and c)
         return new SchemaMappingToSchemaMetadataConverter().convert(schemaMapping);
     }
 
+    // EDML
     private SchemaMapping getSchemaMappingDefinition(final ExaMetadata exaMetadata, final AdapterRequest request) {
+        // read out adapter properties
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
+
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         getConnectionInformation(exaMetadata, request);
+
         final TableKeyFetcher tableKeyFetcher = this.dialect
                 .getTableKeyFetcher(getConnectionInformation(exaMetadata, request));
+        // EDML-reader, uses the tableKeyFetcher and the path to the mapping definition files
         return new JsonSchemaMappingReader(tableKeyFetcher)
                 .readSchemaMapping(documentAdapterProperties.getMappingDefinition());
     }
@@ -98,14 +115,16 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     }
 
     /**
-     * Runs the actual query. The data is fetched using a scan from DynamoDB and then transformed into a
-     * {@code SELECT FROM VALUES} statement and passed back to Exasol.
+     * Runs the actual query. The data is fetched using a scan (from DynamoDB or from document sources) and then
+     * transformed into a {@code SELECT FROM VALUES} statement and passed back to Exasol.
      */
     @Override
     public final PushDownResponse pushdown(final ExaMetadata exaMetadata, final PushDownRequest request)
             throws AdapterException {
         final SqlStatement sqlQuery = request.getSelect();
         final String adapterNotes = request.getSchemaMetadataInfo().getAdapterNotes();
+        // the adapter notes contain serialized tablemappings (created from the edml definition when creating the
+        // virtual schema)
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
         return PushDownResponse.builder()//
@@ -122,6 +141,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
                 documentAdapterProperties, this.thisNodesCoreCount);
+        //
         final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery, availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
         return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), this.dialect.getAdapterName())
@@ -131,6 +151,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
             throws AdapterException {
+        // EDML-reading happening here
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, refreshRequest);
         return RefreshResponse.builder().schemaMetadata(schemaMetadata).build();
     }

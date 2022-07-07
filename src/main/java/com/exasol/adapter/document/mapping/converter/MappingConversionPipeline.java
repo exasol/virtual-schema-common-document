@@ -26,6 +26,7 @@ public class MappingConversionPipeline {
      * @param edmlDefinition EDML definition to convert
      * @return resulting schema mapping definition
      */
+    // transformation pipeline on the mappings
     public List<TableMapping> convert(final EdmlDefinition edmlDefinition) {
         final StagingTableMapping stagingMapping = new EdmlToStagingTableMappingConverter().convert(edmlDefinition);
         return stagingMapping//
