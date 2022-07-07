@@ -7,7 +7,7 @@ import static org.hamcrest.Matchers.equalTo;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import org.junit.jupiter.api.Test;
 
-public class TableMappingTest {
+class TableMappingTest {
     @Test
     void additionalPropertiesReturnedTest() {
         final String testValue = "testAdditionalConfig";
