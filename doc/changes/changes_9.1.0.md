@@ -1,12 +1,14 @@
-# Common Virtual Schema for document data 9.1.0, released 2022-??-??
+# Common Virtual Schema for document data 9.1.0, released 2022-07-07
 
-Code name:
+Code name: CSV Support / EDML Changes
 
 ## Summary
 
+Changes making csv support + configuration via edml files possible.
+
 ## Features
 
-* ISSUE_NUMBER: description
+* #145 : edml: support for additional configuration options
 
 ## Dependency Updates
 
