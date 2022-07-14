@@ -239,7 +239,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>9.1.0</version>
+        <version>9.1.1</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
