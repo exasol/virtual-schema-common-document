@@ -5,9 +5,8 @@ Code name: update edml dependency to fix serialisation issue
 ## Summary
 
 Update edml dependency to fix serialisation issue
-## Features
 
-* ISSUE_NUMBER: description
+## Features
 
 ## Dependency Updates
 
