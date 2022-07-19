@@ -396,10 +396,10 @@ When you want to map CSV files without any headers then you should use the index
   }
 ```
 
-IMPORTANT: Mapping ToVarcharMapping is currently the only supported option for CSV files (due to implementation details). To work around this you can use the Exasol database's CONVERT, CAST or other functions to convert to other datatypes from VARCHAR afterwards.
+IMPORTANT: `"toVarcharMapping"` is currently the only supported option for CSV files (due to implementation details). To work around this you can use the Exasol database's CONVERT, CAST or other functions to convert to other datatypes from VARCHAR afterwards.
 Example:
 ```sql
-SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;"
+SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;
 ```
 
 ## Reference
