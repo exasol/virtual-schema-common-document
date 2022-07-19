@@ -341,6 +341,67 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 * Date: Date as JSON string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
+## CSV Support
+### CSV File Headers
+
+For CSV Support specifically we added an (optional) `additionalConfiguration` JSON object. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers.
+If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
+Example:
+```json
+{
+  "$schema": "https://schemas.exasol.com/edml-1.4.0.json",
+  "source": "data/CsvWithHeaders.csv",
+  "destinationTable": "BOOKS",
+  "description": "Maps MY_BOOKS to BOOKS",
+  "addSourceReferenceColumn": true,
+  "additionalConfiguration": {
+    "csv-headers": true
+  },
+  "mapping": {
+    "fields": {
+      "id": {
+        "toVarcharMapping": {
+          "destinationName": "ID"
+        }
+      }
+    }
+  }
+} 
+```
+### Mapping CSV Files
+
+When you want to map CSV files with headers you use the column name from the csv header. Example:
+```json
+  "mapping": {
+    "fields": {
+      "id": {
+        "toVarcharMapping": {
+          "destinationName": "ID"
+        }
+      }
+    }
+  }
+```
+
+When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0). Example:
+```json
+  "mapping": {
+    "fields": {
+      "0": {
+        "toVarcharMapping": {
+          "destinationName": "ID"
+        }
+      }
+    }
+  }
+```
+
+IMPORTANT: Mapping ToVarcharMapping is currently the only supported option for CSV files (due to implementation details). To work around this you can use the Exasol database's CONVERT, CAST or other functions to convert to other datatypes from VARCHAR afterwards.
+Example:
+```sql
+SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;"
+```
+
 ## Reference
 
 [Schema mapping language schema & reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)
