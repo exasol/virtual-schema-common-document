@@ -370,7 +370,8 @@ Example:
 ```
 ### Mapping CSV Files
 
-When you want to map CSV files with headers you use the column name from the csv header. Example:
+When you want to map CSV files with headers you use the column name from the CSV header. 
+The following example maps the column with header "id" to "ID":
 ```json
   "mapping": {
     "fields": {
@@ -383,7 +384,8 @@ When you want to map CSV files with headers you use the column name from the csv
   }
 ```
 
-When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0). Example:
+When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0). 
+The following example maps column 0 to "ID": 
 ```json
   "mapping": {
     "fields": {
@@ -396,7 +398,8 @@ When you want to map CSV files without any headers then you should use the index
   }
 ```
 
-IMPORTANT: `"toVarcharMapping"` is currently the only supported option for CSV files (due to implementation details). To work around this you can use the Exasol database's CONVERT, CAST or other functions to convert to other datatypes from VARCHAR afterwards.
+Currently `"toVarcharMapping"` is the only available mapping option for CVS files. 
+Please use Exasol database methods `CONVERT`, `CAST`, etc. to convert from VARCHAR to other datatypes such as `DATE` or `DECIMAL`.
 Example:
 ```sql
 SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;
