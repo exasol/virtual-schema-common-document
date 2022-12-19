@@ -3,13 +3,13 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.exasol</groupId>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>9.1.1</version>
+    <version>9.1.2</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
-        <junit.version>5.8.2</junit.version>
-        <vscommon.version>15.3.2</vscommon.version>
+        <junit.version>5.9.1</junit.version>
+        <vscommon.version>16.2.0</vscommon.version>
     </properties>
     <licenses>
         <license>
@@ -75,23 +75,23 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>sql-statement-builder</artifactId>
-            <version>4.5.1</version>
+            <version>4.5.2</version>
         </dependency>
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.2.1</version>
+            <version>2.4.1</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>error-reporting-java</artifactId>
-            <version>0.4.1</version>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -126,26 +126,26 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>4.6.1</version>
+            <version>4.10.0</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>0.3.2</version>
+            <version>1.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.3.3</version>
+            <version>3.4.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>udf-debugging-java</artifactId>
-            <version>0.6.4</version>
+            <version>0.6.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -171,13 +171,13 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.5.1</version>
+            <version>1.5.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>maven-project-version-getter</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
         </dependency>
     </dependencies>
     <build>
@@ -202,7 +202,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.4.6</version>
+                <version>2.9.2</version>
                 <executions>
                     <execution>
                         <goals>
@@ -239,7 +239,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>9.1.1</version>
+        <version>9.1.2</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
