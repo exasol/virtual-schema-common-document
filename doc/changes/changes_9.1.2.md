@@ -1,4 +1,4 @@
-# Common Virtual Schema for document data 9.1.2, released 2022-12-19
+# Common Virtual Schema for document data 9.1.2, released 2022-12-20
 
 Code name: Dependency Upgrade
 
@@ -14,6 +14,7 @@ Updated dependencies to use artifacts from maven as repository maven.exasol.com 
 
 ### Compile Dependency Updates
 
+* Updated `com.exasol:edml-java:1.1.1` to `1.1.2`
 * Updated `com.exasol:error-reporting-java:0.4.1` to `1.0.0`
 * Updated `com.exasol:maven-project-version-getter:1.1.0` to `1.2.0`
 * Updated `com.exasol:sql-statement-builder:4.5.1` to `4.5.2`
@@ -34,7 +35,7 @@ Updated dependencies to use artifacts from maven as repository maven.exasol.com 
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:error-code-crawler-maven-plugin:1.1.1` to `1.2.1`
-* Updated `com.exasol:project-keeper-maven-plugin:2.4.6` to `2.9.2`
+* Updated `com.exasol:project-keeper-maven-plugin:2.4.6` to `2.9.1`
 * Updated `io.github.zlika:reproducible-build-maven-plugin:0.15` to `0.16`
 * Updated `org.apache.maven.plugins:maven-deploy-plugin:3.0.0-M1` to `3.0.0`
 * Updated `org.apache.maven.plugins:maven-enforcer-plugin:3.0.0` to `3.1.0`

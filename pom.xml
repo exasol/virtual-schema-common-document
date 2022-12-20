@@ -102,7 +102,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
-            <version>1.1.1</version>
+            <version>1.1.2</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
