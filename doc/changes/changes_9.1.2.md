@@ -1,10 +1,10 @@
-# Common Virtual Schema for document data 9.1.2, released 2022-12-20
+# Common Virtual Schema for document data 9.1.2, released 2022-12-21
 
 Code name: Dependency Upgrade
 
 ## Summary
 
-Updated dependencies to use artifacts from maven as repository maven.exasol.com has been discontinued.
+Updated dependencies to use artifacts from Maven Central as repository maven.exasol.com has been discontinued.
 
 ## Changes
 
