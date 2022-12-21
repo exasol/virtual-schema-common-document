@@ -24,7 +24,7 @@ Updated dependencies to use artifacts from maven as repository maven.exasol.com 
 
 ### Test Dependency Updates
 
-* Updated `com.exasol:exasol-test-setup-abstraction-java:0.3.2` to `1.1.0`
+* Updated `com.exasol:exasol-test-setup-abstraction-java:0.3.2` to `1.1.1`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.5.1` to `1.5.2`
 * Updated `com.exasol:test-db-builder-java:3.3.3` to `3.4.1`
 * Updated `com.exasol:udf-debugging-java:0.6.4` to `0.6.5`
