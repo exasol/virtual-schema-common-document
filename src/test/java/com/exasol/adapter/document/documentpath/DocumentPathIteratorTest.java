@@ -8,9 +8,7 @@ import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.documentnode.holder.ArrayHolderNode;
-import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
-import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
+import com.exasol.adapter.document.documentnode.holder.*;
 
 class DocumentPathIteratorTest {
     private static final String KEY = "key";
@@ -34,11 +32,15 @@ class DocumentPathIteratorTest {
     void testEmptyIteration() {
         final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY, new ArrayHolderNode(List.of())));
         final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
+        assertThat(size(iterable.iterator()), equalTo(0));
+    }
+
+    private <T> int size(final Iterator<T> iterator) {
         int counter = 0;
-        for (final PathIterationStateProvider state : iterable) {
+        while (iterator.hasNext()) {
             counter++;
         }
-        assertThat(counter, equalTo(0));
+        return counter;
     }
 
     @Test
@@ -56,11 +58,7 @@ class DocumentPathIteratorTest {
         final DocumentPathExpression pathWithNoArrayAll = DocumentPathExpression.builder().addObjectLookup("key")
                 .build();
         final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(pathWithNoArrayAll, testDocument);
-        int counter = 0;
-        for (final PathIterationStateProvider state : iterable) {
-            counter++;
-        }
-        assertThat(counter, equalTo(1));
+        assertThat(size(iterable.iterator()), equalTo(1));
     }
 
     @Test

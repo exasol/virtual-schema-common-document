@@ -15,8 +15,11 @@ class CloseInjectIteratorTest {
     @Test
     void testIteration() {
         final List<Integer> result = new ArrayList<>();
-        new CloseInjectIterator<>(new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), () -> {
-        }).forEachRemaining(result::add);
+        final CloseInjectIterator<Integer> iterator = new CloseInjectIterator<>(
+                new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), () -> {
+                });
+        iterator.forEachRemaining(result::add);
+        iterator.close();
         assertThat(result, Matchers.contains(1, 2, 3));
     }
 

@@ -16,11 +16,12 @@ import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
-import com.exasol.adapter.document.edml.MappingErrorBehaviour;
-import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
+import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.properties.EdmlInput;
+
+import jakarta.json.Json;
+import jakarta.json.JsonValue;
 
 @Tag("integration")
 @Tag("quick")
@@ -80,7 +81,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testSourcePathColumn() throws IOException {
         final String mappingString = generateInvalid(MappingTestFiles.BASIC_MAPPING,
-                base -> base.put("addSourceReferenceColumn", true));
+                base -> base.put("addSourceReferenceColumn", JsonValue.TRUE));
         final SchemaMapping schemaMapping = runReader(mappingString);
         final TableMapping table = schemaMapping.getTableMappings().get(0);
         assertThat(table.getColumns(), hasItem(new SourceReferenceColumnMapping()));
@@ -89,7 +90,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testWithoutSourcePathColumn() throws IOException {
         final String mappingString = generateInvalid(MappingTestFiles.BASIC_MAPPING,
-                base -> base.put("addSourceReferenceColumn", false));
+                base -> base.put("addSourceReferenceColumn", JsonValue.FALSE));
         final SchemaMapping schemaMapping = runReader(mappingString);
         final TableMapping table = schemaMapping.getTableMappings().get(0);
         assertThat(table.getColumns(), not(hasItem(new SourceReferenceColumnMapping())));
@@ -135,8 +136,8 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testDifferentKeysException() throws IOException {
         final String invalidString = generateInvalid(MappingTestFiles.BASIC_MAPPING, base -> {
-            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("name")
-                    .getJSONObject("toVarcharMapping").put("key", "local");
+            base.getJsonObject("mapping").getJsonObject("fields").getJsonObject("name")
+                    .getJsonObject("toVarcharMapping").put("key", Json.createValue("local"));
             return base;
         });
         assertReaderThrowsExceptionMessage(invalidString, equalTo(
@@ -146,8 +147,8 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testLocalKeyAtRootLevelException() throws IOException {
         final String invalidString = generateInvalid(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("isbn")
-                    .getJSONObject("toVarcharMapping").put("key", "local");
+            base.getJsonObject("mapping").getJsonObject("fields").getJsonObject("isbn")
+                    .getJsonObject("toVarcharMapping").put("key", Json.createValue("local"));
             return base;
         });
 
@@ -169,8 +170,8 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testNestedTableRootKeyGeneration() throws IOException {
         final String mappingString = generateInvalid(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJSONObject("mapping").getJSONObject("fields").getJSONObject("isbn")
-                    .getJSONObject("toVarcharMapping").remove("key");
+            base.getJsonObject("mapping").getJsonObject("fields").getJsonObject("isbn")
+                    .getJsonObject("toVarcharMapping").remove("key");
             return base;
         });
         final SchemaMapping schemaMapping = runReader(mappingString);
@@ -182,7 +183,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testNestedTableRootKeyGenerationException() throws IOException {
         final String mappingString = generateInvalid(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJSONObject("mapping").getJSONObject("fields").remove("isbn");
+            base.getJsonObject("mapping").getJsonObject("fields").remove("isbn");
             return base;
         });
         assertReaderThrowsExceptionMessage(mappingString, equalTo(

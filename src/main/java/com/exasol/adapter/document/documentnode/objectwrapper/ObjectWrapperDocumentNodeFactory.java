@@ -20,11 +20,12 @@ public class ObjectWrapperDocumentNodeFactory {
 
     /**
      * Get a {@link DocumentNode} wrapping a given java object.
-     * 
+     *
      * @param object object to wrap
      * @return built {@link DocumentNode} tree
      * @throws UnsupportedOperationException if a unsupported java type was passed
      */
+    @SuppressWarnings("unchecked")
     public static DocumentNode getNodeFor(final Object object) {
         if (object instanceof List) {
             return new ListWrapperNode((List<Object>) object);

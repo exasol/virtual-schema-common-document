@@ -15,8 +15,10 @@ class TransformingIteratorTest {
     @Test
     void testTransformation() {
         final List<Integer> result = new ArrayList<>();
-        new TransformingIterator<>(new CloseableIteratorWrapper<>(List.of(1, 2).iterator()), x -> x * 2)
-                .forEachRemaining(result::add);
+        final TransformingIterator<Integer, Integer> iterator = new TransformingIterator<>(
+                new CloseableIteratorWrapper<>(List.of(1, 2).iterator()), x -> x * 2);
+        iterator.forEachRemaining(result::add);
+        iterator.close();
         assertThat(result, Matchers.contains(2, 4));
     }
 

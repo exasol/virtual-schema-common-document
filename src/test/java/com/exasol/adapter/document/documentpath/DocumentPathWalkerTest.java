@@ -4,22 +4,17 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.holder.ArrayHolderNode;
-import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
-import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
+import com.exasol.adapter.document.documentnode.holder.*;
 
 class DocumentPathWalkerTest {
 
     private static final StringHolderNode NESTED_VALUE1 = new StringHolderNode("value");
     private static final StringHolderNode NESTED_VALUE2 = new StringHolderNode("value");
-    private static final String ARRAY_KEY = "array_key";
     private static final String OBJECT_KEY = "array_key";
     private static final ArrayHolderNode TEST_ARRAY_NODE = new ArrayHolderNode(List.of(NESTED_VALUE1, NESTED_VALUE2));
     private static final ObjectHolderNode TEST_OBJECT_NODE = new ObjectHolderNode(
