@@ -38,6 +38,7 @@ class DocumentPathIteratorTest {
     private <T> int size(final Iterator<T> iterator) {
         int counter = 0;
         while (iterator.hasNext()) {
+            iterator.next();
             counter++;
         }
         return counter;
