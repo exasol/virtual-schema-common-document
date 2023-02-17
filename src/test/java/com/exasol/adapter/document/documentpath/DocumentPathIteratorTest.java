@@ -31,17 +31,8 @@ class DocumentPathIteratorTest {
     @Test
     void testEmptyIteration() {
         final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY, new ArrayHolderNode(List.of())));
-        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
-        assertThat(size(iterable.iterator()), equalTo(0));
-    }
-
-    private <T> int size(final Iterator<T> iterator) {
-        int counter = 0;
-        while (iterator.hasNext()) {
-            iterator.next();
-            counter++;
-        }
-        return counter;
+        final DocumentPathIteratorFactory testee = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
+        assertThat(testee, iterableWithSize(0));
     }
 
     @Test
@@ -58,8 +49,8 @@ class DocumentPathIteratorTest {
                 new ArrayHolderNode(List.of(new StringHolderNode("value1"), new StringHolderNode("value2")))));
         final DocumentPathExpression pathWithNoArrayAll = DocumentPathExpression.builder().addObjectLookup("key")
                 .build();
-        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(pathWithNoArrayAll, testDocument);
-        assertThat(size(iterable.iterator()), equalTo(1));
+        final DocumentPathIteratorFactory testee = new DocumentPathIteratorFactory(pathWithNoArrayAll, testDocument);
+        assertThat(testee, iterableWithSize(1));
     }
 
     @Test

@@ -1,7 +1,5 @@
 package com.exasol.adapter.document.mapping.reader;
 
-import static com.exasol.adapter.document.mapping.MappingTestFiles.generateInvalid;
-import static com.exasol.adapter.document.mapping.MappingTestFiles.getMappingAsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -18,43 +16,19 @@ import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.TableKeyFetcher.NoKeyFoundException;
 import com.exasol.adapter.document.properties.EdmlInput;
-
-import jakarta.json.Json;
-import jakarta.json.JsonValue;
 
 @Tag("integration")
 @Tag("quick")
 class JsonSchemaMappingReaderIT {
 
-    private SchemaMapping runReader(final String mappingString) {
-        final TableKeyFetcher tableKeyFetcherMock = (tableName, mappedColumns) -> {
-            final List<ColumnMapping> key = mappedColumns.stream().filter(this::isIsbnColumn)
-                    .collect(Collectors.toList());
-            if (key.isEmpty()) {
-                throw new TableKeyFetcher.NoKeyFoundException();
-            }
-            return key;
-        };
-        return new JsonSchemaMappingReader(tableKeyFetcherMock)
-                .readSchemaMapping(List.of(new EdmlInput(mappingString, "test")));
-    }
-
-    private boolean isIsbnColumn(final ColumnMapping column) {
-        if (column instanceof PropertyToColumnMapping) {
-            final PropertyToColumnMapping propertyToColumnMapping = (PropertyToColumnMapping) column;
-            return propertyToColumnMapping.getPathToSourceProperty().toString().endsWith("isbn");
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Tests schema load from basicMapping.json.
-     */
     @Test
     void testBasicMapping() {
-        final SchemaMapping schemaMapping = runReader(getMappingAsString(MappingTestFiles.BASIC_MAPPING));
+        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+                .basic() //
+                .withFields(JsonSample.ADDITIONAL_FIELDS) //
+                .build());
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping table = tables.get(0);
         final List<ColumnMapping> columns = table.getColumns();
@@ -80,25 +54,28 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testSourcePathColumn() throws IOException {
-        final String mappingString = generateInvalid(MappingTestFiles.BASIC_MAPPING,
-                base -> base.put("addSourceReferenceColumn", JsonValue.TRUE));
-        final SchemaMapping schemaMapping = runReader(mappingString);
+        final SchemaMapping schemaMapping = read(JsonSample.builder().basic().build());
         final TableMapping table = schemaMapping.getTableMappings().get(0);
         assertThat(table.getColumns(), hasItem(new SourceReferenceColumnMapping()));
     }
 
     @Test
     void testWithoutSourcePathColumn() throws IOException {
-        final String mappingString = generateInvalid(MappingTestFiles.BASIC_MAPPING,
-                base -> base.put("addSourceReferenceColumn", JsonValue.FALSE));
-        final SchemaMapping schemaMapping = runReader(mappingString);
+        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+                .basic() //
+                .addSourceReferenceColumn("  'addSourceReferenceColumn': false,") //
+                .build());
         final TableMapping table = schemaMapping.getTableMappings().get(0);
         assertThat(table.getColumns(), not(hasItem(new SourceReferenceColumnMapping())));
     }
 
     @Test
     void testToJsonMapping() {
-        final SchemaMapping schemaMapping = runReader(getMappingAsString(MappingTestFiles.TO_JSON_MAPPING));
+        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+                .basic() //
+                .addSourceReferenceColumn("") //
+                .withFields(JsonSample.TOPICS_JSON) //
+                .build());
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping table = tables.get(0);
         final List<ColumnMapping> columns = table.getColumns();
@@ -119,8 +96,12 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testToSingleColumnTableMapping() {
-        final SchemaMapping schemaMapping = runReader(
-                getMappingAsString(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING));
+        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+                .basic() //
+                .addSourceReferenceColumn("") //
+                .withFields(JsonSample.TOPICS_TABLE) //
+                .build());
+
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping nestedTable = tables.stream().filter(table -> !table.isRootTable()).findAny().orElseThrow();
         final PropertyToVarcharColumnMapping column = (PropertyToVarcharColumnMapping) getColumnByExasolName(
@@ -135,31 +116,29 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testDifferentKeysException() throws IOException {
-        final String invalidString = generateInvalid(MappingTestFiles.BASIC_MAPPING, base -> {
-            base.getJsonObject("mapping").getJsonObject("fields").getJsonObject("name")
-                    .getJsonObject("toVarcharMapping").put("key", Json.createValue("local"));
-            return base;
-        });
+        final String invalidString = JsonSample.builder() //
+                .isbn(", 'key': 'global'") //
+                .name(", 'key': 'local'") //
+                .build();
         assertReaderThrowsExceptionMessage(invalidString, equalTo(
                 "E-VSD-8: The table 'BOOKS' specified both local and global key columns: Local keys: ['NAME'], Global keys: ['ISBN']. That is not allowed. Use either a local or a global key."));
     }
 
     @Test
     void testLocalKeyAtRootLevelException() throws IOException {
-        final String invalidString = generateInvalid(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJsonObject("mapping").getJsonObject("fields").getJsonObject("isbn")
-                    .getJsonObject("toVarcharMapping").put("key", Json.createValue("local"));
-            return base;
-        });
-
-        final Matcher<String> messageMatcher = equalTo(
-                "E-VSD-47: Invalid local key for column 'ISBN'. Local keys make no sense in root table mapping definitions. Please make this key global.");
+        final String invalidString = JsonSample.builder() //
+                .isbn(", 'key': 'local'") //
+                .name("") //
+                .withFields(JsonSample.TOPICS_TABLE) //
+                .build();
+        final Matcher<String> messageMatcher = equalTo("E-VSD-47: Invalid local key for column 'ISBN'."
+                + " Local keys make no sense in root table mapping definitions. Please make this key global.");
         assertReaderThrowsExceptionMessage(invalidString, messageMatcher);
     }
 
     private void assertReaderThrowsExceptionMessage(final String invalidMapping, final Matcher<String> messageMatcher) {
         final ExasolDocumentMappingLanguageException exception = assertThrows(
-                ExasolDocumentMappingLanguageException.class, () -> runReader(invalidMapping));
+                ExasolDocumentMappingLanguageException.class, () -> read(invalidMapping));
         assertAll(//
                 () -> assertThat(exception.getMessage(),
                         startsWith("F-VSD-81: Semantic-validation error in schema mapping '")),
@@ -169,12 +148,11 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testNestedTableRootKeyGeneration() throws IOException {
-        final String mappingString = generateInvalid(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJsonObject("mapping").getJsonObject("fields").getJsonObject("isbn")
-                    .getJsonObject("toVarcharMapping").remove("key");
-            return base;
-        });
-        final SchemaMapping schemaMapping = runReader(mappingString);
+        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+                .isbn("") //
+                .name("") //
+                .withFields(JsonSample.TOPICS_TABLE) //
+                .build());
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping nestedTable = tables.stream().filter(table -> !table.isRootTable()).findAny().orElseThrow();
         assertThat(getColumnNames(nestedTable.getColumns()), containsInAnyOrder("NAME", "BOOKS_ISBN"));
@@ -182,18 +160,22 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testNestedTableRootKeyGenerationException() throws IOException {
-        final String mappingString = generateInvalid(MappingTestFiles.SINGLE_COLUMN_TO_TABLE_MAPPING, base -> {
-            base.getJsonObject("mapping").getJsonObject("fields").remove("isbn");
-            return base;
-        });
+        final String mappingString = JsonSample.builder() //
+                .name("") //
+                .withFields(JsonSample.TOPICS_TABLE) //
+                .build();
         assertReaderThrowsExceptionMessage(mappingString, equalTo(
                 "E-VSD-46: Could not infer keys for table 'BOOKS'. Define a unique key by setting key='global' for one or more columns."));
     }
 
     @Test
     void testDoubleNestedToTableMapping() {
-        final SchemaMapping schemaMapping = runReader(
-                getMappingAsString(MappingTestFiles.DOUBLE_NESTED_TO_TABLE_MAPPING));
+        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+                .addSourceReferenceColumn("") //
+                .isbn("") //
+                .name() //
+                .withFields(JsonSample.DOUBLE_NESTED_TO_TABLE_MAPPING) //
+                .build());
         final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping doubleNestedTable = tables.stream()
                 .filter(table -> table.getExasolName().equals("BOOKS_CHAPTERS_FIGURES")).findAny().orElseThrow();
@@ -223,5 +205,28 @@ class JsonSchemaMappingReaderIT {
     private ColumnMapping getColumnByExasolName(final TableMapping table, final String exasolName) {
         return table.getColumns().stream().filter(each -> each.getExasolColumnName().equals(exasolName)).findAny()
                 .orElseThrow();
+    }
+
+    private SchemaMapping read(final String mappingString) {
+        return new JsonSchemaMappingReader(this::tableKeyFetcherMock)
+                .readSchemaMapping(List.of(new EdmlInput(mappingString, "test")));
+    }
+
+    private List<ColumnMapping> tableKeyFetcherMock(final String tableName, final List<ColumnMapping> mappedColumns)
+            throws NoKeyFoundException {
+        final List<ColumnMapping> key = mappedColumns.stream().filter(this::isIsbnColumn).collect(Collectors.toList());
+        if (key.isEmpty()) {
+            throw new TableKeyFetcher.NoKeyFoundException();
+        }
+        return key;
+    }
+
+    private boolean isIsbnColumn(final ColumnMapping column) {
+        if (column instanceof PropertyToColumnMapping) {
+            final PropertyToColumnMapping propertyToColumnMapping = (PropertyToColumnMapping) column;
+            return propertyToColumnMapping.getPathToSourceProperty().toString().endsWith("isbn");
+        } else {
+            return false;
+        }
     }
 }

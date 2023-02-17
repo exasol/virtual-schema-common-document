@@ -27,6 +27,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
+import com.exasol.adapter.document.mapping.reader.JsonSample;
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.dbbuilder.dialects.exasol.udf.UdfScript;
@@ -72,7 +73,6 @@ class DocumentAdapterIT {
 
     @AfterAll
     static void afterAll() throws Exception {
-        // should we close udfTestSetup here, too?
         testSetup.close();
     }
 
@@ -118,9 +118,9 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testUseMappingFromFile() throws BucketAccessException, TimeoutException, SQLException {
-        testSetup.getDefaultBucket().uploadInputStream(
-                () -> getClass().getClassLoader().getResourceAsStream("basicMapping.json"), "mapping.json");
+    void testUseMappingFromFile() throws Exception {
+        final String content = JsonSample.builder().basic().withFields(JsonSample.ADDITIONAL_FIELDS).build();
+        testSetup.getDefaultBucket().uploadStringContent(content, "mapping.json");
         final VirtualSchema virtualSchema = createVirtualSchema("/bfsdefault/default/mapping.json");
         try {
             final Statement statement = connection.createStatement();
