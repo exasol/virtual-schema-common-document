@@ -104,7 +104,7 @@
 [41]: https://www.mojohaus.org/flatten-maven-plugin/
 [42]: https://sonatype.github.io/ossindex-maven/maven-plugin/
 [43]: https://maven.apache.org/surefire/maven-surefire-plugin/
-[44]: https://www.mojohaus.org/versions-maven-plugin/
+[44]: https://www.mojohaus.org/versions/versions-maven-plugin/
 [45]: https://maven.apache.org/plugins/maven-deploy-plugin/
 [46]: https://maven.apache.org/plugins/maven-gpg-plugin/
 [47]: https://maven.apache.org/plugins/maven-source-plugin/
