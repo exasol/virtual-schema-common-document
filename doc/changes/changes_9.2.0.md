@@ -6,6 +6,8 @@ Code name: Dependency Upgrade
 
 Updated dependencies, especially to account for breaking change in `edml-java` renaming method `com.exasol.adapter.document.edml.Fields.getFields()` to `getFieldsMap()`.
 
+Suppressed message about vulnerability in transitive dependency `fr.turri:aXMLRPC` via `com.exasol:exasol-test-setup-abstraction-java:jar`. CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0, so this is a false positive. 
+
 ## Refactorings
 
 * #156: Updated dependencies
