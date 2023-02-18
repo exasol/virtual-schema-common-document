@@ -226,7 +226,7 @@
                     <excludeVulnerabilityIds>
                         <!-- This issue is mitigated in the AWS SDK. See https://github.com/aws/aws-sdk-java-v2/issues/3263 -->
                         <excludeVulnerabilityId>sonatype-2020-0026</excludeVulnerabilityId>
-                        <!-- Ignore vulnerability in Transitive dependency fr.turri:aXMLRPC
+                        <!-- Ignore vulnerability in transitive dependency fr.turri:aXMLRPC
                              via com.exasol:exasol-test-setup-abstraction-java:jar.
                              CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0,
                              so this is a false positive. -->
