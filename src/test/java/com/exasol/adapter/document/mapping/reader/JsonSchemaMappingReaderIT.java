@@ -117,8 +117,8 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testDifferentKeysException() throws IOException {
         final String invalidString = JsonSample.builder() //
-                .isbn(", 'key': 'global'") //
-                .name(", 'key': 'local'") //
+                .isbn("global") //
+                .name("local") //
                 .build();
         assertReaderThrowsExceptionMessage(invalidString, equalTo(
                 "E-VSD-8: The table 'BOOKS' specified both local and global key columns: Local keys: ['NAME'], Global keys: ['ISBN']. That is not allowed. Use either a local or a global key."));
@@ -127,7 +127,7 @@ class JsonSchemaMappingReaderIT {
     @Test
     void testLocalKeyAtRootLevelException() throws IOException {
         final String invalidString = JsonSample.builder() //
-                .isbn(", 'key': 'local'") //
+                .isbn("local") //
                 .name("") //
                 .withFields(JsonSample.TOPICS_TABLE) //
                 .build();
@@ -173,7 +173,7 @@ class JsonSchemaMappingReaderIT {
         final SchemaMapping schemaMapping = read(JsonSample.builder() //
                 .addSourceReferenceColumn("") //
                 .isbn("") //
-                .name() //
+                .name("") //
                 .withFields(JsonSample.DOUBLE_NESTED_TO_TABLE_MAPPING) //
                 .build());
         final List<TableMapping> tables = schemaMapping.getTableMappings();

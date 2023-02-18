@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 9.2.0, released 2023-02-17
+# Common Virtual Schema for Document Data 9.2.0, released 2023-02-21
 
 Code name: Dependency Upgrade
 
