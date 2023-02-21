@@ -8,9 +8,7 @@ import java.util.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.documentnode.holder.ArrayHolderNode;
-import com.exasol.adapter.document.documentnode.holder.ObjectHolderNode;
-import com.exasol.adapter.document.documentnode.holder.StringHolderNode;
+import com.exasol.adapter.document.documentnode.holder.*;
 
 class DocumentPathIteratorTest {
     private static final String KEY = "key";
@@ -33,12 +31,8 @@ class DocumentPathIteratorTest {
     @Test
     void testEmptyIteration() {
         final ObjectHolderNode testDocument = new ObjectHolderNode(Map.of(KEY, new ArrayHolderNode(List.of())));
-        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
-        int counter = 0;
-        for (final PathIterationStateProvider state : iterable) {
-            counter++;
-        }
-        assertThat(counter, equalTo(0));
+        final DocumentPathIteratorFactory testee = new DocumentPathIteratorFactory(SINGLE_NESTED_PATH, testDocument);
+        assertThat(testee, iterableWithSize(0));
     }
 
     @Test
@@ -55,12 +49,8 @@ class DocumentPathIteratorTest {
                 new ArrayHolderNode(List.of(new StringHolderNode("value1"), new StringHolderNode("value2")))));
         final DocumentPathExpression pathWithNoArrayAll = DocumentPathExpression.builder().addObjectLookup("key")
                 .build();
-        final DocumentPathIteratorFactory iterable = new DocumentPathIteratorFactory(pathWithNoArrayAll, testDocument);
-        int counter = 0;
-        for (final PathIterationStateProvider state : iterable) {
-            counter++;
-        }
-        assertThat(counter, equalTo(1));
+        final DocumentPathIteratorFactory testee = new DocumentPathIteratorFactory(pathWithNoArrayAll, testDocument);
+        assertThat(testee, iterableWithSize(1));
     }
 
     @Test

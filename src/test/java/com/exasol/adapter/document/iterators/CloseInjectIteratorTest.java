@@ -11,12 +11,14 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 class CloseInjectIteratorTest {
-
     @Test
     void testIteration() {
         final List<Integer> result = new ArrayList<>();
-        new CloseInjectIterator<>(new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), () -> {
-        }).forEachRemaining(result::add);
+        try (CloseInjectIterator<Integer> iterator = new CloseInjectIterator<>(
+                new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), () -> {
+                })) {
+            iterator.forEachRemaining(result::add);
+        }
         assertThat(result, Matchers.contains(1, 2, 3));
     }
 

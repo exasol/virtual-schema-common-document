@@ -10,13 +10,12 @@ import com.exasol.adapter.document.documentnode.DocumentObject;
  * {@link DocumentNode} wrapping a java map.
  */
 class MapWrapperNode implements DocumentObject {
-    private static final long serialVersionUID = -2645468647296058810L;
     /** @serial */
     private final Map<String, Object> values;
 
     /**
      * Create a new instance of {@link MapWrapperNode}.
-     * 
+     *
      * @param values java map to wrap
      */
     MapWrapperNode(final Map<String, Object> values) {

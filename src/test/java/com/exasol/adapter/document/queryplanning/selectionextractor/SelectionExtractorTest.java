@@ -81,6 +81,7 @@ class SelectionExtractorTest {
     }
 
     private static class MockSelectionMatcher implements SelectionMatcher {
+        @Override
         public boolean matchComparison(final ComparisonPredicate comparison) {
             return comparison.equals(MATCHING_COMPARISON);
         }

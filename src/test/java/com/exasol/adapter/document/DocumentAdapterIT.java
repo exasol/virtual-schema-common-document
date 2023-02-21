@@ -12,9 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.util.Calendar;
-import java.util.Map;
-import java.util.TimeZone;
+import java.sql.Date;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -22,15 +21,13 @@ import java.util.regex.Pattern;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.hamcrest.Matcher;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
+import com.exasol.adapter.document.mapping.reader.JsonSample;
 import com.exasol.bucketfs.BucketAccessException;
 import com.exasol.dbbuilder.dialects.exasol.*;
 import com.exasol.dbbuilder.dialects.exasol.udf.UdfScript;
@@ -121,9 +118,9 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testUseMappingFromFile() throws BucketAccessException, TimeoutException, SQLException {
-        testSetup.getDefaultBucket().uploadInputStream(
-                () -> getClass().getClassLoader().getResourceAsStream("basicMapping.json"), "mapping.json");
+    void testUseMappingFromFile() throws Exception {
+        final String content = JsonSample.builder().basic().withFields(JsonSample.ADDITIONAL_FIELDS).build();
+        testSetup.getDefaultBucket().uploadStringContent(content, "mapping.json");
         final VirtualSchema virtualSchema = createVirtualSchema("/bfsdefault/default/mapping.json");
         try {
             final Statement statement = connection.createStatement();

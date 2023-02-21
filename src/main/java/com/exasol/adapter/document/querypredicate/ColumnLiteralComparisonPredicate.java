@@ -10,13 +10,12 @@ import com.exasol.adapter.sql.SqlNode;
  * This class represents a comparison between a literal and a column of a table.
  */
 public class ColumnLiteralComparisonPredicate extends AbstractComparisonPredicate {
-    private static final long serialVersionUID = 1747022926992293431L;//
     private final SqlNode literal;
     private final ColumnMapping column;
 
     /**
      * Create an instance of {@link ColumnLiteralComparisonPredicate}.
-     * 
+     *
      * @param operator comparison operator
      * @param column   column to compare
      * @param literal  literal to compare
@@ -30,7 +29,7 @@ public class ColumnLiteralComparisonPredicate extends AbstractComparisonPredicat
 
     /**
      * Get the literal that the column is compared to in this predicate.
-     * 
+     *
      * @return literal
      */
     public SqlNode getLiteral() {
@@ -39,7 +38,7 @@ public class ColumnLiteralComparisonPredicate extends AbstractComparisonPredicat
 
     /**
      * Get the column that the literal is compared to in this predicate.
-     * 
+     *
      * @return column
      */
     public ColumnMapping getColumn() {

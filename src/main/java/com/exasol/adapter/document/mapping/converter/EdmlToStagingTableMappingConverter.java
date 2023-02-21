@@ -1,8 +1,6 @@
 package com.exasol.adapter.document.mapping.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.edml.*;
@@ -17,7 +15,7 @@ class EdmlToStagingTableMappingConverter {
 
     /**
      * Convert an {@link EdmlDefinition} into a {@link StagingTableMapping}.
-     * 
+     *
      * @param edmlDefinition {@link EdmlDefinition} to convert
      * @return converted
      */
@@ -42,7 +40,7 @@ class EdmlToStagingTableMappingConverter {
         private final List<StagingTableMapping> nestedTables;
 
         private MappingDefinitionConverterVisitor(final String source, final String destinationTableName,
-                final DocumentPathExpression.Builder path, String additionalConfiguration) {
+                final DocumentPathExpression.Builder path, final String additionalConfiguration) {
             this.source = source;
             this.destinationTableName = destinationTableName;
             this.additionalConfiguration = additionalConfiguration;
@@ -53,7 +51,7 @@ class EdmlToStagingTableMappingConverter {
 
         @Override
         public void visit(final Fields fields) {
-            for (final Map.Entry<String, MappingDefinition> field : fields.getFields().entrySet()) {
+            for (final Map.Entry<String, MappingDefinition> field : fields.getFieldsMap().entrySet()) {
                 final DocumentPathExpression.Builder childPath = new DocumentPathExpression.Builder(this.path)
                         .addObjectLookup(field.getKey());
                 final MappingDefinitionConverterVisitor childVisitor = new MappingDefinitionConverterVisitor(

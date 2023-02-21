@@ -1,8 +1,6 @@
 package com.exasol.adapter.document.documentpath;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import com.exasol.adapter.document.documentnode.DocumentArray;
 import com.exasol.adapter.document.documentnode.DocumentNode;
@@ -25,7 +23,7 @@ public class LoopDocumentPathIterator implements Iterator<PathIterationStateProv
 
     /**
      * Create an instance of {@link LoopDocumentPathIterator}.
-     * 
+     *
      * @param path     path definition used for extracting the {@link ArrayAllPathSegment}s to iterate
      * @param document document used for reading the array sizes
      */
@@ -53,9 +51,9 @@ public class LoopDocumentPathIterator implements Iterator<PathIterationStateProv
         int index = this.currentIndex;
         Iterator<PathIterationStateProvider> nextNestedIterator = this.nestedIterator;
         while (true) {
-            if (nextNestedIterator != null && nextNestedIterator.hasNext()) {
+            if ((nextNestedIterator != null) && nextNestedIterator.hasNext()) {
                 return true;
-            } else if (index + 1 < this.arraySize) {
+            } else if ((index + 1) < this.arraySize) {
                 index++;
                 nextNestedIterator = getNestedIteratorAtIndex(index);
             } else {
@@ -69,14 +67,15 @@ public class LoopDocumentPathIterator implements Iterator<PathIterationStateProv
      *
      * If the the {@link #nestedIterator} still has combinations these are taken first. Otherwise a new nested iterator
      * is build for the sub document of the next index of this iterator.
-     * 
+     *
      * @return {@code true} if could move to next; {@code false} if there was no remaining combination to iterate.
      */
+    @Override
     public PathIterationStateProvider next() {
         while (true) {
-            if (this.nestedIterator != null && this.nestedIterator.hasNext()) {
+            if ((this.nestedIterator != null) && this.nestedIterator.hasNext()) {
                 return new IteratorState(this.pathOfThisIterator, this.currentIndex, this.nestedIterator.next());
-            } else if (this.currentIndex + 1 < this.arraySize) {// load next nested iterator
+            } else if ((this.currentIndex + 1) < this.arraySize) {// load next nested iterator
                 this.currentIndex++;
                 this.nestedIterator = getNestedIteratorAtIndex(this.currentIndex);
             } else {
@@ -112,7 +111,7 @@ public class LoopDocumentPathIterator implements Iterator<PathIterationStateProv
             if (pathToRequestedArrayAll.equals(this.pathOfThisIterator)) {
                 // This request is for our array
                 return this.currentIndex;
-            } else if (this.nextState != null && pathToRequestedArrayAll.startsWith(this.pathOfThisIterator)) {
+            } else if ((this.nextState != null) && pathToRequestedArrayAll.startsWith(this.pathOfThisIterator)) {
                 final DocumentPathExpression remainingPathToRequestedArrayAll = pathToRequestedArrayAll
                         .getSubPath(this.pathOfThisIterator.size(), pathToRequestedArrayAll.size());
                 return this.nextState.getIndexFor(remainingPathToRequestedArrayAll);

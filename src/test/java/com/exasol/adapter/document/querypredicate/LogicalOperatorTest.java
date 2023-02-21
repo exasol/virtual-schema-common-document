@@ -40,7 +40,6 @@ class LogicalOperatorTest {
 
     @Test
     void testIdentical() {
-        final LogicalOperator otherPredicate = new LogicalOperator(Set.of(NO_PREDICATE), LogicalOperator.Operator.OR);
         assertSymmetricEqualWithHashAndEquals(TEST_PREDICATE, TEST_PREDICATE);
     }
 

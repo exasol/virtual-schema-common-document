@@ -4,8 +4,6 @@ package com.exasol.adapter.document.querypredicate;
  * This class represents the absence of a selection predicate.
  */
 public final class NoPredicate implements QueryPredicate {
-    private static final long serialVersionUID = -7964488054466482230L;
-
     @Override
     public void accept(final QueryPredicateVisitor visitor) {
         visitor.visit(this);
