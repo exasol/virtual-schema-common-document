@@ -107,6 +107,13 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <!-- Explicitly upgrade testcontainers to fix container reuse. -->
+            <groupId>com.exasol</groupId>
+            <artifactId>exasol-testcontainers</artifactId>
+            <version>6.5.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
             <version>3.4.2</version>
