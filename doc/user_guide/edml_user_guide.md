@@ -47,7 +47,7 @@ We want to map documents like that to an Exasol table with the following structu
 CREATE TABLE BOOKS (
     ISBN        VARCHAR(20),
     NAME        VARCHAR(100),
-    AUTHOR_NAME  VARCHAR(20)
+    AUTHOR_NAME VARCHAR(20)
 );
 ```
 
@@ -84,7 +84,7 @@ In order to let this adapter create the described mapping we create the followin
             "toVarcharMapping": {
               "varcharColumnSize": 20,
               "destinationName": "AUTHOR_NAME",
-              "description": "Maps the nested property authors.name to column authorName"
+              "description": "Maps the nested property authors.name to column AUTHOR_NAME"
             }
           }
         }

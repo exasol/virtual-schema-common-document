@@ -46,7 +46,7 @@ public class JsonSample {
                     "            'toVarcharMapping': {", //
                     "              'varcharColumnSize': 20,", //
                     "              'destinationName': 'AUTHOR_NAME',", //
-                    "              'description': 'Maps the nested property authors.name to column authorName'", //
+                    "              'description': 'Maps the nested property authors.name to column AUTHOR_NAME'", //
                     "            }", //
                     "          }", //
                     "        }", //

@@ -2,9 +2,7 @@ package com.exasol.adapter.document.mapping.converter;
 
 import static com.exasol.adapter.document.ListUtils.union;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.edml.KeyType;
@@ -14,7 +12,7 @@ import com.exasol.errorreporting.ExaError;
 /**
  * This class puts the key of each table to all their nested tables.
  * <p>
- * This is requires since each nested table should contain the key of its parent table, so that users can join them
+ * This is required since each nested table should contain the key of its parent table, so that users can join them
  * together.
  * </p>
  */

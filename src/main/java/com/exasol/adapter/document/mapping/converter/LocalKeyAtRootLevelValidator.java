@@ -5,7 +5,7 @@ import com.exasol.adapter.document.edml.KeyType;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * This class validates that a definition has no local keys at in a root-table mapping since those make no sense.
+ * This class validates that a definition has no local keys in a root-table mapping since those make no sense.
  */
 class LocalKeyAtRootLevelValidator implements StagingTableMapping.Validator {
     @Override
