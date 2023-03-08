@@ -4,13 +4,9 @@ import static com.exasol.utils.StringSerializer.serializeToString;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
-import com.exasol.adapter.metadata.ColumnMetadata;
-import com.exasol.adapter.metadata.SchemaMetadata;
-import com.exasol.adapter.metadata.TableMetadata;
+import com.exasol.adapter.metadata.*;
 import com.exasol.errorreporting.ExaError;
 import com.exasol.utils.StringSerializer;
 
@@ -35,14 +31,8 @@ public class SchemaMappingToSchemaMetadataConverter {
             tableMetadata.add(convertTable(table));
             tableMappings.put(table.getExasolName(), table);
         }
-        @SuppressWarnings("java:S125") // not commented out code
-        /*
-         * Actually the tables should be serialized into TableSchema adapter notes. But as these do not work due to a
-         * bug, they are added here. {@see https://github.com/exasol/dynamodb-virtual-schema/issues/25} -> this got
-         * fixed in 7.1 see https://github.com/exasol/virtual-schema-common-document/issues/136
-         */
-        final String serialized = serializeTableMapping(tableMappings);
-        return new SchemaMetadata(serialized, tableMetadata);
+        final String adapterNotes = serializeTableMapping(tableMappings);
+        return new SchemaMetadata(adapterNotes, tableMetadata);
     }
 
     private String serializeTableMapping(final HashMap<String, TableMapping> tableMappings) {
@@ -50,8 +40,7 @@ public class SchemaMappingToSchemaMetadataConverter {
             return serializeToString(new TableMappings(tableMappings));
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-25")
-                    .message("Internal error (failed to serialize TableMapping).").ticketMitigation().toString(),
-                    exception);
+                    .message("Failed to serialize TableMapping.").ticketMitigation().toString(), exception);
         }
     }
 
@@ -77,8 +66,7 @@ public class SchemaMappingToSchemaMetadataConverter {
             serialized = serializeToString(columnMapping);
         } catch (final IOException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("F-VSD-26")
-                    .message("Internal error (failed to serialize ColumnMapping).").ticketMitigation().toString(),
-                    exception);
+                    .message("Failed to serialize ColumnMapping.").ticketMitigation().toString(), exception);
         }
         return ColumnMetadata.builder()//
                 .name(columnMapping.getExasolColumnName())//
