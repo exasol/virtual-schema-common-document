@@ -10,8 +10,13 @@ Code name: Auto-inference for Parquet files
 
 ## Dependency Updates
 
+### Compile Dependency Updates
+
+* Updated `com.exasol:edml-java:1.1.3` to `1.2.0`
+
 ### Test Dependency Updates
 
+* Added `com.exasol:exasol-testcontainers:6.5.1`
 * Removed `junit:junit:4.13.2`
 
 ### Plugin Dependency Updates
