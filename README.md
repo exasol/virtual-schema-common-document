@@ -42,7 +42,7 @@ If you specify a different escape character by setting `DEFAULT_LIKE_ESCAPE_CHAR
 ### Dialects:
 
 * [DynamoDB](https://github.com/exasol/dynamodb-virtual-schema)
-* [Files](https://github.com/exasol/virtual-schema-common-document-files)
+* [Files](https://github.com/exasol/virtual-schema-common-document-files): see [available storage variants](https://github.com/exasol/virtual-schema-common-document-files#storage-variants)
 
 ## Information for Developers
 

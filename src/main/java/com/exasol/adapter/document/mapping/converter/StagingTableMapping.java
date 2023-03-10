@@ -133,6 +133,7 @@ class StagingTableMapping {
          * Run validation.
          *
          * @param stagingTableMapping {@link StagingTableMapping} to validate
+         * @throws RuntimeException if validation fails
          */
         public void validate(StagingTableMapping stagingTableMapping);
     }

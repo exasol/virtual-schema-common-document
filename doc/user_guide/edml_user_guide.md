@@ -3,10 +3,12 @@
 For creating a Virtual Schema for document data you have to define a mapping from the document structure to a relational structure. This is done using the Exasol Document Mapping Language (EDML)
 ([reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)).
 
-Usually you write these definitions by hand. An exception are parquet input files for which you can use our [generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize further.  
-We recommend  using an editor with JSON-Schema support for creating the files. This makes it easier to write the definition.
+Usually you write these definitions by hand. An exception are parquet input files for which you can use the [Exasol Parquet EDML generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize further.
 
-You can then use this mapping definition when creating the virtual schema. For that you upload the mapping definition as a file to BucketFS. Afterwards you set the property `MAPPING` in the `CREATE VIRTUAL SCHEMA` command to the path of the mapping definition in BucketFS.  
+We recommend using an editor with JSON-Schema support for creating the files. This makes it easier to write the definition.
+
+You can then use this mapping definition when creating the virtual schema. For that you upload the mapping definition as a file to BucketFS. Afterwards you set the property `MAPPING` in the `CREATE VIRTUAL SCHEMA` command to the path of the mapping definition in BucketFS.
+
 You can also upload multiple mapping definitions into one folder and point to this folder. The adapter will then pick up all definitions.
 
 For testing and automated creation of Virtual Schemas it's also possible to inline the EDML definition into the `MAPPING` property. Our tip: Don't use this if you're manipulating the EDML definitions by hand. Instead, use a proper editor with JSON-Schema support and upload the files. Editing inlined files is just too confusing. To inline the definitions you simply provide the mapping definition instead of the BucketFS path:
@@ -29,7 +31,7 @@ The structure of the mapping follows the structure of the document data.
 
 ## Simple Example
 
-Given the following document :
+Given the following JSON document:
 
 ```json
 {
@@ -47,7 +49,7 @@ We want to map documents like that to an Exasol table with the following structu
 CREATE TABLE BOOKS (
     ISBN        VARCHAR(20),
     NAME        VARCHAR(100),
-    AUTHOR_NAME  VARCHAR(20)
+    AUTHOR_NAME VARCHAR(20)
 );
 ```
 
@@ -57,7 +59,7 @@ In order to let this adapter create the described mapping we create the followin
 
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
   "description": "Example mapping",
@@ -84,7 +86,7 @@ In order to let this adapter create the described mapping we create the followin
             "toVarcharMapping": {
               "varcharColumnSize": 20,
               "destinationName": "AUTHOR_NAME",
-              "description": "Maps the nested property authors.name to column authorName"
+              "description": "Maps the nested property authors.name to column AUTHOR_NAME"
             }
           }
         }
@@ -94,7 +96,8 @@ In order to let this adapter create the described mapping we create the followin
 }
 ```
 
-The `source` property describes the source of the data. Its syntax and meaning is different for the different Virtual Schemas for different data sources.  
+The `source` property describes the source of the data. Its syntax and meaning is different for the different Virtual Schemas for different data sources.
+
 Check the corresponding user guide for details.
 
 Next we save this definition to a file, upload it to a bucket in BucketFS and reference it in the `CREATE VIRTUAL SCHEMA` call.
@@ -136,7 +139,7 @@ To achieve this we create the following mapping definition:
 
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
   "description": "Example mapping",
@@ -194,7 +197,7 @@ To achieve this we create the following mapping definition:
 
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
   "description": "Example mapping",
@@ -341,15 +344,29 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 * Date: Date as JSON string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
+## Automatic Mapping Inference
+
+The adapter supports automatic mapping inference. This allows you to omit the `mapping` element from the EDML definition. The virtual schema will then infer the mapping from the schema of the source.
+
+Currently this is only supported for Parquet files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
+
+### Notes
+
+* The files specified in the `source` must be available when creating the virtual schema. If the files are not available, the `CREATE VIRTUAL SCHEMA` command will fail.
+  * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
+* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
+* The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
+* Creating the virtual schema will take longer because the adapter needs to read files from the `source`.
+
 ## CSV Support
 ### CSV File Headers
 
-For CSV Support specifically we added an (optional) `additionalConfiguration` JSON object. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers.
-If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
+For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers. If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
+
 Example:
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.4.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "data/CsvWithHeaders.csv",
   "destinationTable": "BOOKS",
   "description": "Maps MY_BOOKS to BOOKS",
@@ -366,11 +383,13 @@ Example:
       }
     }
   }
-} 
+}
 ```
+
 ### Mapping CSV Files
 
-When you want to map CSV files with headers you use the column name from the CSV header. 
+When you want to map CSV files with headers you use the column name from the CSV header.
+
 The following example maps the column with header "id" to "ID":
 ```json
   "mapping": {
@@ -384,8 +403,9 @@ The following example maps the column with header "id" to "ID":
   }
 ```
 
-When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0). 
-The following example maps column 0 to "ID": 
+When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0).
+
+The following example maps column 0 to "ID":
 ```json
   "mapping": {
     "fields": {
@@ -398,8 +418,9 @@ The following example maps column 0 to "ID":
   }
 ```
 
-Currently `"toVarcharMapping"` is the only available mapping option for CVS files. 
-Please use Exasol database methods `CONVERT`, `CAST`, etc. to convert from VARCHAR to other datatypes such as `DATE` or `DECIMAL`.
+Currently `"toVarcharMapping"` is the only available mapping option for CVS files.
+Please use Exasol database methods `CONVERT`, `CAST`, etc. to convert from VARCHAR to other data types such as `DATE` or `DECIMAL`.
+
 Example:
 ```sql
 SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;
@@ -407,4 +428,4 @@ SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_
 
 ## Reference
 
-[Schema mapping language schema & reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)
+* [Schema mapping language schema & reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)

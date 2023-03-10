@@ -7,9 +7,8 @@ import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.edml.deserializer.EdmlDeserializer;
 import com.exasol.adapter.document.edml.validator.EdmlSchemaValidator;
-import com.exasol.adapter.document.mapping.SchemaMapping;
-import com.exasol.adapter.document.mapping.TableKeyFetcher;
-import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.mapping.converter.MappingConversionPipeline;
 import com.exasol.adapter.document.properties.EdmlInput;
 import com.exasol.errorreporting.ExaError;
@@ -17,26 +16,29 @@ import com.exasol.errorreporting.ExaError;
 /**
  * EDML: This class reads a {@link SchemaMapping} from JSON files.
  * <p>
- * The JSON files must follow the schema defined in {@code resources/schemas/edml-1.0.0.json}. Documentation of schema
- * mapping definitions can be found at {@code /doc/gettingStartedWithSchemaMappingLanguage.md}.
+ * The JSON files must follow the schema defined in {@code resources/schemas/edml-1.5.0.json}. Documentation of schema
+ * mapping definitions can be found at {@code doc/user_guide/edml_user_guide.md}.
  * </p>
  */
 public class JsonSchemaMappingReader {
     private final TableKeyFetcher tableKeyFetcher;
+    private final SchemaInferencer schemaInferencer;
 
     /**
      * Create an instance of {@link JsonSchemaMappingReader}.
      *
-     * @param tableKeyFetcher remote database specific {@link TableKeyFetcher}
+     * @param tableKeyFetcher  remote database specific {@link TableKeyFetcher}
+     * @param schemaInferencer mapping auto inferencer
      * @throws ExasolDocumentMappingLanguageException if schema mapping invalid
      */
-    public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher) {
+    public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher, final SchemaInferencer schemaInferencer) {
         this.tableKeyFetcher = tableKeyFetcher;
+        this.schemaInferencer = schemaInferencer;
     }
 
     /**
      * Read the schema mapping.
-     * 
+     *
      * @param edmlInputs EDML inputs
      * @return read schema mappings
      */
@@ -62,10 +64,9 @@ public class JsonSchemaMappingReader {
                 exception);
     }
 
-    // make a list of tablemapping(s) from the EDML string
+    /** Make a list of table mappings from the EDML string */
     private List<TableMapping> parseDefinition(final String edmlString) {
         final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
-        // pipeline architecture here
-        return new MappingConversionPipeline(this.tableKeyFetcher).convert(edmlDefinition);
+        return new MappingConversionPipeline(this.tableKeyFetcher, this.schemaInferencer).convert(edmlDefinition);
     }
 }

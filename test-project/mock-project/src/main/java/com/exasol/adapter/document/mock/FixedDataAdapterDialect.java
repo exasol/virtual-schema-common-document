@@ -2,24 +2,24 @@ package com.exasol.adapter.document.mock;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.*;
 
 import com.exasol.adapter.AdapterProperties;
+import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.DocumentAdapterDialect;
 import com.exasol.adapter.document.QueryPlanner;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.documentfetcher.FetchedDocument;
+import com.exasol.adapter.document.documentnode.holder.*;
 import com.exasol.adapter.document.iterators.CloseableIterator;
 import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
+import com.exasol.adapter.document.mapping.auto.SchemaFetcher;
 import com.exasol.adapter.document.queryplan.FetchQueryPlan;
 import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
-
-import java.util.*;
-import com.exasol.adapter.capabilities.*;
-import com.exasol.adapter.document.documentnode.holder.*;
 
 /**
  * This class is a mock implementation of the interface that the virtual-schema-common-document defines.
@@ -38,6 +38,11 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
     @Override
     public TableKeyFetcher getTableKeyFetcher(final ConnectionPropertiesReader connectionInformation) {
         return (tableName, mappedColumns) -> Collections.emptyList();
+    }
+
+    @Override
+    public SchemaFetcher getSchemaFetcher(final ConnectionPropertiesReader connectionInformation) {
+        return source -> Optional.empty();
     }
 
     @Override

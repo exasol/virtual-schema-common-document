@@ -1,16 +1,11 @@
 package com.exasol.adapter.document.mapping.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.edml.KeyType;
-import com.exasol.adapter.document.mapping.ColumnMapping;
-import com.exasol.adapter.document.mapping.IterationIndexColumnMapping;
-import com.exasol.adapter.document.mapping.TableKeyFetcher;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.errorreporting.ExaError;
 
 import lombok.AllArgsConstructor;
@@ -104,7 +99,8 @@ class KeyAdder implements StagingTableMapping.Transformer {
             throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-46")
                     .message("Could not infer keys for table {{TABLE}}.")
                     .parameter("TABLE", tableMapping.getExasolName())
-                    .mitigation("Define a unique key by setting key='global' for one or more columns.").toString());
+                    .mitigation("Define a unique key by setting key='global' for one or more columns.").toString(),
+                    exception);
         }
     }
 

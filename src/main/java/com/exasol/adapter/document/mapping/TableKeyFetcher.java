@@ -3,13 +3,13 @@ package com.exasol.adapter.document.mapping;
 import java.util.List;
 
 /**
- * This interfaces tries to fetches a global key from for a remote table.
+ * This interfaces tries to fetch a global key for a remote table.
  */
 public interface TableKeyFetcher {
 
     /**
      * This method tries to build a global key from given column mappings.
-     * 
+     *
      * @param tableName     name of the remote table
      * @param mappedColumns available column mappings
      * @return global key columns
