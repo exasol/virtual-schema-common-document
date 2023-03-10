@@ -18,6 +18,7 @@ Code name: Auto-inference for Parquet files
 
 * Added `com.exasol:exasol-testcontainers:6.5.1`
 * Removed `junit:junit:4.13.2`
+* Updated `org.mockito:mockito-junit-jupiter:5.1.1` to `5.2.0`
 
 ### Plugin Dependency Updates
 
