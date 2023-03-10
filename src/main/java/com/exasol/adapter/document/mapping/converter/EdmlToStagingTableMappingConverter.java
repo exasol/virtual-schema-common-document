@@ -5,6 +5,7 @@ import java.util.*;
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
+import com.exasol.errorreporting.ExaError;
 
 import lombok.Getter;
 
@@ -17,9 +18,13 @@ class EdmlToStagingTableMappingConverter {
      * Convert an {@link EdmlDefinition} into a {@link StagingTableMapping}.
      *
      * @param edmlDefinition {@link EdmlDefinition} to convert
-     * @return converted
+     * @return converted definition
      */
     StagingTableMapping convert(final EdmlDefinition edmlDefinition) {
+        if (edmlDefinition.getMapping() == null) {
+            throw new IllegalStateException(ExaError.messageBuilder("E-VSD-103")
+                    .message("Mapping of EDML definition is missing").ticketMitigation().toString());
+        }
         final MappingDefinitionConverterVisitor visitor = new MappingDefinitionConverterVisitor(
                 edmlDefinition.getSource(), edmlDefinition.getDestinationTable(), DocumentPathExpression.builder(),
                 edmlDefinition.getAdditionalConfiguration());

@@ -5,6 +5,7 @@ import java.util.List;
 import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 
 import lombok.AllArgsConstructor;
 
@@ -20,15 +21,18 @@ public class MappingConversionPipeline {
      */
     private final TableKeyFetcher tableKeyFetcher;
 
+    private final SchemaInferencer mappingAutoInferencer;
+
     /**
      * Converts an EDML definition into a mapping definition
-     * 
+     *
      * @param edmlDefinition EDML definition to convert
      * @return resulting schema mapping definition
      */
     // transformation pipeline on the mappings
     public List<TableMapping> convert(final EdmlDefinition edmlDefinition) {
-        final StagingTableMapping stagingMapping = new EdmlToStagingTableMappingConverter().convert(edmlDefinition);
+        final EdmlDefinition enrichedDefinition = this.mappingAutoInferencer.inferSchema(edmlDefinition);
+        final StagingTableMapping stagingMapping = new EdmlToStagingTableMappingConverter().convert(enrichedDefinition);
         return stagingMapping//
                 .transformedBy(new ColumnNameGenerator())//
                 .transformedBy(new TableNameGenerator())//

@@ -7,9 +7,8 @@ import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.edml.deserializer.EdmlDeserializer;
 import com.exasol.adapter.document.edml.validator.EdmlSchemaValidator;
-import com.exasol.adapter.document.mapping.SchemaMapping;
-import com.exasol.adapter.document.mapping.TableKeyFetcher;
-import com.exasol.adapter.document.mapping.TableMapping;
+import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.mapping.converter.MappingConversionPipeline;
 import com.exasol.adapter.document.properties.EdmlInput;
 import com.exasol.errorreporting.ExaError;
@@ -23,20 +22,24 @@ import com.exasol.errorreporting.ExaError;
  */
 public class JsonSchemaMappingReader {
     private final TableKeyFetcher tableKeyFetcher;
+    private final SchemaInferencer mappingAutoInferencer;
 
     /**
      * Create an instance of {@link JsonSchemaMappingReader}.
      *
-     * @param tableKeyFetcher remote database specific {@link TableKeyFetcher}
+     * @param tableKeyFetcher       remote database specific {@link TableKeyFetcher}
+     * @param mappingAutoInferencer mapping auto inferencer
      * @throws ExasolDocumentMappingLanguageException if schema mapping invalid
      */
-    public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher) {
+    public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher,
+            final SchemaInferencer mappingAutoInferencer) {
         this.tableKeyFetcher = tableKeyFetcher;
+        this.mappingAutoInferencer = mappingAutoInferencer;
     }
 
     /**
      * Read the schema mapping.
-     * 
+     *
      * @param edmlInputs EDML inputs
      * @return read schema mappings
      */
@@ -62,10 +65,9 @@ public class JsonSchemaMappingReader {
                 exception);
     }
 
-    // make a list of tablemapping(s) from the EDML string
+    /** Make a list of tablemappings from the EDML string */
     private List<TableMapping> parseDefinition(final String edmlString) {
         final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
-        // pipeline architecture here
-        return new MappingConversionPipeline(this.tableKeyFetcher).convert(edmlDefinition);
+        return new MappingConversionPipeline(this.tableKeyFetcher, this.mappingAutoInferencer).convert(edmlDefinition);
     }
 }

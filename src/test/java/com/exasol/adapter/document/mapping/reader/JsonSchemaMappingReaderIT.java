@@ -6,8 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.hamcrest.Matcher;
@@ -17,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.TableKeyFetcher.NoKeyFoundException;
+import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.properties.EdmlInput;
 
 @Tag("integration")
@@ -208,7 +208,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     private SchemaMapping read(final String mappingString) {
-        return new JsonSchemaMappingReader(this::tableKeyFetcherMock)
+        return new JsonSchemaMappingReader(this::tableKeyFetcherMock, new SchemaInferencer(this::mappingFetcherMock))
                 .readSchemaMapping(List.of(new EdmlInput(mappingString, "test")));
     }
 
@@ -219,6 +219,10 @@ class JsonSchemaMappingReaderIT {
             throw new TableKeyFetcher.NoKeyFoundException();
         }
         return key;
+    }
+
+    private Optional<MappingDefinition> mappingFetcherMock(final String source) {
+        throw new UnsupportedOperationException("unsupported");
     }
 
     private boolean isIsbnColumn(final ColumnMapping column) {

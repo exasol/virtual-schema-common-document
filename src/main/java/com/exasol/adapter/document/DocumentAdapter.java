@@ -10,8 +10,11 @@ import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.connection.ConnectionStringReader;
 import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.auto.SchemaFetcher;
+import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
 import com.exasol.adapter.document.properties.DocumentAdapterProperties;
+import com.exasol.adapter.document.properties.EdmlInput;
 import com.exasol.adapter.document.queryplan.QueryPlan;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.queryplanning.RemoteTableQueryFactory;
@@ -40,7 +43,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
 
     /**
      * Create a new instance of {@link DocumentAdapter}.
-     * 
+     *
      * @param dialect dialect implementation
      */
     public DocumentAdapter(final DocumentAdapterDialect dialect) {
@@ -62,20 +65,24 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         return new SchemaMappingToSchemaMetadataConverter().convert(schemaMapping);
     }
 
-    // EDML
     private SchemaMapping getSchemaMappingDefinition(final ExaMetadata exaMetadata, final AdapterRequest request) {
-        // read out adapter properties
+        final JsonSchemaMappingReader mappingReader = createMappingReader(exaMetadata, request);
+        final List<EdmlInput> mappingDefinition = readMappingDefinition(request);
+        return mappingReader.readSchemaMapping(mappingDefinition);
+    }
+
+    private List<EdmlInput> readMappingDefinition(final AdapterRequest request) {
         final AdapterProperties adapterProperties = new AdapterProperties(
                 request.getSchemaMetadataInfo().getProperties());
-
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
-        getConnectionInformation(exaMetadata, request);
+        return documentAdapterProperties.getMappingDefinition();
+    }
 
-        final TableKeyFetcher tableKeyFetcher = this.dialect
-                .getTableKeyFetcher(getConnectionInformation(exaMetadata, request));
-        // EDML-reader, uses the tableKeyFetcher and the path to the mapping definition files
-        return new JsonSchemaMappingReader(tableKeyFetcher)
-                .readSchemaMapping(documentAdapterProperties.getMappingDefinition());
+    private JsonSchemaMappingReader createMappingReader(final ExaMetadata exaMetadata, final AdapterRequest request) {
+        final ConnectionPropertiesReader connectionInformation = getConnectionInformation(exaMetadata, request);
+        final TableKeyFetcher tableKeyFetcher = this.dialect.getTableKeyFetcher(connectionInformation);
+        final SchemaFetcher mappingFetcher = this.dialect.getMappingFetcher(connectionInformation);
+        return new JsonSchemaMappingReader(tableKeyFetcher, new SchemaInferencer(mappingFetcher));
     }
 
     private ConnectionPropertiesReader getConnectionInformation(final ExaMetadata exaMetadata,
@@ -131,7 +138,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
                 documentAdapterProperties, this.thisNodesCoreCount);
-        //
+
         final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery, availableClusterCores);
         final String connectionName = getPropertiesFromRequest(request).getConnectionName();
         return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), this.dialect.getAdapterName())

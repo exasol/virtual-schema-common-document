@@ -2,4 +2,4 @@ error-tags:
   VSD:
     packages:
       - com.exasol
-    highest-index: 100
+    highest-index: 103
