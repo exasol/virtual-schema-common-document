@@ -81,7 +81,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     private JsonSchemaMappingReader createMappingReader(final ExaMetadata exaMetadata, final AdapterRequest request) {
         final ConnectionPropertiesReader connectionInformation = getConnectionInformation(exaMetadata, request);
         final TableKeyFetcher tableKeyFetcher = this.dialect.getTableKeyFetcher(connectionInformation);
-        final SchemaFetcher mappingFetcher = this.dialect.getMappingFetcher(connectionInformation);
+        final SchemaFetcher mappingFetcher = this.dialect.getSchemaFetcher(connectionInformation);
         return new JsonSchemaMappingReader(tableKeyFetcher, new SchemaInferencer(mappingFetcher));
     }
 

@@ -41,7 +41,7 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
     }
 
     @Override
-    public SchemaFetcher getMappingFetcher(final ConnectionPropertiesReader connectionInformation) {
+    public SchemaFetcher getSchemaFetcher(final ConnectionPropertiesReader connectionInformation) {
         return source -> Optional.empty();
     }
 

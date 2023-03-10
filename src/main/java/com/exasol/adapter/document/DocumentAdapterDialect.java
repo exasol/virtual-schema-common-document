@@ -25,7 +25,7 @@ public interface DocumentAdapterDialect {
      * @param connectionInformation connection details
      * @return database specific {@link SchemaFetcher}
      */
-    public SchemaFetcher getMappingFetcher(final ConnectionPropertiesReader connectionInformation);
+    public SchemaFetcher getSchemaFetcher(final ConnectionPropertiesReader connectionInformation);
 
     /**
      * Get a data source specific {@link QueryPlanner}.
