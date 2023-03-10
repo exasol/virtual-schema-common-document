@@ -1,12 +1,16 @@
 # Common Virtual Schema for Document Data 9.3.0, released 2023-??-??
 
-Code name: Auto-inference for Parquet files
+Code name: Schema Auto-inference
 
 ## Summary
 
+This release adds support for auto inference of schemas. This allows users to omit the `mapping` element in the EDML JSON definition. Currently this is only supported for the Parquet file format in file based virtual schemas using `virtual-schema-common-document-files` (e.g. s3-document-files-virtual-schema and azure-data-lake-storage-gen2-document-files-virtual-schema).
+
+To use this feature you can omit the `mapping` element from the EDML JSON Definition. See the [user guide](https://github.com/exasol/virtual-schema-common-document/blob/main/doc/user_guide/edml_user_guide.md) for details.
+
 ## Features
 
-* #155: Added auto-inference for Parquet files
+* #155: Added support for auto inference of schemas
 
 ## Dependency Updates
 

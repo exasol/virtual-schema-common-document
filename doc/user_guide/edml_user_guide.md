@@ -344,6 +344,18 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 * Date: Date as JSON string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
+## Automatic Mapping Inference
+
+The adapter supports automatic mapping inference. This allows you to omit the `mapping` element from the EDML definition. The virtual schema will then infer the mapping from the schema of the source.
+
+Currently this is only supported for Parquet files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
+
+### Notes
+
+* The files specified in the `source` must be available when creating the virtual schema. If the files are not available, the `CREATE VIRTUAL SCHEMA` command will fail.
+* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` use the same schema.
+* The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
+
 ## CSV Support
 ### CSV File Headers
 
