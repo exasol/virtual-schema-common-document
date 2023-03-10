@@ -21,7 +21,7 @@ public class MappingConversionPipeline {
      */
     private final TableKeyFetcher tableKeyFetcher;
 
-    private final SchemaInferencer schemaInferencer ;
+    private final SchemaInferencer schemaInferencer;
 
     /**
      * Converts an EDML definition into a mapping definition
@@ -31,7 +31,7 @@ public class MappingConversionPipeline {
      */
     // transformation pipeline on the mappings
     public List<TableMapping> convert(final EdmlDefinition edmlDefinition) {
-        final EdmlDefinition enrichedDefinition = this.mappingAutoInferencer.inferSchema(edmlDefinition);
+        final EdmlDefinition enrichedDefinition = this.schemaInferencer.inferSchema(edmlDefinition);
         final StagingTableMapping stagingMapping = new EdmlToStagingTableMappingConverter().convert(enrichedDefinition);
         return stagingMapping//
                 .transformedBy(new ColumnNameGenerator())//

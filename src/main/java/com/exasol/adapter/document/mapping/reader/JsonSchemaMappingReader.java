@@ -22,19 +22,18 @@ import com.exasol.errorreporting.ExaError;
  */
 public class JsonSchemaMappingReader {
     private final TableKeyFetcher tableKeyFetcher;
-    private final SchemaInferencer schemaInferencer ;
+    private final SchemaInferencer schemaInferencer;
 
     /**
      * Create an instance of {@link JsonSchemaMappingReader}.
      *
-     * @param tableKeyFetcher       remote database specific {@link TableKeyFetcher}
-     * @param mappingAutoInferencer mapping auto inferencer
+     * @param tableKeyFetcher  remote database specific {@link TableKeyFetcher}
+     * @param schemaInferencer mapping auto inferencer
      * @throws ExasolDocumentMappingLanguageException if schema mapping invalid
      */
-    public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher,
-            final SchemaInferencer schemaInferencer ) {
+    public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher, final SchemaInferencer schemaInferencer) {
         this.tableKeyFetcher = tableKeyFetcher;
-        this.schemaInferencer = schemaInferencer ;
+        this.schemaInferencer = schemaInferencer;
     }
 
     /**
@@ -65,9 +64,9 @@ public class JsonSchemaMappingReader {
                 exception);
     }
 
-    /** Make a list of tablemappings from the EDML string */
+    /** Make a list of table mappings from the EDML string */
     private List<TableMapping> parseDefinition(final String edmlString) {
         final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
-        return new MappingConversionPipeline(this.tableKeyFetcher, this.mappingAutoInferencer).convert(edmlDefinition);
+        return new MappingConversionPipeline(this.tableKeyFetcher, this.schemaInferencer).convert(edmlDefinition);
     }
 }
