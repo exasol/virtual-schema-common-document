@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 9.3.0, released 2023-??-??
+# Common Virtual Schema for Document Data 9.3.0, released 2023-03-10
 
 Code name: Schema Auto-inference
 
