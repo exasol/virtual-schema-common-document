@@ -7,9 +7,10 @@ import com.exasol.adapter.document.edml.MappingDefinition;
 
 /**
  * This interface allows dialects to provide support for automatic inference of the file structure, e.g. Parquet files.
- *
- * In case the user did not specify a {@link MappingDefinition} in a {@link EdmlDefinition} when creating a virtual
- * schema, this class may automatically detect the schema of the source file(s).
+ * <p>
+ * In case the user did not specify a {@link MappingDefinition mapping} in the {@link EdmlDefinition} when creating a
+ * virtual schema, this class is used to automatically detect the schema of the source file(s).
+ * </p>
  */
 public interface SchemaFetcher {
 

@@ -9,7 +9,7 @@ import com.exasol.errorreporting.ExaError;
 
 /**
  * This class automatically infers the schema for an {@link EdmlDefinition} in case the user did not specify a
- * {@link EdmlDefinition#getMapping() mapping} in.
+ * {@link EdmlDefinition#getMapping() mapping} when creating the virtual schema.
  */
 public class SchemaInferencer {
 
