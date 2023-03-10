@@ -41,7 +41,8 @@ public class SchemaInferencer {
         if (detectedSchema.isEmpty()) {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-101")
                     .message("This virtual schema does not support auto inference for source {{source|q}}.")
-                    .parameter("source", "Value of the SOURCE parameter specified when creating the virtual schema")
+                    .parameter("source", edmlDefinition.getSource(),
+                            "Value of the SOURCE parameter specified when creating the virtual schema")
                     .mitigation("Please specify the 'mapping' element in the JSON EDML definition.").toString());
         }
         LOG.fine(() -> "Detected mapping for source " + edmlDefinition.getSource() + ": " + detectedSchema.get());
@@ -54,12 +55,12 @@ public class SchemaInferencer {
         } catch (final RuntimeException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("E-VSD-102")
                     .message("Schema auto inference for source {{source|q}} failed.")
-                    .parameter("source", source,
-                            "Value of the SOURCE parameter specified when creating the virtual schema")
-                    .mitigation("Make sure that the input files exist at {{source|q}}", source)
+                    .mitigation("Make sure that the input files exist at {{source|q}}")
                     .mitigation("See cause error message for details.")
                     .mitigation(
                             "Fix the root cause or specify the 'mapping' element in the JSON EDML definition to skip auto inference.")
+                    .parameter("source", source,
+                            "Value of the SOURCE parameter specified when creating the virtual schema")
                     .toString(), exception);
         }
     }
