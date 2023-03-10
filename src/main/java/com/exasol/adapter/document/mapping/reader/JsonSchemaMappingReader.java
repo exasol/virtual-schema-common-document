@@ -16,8 +16,8 @@ import com.exasol.errorreporting.ExaError;
 /**
  * EDML: This class reads a {@link SchemaMapping} from JSON files.
  * <p>
- * The JSON files must follow the schema defined in {@code resources/schemas/edml-1.0.0.json}. Documentation of schema
- * mapping definitions can be found at {@code /doc/gettingStartedWithSchemaMappingLanguage.md}.
+ * The JSON files must follow the schema defined in {@code resources/schemas/edml-1.5.0.json}. Documentation of schema
+ * mapping definitions can be found at {@code doc/user_guide/edml_user_guide.md}.
  * </p>
  */
 public class JsonSchemaMappingReader {

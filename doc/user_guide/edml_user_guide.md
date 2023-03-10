@@ -57,7 +57,7 @@ In order to let this adapter create the described mapping we create the followin
 
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
   "description": "Example mapping",
@@ -136,7 +136,7 @@ To achieve this we create the following mapping definition:
 
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
   "description": "Example mapping",
@@ -194,7 +194,7 @@ To achieve this we create the following mapping definition:
 
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.1.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "<data source specific source description>",
   "destinationTable": "BOOKS",
   "description": "Example mapping",
@@ -349,7 +349,7 @@ If the CSV file(s) doesn't have headers you can omit this whole block (or set `c
 Example:
 ```json
 {
-  "$schema": "https://schemas.exasol.com/edml-1.4.0.json",
+  "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
   "source": "data/CsvWithHeaders.csv",
   "destinationTable": "BOOKS",
   "description": "Maps MY_BOOKS to BOOKS",
