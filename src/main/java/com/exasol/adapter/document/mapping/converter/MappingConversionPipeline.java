@@ -21,7 +21,7 @@ public class MappingConversionPipeline {
      */
     private final TableKeyFetcher tableKeyFetcher;
 
-    private final SchemaInferencer mappingAutoInferencer;
+    private final SchemaInferencer schemaInferencer ;
 
     /**
      * Converts an EDML definition into a mapping definition

@@ -15,10 +15,10 @@ import com.exasol.adapter.document.edml.MappingDefinition;
 public interface SchemaFetcher {
 
     /**
-     * Read the schema for the given source.
+     * Infer the schema for the given source.
      *
      * @param source the source reference, i.e. the table name, file path or resource identifier
-     * @return an empty {@link Optional} if the given source is not supported or else the detected schema
+     * @return the detected schema if the given source is supported or else an empty {@link Optional}
      */
     Optional<MappingDefinition> fetchSchema(String source);
 }

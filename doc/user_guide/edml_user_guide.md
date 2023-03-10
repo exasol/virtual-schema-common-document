@@ -3,7 +3,7 @@
 For creating a Virtual Schema for document data you have to define a mapping from the document structure to a relational structure. This is done using the Exasol Document Mapping Language (EDML)
 ([reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)).
 
-Usually you write these definitions by hand. An exception are parquet input files for which you can use our [generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize further.
+Usually you write these definitions by hand. An exception are parquet input files for which you can use the [Exasol Parquet EDML generator](https://github.com/exasol/parquet-edml-generator/) to create an initial version that you then can customize further.
 
 We recommend using an editor with JSON-Schema support for creating the files. This makes it easier to write the definition.
 
@@ -354,14 +354,14 @@ Currently this is only supported for Parquet files using the [file based virtual
 
 * The files specified in the `source` must be available when creating the virtual schema. If the files are not available, the `CREATE VIRTUAL SCHEMA` command will fail.
   * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
-* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` use the same schema, else the mapping may be wrong.
+* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
 * The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
 * Creating the virtual schema will take longer because the adapter needs to read files from the `source`.
 
 ## CSV Support
 ### CSV File Headers
 
-For CSV Support specifically we added an optional `additionalConfiguration` JSON object. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers. If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
+For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers. If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
 
 Example:
 ```json

@@ -23,7 +23,7 @@ class EdmlToStagingTableMappingConverter {
     StagingTableMapping convert(final EdmlDefinition edmlDefinition) {
         if (edmlDefinition.getMapping() == null) {
             throw new IllegalStateException(ExaError.messageBuilder("E-VSD-103")
-                    .message("Mapping of EDML definition is missing").ticketMitigation().toString());
+                    .message("EDML definition does not contain a mapping").ticketMitigation().toString());
         }
         final MappingDefinitionConverterVisitor visitor = new MappingDefinitionConverterVisitor(
                 edmlDefinition.getSource(), edmlDefinition.getDestinationTable(), DocumentPathExpression.builder(),

@@ -26,12 +26,14 @@ public class SchemaInferencer {
     }
 
     /**
-     * If the given {@link EdmlDefinition} does not contain a {@link EdmlDefinition#getMapping() mapping}, this will
-     * return a new {@link MappingDefinition} with an automatically generated mapping based on the source. If a
-     * {@link EdmlDefinition#getMapping() mapping} is present, this will return the {@link EdmlDefinition} unmodified.
+     * There are two ways to provide a mapping: 1) Either the {@link EdmlDefinition} contains an explicit mapping provided upfront and 2) infer the mapping from the {@link EdmlDefinition#getMapping() source data}.
+     * If the given {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping}, the method will 
+     * return this. Otherwise the method infers a mapping from the {@link EdmlDefinition#getMapping() source} and adds this to the {@link EdmlDefinition}. In both cases the method returns the {@link EdmlDefinition}.
      * 
-     * @param edmlDefinition the {@link EdmlDefinition} for which to infer the schema if it is missing.
-     * @return the updated {@link EdmlDefinition}.
+     * @param edmlDefinition the {@link EdmlDefinition} from which to get or infer the mapping
+     * @return {@link EdmlDefinition}, either unchanged or with added mapping
+     * @throws IllegalStateExceptionin case mapping inference fails
+     * @throws IllegalArgumentException in case the current VSD dialect does not support mapping inference
      */
     public EdmlDefinition inferSchema(final EdmlDefinition edmlDefinition) {
         if (edmlDefinition.getMapping() != null) {
@@ -66,14 +68,14 @@ public class SchemaInferencer {
     }
 
     private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition,
-            final MappingDefinition autoInferenceMapping) {
+            final MappingDefinition mapping) {
         return EdmlDefinition.builder() //
                 .additionalConfiguration(edmlDefinition.getAdditionalConfiguration())
                 .addSourceReferenceColumn(edmlDefinition.isAddSourceReferenceColumn())
                 .description(edmlDefinition.getDescription()) //
                 .destinationTable(edmlDefinition.getDestinationTable()) //
                 .source(edmlDefinition.getSource()) //
-                .mapping(autoInferenceMapping) //
+                .mapping(mapping) //
                 .build();
     }
 }

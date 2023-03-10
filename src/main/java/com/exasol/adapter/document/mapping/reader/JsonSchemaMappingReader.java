@@ -22,7 +22,7 @@ import com.exasol.errorreporting.ExaError;
  */
 public class JsonSchemaMappingReader {
     private final TableKeyFetcher tableKeyFetcher;
-    private final SchemaInferencer mappingAutoInferencer;
+    private final SchemaInferencer schemaInferencer ;
 
     /**
      * Create an instance of {@link JsonSchemaMappingReader}.
@@ -32,9 +32,9 @@ public class JsonSchemaMappingReader {
      * @throws ExasolDocumentMappingLanguageException if schema mapping invalid
      */
     public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher,
-            final SchemaInferencer mappingAutoInferencer) {
+            final SchemaInferencer schemaInferencer ) {
         this.tableKeyFetcher = tableKeyFetcher;
-        this.mappingAutoInferencer = mappingAutoInferencer;
+        this.schemaInferencer = schemaInferencer ;
     }
 
     /**
