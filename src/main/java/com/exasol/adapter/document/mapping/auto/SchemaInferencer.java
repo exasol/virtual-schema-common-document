@@ -26,13 +26,18 @@ public class SchemaInferencer {
     }
 
     /**
-     * There are two ways to provide a mapping: 1) Either the {@link EdmlDefinition} contains an explicit mapping provided upfront and 2) infer the mapping from the {@link EdmlDefinition#getMapping() source data}.
-     * If the given {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping}, the method will 
-     * return this. Otherwise the method infers a mapping from the {@link EdmlDefinition#getMapping() source} and adds this to the {@link EdmlDefinition}. In both cases the method returns the {@link EdmlDefinition}.
+     * There are two ways to provide a mapping:
+     * <ol>
+     * <li>Either the {@link EdmlDefinition} contains an explicit mapping provided upfront or</li>
+     * <li>infer the mapping from the {@link EdmlDefinition#getMapping() source data}.</li>
+     * </ol>
+     * If the given {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping}, the method will
+     * return this. Otherwise the method infers a mapping from the {@link EdmlDefinition#getMapping() source} and adds
+     * this to the {@link EdmlDefinition}. In both cases the method returns the {@link EdmlDefinition}.
      * 
      * @param edmlDefinition the {@link EdmlDefinition} from which to get or infer the mapping
      * @return {@link EdmlDefinition}, either unchanged or with added mapping
-     * @throws IllegalStateExceptionin case mapping inference fails
+     * @throws IllegalStateException    in case mapping inference fails
      * @throws IllegalArgumentException in case the current VSD dialect does not support mapping inference
      */
     public EdmlDefinition inferSchema(final EdmlDefinition edmlDefinition) {
@@ -67,8 +72,7 @@ public class SchemaInferencer {
         }
     }
 
-    private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition,
-            final MappingDefinition mapping) {
+    private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition, final MappingDefinition mapping) {
         return EdmlDefinition.builder() //
                 .additionalConfiguration(edmlDefinition.getAdditionalConfiguration())
                 .addSourceReferenceColumn(edmlDefinition.isAddSourceReferenceColumn())
