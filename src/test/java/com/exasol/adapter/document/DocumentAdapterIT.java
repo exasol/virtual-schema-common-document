@@ -51,12 +51,13 @@ class DocumentAdapterIT {
     private static ConnectionDefinition nullConnection;
     private static AdapterScript adapterScript;
     private static Connection connection;
+    private static UdfTestSetup udfTestSetup;
 
     @BeforeAll
     static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, IOException {
         testSetup = new ExasolTestcontainerTestSetup();
         connection = testSetup.createConnection();
-        final UdfTestSetup udfTestSetup = new UdfTestSetup(testSetup, connection);
+        udfTestSetup = new UdfTestSetup(testSetup, connection);
         exasolObjectFactory = new ExasolObjectFactory(connection,
                 ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         buildMockAdapter();
@@ -73,6 +74,7 @@ class DocumentAdapterIT {
 
     @AfterAll
     static void afterAll() throws Exception {
+        udfTestSetup.close();
         testSetup.close();
     }
 
