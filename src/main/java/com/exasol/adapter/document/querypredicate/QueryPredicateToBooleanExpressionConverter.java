@@ -84,8 +84,8 @@ public class QueryPredicateToBooleanExpressionConverter {
             case LIKE:
             case NOT_LIKE:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-5").message(
-                        "For efficiency reasons virtual schemas supports LIKE and NOT LIKE only for the SOURCE_REFERENCE column.")
-                        .mitigation("Please change your query and wrap it in a super-select that does the LIKE.")
+                        "For efficiency reasons virtual schemas support operators LIKE and NOT LIKE only for column SOURCE_REFERENCE.")
+                        .mitigation("Please change your query and wrap it in an outer SELECT statement that can use operator LIKE for other columns as well.")
                         .toString());
             default:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-4")
