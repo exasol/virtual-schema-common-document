@@ -1,9 +1,7 @@
 package com.exasol.adapter.document;
 
 import java.math.BigInteger;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.logging.Logger;
 
 import com.exasol.ExaMetadata;
 import com.exasol.adapter.document.properties.DocumentAdapterProperties;
@@ -17,7 +15,7 @@ class UdfCountCalculator {
      * A JAVA-UDF needs about 150 MB RAM. The rest is an estimate for buffering / handling data.
      */
     private static final int UDF_MIN_MEMORY = 500 * MB;
-    private static final Logger LOGGER = LoggerFactory.getLogger(UdfCountCalculator.class);
+    private static final Logger LOGGER = Logger.getLogger(UdfCountCalculator.class.getName());
 
     /**
      * Get the maximum number of UDFs that can be used to solve the query.
@@ -37,14 +35,14 @@ class UdfCountCalculator {
         final int autoDetectedMaximum = nodeCount * Math.min(maximumNodesByMemory, coresPerNode);
         final int maxConfigured = documentAdapterProperties.getMaxParallelUdfs();
         final int result = Math.min(autoDetectedMaximum, maxConfigured);
-        LOGGER.info("Calculating maximum UDF number as min(\n" + //
-                "    cores in cluster ({}),\n" + //
-                "    (memory per node ({} MB) / min ram per udf ({} MB)) * node count ({}) ) (= {})\n" + //
-                "    configuration MAX_PARALLEL_UDFS ({})\n" + //
-                ") = {}\n"
+        LOGGER.info(() -> String.format("Calculating maximum UDF number as min(\n" + //
+                "    cores in cluster (%d),\n" + //
+                "    (memory per node (%d MB) / min ram per udf (%d MB)) * node count (%d) ) (= %d)\n" + //
+                "    configuration MAX_PARALLEL_UDFS (%d)\n" + //
+                ") = %d\n"
                 + "Note that this is just the maximum. The dialect will decide later how many UDFs will be started.",
                 coresPerNode * nodeCount, memoryLimit.divide(BigInteger.valueOf(MB)).intValue(), UDF_MIN_MEMORY / MB,
-                nodeCount, maximumNodesByMemory * nodeCount, maxConfigured, result);
+                nodeCount, maximumNodesByMemory * nodeCount, maxConfigured, result));
         return result;
     }
 }
