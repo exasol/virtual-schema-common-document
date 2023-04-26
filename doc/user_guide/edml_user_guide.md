@@ -265,15 +265,15 @@ That's, however, not always the best option. For that reason, you can configure 
 
 * `ABORT`: Abort the whole query with an exception
 * `NULL`: Return `NULL` instead
-* `CONVERT_OR_ABORT` try to convert and abort the query if not convertable
-* `CONVERT_OR_NULL` try to convert and return `NULL` if not convertable
+* `CONVERT_OR_ABORT` try to convert and abort the query if not convertible
+* `CONVERT_OR_NULL` try to convert and return `NULL` if not convertible
 
 All mappings pass through null values. That means, if the source value is a null-value, the adapter converts it to `NULL`. The only exception is the `toJsonMapping` which converts null values to JSON null values.
 
 ### ToVarcharMapping Conversions
 
-* Nested object: Not convertable
-* Nested list: Not convertable
+* Nested object: Not convertible
+* Nested list: Not convertible
 * String: No conversion needed
 * Decimal value: String representation of decimal (e.g: `"1.23"`)
 * Double value: String representation of decimal (e.g: `"1.23"`)
@@ -284,49 +284,49 @@ All mappings pass through null values. That means, if the source value is a null
 
 ### ToDecimalMapping Conversions
 
-* Nested object: Not convertable
-* Nested list: Not convertable
-* String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertable.
+* Nested object: Not convertible
+* Nested list: Not convertible
+* String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertible.
 * Decimal value: No conversion needed
 * Double value: Converted to decimal
 * Boolean value: `true` -> 1, `false` -> 0
-* Binary data: Not convertable
+* Binary data: Not convertible
 * Date: Date as UTC milliseconds time value
 * Timestamp: Timestamp as UTC timestamp in milliseconds (floored)
 
 ### ToDoubleMapping Conversions
 
-* Nested object: Not convertable
-* Nested list: Not convertable
-* String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertable.
+* Nested object: Not convertible
+* Nested list: Not convertible
+* String: The adapter tries to parse the string as a number. E.g: `"1.23"` -> `1.23`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertible.
 * Decimal value: Converted to floating-point.
 * Double value: No conversion needed
 * Boolean value: `true` -> 1, `false` -> 0
-* Binary data: Not convertable
+* Binary data: Not convertible
 * Date: Date as UTC milliseconds time value
 * Timestamp: Timestamp as UTC timestamp in milliseconds (floored)
 
 ### ToDateMapping Conversions
 
-* Nested object: Not convertable
-* Nested list: Not convertable
-* String: Not convertable
+* Nested object: Not convertible
+* Nested list: Not convertible
+* String: Not convertible
 * Decimal value: Interpreted as UTC timestamp in milliseconds
 * Double value: Interpreted as UTC timestamp in milliseconds
-* Boolean value: Not convertable
-* Binary data: Not convertable
+* Boolean value: Not convertible
+* Binary data: Not convertible
 * Date: No conversion needed
 * Timestamp: Converted to date (looses time information)
 
 ### ToTimestampMapping Conversions
 
-* Nested object: Not convertable
-* Nested list: Not convertable
-* String: Not convertable
+* Nested object: Not convertible
+* Nested list: Not convertible
+* String: Not convertible
 * Decimal value: Interpreted as UTC timestamp in milliseconds
 * Double value: Interpreted as UTC timestamp in milliseconds
-* Boolean value: Not convertable
-* Binary data: Not convertable
+* Boolean value: Not convertible
+* Binary data: Not convertible
 * Date: Converted to timestamp
 * Timestamp: No conversion needed
 
