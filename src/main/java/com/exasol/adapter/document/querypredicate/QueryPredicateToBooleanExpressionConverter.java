@@ -7,10 +7,7 @@ import static com.exasol.sql.expression.comparison.SimpleComparisonOperator.*;
 import com.exasol.adapter.document.literalconverter.SqlLiteralToValueExpressionConverter;
 import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator;
 import com.exasol.errorreporting.ExaError;
-import com.exasol.sql.expression.And;
-import com.exasol.sql.expression.BooleanExpression;
-import com.exasol.sql.expression.Or;
-import com.exasol.sql.expression.ValueExpression;
+import com.exasol.sql.expression.*;
 import com.exasol.sql.expression.comparison.SimpleComparison;
 import com.exasol.sql.expression.comparison.SimpleComparisonOperator;
 import com.exasol.sql.expression.literal.BooleanLiteral;
@@ -87,8 +84,9 @@ public class QueryPredicateToBooleanExpressionConverter {
             case LIKE:
             case NOT_LIKE:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-5").message(
-                        "The current version of virtual-schemas does not support LIKE and NOT LIKE as post-selection.")
-                        .mitigation("Please change your query.").toString());
+                        "For efficiency reasons virtual schemas supports LIKE and NOT LIKE only for the SOURCE_REFERENCE column.")
+                        .mitigation("Please change your query and wrap it in a super-select that does the LIKE.")
+                        .toString());
             default:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-4")
                         .message("Converting {{OPERATOR}} is not yet implemented.", operator).ticketMitigation()
