@@ -4,11 +4,16 @@ Code name:
 
 ## Summary
 
-This release improves the wording of error code [F-VSD-5](https://exasol.github.io/error-catalog/error-codes/f-vsd-5.html) to better explain the background and mitigation.
+This release allows virtual schemas using VSD as basis to define `additionalConfiguration`, `description` and `destinationTable` in addition to `mapping` during schema auto-inference. This will e.g. allow the auto-inference for CSV files to detect if a CSV file contains a header or not.
+
+To migrate a virtual schema to this new version you need to update your implementation of `SchemaFetcher` to return `Optional<InferredMappingDefinition>` instead of `Optional<MappingDefinition>` in method `fetchSchema()`.
+
+This release also improves the wording of error code [F-VSD-5](https://exasol.github.io/error-catalog/error-codes/f-vsd-5.html) to better explain the background and mitigation.
 
 ## Features
 
 * #159: Improved LIKE error message
+* #161: Allowed virtual schemas to define more properties during auto-inference
 
 ## Dependency Updates
 

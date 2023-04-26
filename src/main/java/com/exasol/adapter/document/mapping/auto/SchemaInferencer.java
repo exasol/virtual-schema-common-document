@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.exasol.adapter.document.edml.EdmlDefinition;
-import com.exasol.adapter.document.edml.MappingDefinition;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -28,12 +27,15 @@ public class SchemaInferencer {
     /**
      * There are two ways to provide a mapping:
      * <ol>
-     * <li>Either the {@link EdmlDefinition} contains an explicit mapping provided upfront or</li>
-     * <li>infer the mapping from the {@link EdmlDefinition#getMapping() source data}.</li>
+     * <li>If the {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping} provided upfront then
+     * this method will return it unchanged.</li>
+     * <li>If the {@link EdmlDefinition} does not contains a {@link EdmlDefinition#getMapping() mapping}, this method
+     * will infer a mapping from the {@link EdmlDefinition#getMapping() source} using the {@link SchemaFetcher} and add
+     * it to the {@link EdmlDefinition}.
+     * <p>
+     * In case the {@link SchemaFetcher} also detected destination table name, description or additional configuration,
+     * these will also be used in the returned mapping. User defined values however take precedence.</li>
      * </ol>
-     * If the given {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping}, the method will
-     * return this. Otherwise the method infers a mapping from the {@link EdmlDefinition#getMapping() source} and adds
-     * this to the {@link EdmlDefinition}. In both cases the method returns the {@link EdmlDefinition}.
      * 
      * @param edmlDefinition the {@link EdmlDefinition} from which to get or infer the mapping
      * @return {@link EdmlDefinition}, either unchanged or with added mapping
@@ -44,7 +46,7 @@ public class SchemaInferencer {
         if (edmlDefinition.getMapping() != null) {
             return edmlDefinition;
         }
-        final Optional<MappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource());
+        final Optional<InferredMappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource());
         if (detectedSchema.isEmpty()) {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-101")
                     .message("This virtual schema does not support auto inference for source {{source|q}}.")
@@ -56,7 +58,7 @@ public class SchemaInferencer {
         return copyWithMapping(edmlDefinition, detectedSchema.get());
     }
 
-    private Optional<MappingDefinition> fetchSchema(final String source) {
+    private Optional<InferredMappingDefinition> fetchSchema(final String source) {
         try {
             return this.schemaFetcher.fetchSchema(source);
         } catch (final RuntimeException exception) {
@@ -72,14 +74,20 @@ public class SchemaInferencer {
         }
     }
 
-    private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition, final MappingDefinition mapping) {
+    private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition,
+            final InferredMappingDefinition inferredMapping) {
+        final String additionalConfiguration = Optional.ofNullable(edmlDefinition.getAdditionalConfiguration())
+                .or(inferredMapping::getAdditionalConfiguration) //
+                .orElse(null);
+        final String description = Optional.ofNullable(edmlDefinition.getDescription())
+                .or(inferredMapping::getDescription).orElse(null);
         return EdmlDefinition.builder() //
-                .additionalConfiguration(edmlDefinition.getAdditionalConfiguration())
-                .addSourceReferenceColumn(edmlDefinition.isAddSourceReferenceColumn())
-                .description(edmlDefinition.getDescription()) //
+                .additionalConfiguration(additionalConfiguration)
+                .addSourceReferenceColumn(edmlDefinition.isAddSourceReferenceColumn()) //
+                .description(description) //
                 .destinationTable(edmlDefinition.getDestinationTable()) //
                 .source(edmlDefinition.getSource()) //
-                .mapping(mapping) //
+                .mapping(inferredMapping.getMapping()) //
                 .build();
     }
 }

@@ -20,5 +20,5 @@ public interface SchemaFetcher {
      * @param source the source reference, i.e. the table name, file path or resource identifier
      * @return the detected schema if the given source is supported or else an empty {@link Optional}
      */
-    Optional<MappingDefinition> fetchSchema(String source);
+    Optional<InferredMappingDefinition> fetchSchema(String source);
 }
