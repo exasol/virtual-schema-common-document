@@ -53,7 +53,7 @@ public class InferredMappingDefinition {
     /**
      * Creates builder to build {@link InferredMappingDefinition}.
      *
-     * @param the mandatory mapping definition
+     * @param mapping the mandatory mapping definition
      * @return created builder
      */
     public static Builder builder(final MappingDefinition mapping) {
