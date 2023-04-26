@@ -4,7 +4,9 @@ import static com.exasol.adapter.document.querypredicate.AbstractComparisonPredi
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -13,15 +15,13 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
+import com.exasol.adapter.document.querypredicate.AbstractComparisonPredicate.Operator;
 import com.exasol.adapter.sql.SqlLiteralString;
 import com.exasol.sql.expression.*;
-import com.exasol.sql.expression.comparison.Comparison;
-import com.exasol.sql.expression.comparison.ComparisonOperator;
-import com.exasol.sql.expression.comparison.SimpleComparisonOperator;
+import com.exasol.sql.expression.comparison.*;
 import com.exasol.sql.expression.literal.BooleanLiteral;
 
 class QueryPredicateToBooleanExpressionConverterTest {
@@ -95,5 +95,16 @@ class QueryPredicateToBooleanExpressionConverterTest {
     void testConvertNotPredicate() {
         final BooleanExpression result = CONVERTER.convert(new NotPredicate(new NoPredicate()));
         assertThat(result, instanceOf(Not.class));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "LIKE", "NOT_LIKE" })
+    void testConvertingLikePredicateNotSupported(final Operator operator) {
+        final QueryPredicate predicate = new ColumnLiteralComparisonPredicate(operator, getMockColumn("COLUMN"),
+                new SqlLiteralString(""));
+        final Exception exception = assertThrows(UnsupportedOperationException.class,
+                () -> CONVERTER.convert(predicate));
+        assertThat(exception.getMessage(), startsWith(
+                "F-VSD-5: For efficiency reasons virtual schemas supports LIKE and NOT LIKE only for the SOURCE_REFERENCE column."));
     }
 }
