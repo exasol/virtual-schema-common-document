@@ -7,7 +7,4 @@ sources:
       - lombok
       - udf_coverage
 linkReplacements:
-  - https://awhitford.github.com/lombok.maven/lombok-maven-plugin/|http://anthonywhitford.com/lombok.maven/lombok-maven-plugin/
   - http://www.gnu.org/licenses/lgpl.txt|https://www.gnu.org/licenses/lgpl-3.0.txt
-excludes:
-  - regex: "E-PK-CORE-53: The dependencies.md file has outdated content.*"

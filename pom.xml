@@ -2,12 +2,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>9.3.0</version>
+    <version>9.4.0</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
-        <junit.version>5.9.2</junit.version>
         <vscommon.version>16.2.0</vscommon.version>
     </properties>
     <distributionManagement>
@@ -43,15 +42,9 @@
             <version>${vscommon.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>sql-statement-builder</artifactId>
-            <version>4.5.2</version>
+            <version>4.5.3</version>
         </dependency>
         <dependency>
             <groupId>org.logicng</groupId>
@@ -83,34 +76,27 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
+            <version>5.9.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.2.0</version>
+            <version>5.3.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>2.0.7</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>2.0.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <!-- Explicitly upgrade testcontainers to fix container reuse. -->
-            <groupId>com.exasol</groupId>
-            <artifactId>exasol-testcontainers</artifactId>
-            <version>6.5.1</version>
+            <version>2.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -141,7 +127,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.5.2</version>
+            <version>1.6.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -172,7 +158,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.9.3</version>
+                <version>2.9.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -214,7 +200,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>9.3.0</version>
+        <version>9.4.0</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
