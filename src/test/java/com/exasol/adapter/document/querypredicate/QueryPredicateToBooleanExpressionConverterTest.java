@@ -105,6 +105,6 @@ class QueryPredicateToBooleanExpressionConverterTest {
         final Exception exception = assertThrows(UnsupportedOperationException.class,
                 () -> CONVERTER.convert(predicate));
         assertThat(exception.getMessage(), startsWith(
-                "F-VSD-5: For efficiency reasons virtual schemas supports LIKE and NOT LIKE only for the SOURCE_REFERENCE column."));
+                "F-VSD-5: For efficiency reasons virtual schemas support operators LIKE and NOT LIKE only for column SOURCE_REFERENCE."));
     }
 }
