@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.TableKeyFetcher.NoKeyFoundException;
+import com.exasol.adapter.document.mapping.auto.InferredMappingDefinition;
 import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.properties.EdmlInput;
 
@@ -221,7 +222,7 @@ class JsonSchemaMappingReaderIT {
         return key;
     }
 
-    private Optional<MappingDefinition> mappingFetcherMock(final String source) {
+    private Optional<InferredMappingDefinition> mappingFetcherMock(final String source) {
         throw new UnsupportedOperationException("unsupported");
     }
 

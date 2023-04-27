@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import com.exasol.adapter.document.edml.EdmlDefinition;
-import com.exasol.adapter.document.edml.MappingDefinition;
 import com.exasol.errorreporting.ExaError;
 
 /**
@@ -12,13 +11,12 @@ import com.exasol.errorreporting.ExaError;
  * {@link EdmlDefinition#getMapping() mapping} when creating the virtual schema.
  */
 public class SchemaInferencer {
-
     private static final Logger LOG = Logger.getLogger(SchemaInferencer.class.getName());
     private final SchemaFetcher schemaFetcher;
 
     /**
      * Create a new instance.
-     * 
+     *
      * @param schemaFetcher the fetcher for retrieving the schema
      */
     public SchemaInferencer(final SchemaFetcher schemaFetcher) {
@@ -28,13 +26,16 @@ public class SchemaInferencer {
     /**
      * There are two ways to provide a mapping:
      * <ol>
-     * <li>Either the {@link EdmlDefinition} contains an explicit mapping provided upfront or</li>
-     * <li>infer the mapping from the {@link EdmlDefinition#getMapping() source data}.</li>
+     * <li>If the {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping} provided upfront then
+     * this method will return it unchanged.</li>
+     * <li>If the {@link EdmlDefinition} does not contains a {@link EdmlDefinition#getMapping() mapping}, this method
+     * will infer a mapping from the {@link EdmlDefinition#getMapping() source} using the {@link SchemaFetcher} and add
+     * it to the {@link EdmlDefinition}.
+     * <p>
+     * In case the {@link SchemaFetcher} also detected destination table name, description or additional configuration,
+     * these will also be used in the returned mapping. User defined values however take precedence.</li>
      * </ol>
-     * If the given {@link EdmlDefinition} contains a {@link EdmlDefinition#getMapping() mapping}, the method will
-     * return this. Otherwise the method infers a mapping from the {@link EdmlDefinition#getMapping() source} and adds
-     * this to the {@link EdmlDefinition}. In both cases the method returns the {@link EdmlDefinition}.
-     * 
+     *
      * @param edmlDefinition the {@link EdmlDefinition} from which to get or infer the mapping
      * @return {@link EdmlDefinition}, either unchanged or with added mapping
      * @throws IllegalStateException    in case mapping inference fails
@@ -44,7 +45,7 @@ public class SchemaInferencer {
         if (edmlDefinition.getMapping() != null) {
             return edmlDefinition;
         }
-        final Optional<MappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource());
+        final Optional<InferredMappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource());
         if (detectedSchema.isEmpty()) {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-101")
                     .message("This virtual schema does not support auto inference for source {{source|q}}.")
@@ -52,11 +53,13 @@ public class SchemaInferencer {
                             "Value of the SOURCE parameter specified when creating the virtual schema")
                     .mitigation("Please specify the 'mapping' element in the JSON EDML definition.").toString());
         }
-        LOG.fine(() -> "Detected mapping for source " + edmlDefinition.getSource() + ": " + detectedSchema.get());
-        return copyWithMapping(edmlDefinition, detectedSchema.get());
+        LOG.finest(() -> "Detected mapping for source " + edmlDefinition.getSource() + ": " + detectedSchema.get());
+        final EdmlDefinition updatedMapping = copyWithMapping(edmlDefinition, detectedSchema.get());
+        LOG.finest(() -> "Updated mapping: " + updatedMapping);
+        return updatedMapping;
     }
 
-    private Optional<MappingDefinition> fetchSchema(final String source) {
+    private Optional<InferredMappingDefinition> fetchSchema(final String source) {
         try {
             return this.schemaFetcher.fetchSchema(source);
         } catch (final RuntimeException exception) {
@@ -72,14 +75,39 @@ public class SchemaInferencer {
         }
     }
 
-    private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition, final MappingDefinition mapping) {
+    private EdmlDefinition copyWithMapping(final EdmlDefinition edmlDefinition,
+            final InferredMappingDefinition inferredMapping) {
+        final String additionalConfiguration = getAdditionalConfiguration(edmlDefinition, inferredMapping);
+        final String description = getDescription(edmlDefinition, inferredMapping);
         return EdmlDefinition.builder() //
-                .additionalConfiguration(edmlDefinition.getAdditionalConfiguration())
-                .addSourceReferenceColumn(edmlDefinition.isAddSourceReferenceColumn())
-                .description(edmlDefinition.getDescription()) //
+                .additionalConfiguration(additionalConfiguration)
+                .addSourceReferenceColumn(edmlDefinition.isAddSourceReferenceColumn()) //
+                .description(description) //
                 .destinationTable(edmlDefinition.getDestinationTable()) //
                 .source(edmlDefinition.getSource()) //
-                .mapping(mapping) //
+                .mapping(inferredMapping.getMapping()) //
                 .build();
+    }
+
+    private String getDescription(final EdmlDefinition edmlDefinition,
+            final InferredMappingDefinition inferredMapping) {
+        final String existingDescription = edmlDefinition.getDescription();
+        if ((existingDescription != null) && !existingDescription.isBlank()) {
+            LOG.finest(() -> "Using existing description '" + existingDescription + "'");
+            return existingDescription;
+        }
+        LOG.finest(() -> "Using detected description " + inferredMapping.getDescription());
+        return inferredMapping.getDescription().orElse(null);
+    }
+
+    private String getAdditionalConfiguration(final EdmlDefinition edmlDefinition,
+            final InferredMappingDefinition inferredMapping) {
+        final String existingConfiguration = edmlDefinition.getAdditionalConfiguration();
+        if ((existingConfiguration != null) && !existingConfiguration.isBlank()) {
+            LOG.finest(() -> "Using existing additional configuration '" + existingConfiguration + "'");
+            return existingConfiguration;
+        }
+        LOG.finest(() -> "Using detected additional configuration " + inferredMapping.getAdditionalConfiguration());
+        return inferredMapping.getAdditionalConfiguration().orElse(null);
     }
 }

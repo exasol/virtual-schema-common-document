@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -30,13 +32,13 @@ class SchemaInferencerTest {
 
     @BeforeEach
     void setUp() {
-        inferencer = new SchemaInferencer(schemaFetcherMock);
+        this.inferencer = new SchemaInferencer(this.schemaFetcherMock);
     }
 
     @Test
     void mappingPresent() {
         final EdmlDefinition definition = createDefinition(createMapping());
-        final EdmlDefinition result = inferencer.inferSchema(definition);
+        final EdmlDefinition result = this.inferencer.inferSchema(definition);
         assertThat(result, sameInstance(definition));
     }
 
@@ -44,8 +46,9 @@ class SchemaInferencerTest {
     void mappingNotPresent() {
         final EdmlDefinition definition = createDefinition(null);
         final MappingDefinition mapping = createMapping();
-        when(schemaFetcherMock.fetchSchema(SOURCE)).thenReturn(Optional.of(mapping));
-        final EdmlDefinition result = inferencer.inferSchema(definition);
+        simulatedDetectedSchema(InferredMappingDefinition.builder(mapping)
+                .additionalConfiguration("ignored additional config").description("ignored description"));
+        final EdmlDefinition result = this.inferencer.inferSchema(definition);
         assertAll(() -> assertThat(result, not(sameInstance(definition))),
                 () -> assertThat(result.getMapping(), sameInstance(mapping)),
                 () -> assertThat(result.getAdditionalConfiguration(), equalTo(ADDITIONAL_CONFIG)),
@@ -55,12 +58,36 @@ class SchemaInferencerTest {
                 () -> assertThat(result.isAddSourceReferenceColumn(), is(true)));
     }
 
+    @ParameterizedTest
+    @NullAndEmptySource
+    void additionalConfigurationDetected(final String existingConfiguration) {
+        final EdmlDefinition definition = emptyDefinition().additionalConfiguration(existingConfiguration).build();
+        simulatedDetectedSchema(
+                InferredMappingDefinition.builder(createMapping()).additionalConfiguration("detected config"));
+        final EdmlDefinition result = this.inferencer.inferSchema(definition);
+        assertThat(result.getAdditionalConfiguration(), equalTo("detected config"));
+    }
+
+    @ParameterizedTest
+    @NullAndEmptySource
+    void descriptionDetected(final String existingDescription) {
+        final EdmlDefinition definition = emptyDefinition().description(existingDescription).build();
+        simulatedDetectedSchema(InferredMappingDefinition.builder(createMapping()).description("detected description"));
+        final EdmlDefinition result = this.inferencer.inferSchema(definition);
+        assertThat(result.getDescription(), equalTo("detected description"));
+    }
+
+    private void simulatedDetectedSchema(final InferredMappingDefinition.Builder builder) {
+        when(this.schemaFetcherMock.fetchSchema(SOURCE))
+                .thenReturn(Optional.of(builder.build()));
+    }
+
     @Test
     void mappingNotPresentSourceNotSupported() {
         final EdmlDefinition definition = createDefinition(null);
-        when(schemaFetcherMock.fetchSchema(SOURCE)).thenReturn(Optional.empty());
+        when(this.schemaFetcherMock.fetchSchema(SOURCE)).thenReturn(Optional.empty());
         final Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> inferencer.inferSchema(definition));
+                () -> this.inferencer.inferSchema(definition));
         assertThat(exception.getMessage(), equalTo(
                 "E-VSD-101: This virtual schema does not support auto inference for source 'mySource'. Please specify the 'mapping' element in the JSON EDML definition."));
     }
@@ -68,14 +95,20 @@ class SchemaInferencerTest {
     @Test
     void mappingNotPresentFetchingFails() {
         final EdmlDefinition definition = createDefinition(null);
-        when(schemaFetcherMock.fetchSchema(SOURCE)).thenThrow(new RuntimeException("expected"));
-        final Exception exception = assertThrows(IllegalStateException.class, () -> inferencer.inferSchema(definition));
+        when(this.schemaFetcherMock.fetchSchema(SOURCE)).thenThrow(new RuntimeException("expected"));
+        final Exception exception = assertThrows(IllegalStateException.class,
+                () -> this.inferencer.inferSchema(definition));
         assertThat(exception.getMessage(),
                 startsWith("E-VSD-102: Schema auto inference for source 'mySource' failed. Known"));
     }
 
     private MappingDefinition createMapping() {
         return Fields.builder().mapField("field", ToVarcharMapping.builder().build()).build();
+    }
+
+    private EdmlDefinitionBuilder emptyDefinition() {
+        return EdmlDefinition.builder().source(SOURCE).destinationTable(DESTINATION).addSourceReferenceColumn(true)
+                .additionalConfiguration(null).description(null);
     }
 
     private EdmlDefinition createDefinition(final MappingDefinition mapping) {
