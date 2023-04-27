@@ -11,6 +11,8 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -56,18 +58,20 @@ class SchemaInferencerTest {
                 () -> assertThat(result.isAddSourceReferenceColumn(), is(true)));
     }
 
-    @Test
-    void additionalConfigurationDetected() {
-        final EdmlDefinition definition = emptyDefinition();
+    @ParameterizedTest
+    @NullAndEmptySource
+    void additionalConfigurationDetected(final String existingConfiguration) {
+        final EdmlDefinition definition = emptyDefinition().additionalConfiguration(existingConfiguration).build();
         simulatedDetectedSchema(
                 InferredMappingDefinition.builder(createMapping()).additionalConfiguration("detected config"));
         final EdmlDefinition result = this.inferencer.inferSchema(definition);
         assertThat(result.getAdditionalConfiguration(), equalTo("detected config"));
     }
 
-    @Test
-    void descriptionDetected() {
-        final EdmlDefinition definition = emptyDefinition();
+    @ParameterizedTest
+    @NullAndEmptySource
+    void descriptionDetected(final String existingDescription) {
+        final EdmlDefinition definition = emptyDefinition().description(existingDescription).build();
         simulatedDetectedSchema(InferredMappingDefinition.builder(createMapping()).description("detected description"));
         final EdmlDefinition result = this.inferencer.inferSchema(definition);
         assertThat(result.getDescription(), equalTo("detected description"));
@@ -102,9 +106,9 @@ class SchemaInferencerTest {
         return Fields.builder().mapField("field", ToVarcharMapping.builder().build()).build();
     }
 
-    private EdmlDefinition emptyDefinition() {
+    private EdmlDefinitionBuilder emptyDefinition() {
         return EdmlDefinition.builder().source(SOURCE).destinationTable(DESTINATION).addSourceReferenceColumn(true)
-                .additionalConfiguration(null).description(null).build();
+                .additionalConfiguration(null).description(null);
     }
 
     private EdmlDefinition createDefinition(final MappingDefinition mapping) {

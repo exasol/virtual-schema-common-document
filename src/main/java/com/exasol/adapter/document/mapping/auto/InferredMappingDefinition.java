@@ -60,6 +60,12 @@ public class InferredMappingDefinition {
         return new Builder(mapping);
     }
 
+    @Override
+    public String toString() {
+        return "InferredMappingDefinition [mapping=" + this.mapping + ", additionalConfiguration="
+                + this.additionalConfiguration + ", description=" + this.description + "]";
+    }
+
     /**
      * Builder to build {@link InferredMappingDefinition}.
      */
