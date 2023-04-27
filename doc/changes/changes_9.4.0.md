@@ -1,6 +1,6 @@
-# Common Virtual Schema for Document Data 9.4.0, released 2023-04-??
+# Common Virtual Schema for Document Data 9.4.0, released 2023-04-27
 
-Code name:
+Code name: Detect additional configuration
 
 ## Summary
 
