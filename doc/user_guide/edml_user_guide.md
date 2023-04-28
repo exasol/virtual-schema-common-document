@@ -259,7 +259,7 @@ The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. The adapter
 
 This adapter can convert input data to the requested column type. For example if the input is a number and the requested column is a string the adapter can convert the number to string.
 
-The conversion is done per value. That means that it's ok if in one row the input value is an int-value and the next row is a bool value. The adapter can convert both to the requested output column.
+The conversion is done per value. That means that it's ok if in one row the input value is an integer value and the next row is a boolean value. The adapter can convert both to the requested output column.
 
 That's, however, not always the best option. For that reason, you can configure how the adapter should behave if the input data does not match the requested column format. You can configure this for example using the `nonStringBehaviour`:
 
@@ -281,6 +281,18 @@ All mappings pass through null values. That means, if the source value is a null
 * Binary data: Converted to Base64 encoded data string
 * Date: Date as string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
+
+### ToBoolMapping Conversions
+
+* Nested object: Not convertible
+* Nested list: Not convertible
+* String: The adapter tries to parse the string as a boolean, e.g. `"True"` -> `true`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertible.
+* Decimal value: Not convertible
+* Double value: Not convertible
+* Boolean value: No conversion needed
+* Binary data: Not convertible
+* Date: Not convertible
+* Timestamp: Not convertible
 
 ### ToDecimalMapping Conversions
 
