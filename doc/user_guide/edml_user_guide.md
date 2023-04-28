@@ -474,6 +474,45 @@ Null and empty values are currently not supported in CSV files. If your CSV file
 
 ### Automatic Mapping Inference for CSV Files
 
+See the section [above](#automatic-mapping-inference) for general information about auto-inference.
+
+When the `mapping` element is missing in the EDML definition, VSD will automatically detect the column types and presence of a header in the CSV files.
+
+#### CSV Header Presence Detection
+
+VSD tries to detect if a CSV file contains a header or not based on the data types of the first two rows:
+
+* If the first row contains non-string values, VSD assumes there is no header
+* If the first and second row contain values with the same types, VSD assumes there is no header
+* Else VSD assumes there is a header
+
+If a header is present, VSD will convert the CSV column names to UPPER_SNAKE_CASE and use that as the table column name. Assuming a CSV column has name `userId`, VSD will map this to table column name `USER_ID`.
+
+If no header is present, VSD will map CSV columns to table column names `COLUMN_0`, `COLUMN_1` etc.
+
+In case the automatic header detection fails and wrongly assumes there is no header, you can filter out the header row using a `WHERE` condition in your SQL query.
+
+#### CSV Data Type Detection
+
+VSD detects the column types in the CSV file and converts the values to an appropriate Exasol type:
+
+* Strings: `VARCHAR(2000000)`
+* Characters (Strings of length 1): `VARCHAR(1)`
+* Boolean values like `true` or `False`: `BOOLEAN`
+* Integers between `-2147483648` and `2147483647`: `DECIMAL(10,0)`
+* Integers between `-9223372036854775808` and `9223372036854775807` `DECIMAL(20,0)`
+* Numbers with a decimal point: `DOUBLE PRECISION`
+
+VSD does not detect date or timestamp types as there are too many formats. Instead, these columns are mapped to `VARCHAR(2000000)`. In order to convert date and timestamps to the correct type, use one of the following Exasol functions:
+
+* If the format matches the Exasol format for date and timestamps, you can use [`CAST`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/cast.htm), e.g. `CAST(... AS DATE)` or `CAST(... AS TIMESTAMP)`.
+* For dates in a custom format use [`TO_DATE`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_date.htm).
+* For timestamps in a custom format use [`TO_TIMESTAMP`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_timestamp.htm).
+
+See the [documentation of Exasol's format models](https://docs.exasol.com/db/latest/sql_references/formatmodels.htm#DateTimeFormat) about specifying custom formats for `TO_DATE` and `TO_TIMESTAMP`.
+
+#### Limitations of Automatic Mapping Inference for CSV Files
+
 ## Reference
 
 * [Schema mapping language schema & reference](https://schemas.exasol.com/#exasol-document-mapping-language-edml)
