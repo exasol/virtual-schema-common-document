@@ -360,7 +360,7 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 
 The adapter supports automatic mapping inference. This allows you to omit the `mapping` element from the EDML definition. The virtual schema will then infer the mapping from the schema of the source.
 
-Currently this is only supported for Parquet files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
+Currently this is only supported for Parquet and CSV files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
 
 ### Notes
 
@@ -368,14 +368,17 @@ Currently this is only supported for Parquet files using the [file based virtual
   * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
 * The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
 * The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
-* Creating the virtual schema will take longer because the adapter needs to read files from the `source`.
+* Creating the virtual schema with auto-inference will take longer because the adapter needs to read files from the `source`.
+* Please see [below](#automatic-mapping-inference-for-csv-files) for details about auto-inference for CSV files.
 
 ## CSV Support
+
 ### CSV File Headers
 
-For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers. If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
+For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV files have a header. If the CSV files don't have a header you can omit this whole block or set `csv-headers` to `false`.
 
 Example:
+
 ```json
 {
   "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
@@ -398,11 +401,12 @@ Example:
 }
 ```
 
-### Mapping CSV Files
+#### Mapping CSV Files With Header
 
-When you want to map CSV files with headers you use the column name from the CSV header.
+When you want to map CSV files with header you use the column name from the CSV header.
 
-The following example maps the column with header "id" to "ID":
+The following example maps CSV column with header "id" to database table column "ID":
+
 ```json
   "mapping": {
     "fields": {
@@ -415,9 +419,11 @@ The following example maps the column with header "id" to "ID":
   }
 ```
 
-When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0).
+#### Mapping CSV Files Without Header
 
-The following example maps column 0 to "ID":
+When you want to map CSV files without header then you use column index as field name. The index is zero-based, so start counting at 0.
+
+The following example maps the first CSV column (index 0) to database table column "ID":
 ```json
   "mapping": {
     "fields": {
@@ -430,13 +436,43 @@ The following example maps column 0 to "ID":
   }
 ```
 
-Currently `"toVarcharMapping"` is the only available mapping option for CVS files.
-Please use Exasol database methods `CONVERT`, `CAST`, etc. to convert from VARCHAR to other data types such as `DATE` or `DECIMAL`.
+### Whitespace in CSV Files
+
+Please note that VSD trims whitespace in CSV column header names. If a CSV file contains header `id, name, value`, you can specify fields `"id"`, `"name"` and `"value"` in your mapping instead of `"id"`, `" name"` and `" value"`.
+
+Values however are not trimmed, so if your CSV contains values with leading or trailing whitespace, this will also appear in the Exasol table. If necessary you can trim the whitespace in your SQL query using Exasol's built-in function [`TRIM`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/trim.htm).
+
+### Supported Mappings for CSV
+
+VSD supports the following mappings for CSV files:
+
+* `toVarcharMapping`
+* `toDecimalMapping`
+* `toDoubleMapping`
+* `toBoolMapping`: Strings `true` and `false` are mapped to boolean case insensitively.
+* `toDateMapping`: Date values must use format `yyyy-[m]m-[d]d`.
+* `toTimestampMapping`: Timestamp values must use format `yyyy-[m]m-[d]d hh:mm:ss[.f...]`.
+
+If your CSV files use an unsupported format for date or timestamps, please use `toVarcharMapping` for these columns and convert the values to the correct type in your SQL query using Exasol's built-in functions:
+
+* [`CAST`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/cast.htm) / [`CONVERT`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/convert.htm)
+* [`TO_DATE`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_date.htm) / [`TO_TIMESTAMP`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_timestamp.htm)
+* [`TO_NUMBER`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_number.htm)
+
+These functions allow specifying a custom format, e.g. `HH24:MI:SS DD-MM-YYYY` for timestamps.
 
 Example:
+
 ```sql
-SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;
+SELECT TO_TIMESTAMP(TIMESTAMP_COLUMN, 'HH24:MI:SS DD-MM-YYYY') CONVERTED_TIMESTAMP
+FROM TEST_SCHEMA.DATA_TYPES;
 ```
+
+#### Null and Empty Values
+
+Null and empty values are currently not supported in CSV files. If your CSV files contain special `null` or empty values, please use `toVarcharMapping` and convert the values using Exasol's built-in function [`CASE ... WHEN ... THEN ...`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/case.htm).
+
+### Automatic Mapping Inference for CSV Files
 
 ## Reference
 
