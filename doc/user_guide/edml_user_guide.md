@@ -259,7 +259,7 @@ The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. The adapter
 
 This adapter can convert input data to the requested column type. For example if the input is a number and the requested column is a string the adapter can convert the number to string.
 
-The conversion is done per value. That means that it's ok if in one row the input value is an int-value and the next row is a bool value. The adapter can convert both to the requested output column.
+The conversion is done per value. That means that it's ok if in one row the input value is an integer value and the next row is a boolean value. The adapter can convert both to the requested output column.
 
 That's, however, not always the best option. For that reason, you can configure how the adapter should behave if the input data does not match the requested column format. You can configure this for example using the `nonStringBehaviour`:
 
@@ -281,6 +281,18 @@ All mappings pass through null values. That means, if the source value is a null
 * Binary data: Converted to Base64 encoded data string
 * Date: Date as string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
+
+### ToBoolMapping Conversions
+
+* Nested object: Not convertible
+* Nested list: Not convertible
+* String: The adapter tries to parse the string as a boolean, e.g. `"True"` -> `true`. If not possible (e.g: `"abc"`) the adapter handles the value as not convertible.
+* Decimal value: Not convertible
+* Double value: Not convertible
+* Boolean value: No conversion needed
+* Binary data: Not convertible
+* Date: Not convertible
+* Timestamp: Not convertible
 
 ### ToDecimalMapping Conversions
 
@@ -348,7 +360,7 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 
 The adapter supports automatic mapping inference. This allows you to omit the `mapping` element from the EDML definition. The virtual schema will then infer the mapping from the schema of the source.
 
-Currently this is only supported for Parquet files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
+Currently this is only supported for Parquet and CSV files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
 
 ### Notes
 
@@ -356,14 +368,17 @@ Currently this is only supported for Parquet files using the [file based virtual
   * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
 * The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
 * The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
-* Creating the virtual schema will take longer because the adapter needs to read files from the `source`.
+* Creating the virtual schema with auto-inference will take longer because the adapter needs to read files from the `source`.
+* Please see [below](#automatic-mapping-inference-for-csv-files) for details about auto-inference for CSV files.
 
 ## CSV Support
+
 ### CSV File Headers
 
-For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV file(s) has headers. If the CSV file(s) doesn't have headers you can omit this whole block (or set `csv-headers` to `false`).
+For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV files have a header. If the CSV files don't have a header you can omit this whole block or set `csv-headers` to `false`.
 
 Example:
+
 ```json
 {
   "$schema": "https://schemas.exasol.com/edml-1.5.0.json",
@@ -386,11 +401,12 @@ Example:
 }
 ```
 
-### Mapping CSV Files
+#### Mapping CSV Files With Header
 
-When you want to map CSV files with headers you use the column name from the CSV header.
+When you want to map CSV files with header you use the column name from the CSV header.
 
-The following example maps the column with header "id" to "ID":
+The following example maps CSV column with header "id" to database table column "ID":
+
 ```json
   "mapping": {
     "fields": {
@@ -403,9 +419,11 @@ The following example maps the column with header "id" to "ID":
   }
 ```
 
-When you want to map CSV files without any headers then you should use the index of the columns (zero-based, so start counting at 0).
+#### Mapping CSV Files Without Header
 
-The following example maps column 0 to "ID":
+When you want to map CSV files without header then you use column index as field name. The index is zero-based, so start counting at 0.
+
+The following example maps the first CSV column (index 0) to database table column "ID":
 ```json
   "mapping": {
     "fields": {
@@ -418,13 +436,84 @@ The following example maps column 0 to "ID":
   }
 ```
 
-Currently `"toVarcharMapping"` is the only available mapping option for CVS files.
-Please use Exasol database methods `CONVERT`, `CAST`, etc. to convert from VARCHAR to other data types such as `DATE` or `DECIMAL`.
+### Whitespace in CSV Files
+
+Please note that VSD trims whitespace in CSV column header names. If a CSV file contains header `id, name, value`, you can specify fields `"id"`, `"name"` and `"value"` in your mapping instead of `"id"`, `" name"` and `" value"`.
+
+Values however are not trimmed, so if your CSV contains values with leading or trailing whitespace, this will also appear in the Exasol table. If necessary you can trim the whitespace in your SQL query using Exasol's built-in function [`TRIM`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/trim.htm).
+
+### Supported Mappings for CSV
+
+VSD supports the following mappings for CSV files:
+
+* `toVarcharMapping`
+* `toDecimalMapping`
+* `toDoubleMapping`
+* `toBoolMapping`: Strings `true` and `false` are mapped to boolean case insensitively.
+* `toDateMapping`: Date values must use format `yyyy-[m]m-[d]d`.
+* `toTimestampMapping`: Timestamp values must use format `yyyy-[m]m-[d]d hh:mm:ss[.f...]`.
+
+If your CSV files use an unsupported format for dates or timestamps, please use `toVarcharMapping` for these columns and convert the values to the correct type in your SQL query using Exasol's built-in functions:
+
+* [`CAST`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/cast.htm) / [`CONVERT`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/convert.htm)
+* [`TO_DATE`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_date.htm) / [`TO_TIMESTAMP`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_timestamp.htm)
+* [`TO_NUMBER`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_number.htm)
+
+These functions allow specifying a custom format, e.g. `HH24:MI:SS DD-MM-YYYY` for timestamps.
 
 Example:
+
 ```sql
-SELECT CONVERT( BOOLEAN, BOOLEANCOLUMN ) CONVERTEDBOOLEAN FROM TEST_SCHEMA.DATA_TYPES;
+SELECT TO_TIMESTAMP(TIMESTAMP_COLUMN, 'HH24:MI:SS DD-MM-YYYY') CONVERTED_TIMESTAMP
+FROM TEST_SCHEMA.DATA_TYPES;
 ```
+
+#### Null and Empty Values
+
+Null and empty values are currently not supported in CSV files. If your CSV files contain special `null` or empty values, please use `toVarcharMapping` and convert the values using Exasol's built-in function [`CASE ... WHEN ... THEN ...`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/case.htm).
+
+### Automatic Mapping Inference for CSV Files
+
+See the section [above](#automatic-mapping-inference) for general information about auto-inference.
+
+When the `mapping` element is missing in the EDML definition, VSD will automatically detect 
+* whether the CSV file contains a header
+* and the data types of the columns
+
+#### CSV Header Presence Detection
+
+VSD tries to detect if a CSV file contains a header or not based on the data types of the first two rows:
+
+* If the first row contains non-string values, VSD assumes there is no header
+* If the first and second row contain values with the same types, VSD assumes there is no header
+* Else VSD assumes there is a header
+
+If a header is present, VSD will convert the CSV column names to UPPER_SNAKE_CASE and use that as the table column name. Assuming a CSV column has name `userId`, VSD will map this to table column name `USER_ID`.
+
+If no header is present, VSD will map CSV columns to table column names `COLUMN_0`, `COLUMN_1` etc.
+
+In case the automatic header detection fails and wrongly assumes there is no header, you can filter out the header row using a `WHERE` condition in your SQL query.
+
+#### CSV Data Type Detection
+
+VSD detects the column types in the CSV file and converts the values to an appropriate Exasol type:
+
+* Strings: `VARCHAR(2000000)`
+* Characters (Strings of length 1): `VARCHAR(1)`
+* Boolean values like `true` or `False`: `BOOLEAN`
+* Integers between `-2147483648` and `2147483647`: `DECIMAL(10,0)`
+* Integers between `-9223372036854775808` and `9223372036854775807` `DECIMAL(20,0)`
+* Numbers with a decimal point: `DOUBLE PRECISION`
+
+VSD does not detect date or timestamp types as there are too many formats. Instead, these columns are mapped to `VARCHAR(2000000)`. In order to convert date and timestamps to the correct type, use one of the following Exasol functions:
+
+* If the format matches the Exasol format for date and timestamps, you can use [`CAST`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/cast.htm), e.g. `CAST(... AS DATE)` or `CAST(... AS TIMESTAMP)`.
+* For dates in a custom format use [`TO_DATE`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_date.htm).
+* For timestamps in a custom format use [`TO_TIMESTAMP`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_timestamp.htm).
+
+See the [documentation of Exasol's format models](https://docs.exasol.com/db/latest/sql_references/formatmodels.htm#DateTimeFormat) about specifying custom formats for `TO_DATE` and `TO_TIMESTAMP`.
+
+#### Limitations of Automatic Mapping Inference for CSV Files
 
 ## Reference
 
