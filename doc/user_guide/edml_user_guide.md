@@ -453,7 +453,7 @@ VSD supports the following mappings for CSV files:
 * `toDateMapping`: Date values must use format `yyyy-[m]m-[d]d`.
 * `toTimestampMapping`: Timestamp values must use format `yyyy-[m]m-[d]d hh:mm:ss[.f...]`.
 
-If your CSV files use an unsupported format for date or timestamps, please use `toVarcharMapping` for these columns and convert the values to the correct type in your SQL query using Exasol's built-in functions:
+If your CSV files use an unsupported format for dates or timestamps, please use `toVarcharMapping` for these columns and convert the values to the correct type in your SQL query using Exasol's built-in functions:
 
 * [`CAST`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/cast.htm) / [`CONVERT`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/convert.htm)
 * [`TO_DATE`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_date.htm) / [`TO_TIMESTAMP`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_timestamp.htm)
@@ -476,7 +476,9 @@ Null and empty values are currently not supported in CSV files. If your CSV file
 
 See the section [above](#automatic-mapping-inference) for general information about auto-inference.
 
-When the `mapping` element is missing in the EDML definition, VSD will automatically detect the column types and presence of a header in the CSV files.
+When the `mapping` element is missing in the EDML definition, VSD will automatically detect 
+* whether the CSV file contains a header
+* and the data types of the columns
 
 #### CSV Header Presence Detection
 
