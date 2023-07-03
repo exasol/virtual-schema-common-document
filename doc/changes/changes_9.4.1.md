@@ -16,11 +16,12 @@ The release also fixes vulnerability CVE-2023-34462 in transitive test dependenc
 
 ## Documentation
 
-* #168: Documented data type support and auto-inference for CSV files
+* #160: Documented data type support and auto-inference for CSV files
 
 ## Bugfixes
 
 * #165: Upgraded dependencies
+
 ## Dependency Updates
 
 ### Test Dependency Updates
