@@ -25,7 +25,7 @@
 | [Test Database Builder for Java][24]     | [MIT License][25]                 |
 | [udf-debugging-java][26]                 | [MIT License][27]                 |
 | [Apache Maven Verifier Component][28]    | [Apache License, Version 2.0][29] |
-| [Apache Commons IO][30]                  | [Apache License, Version 2.0][29] |
+| [Apache Commons IO][30]                  | [Apache-2.0][29]                  |
 | [Matcher for SQL Result Sets][31]        | [MIT License][32]                 |
 | [JaCoCo :: Agent][33]                    | [Eclipse Public License 2.0][34]  |
 
