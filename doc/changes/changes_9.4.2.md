@@ -20,7 +20,7 @@ This release fixes CVE-2023-42503 in test dependency `org.apache.commons:commons
 
 ### Test Dependency Updates
 
-* Updated `com.exasol:exasol-test-setup-abstraction-java:2.0.2` to `2.0.3`
+* Updated `com.exasol:exasol-test-setup-abstraction-java:2.0.2` to `2.0.4`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.0` to `1.6.1`
 * Updated `com.exasol:test-db-builder-java:3.4.2` to `3.5.1`
 * Updated `com.exasol:udf-debugging-java:0.6.8` to `0.6.11`
