@@ -20,7 +20,7 @@
 | [Hamcrest][14]                           | [BSD License 3][15]               |
 | [JUnit Jupiter Params][16]               | [Eclipse Public License v2.0][17] |
 | [mockito-junit-jupiter][18]              | [The MIT License][19]             |
-| [SLF4J JDK14 Binding][20]                | [MIT License][21]                 |
+| [SLF4J JDK14 Provider][20]               | [MIT License][21]                 |
 | [exasol-test-setup-abstraction-java][22] | [MIT License][23]                 |
 | [Test Database Builder for Java][24]     | [MIT License][25]                 |
 | [udf-debugging-java][26]                 | [MIT License][27]                 |
@@ -42,11 +42,11 @@
 | [Versions Maven Plugin][42]                             | [Apache License, Version 2.0][29]             |
 | [duplicate-finder-maven-plugin Maven Mojo][43]          | [Apache License 2.0][44]                      |
 | [Apache Maven Deploy Plugin][45]                        | [Apache-2.0][29]                              |
-| [Apache Maven GPG Plugin][46]                           | [Apache License, Version 2.0][29]             |
+| [Apache Maven GPG Plugin][46]                           | [Apache-2.0][29]                              |
 | [Apache Maven Source Plugin][47]                        | [Apache License, Version 2.0][29]             |
 | [Apache Maven Javadoc Plugin][48]                       | [Apache-2.0][29]                              |
 | [Nexus Staging Maven Plugin][49]                        | [Eclipse Public License][50]                  |
-| [Apache Maven Dependency Plugin][51]                    | [Apache License, Version 2.0][29]             |
+| [Apache Maven Dependency Plugin][51]                    | [Apache-2.0][29]                              |
 | [Lombok Maven Plugin][52]                               | [The MIT License][53]                         |
 | [Apache Maven JAR Plugin][54]                           | [Apache License, Version 2.0][29]             |
 | [Project keeper maven plugin][55]                       | [The MIT License][56]                         |
@@ -102,7 +102,7 @@
 [40]: https://sonatype.github.io/ossindex-maven/maven-plugin/
 [41]: https://maven.apache.org/surefire/maven-surefire-plugin/
 [42]: https://www.mojohaus.org/versions/versions-maven-plugin/
-[43]: https://github.com/basepom/duplicate-finder-maven-plugin
+[43]: https://basepom.github.io/duplicate-finder-maven-plugin
 [44]: http://www.apache.org/licenses/LICENSE-2.0.html
 [45]: https://maven.apache.org/plugins/maven-deploy-plugin/
 [46]: https://maven.apache.org/plugins/maven-gpg-plugin/
