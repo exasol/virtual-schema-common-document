@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 9.4.2, released 2023-09-26
+# Common Virtual Schema for Document Data 9.4.2, released 2023-09-27
 
 Code name: Fixed CVE-2023-42503
 
