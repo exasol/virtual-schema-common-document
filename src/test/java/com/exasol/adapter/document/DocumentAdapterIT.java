@@ -90,9 +90,10 @@ class DocumentAdapterIT {
 
     private static void buildMockAdapter() throws IOException {
         writeCurrentVersionToMockProjectPom();
+        Verifier mvnRunner = null;
         try {
+            mvnRunner = new Verifier(Path.of("test-project", "aggregator").toAbsolutePath().toString());
             LOGGER.info("Building mock-project");
-            final Verifier mvnRunner = new Verifier(Path.of("test-project", "aggregator").toAbsolutePath().toString());
             mvnRunner.setSystemProperty("skipTests", "true");
             mvnRunner.setSystemProperty("maven.test.skip", "true");
             mvnRunner.setSystemProperty("ossindex.skip", "true");
@@ -101,8 +102,12 @@ class DocumentAdapterIT {
             mvnRunner.setSystemProperty("project-keeper.skip", "true");
             mvnRunner.addCliOption("-PalternateTargetDir");
             mvnRunner.executeGoal("package");
+            mvnRunner.verifyErrorFreeLog();
             LOGGER.info("Done building mock-project");
         } catch (final VerificationException exception) {
+            if (mvnRunner != null) {
+                mvnRunner.displayStreamBuffers();
+            }
             throw new IllegalStateException(ExaError.messageBuilder("E-VSD-76")
                     .message("Failed to build mock-project. The project is used for the integration testing.")
                     .toString(), exception);
