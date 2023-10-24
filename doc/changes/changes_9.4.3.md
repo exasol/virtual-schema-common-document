@@ -12,6 +12,11 @@ This release validates that the given EDML mapping does not define multiple `des
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Updated `commons-io:commons-io:2.13.0` to `2.14.0`
+* Updated `org.mockito:mockito-junit-jupiter:5.5.0` to `5.6.0`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:error-code-crawler-maven-plugin:1.3.0` to `1.3.1`

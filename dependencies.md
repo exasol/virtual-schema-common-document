@@ -19,7 +19,7 @@
 | ---------------------------------------- | --------------------------------- |
 | [Hamcrest][14]                           | [BSD License 3][15]               |
 | [JUnit Jupiter Params][16]               | [Eclipse Public License v2.0][17] |
-| [mockito-junit-jupiter][18]              | [The MIT License][19]             |
+| [mockito-junit-jupiter][18]              | [MIT][19]                         |
 | [SLF4J JDK14 Provider][20]               | [MIT License][21]                 |
 | [exasol-test-setup-abstraction-java][22] | [MIT License][23]                 |
 | [Test Database Builder for Java][24]     | [MIT License][25]                 |
