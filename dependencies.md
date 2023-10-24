@@ -53,6 +53,7 @@
 | [JaCoCo :: Maven Plugin][57]                            | [Eclipse Public License 2.0][34]  |
 | [error-code-crawler-maven-plugin][58]                   | [MIT License][59]                 |
 | [Reproducible Build Maven Plugin][60]                   | [Apache 2.0][5]                   |
+| [Apache Maven Enforcer Plugin][61]                      | [Apache-2.0][29]                  |
 
 [0]: https://github.com/exasol/virtual-schema-common-java/
 [1]: https://github.com/exasol/virtual-schema-common-java/blob/main/LICENSE
@@ -115,3 +116,4 @@
 [58]: https://github.com/exasol/error-code-crawler-maven-plugin/
 [59]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
 [60]: http://zlika.github.io/reproducible-build-maven-plugin
+[61]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
