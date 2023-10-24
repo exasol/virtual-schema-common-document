@@ -2,6 +2,8 @@ package com.exasol.adapter.document.mapping.reader;
 
 import java.util.*;
 
+import com.exasol.adapter.document.properties.EdmlInput;
+
 public class JsonSample {
 
     static final String TOPICS_JSON = lines( //
@@ -88,6 +90,8 @@ public class JsonSample {
     }
 
     private String addSourceReferenceColumn;
+    private String source = "MY_BOOKS";
+    private String destinationTable = "BOOKS";
     private final List<String> fields = new ArrayList<>();
 
     public JsonSample() {
@@ -132,6 +136,16 @@ public class JsonSample {
         return this;
     }
 
+    public JsonSample source(final String source) {
+        this.source = source;
+        return this;
+    }
+
+    public JsonSample destinationTable(final String destinationTable) {
+        this.destinationTable = destinationTable;
+        return this;
+    }
+
     public JsonSample withFields(final String... strings) {
         this.fields.addAll(Arrays.asList(strings));
         return this;
@@ -141,9 +155,10 @@ public class JsonSample {
         return new StringBuilder() //
                 .append(lines("{", //
                         "  '$schema': 'https://schemas.exasol.com/edml-1.3.0.json',", //
-                        "  'source': 'MY_BOOKS',", //
-                        "  'destinationTable': 'BOOKS',", //
-                        "  'description': 'Maps MY_BOOKS to BOOKS',", this.addSourceReferenceColumn, //
+                        "  'source': '" + this.source + "',", //
+                        "  'destinationTable': '" + this.destinationTable + "',", //
+                        "  'description': 'Maps " + this.source + " to " + this.destinationTable + "',", //
+                        this.addSourceReferenceColumn, //
                         "  'mapping': {", //
                         "    'fields': {", //
                         "")) //
@@ -154,6 +169,10 @@ public class JsonSample {
                         "  }", //
                         "}")) //
                 .toString();
+    }
+
+    public EdmlInput buildEdmlInput(final String source) {
+        return new EdmlInput(this.build(), source);
     }
 
     static String lines(final String... strings) {
