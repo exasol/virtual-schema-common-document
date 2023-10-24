@@ -83,7 +83,7 @@ public class JsonSchemaMappingReader {
         if (!duplicateDestinationTableNames.isEmpty()) {
             throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-104")
                     .message("Found duplicate destination table names {{table names}}.", duplicateDestinationTableNames)
-                    .mitigation("Ensure that each mapping uses a unique 'destinationTable' value.").toString());
+                    .mitigation("Ensure that each mapping uses a unique value for 'destinationTable'.").toString());
         }
     }
 }

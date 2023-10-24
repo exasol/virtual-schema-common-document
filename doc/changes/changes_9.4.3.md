@@ -4,7 +4,7 @@ Code name: Validate EDML for duplicate table names
 
 ## Summary
 
-This release validates that the given EDML mapping does not define multiple `destinationTable` entries with the same values because this leads to unexpected behaviour. Documentation is updated accordingly.
+This release validates that the given EDML mapping uses unique values for each `destinationTable` entry as duplicate values led to unexpected behavior. Documentation is updated accordingly.
 
 ## Features
 

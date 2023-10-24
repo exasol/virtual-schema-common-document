@@ -247,7 +247,7 @@ If you did not mark any column as key and the adapter could not detects any key 
 
 ## Destination Table
 
-The `destinationTable` property of a mapping defines the name of the virtual table to which the data is mapped. Please note that this must be unique for all mapping entries. Creating a virtual schema with duplicate `destinationTable` entries will fail.
+The `destinationTable` property of a mapping defines the name of the virtual table to which the data is mapped. Please note that its value must be unique for all mapping entries. Creating a virtual schema with duplicate values for `destinationTable` will fail.
 
 ### Mapping Multiple Files to a Single Destination Table
 

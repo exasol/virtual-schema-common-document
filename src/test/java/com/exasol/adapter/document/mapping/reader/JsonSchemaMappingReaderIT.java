@@ -226,7 +226,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testMultipleInputsWithSameDestinationFailsValidation() {
+    void testMultipleInputsWithDuplicateDestinationFailsValidation() {
         final EdmlInput input1 = JsonSample.builder().source("src1").destinationTable("dest").basic()
                 .buildEdmlInput("edmlInput1");
         final EdmlInput input2 = JsonSample.builder().source("src2").destinationTable("dest").basic()
@@ -234,7 +234,7 @@ class JsonSchemaMappingReaderIT {
         final ExasolDocumentMappingLanguageException exception = assertThrows(
                 ExasolDocumentMappingLanguageException.class, () -> read(input1, input2));
         assertThat(exception.getMessage(), equalTo(
-                "E-VSD-104: Found duplicate destination table names ['dest']. Ensure that each mapping uses a unique 'destinationTable' value."));
+                "E-VSD-104: Found duplicate destination table names ['dest']. Ensure that each mapping uses a unique value for 'destinationTable'."));
     }
 
     private ColumnMapping getColumnByExasolName(final TableMapping table, final String exasolName) {
