@@ -75,8 +75,11 @@ public class JsonSchemaMappingReader {
 
     private void validate(final List<TableMapping> tables) {
         final Set<String> duplicateDestinationTableNames = tables.stream()
-                .collect(groupingBy(TableMapping::getExasolName, counting())).entrySet().stream()
-                .filter(entry -> entry.getValue() > 1).map(Entry::getKey).collect(toSet());
+                .collect(groupingBy(TableMapping::getExasolName, counting())) //
+                .entrySet().stream() //
+                .filter(entry -> entry.getValue() > 1) //
+                .map(Entry::getKey) //
+                .collect(toSet());
         if (!duplicateDestinationTableNames.isEmpty()) {
             throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-104")
                     .message("Found duplicate destination table names {{table names}}.", duplicateDestinationTableNames)

@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 9.4.3, released 2023-??-??
+# Common Virtual Schema for Document Data 9.4.3, released 2023-10-24
 
 Code name: Validate EDML for duplicate table names
 
