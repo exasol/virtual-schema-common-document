@@ -1,5 +1,6 @@
 package com.exasol.adapter.document.mapping.reader;
 
+import static java.util.Arrays.asList;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -26,11 +27,10 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testBasicMapping() {
-        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+        final List<TableMapping> tables = read(JsonSample.builder() //
                 .basic() //
                 .withFields(JsonSample.ADDITIONAL_FIELDS) //
                 .build());
-        final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping table = tables.get(0);
         final List<ColumnMapping> columns = table.getColumns();
         final Map<String, String> columnNames = getColumnNamesWithType(columns);
@@ -55,29 +55,26 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testSourcePathColumn() throws IOException {
-        final SchemaMapping schemaMapping = read(JsonSample.builder().basic().build());
-        final TableMapping table = schemaMapping.getTableMappings().get(0);
+        final TableMapping table = read(JsonSample.builder().basic().build()).get(0);
         assertThat(table.getColumns(), hasItem(new SourceReferenceColumnMapping()));
     }
 
     @Test
     void testWithoutSourcePathColumn() throws IOException {
-        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+        final List<TableMapping> tables = read(JsonSample.builder() //
                 .basic() //
                 .addSourceReferenceColumn("  'addSourceReferenceColumn': false,") //
                 .build());
-        final TableMapping table = schemaMapping.getTableMappings().get(0);
-        assertThat(table.getColumns(), not(hasItem(new SourceReferenceColumnMapping())));
+        assertThat(tables.get(0).getColumns(), not(hasItem(new SourceReferenceColumnMapping())));
     }
 
     @Test
     void testToJsonMapping() {
-        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+        final List<TableMapping> tables = read(JsonSample.builder() //
                 .basic() //
                 .addSourceReferenceColumn("") //
                 .withFields(JsonSample.TOPICS_JSON) //
                 .build());
-        final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping table = tables.get(0);
         final List<ColumnMapping> columns = table.getColumns();
         final List<String> columnNames = getColumnNames(columns);
@@ -97,13 +94,12 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testToSingleColumnTableMapping() {
-        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+        final List<TableMapping> tables = read(JsonSample.builder() //
                 .basic() //
                 .addSourceReferenceColumn("") //
                 .withFields(JsonSample.TOPICS_TABLE) //
                 .build());
 
-        final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping nestedTable = tables.stream().filter(table -> !table.isRootTable()).findAny().orElseThrow();
         final PropertyToVarcharColumnMapping column = (PropertyToVarcharColumnMapping) getColumnByExasolName(
                 nestedTable, "NAME");
@@ -149,12 +145,11 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testNestedTableRootKeyGeneration() throws IOException {
-        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+        final List<TableMapping> tables = read(JsonSample.builder() //
                 .isbn("") //
                 .name("") //
                 .withFields(JsonSample.TOPICS_TABLE) //
                 .build());
-        final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping nestedTable = tables.stream().filter(table -> !table.isRootTable()).findAny().orElseThrow();
         assertThat(getColumnNames(nestedTable.getColumns()), containsInAnyOrder("NAME", "BOOKS_ISBN"));
     }
@@ -171,13 +166,12 @@ class JsonSchemaMappingReaderIT {
 
     @Test
     void testDoubleNestedToTableMapping() {
-        final SchemaMapping schemaMapping = read(JsonSample.builder() //
+        final List<TableMapping> tables = read(JsonSample.builder() //
                 .addSourceReferenceColumn("") //
                 .isbn("") //
                 .name("") //
                 .withFields(JsonSample.DOUBLE_NESTED_TO_TABLE_MAPPING) //
                 .build());
-        final List<TableMapping> tables = schemaMapping.getTableMappings();
         final TableMapping doubleNestedTable = tables.stream()
                 .filter(table -> table.getExasolName().equals("BOOKS_CHAPTERS_FIGURES")).findAny().orElseThrow();
         final TableMapping nestedTable = tables.stream().filter(table -> table.getExasolName().equals("BOOKS_CHAPTERS"))
@@ -203,14 +197,58 @@ class JsonSchemaMappingReaderIT {
                 () -> assertThat(indexColumn.getTablesPath().toString(), equalTo("/chapters[*]")));
     }
 
+    @Test
+    void testMultipleInputs() {
+        final List<TableMapping> tables = read(
+                JsonSample.builder().source("src1").destinationTable("dest1").basic().buildEdmlInput("edmlInput1"),
+                JsonSample.builder().source("src2").destinationTable("dest2").basic().buildEdmlInput("edmlInput2"));
+        assertAll(() -> assertThat(tables, hasSize(2)),
+                () -> assertThat(tables.get(0).getExasolName(), equalTo("dest1")),
+                () -> assertThat(tables.get(0).getRemoteName(), equalTo("src1")),
+                () -> assertThat(tables.get(0).getPathInRemoteTable().toString(), equalTo("/")),
+                () -> assertThat(tables.get(1).getExasolName(), equalTo("dest2")),
+                () -> assertThat(tables.get(1).getRemoteName(), equalTo("src2")),
+                () -> assertThat(tables.get(1).getPathInRemoteTable().toString(), equalTo("/")));
+    }
+
+    @Test
+    void testMultipleInputsWithSameSource() {
+        final List<TableMapping> tables = read(
+                JsonSample.builder().source("src").destinationTable("dest1").basic().buildEdmlInput("edmlInput1"),
+                JsonSample.builder().source("src").destinationTable("dest2").basic().buildEdmlInput("edmlInput2"));
+        assertAll(() -> assertThat(tables, hasSize(2)),
+                () -> assertThat(tables.get(0).getExasolName(), equalTo("dest1")),
+                () -> assertThat(tables.get(0).getRemoteName(), equalTo("src")),
+                () -> assertThat(tables.get(0).getPathInRemoteTable().toString(), equalTo("/")),
+                () -> assertThat(tables.get(1).getExasolName(), equalTo("dest2")),
+                () -> assertThat(tables.get(1).getRemoteName(), equalTo("src")),
+                () -> assertThat(tables.get(1).getPathInRemoteTable().toString(), equalTo("/")));
+    }
+
+    @Test
+    void testMultipleInputsWithDuplicateDestinationFailsValidation() {
+        final EdmlInput input1 = JsonSample.builder().source("src1").destinationTable("dest").basic()
+                .buildEdmlInput("edmlInput1");
+        final EdmlInput input2 = JsonSample.builder().source("src2").destinationTable("dest").basic()
+                .buildEdmlInput("edmlInput2");
+        final ExasolDocumentMappingLanguageException exception = assertThrows(
+                ExasolDocumentMappingLanguageException.class, () -> read(input1, input2));
+        assertThat(exception.getMessage(), equalTo(
+                "E-VSD-104: Found duplicate destination table names ['dest']. Ensure that each mapping uses a unique value for 'destinationTable'."));
+    }
+
     private ColumnMapping getColumnByExasolName(final TableMapping table, final String exasolName) {
         return table.getColumns().stream().filter(each -> each.getExasolColumnName().equals(exasolName)).findAny()
                 .orElseThrow();
     }
 
-    private SchemaMapping read(final String mappingString) {
+    private List<TableMapping> read(final String mappingString) {
+        return read(new EdmlInput(mappingString, "test"));
+    }
+
+    private List<TableMapping> read(final EdmlInput... input) {
         return new JsonSchemaMappingReader(this::tableKeyFetcherMock, new SchemaInferencer(this::mappingFetcherMock))
-                .readSchemaMapping(List.of(new EdmlInput(mappingString, "test")));
+                .readSchemaMapping(asList(input)).getTableMappings();
     }
 
     private List<ColumnMapping> tableKeyFetcherMock(final String tableName, final List<ColumnMapping> mappedColumns)

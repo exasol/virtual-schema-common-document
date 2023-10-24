@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.mapping.reader;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.util.stream.Collectors.*;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
@@ -54,6 +56,7 @@ public class JsonSchemaMappingReader {
                 throw getParseFailedException(edmlInput.getSource(), exception);
             }
         }
+        validate(tables);
         return new SchemaMapping(tables);
     }
 
@@ -68,5 +71,19 @@ public class JsonSchemaMappingReader {
     private List<TableMapping> parseDefinition(final String edmlString) {
         final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
         return new MappingConversionPipeline(this.tableKeyFetcher, this.schemaInferencer).convert(edmlDefinition);
+    }
+
+    private void validate(final List<TableMapping> tables) {
+        final Set<String> duplicateDestinationTableNames = tables.stream()
+                .collect(groupingBy(TableMapping::getExasolName, counting())) //
+                .entrySet().stream() //
+                .filter(entry -> entry.getValue() > 1) //
+                .map(Entry::getKey) //
+                .collect(toSet());
+        if (!duplicateDestinationTableNames.isEmpty()) {
+            throw new ExasolDocumentMappingLanguageException(ExaError.messageBuilder("E-VSD-104")
+                    .message("Found duplicate destination table names {{table names}}.", duplicateDestinationTableNames)
+                    .mitigation("Ensure that each mapping uses a unique value for 'destinationTable'.").toString());
+        }
     }
 }

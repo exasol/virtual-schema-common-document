@@ -245,11 +245,24 @@ If the data source supports it, the virtual schema adapter can also fetch the ke
 
 If you did not mark any column as key and the adapter could not detects any key column, it will add an `INDEX` column. These columns contain the position of the element in the nested list. So in the example from above `DynamoDB` will receive the index 0 and `Exasol` the index 1.
 
+## Destination Table
+
+The `destinationTable` property of a mapping defines the name of the virtual table to which the data is mapped. Please note that its value must be unique for all mapping entries. Creating a virtual schema with duplicate values for `destinationTable` will fail.
+
+### Mapping Multiple Files to a Single Destination Table
+
+If you want to map multiple files with the same schema to the same table, please specify all files in the `source` property. See the following Virtual Schema specific user guides for details:
+
+* [AWS S3](https://github.com/exasol/s3-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+* [Azure BLOB storage](https://github.com/exasol/azure-blob-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+* [Azure Data Lake Storage Gen2](https://github.com/exasol/azure-data-lake-storage-gen2-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+* [Google Cloud Storage](https://github.com/exasol/google-cloud-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+
 ## Source Reference Column
 
 Some dialects support reading one table from multiple sources. For example the [files-virtual-schemas](https://github.com/exasol/virtual-schema-common-document-files) allow you to load each row from a different file. In that case you may want to add the filename as a column to the Exasol table. That allows you to query on it and by that only read the required files.
 
-To do so, set `addSourceReferenceColumn: true` in the root object of your EDML definition. The adapter will then automatically add a column named `SOURCE_REFERENCE` to the end of the table.
+To do so, set `"addSourceReferenceColumn": true` in the root object of your EDML definition. The adapter will then automatically add a column named `SOURCE_REFERENCE` to the end of the table.
 
 You can use this property for all dialects. Typically, it will, however, only give you additional information, if you load data from multiple sources.
 

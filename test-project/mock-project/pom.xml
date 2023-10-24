@@ -11,7 +11,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- this property is automatically updated by the DocumentAdapterIT -->
-        <vs-common-document-version>9.4.2</vs-common-document-version>
+        <vs-common-document-version>9.4.3</vs-common-document-version>
     </properties>
     <dependencies>
         <dependency>
@@ -34,7 +34,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>3.5.0</version>
+                <version>3.6.0</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/all-dependencies.xml</descriptor>
