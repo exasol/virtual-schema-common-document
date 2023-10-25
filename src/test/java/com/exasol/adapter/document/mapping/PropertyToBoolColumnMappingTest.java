@@ -35,7 +35,7 @@ class PropertyToBoolColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToBoolColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToBoolColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 
     @Test

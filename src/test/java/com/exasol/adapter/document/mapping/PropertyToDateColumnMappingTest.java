@@ -35,7 +35,7 @@ class PropertyToDateColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToDateColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToDateColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 
     @Test

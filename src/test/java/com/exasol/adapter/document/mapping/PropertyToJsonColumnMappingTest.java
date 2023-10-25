@@ -40,7 +40,7 @@ class PropertyToJsonColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToJsonColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToJsonColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 
     @Test

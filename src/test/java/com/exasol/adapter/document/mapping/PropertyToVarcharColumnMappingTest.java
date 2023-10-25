@@ -38,7 +38,8 @@ class PropertyToVarcharColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToVarcharColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToVarcharColumnMapping.class).withRedefinedSuperclass().usingGetClass()
+                .verify();
     }
 
     @Test

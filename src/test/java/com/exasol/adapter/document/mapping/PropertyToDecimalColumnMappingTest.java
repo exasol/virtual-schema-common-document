@@ -39,7 +39,8 @@ class PropertyToDecimalColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToDecimalColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToDecimalColumnMapping.class).withRedefinedSuperclass().usingGetClass()
+                .verify();
     }
 
     @Test

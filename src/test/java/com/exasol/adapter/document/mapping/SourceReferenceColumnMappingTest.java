@@ -53,7 +53,7 @@ class SourceReferenceColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(SourceReferenceColumnMapping.class).verify();
+        EqualsVerifier.forClass(SourceReferenceColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 
     @Test

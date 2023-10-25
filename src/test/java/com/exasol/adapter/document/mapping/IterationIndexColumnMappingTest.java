@@ -73,7 +73,7 @@ class IterationIndexColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(IterationIndexColumnMapping.class).verify();
+        EqualsVerifier.forClass(IterationIndexColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 
     @Test

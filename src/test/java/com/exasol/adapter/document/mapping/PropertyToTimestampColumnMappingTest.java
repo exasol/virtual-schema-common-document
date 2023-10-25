@@ -40,7 +40,8 @@ class PropertyToTimestampColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToTimestampColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToTimestampColumnMapping.class).withRedefinedSuperclass().usingGetClass()
+                .verify();
     }
 
     @Test

@@ -37,7 +37,7 @@ class PropertyToDoubleColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(PropertyToDoubleColumnMapping.class).verify();
+        EqualsVerifier.forClass(PropertyToDoubleColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 
     @Test

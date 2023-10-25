@@ -5,12 +5,10 @@ import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping {
@@ -40,5 +38,32 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @Override
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof MockPropertyToColumnMapping)) {
+            return false;
+        }
+        final MockPropertyToColumnMapping other = (MockPropertyToColumnMapping) o;
+        if (!other.canEqual((java.lang.Object) this)) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        return true;
+    }
+
+    protected boolean canEqual(final java.lang.Object other) {
+        return other instanceof MockPropertyToColumnMapping;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

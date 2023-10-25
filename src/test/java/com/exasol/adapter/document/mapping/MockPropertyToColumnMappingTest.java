@@ -14,6 +14,6 @@ class MockPropertyToColumnMappingTest {
 
     @Test
     void testEqualsContract() {
-        EqualsVerifier.forClass(MockPropertyToColumnMapping.class).verify();
+        EqualsVerifier.forClass(MockPropertyToColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
     }
 }
