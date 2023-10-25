@@ -54,17 +54,13 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         visitor.visit(this);
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static abstract class IterationIndexColumnMappingBuilder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private DocumentPathExpression tablesPath;
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected B $fillValuesFrom(final C instance) {
             super.$fillValuesFrom(instance);
             IterationIndexColumnMapping.IterationIndexColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
@@ -72,82 +68,65 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
             return self();
         }
 
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
         private static void $fillValuesFromInstanceIntoBuilder(final IterationIndexColumnMapping instance,
                 final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> b) {
             b.tablesPath(instance.tablesPath);
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected abstract B self();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B tablesPath(final DocumentPathExpression tablesPath) {
             this.tablesPath = tablesPath;
             return self();
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public java.lang.String toString() {
             return "IterationIndexColumnMapping.IterationIndexColumnMappingBuilder(super=" + super.toString()
                     + ", tablesPath=" + this.tablesPath + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     private static final class IterationIndexColumnMappingBuilderImpl extends
             IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<IterationIndexColumnMapping, IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private IterationIndexColumnMappingBuilderImpl() {
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl self() {
             return this;
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public IterationIndexColumnMapping build() {
             return new IterationIndexColumnMapping(this);
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     protected IterationIndexColumnMapping(
             final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> b) {
         super(b);
         this.tablesPath = b.tablesPath;
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> builder() {
         return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> toBuilder() {
         return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl().$fillValuesFrom(this);
     }

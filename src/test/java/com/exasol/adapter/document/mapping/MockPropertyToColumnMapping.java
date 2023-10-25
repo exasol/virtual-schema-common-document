@@ -33,13 +33,10 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static abstract class MockPropertyToColumnMappingBuilder<C extends MockPropertyToColumnMapping, B extends MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected B $fillValuesFrom(final C instance) {
             super.$fillValuesFrom(instance);
             MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
@@ -47,69 +44,53 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
             return self();
         }
 
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
         private static void $fillValuesFromInstanceIntoBuilder(final MockPropertyToColumnMapping instance,
                 final MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> b) {
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected abstract B self();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public abstract C build();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public java.lang.String toString() {
             return "MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder(super=" + super.toString() + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     private static final class MockPropertyToColumnMappingBuilderImpl extends
             MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<MockPropertyToColumnMapping, MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private MockPropertyToColumnMappingBuilderImpl() {
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl self() {
             return this;
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public MockPropertyToColumnMapping build() {
             return new MockPropertyToColumnMapping(this);
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     protected MockPropertyToColumnMapping(
             final MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> b) {
         super(b);
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> builder() {
         return new MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> toBuilder() {
         return new MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl().$fillValuesFrom(this);
     }

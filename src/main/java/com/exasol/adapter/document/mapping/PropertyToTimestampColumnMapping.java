@@ -39,20 +39,15 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static abstract class PropertyToTimestampColumnMappingBuilder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private ConvertableMappingErrorBehaviour notTimestampBehaviour;
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private boolean useTimestampWithLocalTimezoneType;
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected B $fillValuesFrom(final C instance) {
             super.$fillValuesFrom(instance);
             PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder
@@ -60,29 +55,24 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
             return self();
         }
 
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
         private static void $fillValuesFromInstanceIntoBuilder(final PropertyToTimestampColumnMapping instance,
                 final PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> b) {
             b.notTimestampBehaviour(instance.notTimestampBehaviour);
             b.useTimestampWithLocalTimezoneType(instance.useTimestampWithLocalTimezoneType);
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected abstract B self();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B notTimestampBehaviour(final ConvertableMappingErrorBehaviour notTimestampBehaviour) {
             this.notTimestampBehaviour = notTimestampBehaviour;
             return self();
@@ -91,16 +81,14 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B useTimestampWithLocalTimezoneType(final boolean useTimestampWithLocalTimezoneType) {
             this.useTimestampWithLocalTimezoneType = useTimestampWithLocalTimezoneType;
             return self();
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public java.lang.String toString() {
             return "PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder(super=" + super.toString()
                     + ", notTimestampBehaviour=" + this.notTimestampBehaviour + ", useTimestampWithLocalTimezoneType="
@@ -108,32 +96,25 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     private static final class PropertyToTimestampColumnMappingBuilderImpl extends
             PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<PropertyToTimestampColumnMapping, PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private PropertyToTimestampColumnMappingBuilderImpl() {
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl self() {
             return this;
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public PropertyToTimestampColumnMapping build() {
             return new PropertyToTimestampColumnMapping(this);
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     protected PropertyToTimestampColumnMapping(
             final PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> b) {
         super(b);
@@ -141,14 +122,10 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         this.useTimestampWithLocalTimezoneType = b.useTimestampWithLocalTimezoneType;
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> builder() {
         return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl().$fillValuesFrom(this);
     }

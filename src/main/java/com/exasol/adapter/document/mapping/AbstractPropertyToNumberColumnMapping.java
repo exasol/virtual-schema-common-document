@@ -27,20 +27,15 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         return notNumericBehaviour;
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static abstract class AbstractPropertyToNumberColumnMappingBuilder<C extends AbstractPropertyToNumberColumnMapping, B extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private MappingErrorBehaviour overflowBehaviour;
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private ConvertableMappingErrorBehaviour notNumericBehaviour;
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected B $fillValuesFrom(final C instance) {
             super.$fillValuesFrom(instance);
             AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder
@@ -48,29 +43,24 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
             return self();
         }
 
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
         private static void $fillValuesFromInstanceIntoBuilder(final AbstractPropertyToNumberColumnMapping instance,
                 final AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<?, ?> b) {
             b.overflowBehaviour(instance.overflowBehaviour);
             b.notNumericBehaviour(instance.notNumericBehaviour);
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected abstract B self();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B overflowBehaviour(final MappingErrorBehaviour overflowBehaviour) {
             this.overflowBehaviour = overflowBehaviour;
             return self();
@@ -79,16 +69,14 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B notNumericBehaviour(final ConvertableMappingErrorBehaviour notNumericBehaviour) {
             this.notNumericBehaviour = notNumericBehaviour;
             return self();
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public java.lang.String toString() {
             return "AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder(super="
                     + super.toString() + ", overflowBehaviour=" + this.overflowBehaviour + ", notNumericBehaviour="
@@ -96,8 +84,6 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     protected AbstractPropertyToNumberColumnMapping(
             final AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<?, ?> b) {
         super(b);

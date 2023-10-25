@@ -28,20 +28,15 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         return true;
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static abstract class AbstractPropertyToColumnMappingBuilder<C extends AbstractPropertyToColumnMapping, B extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private DocumentPathExpression pathToSourceProperty;
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private MappingErrorBehaviour lookupFailBehaviour;
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected B $fillValuesFrom(final C instance) {
             super.$fillValuesFrom(instance);
             AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder
@@ -49,29 +44,24 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
             return self();
         }
 
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
         private static void $fillValuesFromInstanceIntoBuilder(final AbstractPropertyToColumnMapping instance,
                 final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> b) {
             b.pathToSourceProperty(instance.pathToSourceProperty);
             b.lookupFailBehaviour(instance.lookupFailBehaviour);
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected abstract B self();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B pathToSourceProperty(final DocumentPathExpression pathToSourceProperty) {
             this.pathToSourceProperty = pathToSourceProperty;
             return self();
@@ -80,16 +70,14 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         /**
          * @return {@code this}.
          */
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         public B lookupFailBehaviour(final MappingErrorBehaviour lookupFailBehaviour) {
             this.lookupFailBehaviour = lookupFailBehaviour;
             return self();
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public java.lang.String toString() {
             return "AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder(super=" + super.toString()
                     + ", pathToSourceProperty=" + this.pathToSourceProperty + ", lookupFailBehaviour="
@@ -97,8 +85,6 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     protected AbstractPropertyToColumnMapping(
             final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> b) {
         super(b);

@@ -24,13 +24,10 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static abstract class PropertyToDoubleColumnMappingBuilder<C extends PropertyToDoubleColumnMapping, B extends PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected B $fillValuesFrom(final C instance) {
             super.$fillValuesFrom(instance);
             PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder
@@ -38,69 +35,53 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
             return self();
         }
 
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
         private static void $fillValuesFromInstanceIntoBuilder(final PropertyToDoubleColumnMapping instance,
                 final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected abstract B self();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public abstract C build();
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public java.lang.String toString() {
             return "PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder(super=" + super.toString() + ")";
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     private static final class PropertyToDoubleColumnMappingBuilderImpl extends
             PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<PropertyToDoubleColumnMapping, PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl> {
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+
         private PropertyToDoubleColumnMappingBuilderImpl() {
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         protected PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl self() {
             return this;
         }
 
-        @java.lang.Override
-        @java.lang.SuppressWarnings("all")
-        @lombok.Generated
+        @Override
+
         public PropertyToDoubleColumnMapping build() {
             return new PropertyToDoubleColumnMapping(this);
         }
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     protected PropertyToDoubleColumnMapping(
             final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
         super(b);
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public static PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl();
     }
 
-    @java.lang.SuppressWarnings("all")
-    @lombok.Generated
     public PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl().$fillValuesFrom(this);
     }
