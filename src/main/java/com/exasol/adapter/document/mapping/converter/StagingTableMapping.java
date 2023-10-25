@@ -10,7 +10,6 @@ import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
 
 import lombok.Data;
-import lombok.With;
 
 /**
  * This data structure is an intermediate for the conversion from the {@link EdmlDefinition} to a {@link TableMapping}.
@@ -18,7 +17,6 @@ import lombok.With;
  * In addition, it also maintains the information which columns are key-columns.
  */
 @Data
-@With
 final class StagingTableMapping {
     private final String exasolName;
     private final String remoteName;
@@ -135,6 +133,36 @@ final class StagingTableMapping {
          * @throws RuntimeException if validation fails
          */
         public void validate(StagingTableMapping stagingTableMapping);
+    }
+
+    StagingTableMapping withExasolName(final String exasolName) {
+        return new StagingTableMapping(exasolName, this.remoteName, this.additionalConfiguration, this.columns,
+                this.pathInRemoteTable, this.nestedTables);
+    }
+
+    StagingTableMapping withRemoteName(final String remoteName) {
+        return new StagingTableMapping(this.exasolName, remoteName, this.additionalConfiguration, this.columns,
+                this.pathInRemoteTable, this.nestedTables);
+    }
+
+    StagingTableMapping withAdditionalConfiguration(final String additionalConfiguration) {
+        return new StagingTableMapping(this.exasolName, this.remoteName, additionalConfiguration, this.columns,
+                this.pathInRemoteTable, this.nestedTables);
+    }
+
+    StagingTableMapping withColumns(final List<ColumnWithKeyInfo> columns) {
+        return new StagingTableMapping(this.exasolName, this.remoteName, this.additionalConfiguration, columns,
+                this.pathInRemoteTable, this.nestedTables);
+    }
+
+    StagingTableMapping withPathInRemoteTable(final DocumentPathExpression pathInRemoteTable) {
+        return new StagingTableMapping(this.exasolName, this.remoteName, this.additionalConfiguration, this.columns,
+                pathInRemoteTable, this.nestedTables);
+    }
+
+    StagingTableMapping withNestedTables(final List<StagingTableMapping> nestedTables) {
+        return new StagingTableMapping(this.exasolName, this.remoteName, this.additionalConfiguration, this.columns,
+                this.pathInRemoteTable, nestedTables);
     }
 
     @Override
