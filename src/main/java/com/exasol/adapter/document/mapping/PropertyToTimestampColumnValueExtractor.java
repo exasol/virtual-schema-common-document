@@ -9,9 +9,6 @@ import java.util.Set;
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * This class extracts {@code TIMESTAMP} or {@code TIMESTAMP WITH LOCAL TIMEZONE} values from document data. The
  * extraction is defined using a {@link PropertyToTimestampColumnMapping}.
@@ -36,11 +33,17 @@ public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToC
         return visitor.getResult();
     }
 
-    @RequiredArgsConstructor
     private static class ConvertVisitor implements DocumentNodeVisitor {
         private final PropertyToTimestampColumnMapping column;
-        @Getter
         private Object result;
+
+        ConvertVisitor(final PropertyToTimestampColumnMapping column) {
+            this.column = column;
+        }
+
+        private Object getResult() {
+            return result;
+        }
 
         @Override
         public void visit(final DocumentArray array) {
