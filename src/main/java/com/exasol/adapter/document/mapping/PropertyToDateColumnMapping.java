@@ -33,6 +33,9 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
+    /**
+     * Builder for {@link PropertyToDateColumnMapping}.
+     */
     public abstract static class PropertyToDateColumnMappingBuilder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
         private ConvertableMappingErrorBehaviour notDateBehaviour;
@@ -57,6 +60,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         public abstract C build();
 
         /**
+         * @param notDateBehaviour behaviour in case value is not a date
          * @return {@code this}.
          */
         public B notDateBehaviour(final ConvertableMappingErrorBehaviour notDateBehaviour) {
@@ -65,7 +69,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder(super=" + super.toString()
                     + ", notDateBehaviour=" + this.notDateBehaviour + ")";
         }
@@ -82,18 +86,33 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public PropertyToDateColumnMapping build() {
             return new PropertyToDateColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected PropertyToDateColumnMapping(
-            final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.notDateBehaviour = b.notDateBehaviour;
+            final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.notDateBehaviour = builder.notDateBehaviour;
     }
 
+    /**
+     * Create a new builder for {@link PropertyToDateColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl();
     }

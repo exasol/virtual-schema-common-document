@@ -64,7 +64,7 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
         public abstract C build();
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder(super=" + super.toString() + ")";
         }
     }
@@ -80,18 +80,28 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public SourceReferenceColumnMapping build() {
             return new SourceReferenceColumnMapping(this);
         }
     }
 
-    protected SourceReferenceColumnMapping(
-            final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> b) {
-        super(b);
+    private SourceReferenceColumnMapping(
+            final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder) {
+        super(builder);
     }
 
-    static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
+    /**
+     * Create a new builder for {@link SourceReferenceColumnMapping}.
+     * 
+     * @return a new builder
+     */
+    public static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
         return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl();
     }
 

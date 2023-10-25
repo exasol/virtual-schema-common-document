@@ -24,6 +24,9 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
+    /**
+     * Builder for {@link PropertyToDoubleColumnMapping}.
+     */
     public abstract static class PropertyToDoubleColumnMappingBuilder<C extends PropertyToDoubleColumnMapping, B extends PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
 
@@ -46,7 +49,7 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
         public abstract C build();
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder(super=" + super.toString() + ")";
         }
     }
@@ -62,17 +65,32 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public PropertyToDoubleColumnMapping build() {
             return new PropertyToDoubleColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected PropertyToDoubleColumnMapping(
-            final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
-        super(b);
+            final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> builder) {
+        super(builder);
     }
 
+    /**
+     * Create a new builder for {@link PropertyToDoubleColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl();
     }

@@ -60,6 +60,9 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
+    /**
+     * Builder for {@link PropertyToVarcharColumnMapping}.
+     */
     public abstract static class PropertyToVarcharColumnMappingBuilder<C extends PropertyToVarcharColumnMapping, B extends PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
         private int varcharColumnSize;
@@ -88,6 +91,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         public abstract C build();
 
         /**
+         * @param varcharColumnSize varchar column size
          * @return {@code this}.
          */
         public B varcharColumnSize(final int varcharColumnSize) {
@@ -96,6 +100,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         /**
+         * @param overflowBehaviour overflow behaviour
          * @return {@code this}.
          */
         public B overflowBehaviour(final TruncateableMappingErrorBehaviour overflowBehaviour) {
@@ -104,6 +109,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         /**
+         * @param nonStringBehaviour non-string behaviour
          * @return {@code this}.
          */
         public B nonStringBehaviour(final ConvertableMappingErrorBehaviour nonStringBehaviour) {
@@ -112,7 +118,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder(super=" + super.toString()
                     + ", varcharColumnSize=" + this.varcharColumnSize + ", overflowBehaviour=" + this.overflowBehaviour
                     + ", nonStringBehaviour=" + this.nonStringBehaviour + ")";
@@ -130,20 +136,35 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public PropertyToVarcharColumnMapping build() {
             return new PropertyToVarcharColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected PropertyToVarcharColumnMapping(
-            final PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.varcharColumnSize = b.varcharColumnSize;
-        this.overflowBehaviour = b.overflowBehaviour;
-        this.nonStringBehaviour = b.nonStringBehaviour;
+            final PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.varcharColumnSize = builder.varcharColumnSize;
+        this.overflowBehaviour = builder.overflowBehaviour;
+        this.nonStringBehaviour = builder.nonStringBehaviour;
     }
 
+    /**
+     * Create a new builder for {@link PropertyToVarcharColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> builder() {
         return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl();
     }

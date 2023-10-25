@@ -33,6 +33,9 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
+    /**
+     * Builder for {@link PropertyToBoolColumnMapping}.
+     */
     public abstract static class PropertyToBoolColumnMappingBuilder<C extends PropertyToBoolColumnMapping, B extends PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
         private ConvertableMappingErrorBehaviour notBooleanBehavior;
@@ -57,6 +60,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         public abstract C build();
 
         /**
+         * @param notBooleanBehavior behaviour in case value is not a boolean
          * @return {@code this}.
          */
         public B notBooleanBehavior(final ConvertableMappingErrorBehaviour notBooleanBehavior) {
@@ -65,7 +69,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder(super=" + super.toString()
                     + ", notBooleanBehavior=" + this.notBooleanBehavior + ")";
         }
@@ -82,18 +86,33 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public PropertyToBoolColumnMapping build() {
             return new PropertyToBoolColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected PropertyToBoolColumnMapping(
-            final PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.notBooleanBehavior = b.notBooleanBehavior;
+            final PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.notBooleanBehavior = builder.notBooleanBehavior;
     }
 
+    /**
+     * Create a new builder for {@link PropertyToBoolColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> builder() {
         return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl();
     }

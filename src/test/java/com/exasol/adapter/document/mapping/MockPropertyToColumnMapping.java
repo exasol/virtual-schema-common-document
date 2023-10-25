@@ -54,7 +54,7 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
         public abstract C build();
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder(super=" + super.toString() + ")";
         }
     }
@@ -77,8 +77,8 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
     }
 
     protected MockPropertyToColumnMapping(
-            final MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> b) {
-        super(b);
+            final MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> builder) {
+        super(builder);
     }
 
     public static MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> builder() {

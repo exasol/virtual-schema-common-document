@@ -70,18 +70,23 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder(super=" + super.toString()
                     + ", pathToSourceProperty=" + this.pathToSourceProperty + ", lookupFailBehaviour="
                     + this.lookupFailBehaviour + ")";
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected AbstractPropertyToColumnMapping(
-            final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.pathToSourceProperty = b.pathToSourceProperty;
-        this.lookupFailBehaviour = b.lookupFailBehaviour;
+            final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.pathToSourceProperty = builder.pathToSourceProperty;
+        this.lookupFailBehaviour = builder.lookupFailBehaviour;
     }
 
     @Override

@@ -38,6 +38,9 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         visitor.visit(this);
     }
 
+    /**
+     * Builder for {@link PropertyToJsonColumnMapping}.
+     */
     public abstract static class PropertyToJsonColumnMappingBuilder<C extends PropertyToJsonColumnMapping, B extends PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
         private int varcharColumnSize;
@@ -64,6 +67,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         public abstract C build();
 
         /**
+         * @param varcharColumnSize varchar column size
          * @return {@code this}.
          */
         public B varcharColumnSize(final int varcharColumnSize) {
@@ -72,6 +76,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         }
 
         /**
+         * @param overflowBehaviour overflow behaviour
          * @return {@code this}.
          */
         public B overflowBehaviour(final MappingErrorBehaviour overflowBehaviour) {
@@ -80,7 +85,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder(super=" + super.toString()
                     + ", varcharColumnSize=" + this.varcharColumnSize + ", overflowBehaviour=" + this.overflowBehaviour
                     + ")";
@@ -98,19 +103,34 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public PropertyToJsonColumnMapping build() {
             return new PropertyToJsonColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected PropertyToJsonColumnMapping(
-            final PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.varcharColumnSize = b.varcharColumnSize;
-        this.overflowBehaviour = b.overflowBehaviour;
+            final PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.varcharColumnSize = builder.varcharColumnSize;
+        this.overflowBehaviour = builder.overflowBehaviour;
     }
 
+    /**
+     * Create a new builder for {@link PropertyToJsonColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> builder() {
         return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl();
     }

@@ -38,6 +38,9 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
+    /**
+     * Builder for {@link PropertyToDecimalColumnMapping}.
+     */
     public abstract static class PropertyToDecimalColumnMappingBuilder<C extends PropertyToDecimalColumnMapping, B extends PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
         private int decimalPrecision;
@@ -64,6 +67,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         public abstract C build();
 
         /**
+         * @param decimalPrecision decimal precision
          * @return {@code this}.
          */
         public B decimalPrecision(final int decimalPrecision) {
@@ -72,6 +76,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         }
 
         /**
+         * @param decimalScale decimal scale
          * @return {@code this}.
          */
         public B decimalScale(final int decimalScale) {
@@ -80,7 +85,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder(super=" + super.toString()
                     + ", decimalPrecision=" + this.decimalPrecision + ", decimalScale=" + this.decimalScale + ")";
         }
@@ -97,19 +102,34 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public PropertyToDecimalColumnMapping build() {
             return new PropertyToDecimalColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected PropertyToDecimalColumnMapping(
-            final PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.decimalPrecision = b.decimalPrecision;
-        this.decimalScale = b.decimalScale;
+            final PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.decimalPrecision = builder.decimalPrecision;
+        this.decimalScale = builder.decimalScale;
     }
 
+    /**
+     * Create a new builder for {@link PropertyToDecimalColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl();
     }

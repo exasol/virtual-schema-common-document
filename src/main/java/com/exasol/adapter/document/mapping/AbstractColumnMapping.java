@@ -14,9 +14,18 @@ abstract class AbstractColumnMapping implements ColumnMapping {
         return exasolColumnName;
     }
 
+    /**
+     * Abstract builder for {@link AbstractColumnMapping}.
+     */
     public abstract static class AbstractColumnMappingBuilder<C extends AbstractColumnMapping, B extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B>> {
         private String exasolColumnName;
 
+        /**
+         * Copy values from the given instance into this builder.
+         * 
+         * @param instance instance from which to copy
+         * @return {@code this}
+         */
         protected B fillValuesFrom(final C instance) {
             AbstractColumnMapping.AbstractColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
@@ -27,8 +36,18 @@ abstract class AbstractColumnMapping implements ColumnMapping {
             b.exasolColumnName(instance.exasolColumnName);
         }
 
+        /**
+         * Get this builder instance.
+         * 
+         * @return this builder instance.
+         */
         protected abstract B self();
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         public abstract C build();
 
         /**
@@ -40,13 +59,18 @@ abstract class AbstractColumnMapping implements ColumnMapping {
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "AbstractColumnMapping.AbstractColumnMappingBuilder(exasolColumnName=" + this.exasolColumnName + ")";
         }
     }
 
-    protected AbstractColumnMapping(final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> b) {
-        this.exasolColumnName = b.exasolColumnName;
+    /**
+     * Create a new instance from a builder.
+     * 
+     * @param builder builder
+     */
+    protected AbstractColumnMapping(final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> builder) {
+        this.exasolColumnName = builder.exasolColumnName;
     }
 
     @Override

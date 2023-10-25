@@ -27,6 +27,9 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         return notNumericBehaviour;
     }
 
+    /**
+     * Abstract builder for {@link AbstractPropertyToNumberColumnMapping}.
+     */
     public abstract static class AbstractPropertyToNumberColumnMappingBuilder<C extends AbstractPropertyToNumberColumnMapping, B extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
         private MappingErrorBehaviour overflowBehaviour;
@@ -53,6 +56,7 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         public abstract C build();
 
         /**
+         * @param overflowBehaviour behaviour in case of overflow
          * @return {@code this}.
          */
         public B overflowBehaviour(final MappingErrorBehaviour overflowBehaviour) {
@@ -61,6 +65,7 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         }
 
         /**
+         * @param notNumericBehaviour behaviour in case the value is not numeric
          * @return {@code this}.
          */
         public B notNumericBehaviour(final ConvertableMappingErrorBehaviour notNumericBehaviour) {
@@ -69,18 +74,23 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder(super="
                     + super.toString() + ", overflowBehaviour=" + this.overflowBehaviour + ", notNumericBehaviour="
                     + this.notNumericBehaviour + ")";
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected AbstractPropertyToNumberColumnMapping(
-            final AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.overflowBehaviour = b.overflowBehaviour;
-        this.notNumericBehaviour = b.notNumericBehaviour;
+            final AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.overflowBehaviour = builder.overflowBehaviour;
+        this.notNumericBehaviour = builder.notNumericBehaviour;
     }
 
     @Override

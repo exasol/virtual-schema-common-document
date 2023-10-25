@@ -54,6 +54,9 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         visitor.visit(this);
     }
 
+    /**
+     * Builder for {@link IterationIndexColumnMapping}.
+     */
     public abstract static class IterationIndexColumnMappingBuilder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
         private DocumentPathExpression tablesPath;
@@ -78,6 +81,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         public abstract C build();
 
         /**
+         * @param tablesPath table path
          * @return {@code this}.
          */
         public B tablesPath(final DocumentPathExpression tablesPath) {
@@ -86,7 +90,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         }
 
         @Override
-        public java.lang.String toString() {
+        public String toString() {
             return "IterationIndexColumnMapping.IterationIndexColumnMappingBuilder(super=" + super.toString()
                     + ", tablesPath=" + this.tablesPath + ")";
         }
@@ -103,18 +107,33 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
             return this;
         }
 
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
         @Override
         public IterationIndexColumnMapping build() {
             return new IterationIndexColumnMapping(this);
         }
     }
 
+    /**
+     * Creates a new instance from a builder.
+     * 
+     * @param builder builder
+     */
     protected IterationIndexColumnMapping(
-            final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> b) {
-        super(b);
-        this.tablesPath = b.tablesPath;
+            final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+        this.tablesPath = builder.tablesPath;
     }
 
+    /**
+     * Create a new builder for {@link IterationIndexColumnMapping}.
+     * 
+     * @return a new builder
+     */
     public static IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> builder() {
         return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl();
     }
