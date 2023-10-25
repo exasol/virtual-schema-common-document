@@ -136,7 +136,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl();
     }
 
-    private PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> toBuilder() {
+    PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
