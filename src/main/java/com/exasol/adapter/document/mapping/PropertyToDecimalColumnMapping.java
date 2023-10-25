@@ -114,7 +114,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl();
     }
 
-    public PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> toBuilder() {
+    private PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

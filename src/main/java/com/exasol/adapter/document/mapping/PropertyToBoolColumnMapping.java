@@ -98,7 +98,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl();
     }
 
-    public PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> toBuilder() {
+    private PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

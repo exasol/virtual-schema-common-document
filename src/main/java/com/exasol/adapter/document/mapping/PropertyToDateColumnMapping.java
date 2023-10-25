@@ -98,7 +98,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl();
     }
 
-    public PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> toBuilder() {
+    private PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

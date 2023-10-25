@@ -42,7 +42,7 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
         visitor.visit(this);
     }
 
-    public abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
+    abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
 
         @Override
@@ -91,11 +91,11 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
         super(b);
     }
 
-    public static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
+    static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
         return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl();
     }
 
-    public SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> toBuilder() {
+    private SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> toBuilder() {
         return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

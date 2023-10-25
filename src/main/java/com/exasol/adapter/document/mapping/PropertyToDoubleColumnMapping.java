@@ -77,7 +77,7 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
         return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl();
     }
 
-    public PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> toBuilder() {
+    private PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

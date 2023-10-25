@@ -115,7 +115,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl();
     }
 
-    public PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> toBuilder() {
+    private PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

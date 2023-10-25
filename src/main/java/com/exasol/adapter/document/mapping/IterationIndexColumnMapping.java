@@ -119,7 +119,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl();
     }
 
-    public IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> toBuilder() {
+    private IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> toBuilder() {
         return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

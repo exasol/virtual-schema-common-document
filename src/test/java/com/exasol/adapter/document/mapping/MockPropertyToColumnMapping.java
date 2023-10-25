@@ -85,7 +85,7 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
         return new MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl();
     }
 
-    public MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> toBuilder() {
+    private MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> toBuilder() {
         return new MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

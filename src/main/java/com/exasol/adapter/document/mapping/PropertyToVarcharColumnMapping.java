@@ -148,7 +148,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl();
     }
 
-    public PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> toBuilder() {
+    PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
