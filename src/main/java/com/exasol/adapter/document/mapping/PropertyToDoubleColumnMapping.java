@@ -2,13 +2,10 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.experimental.SuperBuilder;
-
 /**
  * This class defines a mapping that extracts a floating-point number from the remote document and maps it to an Exasol
  * {@code DOUBLE-PRECISION} column.
  */
-@SuperBuilder(toBuilder = true)
 public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumberColumnMapping {
     private static final long serialVersionUID = 6021806680404016343L;
 
@@ -25,6 +22,87 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static abstract class PropertyToDoubleColumnMappingBuilder<C extends PropertyToDoubleColumnMapping, B extends PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<C, B>>
+            extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected B $fillValuesFrom(final C instance) {
+            super.$fillValuesFrom(instance);
+            PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder
+                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+            return self();
+        }
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToDoubleColumnMapping instance,
+                final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected abstract B self();
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public abstract C build();
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public java.lang.String toString() {
+            return "PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder(super=" + super.toString() + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    private static final class PropertyToDoubleColumnMappingBuilderImpl extends
+            PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<PropertyToDoubleColumnMapping, PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl> {
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private PropertyToDoubleColumnMappingBuilderImpl() {
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl self() {
+            return this;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public PropertyToDoubleColumnMapping build() {
+            return new PropertyToDoubleColumnMapping(this);
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    protected PropertyToDoubleColumnMapping(
+            final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
+        super(b);
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> builder() {
+        return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> toBuilder() {
+        return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl().$fillValuesFrom(this);
     }
 
     @Override

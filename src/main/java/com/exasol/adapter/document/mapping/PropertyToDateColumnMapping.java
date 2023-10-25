@@ -5,13 +5,10 @@ import java.util.Objects;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.experimental.SuperBuilder;
-
 /**
  * This class defines a mapping that extracts a date value from the remote document and maps it to an Exasol
  * {@code DATE} column.
  */
-@SuperBuilder(toBuilder = true)
 public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 6169627871770637281L;
     /** @serial */
@@ -34,6 +31,104 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static abstract class PropertyToDateColumnMappingBuilder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<C, B>>
+            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private ConvertableMappingErrorBehaviour notDateBehaviour;
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected B $fillValuesFrom(final C instance) {
+            super.$fillValuesFrom(instance);
+            PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
+                    this);
+            return self();
+        }
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToDateColumnMapping instance,
+                final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> b) {
+            b.notDateBehaviour(instance.notDateBehaviour);
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected abstract B self();
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public abstract C build();
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public B notDateBehaviour(final ConvertableMappingErrorBehaviour notDateBehaviour) {
+            this.notDateBehaviour = notDateBehaviour;
+            return self();
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public java.lang.String toString() {
+            return "PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder(super=" + super.toString()
+                    + ", notDateBehaviour=" + this.notDateBehaviour + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    private static final class PropertyToDateColumnMappingBuilderImpl extends
+            PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<PropertyToDateColumnMapping, PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl> {
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private PropertyToDateColumnMappingBuilderImpl() {
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl self() {
+            return this;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public PropertyToDateColumnMapping build() {
+            return new PropertyToDateColumnMapping(this);
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    protected PropertyToDateColumnMapping(
+            final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> b) {
+        super(b);
+        this.notDateBehaviour = b.notDateBehaviour;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> builder() {
+        return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> toBuilder() {
+        return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl().$fillValuesFrom(this);
     }
 
     @Override

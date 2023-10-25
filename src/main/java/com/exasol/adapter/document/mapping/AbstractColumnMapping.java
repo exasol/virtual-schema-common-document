@@ -2,12 +2,9 @@ package com.exasol.adapter.document.mapping;
 
 import java.util.Objects;
 
-import lombok.experimental.SuperBuilder;
-
 /**
  * This class is an abstract basis for {@link ColumnMapping}s.
  */
-@SuperBuilder(toBuilder = true)
 abstract class AbstractColumnMapping implements ColumnMapping {
     private static final long serialVersionUID = -3284843747319182683L;
     private final String exasolColumnName;
@@ -15,6 +12,59 @@ abstract class AbstractColumnMapping implements ColumnMapping {
     @Override
     public String getExasolColumnName() {
         return exasolColumnName;
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static abstract class AbstractColumnMappingBuilder<C extends AbstractColumnMapping, B extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B>> {
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private String exasolColumnName;
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected B $fillValuesFrom(final C instance) {
+            AbstractColumnMapping.AbstractColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance, this);
+            return self();
+        }
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private static void $fillValuesFromInstanceIntoBuilder(final AbstractColumnMapping instance,
+                final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> b) {
+            b.exasolColumnName(instance.exasolColumnName);
+        }
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected abstract B self();
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public abstract C build();
+
+        /**
+         * @return {@code this}.
+         */
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public B exasolColumnName(final String exasolColumnName) {
+            this.exasolColumnName = exasolColumnName;
+            return self();
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public java.lang.String toString() {
+            return "AbstractColumnMapping.AbstractColumnMappingBuilder(exasolColumnName=" + this.exasolColumnName + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    protected AbstractColumnMapping(final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> b) {
+        this.exasolColumnName = b.exasolColumnName;
     }
 
     @Override

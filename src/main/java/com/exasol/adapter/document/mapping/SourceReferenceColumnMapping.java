@@ -2,8 +2,6 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.experimental.SuperBuilder;
-
 /**
  * This class describes a column that maps the source reference. For example in the files-virtual-schemas the name of
  * the file that contained the document.
@@ -12,7 +10,6 @@ import lombok.experimental.SuperBuilder;
  * possible).
  * </p>
  */
-@SuperBuilder(toBuilder = true)
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     /** Constant for the default name of the SOURCE_REFERENCE column */
     public static final String DEFAULT_COLUMN_NAME = "SOURCE_REFERENCE";
@@ -43,6 +40,87 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     @Override
     public void accept(final ColumnMappingVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static abstract class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
+            extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected B $fillValuesFrom(final C instance) {
+            super.$fillValuesFrom(instance);
+            SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder
+                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+            return self();
+        }
+
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private static void $fillValuesFromInstanceIntoBuilder(final SourceReferenceColumnMapping instance,
+                final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> b) {
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected abstract B self();
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public abstract C build();
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public java.lang.String toString() {
+            return "SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder(super=" + super.toString() + ")";
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    private static final class SourceReferenceColumnMappingBuilderImpl extends
+            SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<SourceReferenceColumnMapping, SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl> {
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        private SourceReferenceColumnMappingBuilderImpl() {
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        protected SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl self() {
+            return this;
+        }
+
+        @java.lang.Override
+        @java.lang.SuppressWarnings("all")
+        @lombok.Generated
+        public SourceReferenceColumnMapping build() {
+            return new SourceReferenceColumnMapping(this);
+        }
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    protected SourceReferenceColumnMapping(
+            final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> b) {
+        super(b);
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
+        return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl();
+    }
+
+    @java.lang.SuppressWarnings("all")
+    @lombok.Generated
+    public SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> toBuilder() {
+        return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl().$fillValuesFrom(this);
     }
 
     @Override
