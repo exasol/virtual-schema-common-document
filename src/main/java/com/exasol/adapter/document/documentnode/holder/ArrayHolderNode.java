@@ -1,16 +1,14 @@
 package com.exasol.adapter.document.documentnode.holder;
 
 import java.util.List;
+import java.util.Objects;
 
 import com.exasol.adapter.document.documentnode.DocumentArray;
 import com.exasol.adapter.document.documentnode.DocumentNode;
 
-import lombok.EqualsAndHashCode;
-
 /**
  * Implementation of {@link DocumentArray} that simply holds the list elements as array.
  */
-@EqualsAndHashCode
 public final class ArrayHolderNode implements DocumentArray {
     private final List<DocumentNode> value;
 
@@ -36,5 +34,25 @@ public final class ArrayHolderNode implements DocumentArray {
     @Override
     public int size() {
         return this.value.size();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ArrayHolderNode other = (ArrayHolderNode) obj;
+        return Objects.equals(value, other.value);
     }
 }

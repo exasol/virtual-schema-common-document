@@ -1,13 +1,12 @@
 package com.exasol.adapter.document.documentnode.holder;
 
-import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
+import java.util.Objects;
 
-import lombok.EqualsAndHashCode;
+import com.exasol.adapter.document.documentnode.DocumentFloatingPointValue;
 
 /**
  * Implementation of {@link DocumentFloatingPointValue} that simply holds the double value in a variable.
  */
-@EqualsAndHashCode
 public final class DoubleHolderNode implements DocumentFloatingPointValue {
     private final double value;
 
@@ -23,5 +22,25 @@ public final class DoubleHolderNode implements DocumentFloatingPointValue {
     @Override
     public double getValue() {
         return this.value;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DoubleHolderNode other = (DoubleHolderNode) obj;
+        return Double.doubleToLongBits(value) == Double.doubleToLongBits(other.value);
     }
 }

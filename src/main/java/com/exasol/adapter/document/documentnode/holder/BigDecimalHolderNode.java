@@ -1,15 +1,13 @@
 package com.exasol.adapter.document.documentnode.holder;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import com.exasol.adapter.document.documentnode.DocumentDecimalValue;
-
-import lombok.EqualsAndHashCode;
 
 /**
  * Implementation of {@link DocumentDecimalValue} that simply holds the big decimal value in a variable.
  */
-@EqualsAndHashCode
 public final class BigDecimalHolderNode implements DocumentDecimalValue {
     private final BigDecimal numberValue;
 
@@ -25,5 +23,25 @@ public final class BigDecimalHolderNode implements DocumentDecimalValue {
     @Override
     public BigDecimal getValue() {
         return this.numberValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(numberValue);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BigDecimalHolderNode other = (BigDecimalHolderNode) obj;
+        return Objects.equals(numberValue, other.numberValue);
     }
 }
