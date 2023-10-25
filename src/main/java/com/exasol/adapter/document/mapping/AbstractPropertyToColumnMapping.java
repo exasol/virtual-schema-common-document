@@ -28,40 +28,34 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         return true;
     }
 
-    public static abstract class AbstractPropertyToColumnMappingBuilder<C extends AbstractPropertyToColumnMapping, B extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B>>
+    public abstract static class AbstractPropertyToColumnMappingBuilder<C extends AbstractPropertyToColumnMapping, B extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
-
         private DocumentPathExpression pathToSourceProperty;
-
         private MappingErrorBehaviour lookupFailBehaviour;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+                    .fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final AbstractPropertyToColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final AbstractPropertyToColumnMapping instance,
                 final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> b) {
             b.pathToSourceProperty(instance.pathToSourceProperty);
             b.lookupFailBehaviour(instance.lookupFailBehaviour);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B pathToSourceProperty(final DocumentPathExpression pathToSourceProperty) {
             this.pathToSourceProperty = pathToSourceProperty;
             return self();
@@ -70,14 +64,12 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         /**
          * @return {@code this}.
          */
-
         public B lookupFailBehaviour(final MappingErrorBehaviour lookupFailBehaviour) {
             this.lookupFailBehaviour = lookupFailBehaviour;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder(super=" + super.toString()
                     + ", pathToSourceProperty=" + this.pathToSourceProperty + ", lookupFailBehaviour="

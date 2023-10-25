@@ -38,40 +38,34 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         visitor.visit(this);
     }
 
-    public static abstract class PropertyToJsonColumnMappingBuilder<C extends PropertyToJsonColumnMapping, B extends PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToJsonColumnMappingBuilder<C extends PropertyToJsonColumnMapping, B extends PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-
         private int varcharColumnSize;
-
         private MappingErrorBehaviour overflowBehaviour;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
-            PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
+            PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
                     this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToJsonColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToJsonColumnMapping instance,
                 final PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> b) {
             b.varcharColumnSize(instance.varcharColumnSize);
             b.overflowBehaviour(instance.overflowBehaviour);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B varcharColumnSize(final int varcharColumnSize) {
             this.varcharColumnSize = varcharColumnSize;
             return self();
@@ -80,14 +74,12 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         /**
          * @return {@code this}.
          */
-
         public B overflowBehaviour(final MappingErrorBehaviour overflowBehaviour) {
             this.overflowBehaviour = overflowBehaviour;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder(super=" + super.toString()
                     + ", varcharColumnSize=" + this.varcharColumnSize + ", overflowBehaviour=" + this.overflowBehaviour
@@ -102,13 +94,11 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         }
 
         @Override
-
         protected PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToJsonColumnMapping build() {
             return new PropertyToJsonColumnMapping(this);
         }
@@ -126,7 +116,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
     }
 
     public PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

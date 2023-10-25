@@ -33,12 +33,11 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class MockPropertyToColumnMappingBuilder<C extends MockPropertyToColumnMapping, B extends MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<C, B>>
+    public abstract static class MockPropertyToColumnMappingBuilder<C extends MockPropertyToColumnMapping, B extends MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
                     this);
             return self();
@@ -49,15 +48,12 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         @Override
-
         public java.lang.String toString() {
             return "MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder(super=" + super.toString() + ")";
         }
@@ -70,13 +66,11 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
         }
 
         @Override
-
         protected MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public MockPropertyToColumnMapping build() {
             return new MockPropertyToColumnMapping(this);
         }
@@ -92,7 +86,7 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
     }
 
     public MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<?, ?> toBuilder() {
-        return new MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

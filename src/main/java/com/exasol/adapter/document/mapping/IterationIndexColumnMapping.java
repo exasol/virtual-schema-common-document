@@ -54,44 +54,38 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         visitor.visit(this);
     }
 
-    public static abstract class IterationIndexColumnMappingBuilder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<C, B>>
+    public abstract static class IterationIndexColumnMappingBuilder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
-
         private DocumentPathExpression tablesPath;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
-            IterationIndexColumnMapping.IterationIndexColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
+            IterationIndexColumnMapping.IterationIndexColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
                     this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final IterationIndexColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final IterationIndexColumnMapping instance,
                 final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> b) {
             b.tablesPath(instance.tablesPath);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B tablesPath(final DocumentPathExpression tablesPath) {
             this.tablesPath = tablesPath;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "IterationIndexColumnMapping.IterationIndexColumnMappingBuilder(super=" + super.toString()
                     + ", tablesPath=" + this.tablesPath + ")";
@@ -105,13 +99,11 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         }
 
         @Override
-
         protected IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public IterationIndexColumnMapping build() {
             return new IterationIndexColumnMapping(this);
         }
@@ -128,7 +120,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
     }
 
     public IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> toBuilder() {
-        return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

@@ -42,31 +42,28 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
         visitor.visit(this);
     }
 
-    public static abstract class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
+    public abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
-        @Override
 
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
-            SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+        @Override
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
+            SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
+                    this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final SourceReferenceColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final SourceReferenceColumnMapping instance,
                 final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> b) {
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         @Override
-
         public java.lang.String toString() {
             return "SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder(super=" + super.toString() + ")";
         }
@@ -79,13 +76,11 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
         }
 
         @Override
-
         protected SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public SourceReferenceColumnMapping build() {
             return new SourceReferenceColumnMapping(this);
         }
@@ -101,7 +96,7 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     }
 
     public SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> toBuilder() {
-        return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

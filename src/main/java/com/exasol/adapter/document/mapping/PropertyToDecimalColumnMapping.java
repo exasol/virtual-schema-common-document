@@ -38,40 +38,34 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class PropertyToDecimalColumnMappingBuilder<C extends PropertyToDecimalColumnMapping, B extends PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToDecimalColumnMappingBuilder<C extends PropertyToDecimalColumnMapping, B extends PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
-
         private int decimalPrecision;
-
         private int decimalScale;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+                    .fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToDecimalColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToDecimalColumnMapping instance,
                 final PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> b) {
             b.decimalPrecision(instance.decimalPrecision);
             b.decimalScale(instance.decimalScale);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B decimalPrecision(final int decimalPrecision) {
             this.decimalPrecision = decimalPrecision;
             return self();
@@ -80,14 +74,12 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         /**
          * @return {@code this}.
          */
-
         public B decimalScale(final int decimalScale) {
             this.decimalScale = decimalScale;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder(super=" + super.toString()
                     + ", decimalPrecision=" + this.decimalPrecision + ", decimalScale=" + this.decimalScale + ")";
@@ -101,13 +93,11 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         }
 
         @Override
-
         protected PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToDecimalColumnMapping build() {
             return new PropertyToDecimalColumnMapping(this);
         }
@@ -125,7 +115,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
     }
 
     public PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

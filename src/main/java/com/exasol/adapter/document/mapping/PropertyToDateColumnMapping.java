@@ -33,44 +33,38 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class PropertyToDateColumnMappingBuilder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToDateColumnMappingBuilder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-
         private ConvertableMappingErrorBehaviour notDateBehaviour;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
-            PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
+            PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
                     this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToDateColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToDateColumnMapping instance,
                 final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> b) {
             b.notDateBehaviour(instance.notDateBehaviour);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B notDateBehaviour(final ConvertableMappingErrorBehaviour notDateBehaviour) {
             this.notDateBehaviour = notDateBehaviour;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder(super=" + super.toString()
                     + ", notDateBehaviour=" + this.notDateBehaviour + ")";
@@ -84,13 +78,11 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         }
 
         @Override
-
         protected PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToDateColumnMapping build() {
             return new PropertyToDateColumnMapping(this);
         }
@@ -107,7 +99,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
     }
 
     public PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

@@ -14,16 +14,15 @@ abstract class AbstractColumnMapping implements ColumnMapping {
         return exasolColumnName;
     }
 
-    public static abstract class AbstractColumnMappingBuilder<C extends AbstractColumnMapping, B extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B>> {
-
+    public abstract static class AbstractColumnMappingBuilder<C extends AbstractColumnMapping, B extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B>> {
         private String exasolColumnName;
 
-        protected B $fillValuesFrom(final C instance) {
-            AbstractColumnMapping.AbstractColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance, this);
+        protected B fillValuesFrom(final C instance) {
+            AbstractColumnMapping.AbstractColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final AbstractColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final AbstractColumnMapping instance,
                 final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> b) {
             b.exasolColumnName(instance.exasolColumnName);
         }
@@ -35,14 +34,12 @@ abstract class AbstractColumnMapping implements ColumnMapping {
         /**
          * @return {@code this}.
          */
-
         public B exasolColumnName(final String exasolColumnName) {
             this.exasolColumnName = exasolColumnName;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "AbstractColumnMapping.AbstractColumnMappingBuilder(exasolColumnName=" + this.exasolColumnName + ")";
         }

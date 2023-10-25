@@ -60,25 +60,21 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class PropertyToVarcharColumnMappingBuilder<C extends PropertyToVarcharColumnMapping, B extends PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToVarcharColumnMappingBuilder<C extends PropertyToVarcharColumnMapping, B extends PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-
         private int varcharColumnSize;
-
         private TruncateableMappingErrorBehaviour overflowBehaviour;
-
         private ConvertableMappingErrorBehaviour nonStringBehaviour;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+                    .fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToVarcharColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToVarcharColumnMapping instance,
                 final PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> b) {
             b.varcharColumnSize(instance.varcharColumnSize);
             b.overflowBehaviour(instance.overflowBehaviour);
@@ -86,17 +82,14 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B varcharColumnSize(final int varcharColumnSize) {
             this.varcharColumnSize = varcharColumnSize;
             return self();
@@ -105,7 +98,6 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         /**
          * @return {@code this}.
          */
-
         public B overflowBehaviour(final TruncateableMappingErrorBehaviour overflowBehaviour) {
             this.overflowBehaviour = overflowBehaviour;
             return self();
@@ -114,14 +106,12 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         /**
          * @return {@code this}.
          */
-
         public B nonStringBehaviour(final ConvertableMappingErrorBehaviour nonStringBehaviour) {
             this.nonStringBehaviour = nonStringBehaviour;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder(super=" + super.toString()
                     + ", varcharColumnSize=" + this.varcharColumnSize + ", overflowBehaviour=" + this.overflowBehaviour
@@ -136,13 +126,11 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         @Override
-
         protected PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToVarcharColumnMapping build() {
             return new PropertyToVarcharColumnMapping(this);
         }
@@ -161,7 +149,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
     }
 
     public PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

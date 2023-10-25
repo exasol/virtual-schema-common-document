@@ -33,44 +33,38 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class PropertyToBoolColumnMappingBuilder<C extends PropertyToBoolColumnMapping, B extends PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToBoolColumnMappingBuilder<C extends PropertyToBoolColumnMapping, B extends PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-
         private ConvertableMappingErrorBehaviour notBooleanBehavior;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
-            PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder.$fillValuesFromInstanceIntoBuilder(instance,
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
+            PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
                     this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToBoolColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToBoolColumnMapping instance,
                 final PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> b) {
             b.notBooleanBehavior(instance.notBooleanBehavior);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B notBooleanBehavior(final ConvertableMappingErrorBehaviour notBooleanBehavior) {
             this.notBooleanBehavior = notBooleanBehavior;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder(super=" + super.toString()
                     + ", notBooleanBehavior=" + this.notBooleanBehavior + ")";
@@ -84,13 +78,11 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         }
 
         @Override
-
         protected PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToBoolColumnMapping build() {
             return new PropertyToBoolColumnMapping(this);
         }
@@ -107,7 +99,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
     }
 
     public PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

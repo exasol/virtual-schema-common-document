@@ -39,40 +39,34 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class PropertyToTimestampColumnMappingBuilder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToTimestampColumnMappingBuilder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-
         private ConvertableMappingErrorBehaviour notTimestampBehaviour;
-
         private boolean useTimestampWithLocalTimezoneType;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+                    .fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToTimestampColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToTimestampColumnMapping instance,
                 final PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> b) {
             b.notTimestampBehaviour(instance.notTimestampBehaviour);
             b.useTimestampWithLocalTimezoneType(instance.useTimestampWithLocalTimezoneType);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B notTimestampBehaviour(final ConvertableMappingErrorBehaviour notTimestampBehaviour) {
             this.notTimestampBehaviour = notTimestampBehaviour;
             return self();
@@ -81,14 +75,12 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         /**
          * @return {@code this}.
          */
-
         public B useTimestampWithLocalTimezoneType(final boolean useTimestampWithLocalTimezoneType) {
             this.useTimestampWithLocalTimezoneType = useTimestampWithLocalTimezoneType;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder(super=" + super.toString()
                     + ", notTimestampBehaviour=" + this.notTimestampBehaviour + ", useTimestampWithLocalTimezoneType="
@@ -103,13 +95,11 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         }
 
         @Override
-
         protected PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToTimestampColumnMapping build() {
             return new PropertyToTimestampColumnMapping(this);
         }
@@ -127,7 +117,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     }
 
     public PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

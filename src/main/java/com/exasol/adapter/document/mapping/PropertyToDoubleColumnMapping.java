@@ -24,31 +24,28 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
         return this.toBuilder().exasolColumnName(newExasolName).build();
     }
 
-    public static abstract class PropertyToDoubleColumnMappingBuilder<C extends PropertyToDoubleColumnMapping, B extends PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<C, B>>
+    public abstract static class PropertyToDoubleColumnMappingBuilder<C extends PropertyToDoubleColumnMapping, B extends PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
-        @Override
 
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        @Override
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+                    .fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final PropertyToDoubleColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final PropertyToDoubleColumnMapping instance,
                 final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         @Override
-
         public java.lang.String toString() {
             return "PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder(super=" + super.toString() + ")";
         }
@@ -61,13 +58,11 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
         }
 
         @Override
-
         protected PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl self() {
             return this;
         }
 
         @Override
-
         public PropertyToDoubleColumnMapping build() {
             return new PropertyToDoubleColumnMapping(this);
         }
@@ -83,7 +78,7 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
     }
 
     public PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl().$fillValuesFrom(this);
+        return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 
     @Override

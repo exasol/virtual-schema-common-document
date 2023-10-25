@@ -27,40 +27,34 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         return notNumericBehaviour;
     }
 
-    public static abstract class AbstractPropertyToNumberColumnMappingBuilder<C extends AbstractPropertyToNumberColumnMapping, B extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B>>
+    public abstract static class AbstractPropertyToNumberColumnMappingBuilder<C extends AbstractPropertyToNumberColumnMapping, B extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B>>
             extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
-
         private MappingErrorBehaviour overflowBehaviour;
-
         private ConvertableMappingErrorBehaviour notNumericBehaviour;
 
         @Override
-
-        protected B $fillValuesFrom(final C instance) {
-            super.$fillValuesFrom(instance);
+        protected B fillValuesFrom(final C instance) {
+            super.fillValuesFrom(instance);
             AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder
-                    .$fillValuesFromInstanceIntoBuilder(instance, this);
+                    .fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
-        private static void $fillValuesFromInstanceIntoBuilder(final AbstractPropertyToNumberColumnMapping instance,
+        private static void fillValuesFromInstanceIntoBuilder(final AbstractPropertyToNumberColumnMapping instance,
                 final AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<?, ?> b) {
             b.overflowBehaviour(instance.overflowBehaviour);
             b.notNumericBehaviour(instance.notNumericBehaviour);
         }
 
         @Override
-
         protected abstract B self();
 
         @Override
-
         public abstract C build();
 
         /**
          * @return {@code this}.
          */
-
         public B overflowBehaviour(final MappingErrorBehaviour overflowBehaviour) {
             this.overflowBehaviour = overflowBehaviour;
             return self();
@@ -69,14 +63,12 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         /**
          * @return {@code this}.
          */
-
         public B notNumericBehaviour(final ConvertableMappingErrorBehaviour notNumericBehaviour) {
             this.notNumericBehaviour = notNumericBehaviour;
             return self();
         }
 
         @Override
-
         public java.lang.String toString() {
             return "AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder(super="
                     + super.toString() + ", overflowBehaviour=" + this.overflowBehaviour + ", notNumericBehaviour="
