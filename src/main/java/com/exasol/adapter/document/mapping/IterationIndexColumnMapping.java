@@ -6,14 +6,12 @@ import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a column that maps the array index of a nested list. Such columns are useful for nested tables
  * that do not have an key.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class IterationIndexColumnMapping extends AbstractColumnMapping {
@@ -49,6 +47,11 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
     @Override
     public void accept(final ColumnMappingVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return "IterationIndexColumnMapping(super=" + super.toString() + ", tablesPath=" + this.getTablesPath() + ")";
     }
 
     @Override

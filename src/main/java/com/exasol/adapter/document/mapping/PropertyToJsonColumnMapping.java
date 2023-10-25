@@ -6,13 +6,11 @@ import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * Maps a property of a DynamoDB table and all its descendants to a JSON string.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnMapping {
@@ -35,6 +33,12 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
     @Override
     public void accept(final PropertyToColumnMappingVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyToJsonColumnMapping(super=" + super.toString() + ", varcharColumnSize="
+                + this.getVarcharColumnSize() + ", overflowBehaviour=" + this.getOverflowBehaviour() + ")";
     }
 
     @Override

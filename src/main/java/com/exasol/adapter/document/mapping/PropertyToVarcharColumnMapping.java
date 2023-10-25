@@ -7,13 +7,11 @@ import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a string from the remote document and maps it to an Exasol VARCHAR column.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColumnMapping {
@@ -38,6 +36,13 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyToVarcharColumnMapping(super=" + super.toString() + ", varcharColumnSize="
+                + this.getVarcharColumnSize() + ", overflowBehaviour=" + this.getOverflowBehaviour()
+                + ", nonStringBehaviour=" + this.getNonStringBehaviour() + ")";
     }
 
     @Override

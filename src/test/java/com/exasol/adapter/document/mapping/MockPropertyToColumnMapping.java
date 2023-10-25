@@ -5,10 +5,8 @@ import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping {
@@ -38,6 +36,11 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @Override
+    public String toString() {
+        return "MockPropertyToColumnMapping(super=" + super.toString() + ")";
     }
 
     @Override

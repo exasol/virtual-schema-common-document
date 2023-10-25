@@ -15,6 +15,11 @@ abstract class AbstractColumnMapping implements ColumnMapping {
     private final String exasolColumnName;
 
     @Override
+    public String toString() {
+        return "AbstractColumnMapping(exasolColumnName=" + this.getExasolColumnName() + ")";
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(exasolColumnName);
     }

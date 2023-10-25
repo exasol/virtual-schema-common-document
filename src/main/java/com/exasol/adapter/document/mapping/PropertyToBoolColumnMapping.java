@@ -6,14 +6,12 @@ import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a boolean value from the remote document and maps it to an Exasol
  * {@code BOOLEAN} column.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnMapping {
@@ -34,6 +32,12 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyToBoolColumnMapping(super=" + super.toString() + ", notBooleanBehavior="
+                + this.getNotBooleanBehavior() + ")";
     }
 
     @Override

@@ -3,7 +3,6 @@ package com.exasol.adapter.document.mapping;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -14,7 +13,6 @@ import lombok.experimental.SuperBuilder;
  * possible).
  * </p>
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
@@ -47,6 +45,11 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     @Override
     public void accept(final ColumnMappingVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public String toString() {
+        return "SourceReferenceColumnMapping(super=" + super.toString() + ")";
     }
 
     @Override

@@ -6,13 +6,11 @@ import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class is an abstract basis for {@link PropertyToColumnMapping}s.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping implements PropertyToColumnMapping {
@@ -23,6 +21,12 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
     @Override
     public boolean isExasolColumnNullable() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "AbstractPropertyToColumnMapping(pathToSourceProperty=" + this.getPathToSourceProperty()
+                + ", lookupFailBehaviour=" + this.getLookupFailBehaviour() + ")";
     }
 
     @Override

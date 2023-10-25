@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.mapping.converter;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
@@ -136,5 +135,36 @@ class StagingTableMapping {
          * @throws RuntimeException if validation fails
          */
         public void validate(StagingTableMapping stagingTableMapping);
+    }
+
+    @Override
+    public String toString() {
+        return "StagingTableMapping(exasolName=" + this.getExasolName() + ", remoteName=" + this.getRemoteName()
+                + ", additionalConfiguration=" + this.getAdditionalConfiguration() + ", columns=" + this.getColumns()
+                + ", pathInRemoteTable=" + this.getPathInRemoteTable() + ", nestedTables=" + this.getNestedTables()
+                + ")";
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(exasolName, remoteName, additionalConfiguration, columns, pathInRemoteTable, nestedTables);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StagingTableMapping other = (StagingTableMapping) obj;
+        return Objects.equals(exasolName, other.exasolName) && Objects.equals(remoteName, other.remoteName)
+                && Objects.equals(additionalConfiguration, other.additionalConfiguration)
+                && Objects.equals(columns, other.columns) && Objects.equals(pathInRemoteTable, other.pathInRemoteTable)
+                && Objects.equals(nestedTables, other.nestedTables);
     }
 }

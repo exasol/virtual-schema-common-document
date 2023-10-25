@@ -5,14 +5,12 @@ import java.util.Objects;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a decimal number from the remote document and maps it to an Exasol
  * {@code DECIMAL} column.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumberColumnMapping {
@@ -38,6 +36,12 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
     }
 
     @Override
+    public String toString() {
+        return "PropertyToDecimalColumnMapping(super=" + super.toString() + ", decimalPrecision="
+                + this.getDecimalPrecision() + ", decimalScale=" + this.getDecimalScale() + ")";
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
@@ -46,7 +50,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -56,7 +60,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         if (getClass() != obj.getClass()) {
             return false;
         }
-        PropertyToDecimalColumnMapping other = (PropertyToDecimalColumnMapping) obj;
+        final PropertyToDecimalColumnMapping other = (PropertyToDecimalColumnMapping) obj;
         return decimalPrecision == other.decimalPrecision && decimalScale == other.decimalScale;
     }
 

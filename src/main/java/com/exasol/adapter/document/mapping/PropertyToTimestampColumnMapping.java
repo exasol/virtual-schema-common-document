@@ -6,14 +6,12 @@ import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a timestamp value from the remote document and maps it to an Exasol
  * {@code TIMESTAMP} or {@code TIMESTAMP WITH LOCAL TIMEZONE} column.
  */
-@ToString(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToTimestampColumnMapping extends AbstractPropertyToColumnMapping {
@@ -36,6 +34,13 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @Override
+    public String toString() {
+        return "PropertyToTimestampColumnMapping(super=" + super.toString() + ", notTimestampBehaviour="
+                + this.getNotTimestampBehaviour() + ", useTimestampWithLocalTimezoneType="
+                + this.isUseTimestampWithLocalTimezoneType() + ")";
     }
 
     @Override
