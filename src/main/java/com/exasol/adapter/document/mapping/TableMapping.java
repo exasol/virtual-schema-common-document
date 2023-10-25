@@ -1,20 +1,15 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * Definition of a table mapping from DynamoDB table to Exasol Virtual Schema. Each instance of this class represents a
  * table in the Exasol Virtual Schema. Typically it also represents a DynamoDB table. But it can also represent the data
  * from a nested list or object. See {@link #isRootTable()} for details.
  */
-@RequiredArgsConstructor
 public class TableMapping implements Serializable {
     private static final long serialVersionUID = -8647175683915939405L;
     /** @serial */
@@ -29,6 +24,24 @@ public class TableMapping implements Serializable {
     private final String additionalConfiguration;
 
     /**
+     * Create a new instance of {@link TableMapping}
+     * 
+     * @param exasolName              Exasol table name
+     * @param remoteName              name in the remote data source
+     * @param columns                 mapped columns
+     * @param pathInRemoteTable       path in remote table
+     * @param additionalConfiguration additional configuration
+     */
+    public TableMapping(final String exasolName, final String remoteName, final List<ColumnMapping> columns,
+            final DocumentPathExpression pathInRemoteTable, final String additionalConfiguration) {
+        this.exasolName = exasolName;
+        this.remoteName = remoteName;
+        this.columns = columns;
+        this.pathInRemoteTable = pathInRemoteTable;
+        this.additionalConfiguration = additionalConfiguration;
+    }
+
+    /**
      * Create a new instance of {@link TableMapping} from serialized data.
      * <p>
      * The {@link #columns} are transient and for that reason must be added separately again here.
@@ -38,11 +51,8 @@ public class TableMapping implements Serializable {
      * @param columns      separately deserialized columns
      */
     TableMapping(final TableMapping deserialized, final List<ColumnMapping> columns) {
-        this.exasolName = deserialized.exasolName;
-        this.remoteName = deserialized.remoteName;
-        this.pathInRemoteTable = deserialized.pathInRemoteTable;
-        this.additionalConfiguration = deserialized.additionalConfiguration;
-        this.columns = columns;
+        this(deserialized.exasolName, deserialized.remoteName, columns, deserialized.pathInRemoteTable,
+                deserialized.additionalConfiguration);
     }
 
     /**

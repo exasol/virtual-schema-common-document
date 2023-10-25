@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * This class extracts {@code DOUBLE-PRECISION} values from document data. The extraction is defined using a
  * {@link PropertyToDoubleColumnMapping}.
@@ -22,9 +20,12 @@ public class PropertyToDoubleColumnValueExtractor extends AbstractPropertyToNumb
         super(column, new ToDoubleNumberConverter(column));
     }
 
-    @RequiredArgsConstructor
     private static class ToDoubleNumberConverter implements NumberConverter {
         private final PropertyToDoubleColumnMapping column;
+
+        ToDoubleNumberConverter(final PropertyToDoubleColumnMapping column) {
+            this.column = column;
+        }
 
         @Override
         public Object convertString(final String stringValue) throws NumberFormatException {
