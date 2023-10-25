@@ -25,8 +25,8 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
 
     @Override
     public String toString() {
-        return "AbstractPropertyToColumnMapping(pathToSourceProperty=" + this.getPathToSourceProperty()
-                + ", lookupFailBehaviour=" + this.getLookupFailBehaviour() + ")";
+        return "AbstractPropertyToColumnMapping(super=" + super.toString() + ", pathToSourceProperty="
+                + this.getPathToSourceProperty() + ", lookupFailBehaviour=" + this.getLookupFailBehaviour() + ")";
     }
 
     @Override

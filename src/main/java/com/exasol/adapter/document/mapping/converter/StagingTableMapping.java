@@ -19,7 +19,7 @@ import lombok.With;
  */
 @Data
 @With
-class StagingTableMapping {
+final class StagingTableMapping {
     private final String exasolName;
     private final String remoteName;
     private final String additionalConfiguration;

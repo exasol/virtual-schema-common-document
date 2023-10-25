@@ -15,7 +15,7 @@ public class DocumentPathToStringConverter {
      */
     public String convertToString(final DocumentPathExpression pathExpression) {
         final List<PathSegment> path = pathExpression.getSegments();
-        if (path.isEmpty()) {
+        if (path == null || path.isEmpty()) {
             return "/";
         } else {
             final StringBuilder resultBuilder = new StringBuilder();
