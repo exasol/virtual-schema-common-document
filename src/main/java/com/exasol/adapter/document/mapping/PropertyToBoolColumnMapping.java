@@ -17,7 +17,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
     /** @serial */
     private final ConvertableMappingErrorBehaviour notBooleanBehavior;
 
-    public ConvertableMappingErrorBehaviour getNotBooleanBehavior() {
+    ConvertableMappingErrorBehaviour getNotBooleanBehavior() {
         return notBooleanBehavior;
     }
 

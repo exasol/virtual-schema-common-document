@@ -18,11 +18,11 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
     /** @serial */
     private final int decimalScale;
 
-    public int getDecimalScale() {
+    int getDecimalScale() {
         return decimalScale;
     }
 
-    public int getDecimalPrecision() {
+    int getDecimalPrecision() {
         return decimalPrecision;
     }
 

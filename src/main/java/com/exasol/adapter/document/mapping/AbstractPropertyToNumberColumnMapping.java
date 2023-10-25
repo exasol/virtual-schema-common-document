@@ -22,11 +22,11 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
      */
     private final ConvertableMappingErrorBehaviour notNumericBehaviour;
 
-    public MappingErrorBehaviour getOverflowBehaviour() {
+    MappingErrorBehaviour getOverflowBehaviour() {
         return overflowBehaviour;
     }
 
-    public ConvertableMappingErrorBehaviour getNotNumericBehaviour() {
+    ConvertableMappingErrorBehaviour getNotNumericBehaviour() {
         return notNumericBehaviour;
     }
 

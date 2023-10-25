@@ -19,11 +19,11 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     /** @serial */
     private final boolean useTimestampWithLocalTimezoneType;
 
-    public ConvertableMappingErrorBehaviour getNotTimestampBehaviour() {
+    ConvertableMappingErrorBehaviour getNotTimestampBehaviour() {
         return notTimestampBehaviour;
     }
 
-    public boolean isUseTimestampWithLocalTimezoneType() {
+    boolean isUseTimestampWithLocalTimezoneType() {
         return useTimestampWithLocalTimezoneType;
     }
 

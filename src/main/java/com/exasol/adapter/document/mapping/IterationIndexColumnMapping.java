@@ -28,6 +28,11 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         this(builder().exasolColumnName(exasolColumnName).tablesPath(tablesPath));
     }
 
+    /**
+     * Get the path to the array that's row index is modeled using this column.
+     * 
+     * @return path to the array
+     */
     public DocumentPathExpression getTablesPath() {
         return tablesPath;
     }

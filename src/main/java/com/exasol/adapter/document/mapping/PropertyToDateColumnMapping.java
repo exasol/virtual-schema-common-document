@@ -17,7 +17,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
     /** @serial */
     private final ConvertableMappingErrorBehaviour notDateBehaviour;
 
-    public ConvertableMappingErrorBehaviour getNotDateBehaviour() {
+    ConvertableMappingErrorBehaviour getNotDateBehaviour() {
         return notDateBehaviour;
     }
 

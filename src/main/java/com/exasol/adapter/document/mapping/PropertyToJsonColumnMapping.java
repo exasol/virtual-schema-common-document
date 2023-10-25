@@ -18,11 +18,11 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
     /** @serial */
     private final MappingErrorBehaviour overflowBehaviour;
 
-    public int getVarcharColumnSize() {
+    int getVarcharColumnSize() {
         return varcharColumnSize;
     }
 
-    public MappingErrorBehaviour getOverflowBehaviour() {
+    MappingErrorBehaviour getOverflowBehaviour() {
         return overflowBehaviour;
     }
 

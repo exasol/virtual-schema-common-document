@@ -21,14 +21,29 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
     /** @serial */
     private final ConvertableMappingErrorBehaviour nonStringBehaviour;
 
+    /**
+     * Get the column size.
+     * 
+     * @return column size
+     */
     public int getVarcharColumnSize() {
         return varcharColumnSize;
     }
 
+    /**
+     * Get the overflow behaviour.
+     * 
+     * @return overflow behaviour
+     */
     public TruncateableMappingErrorBehaviour getOverflowBehaviour() {
         return overflowBehaviour;
     }
 
+    /**
+     * Get the non-string behaviour.
+     * 
+     * @return non-string behaviour
+     */
     public ConvertableMappingErrorBehaviour getNonStringBehaviour() {
         return nonStringBehaviour;
     }
