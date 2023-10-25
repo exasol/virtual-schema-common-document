@@ -46,18 +46,6 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
             extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
 
         @Override
-        protected B fillValuesFrom(final C instance) {
-            super.fillValuesFrom(instance);
-            SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
-                    this);
-            return self();
-        }
-
-        private static void fillValuesFromInstanceIntoBuilder(final SourceReferenceColumnMapping instance,
-                final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> b) {
-        }
-
-        @Override
         protected abstract B self();
 
         @Override

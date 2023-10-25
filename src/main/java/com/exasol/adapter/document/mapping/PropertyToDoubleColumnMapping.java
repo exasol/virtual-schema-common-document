@@ -31,18 +31,6 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
             extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
 
         @Override
-        protected B fillValuesFrom(final C instance) {
-            super.fillValuesFrom(instance);
-            PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder
-                    .fillValuesFromInstanceIntoBuilder(instance, this);
-            return self();
-        }
-
-        private static void fillValuesFromInstanceIntoBuilder(final PropertyToDoubleColumnMapping instance,
-                final PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> b) {
-        }
-
-        @Override
         protected abstract B self();
 
         @Override
