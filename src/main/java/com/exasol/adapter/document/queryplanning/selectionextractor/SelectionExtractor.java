@@ -5,13 +5,8 @@ import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.mapping.IterationIndexColumnMapping;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
-import com.exasol.adapter.document.querypredicate.normalizer.DnfAnd;
-import com.exasol.adapter.document.querypredicate.normalizer.DnfComparison;
-import com.exasol.adapter.document.querypredicate.normalizer.DnfNormalizer;
-import com.exasol.adapter.document.querypredicate.normalizer.DnfOr;
+import com.exasol.adapter.document.querypredicate.normalizer.*;
 import com.exasol.errorreporting.ExaError;
-
-import lombok.RequiredArgsConstructor;
 
 /**
  * This class can split up a selection into two selections that can be combined with an AND. The decision which
@@ -88,10 +83,14 @@ public class SelectionExtractor {
     /**
      * This class stores the result of {@link #extractIndexColumnSelection(QueryPredicate)}.
      */
-    @RequiredArgsConstructor
     public static class Result {
         private final DnfOr selectedSelection;
         private final DnfOr remainingSelection;
+
+        private Result(final DnfOr selectedSelection, final DnfOr remainingSelection) {
+            this.selectedSelection = selectedSelection;
+            this.remainingSelection = remainingSelection;
+        }
 
         /**
          * Get the selection with the predicates that were matched.

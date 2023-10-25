@@ -8,20 +8,23 @@ import com.exasol.adapter.document.edml.KeyType;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.AllArgsConstructor;
-
 /**
  * This class tries to auto-generate these keys if they are not present.
  * <p>
  * Every table that has nested tables must have a local / global key.
  * </p>
  */
-@AllArgsConstructor
 class KeyAdder implements StagingTableMapping.Transformer {
-    /**
-     * Dependency injection of a {@link TableKeyFetcher}.
-     */
     private final TableKeyFetcher tableKeyFetcher;
+
+    /**
+     * Create a new instance of {@link KeyAdder}.
+     * 
+     * @param tableKeyFetcher dependency injection of a {@link TableKeyFetcher}
+     */
+    KeyAdder(final TableKeyFetcher tableKeyFetcher) {
+        this.tableKeyFetcher = tableKeyFetcher;
+    }
 
     @Override
     public StagingTableMapping apply(final StagingTableMapping tableMapping) {

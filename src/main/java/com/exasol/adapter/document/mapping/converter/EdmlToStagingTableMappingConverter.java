@@ -7,8 +7,6 @@ import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.Getter;
-
 /**
  * This class converts an {@link EdmlDefinition} into a {@link StagingTableMapping}.
  */
@@ -39,9 +37,7 @@ class EdmlToStagingTableMappingConverter {
         private final String destinationTableName;
         private final String additionalConfiguration;
         private final DocumentPathExpression.Builder path;
-        @Getter
         private final List<ColumnWithKeyInfo> columns;
-        @Getter
         private final List<StagingTableMapping> nestedTables;
 
         private MappingDefinitionConverterVisitor(final String source, final String destinationTableName,
@@ -52,6 +48,14 @@ class EdmlToStagingTableMappingConverter {
             this.path = path;
             this.columns = new ArrayList<>();
             this.nestedTables = new ArrayList<>();
+        }
+
+        private List<ColumnWithKeyInfo> getColumns() {
+            return columns;
+        }
+
+        private List<StagingTableMapping> getNestedTables() {
+            return nestedTables;
         }
 
         @Override
