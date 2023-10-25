@@ -21,3 +21,4 @@ This release refactors the code to remove the dependency on Lombok.
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:project-keeper-maven-plugin:2.9.13` to `2.9.14`
+* Removed `org.projectlombok:lombok-maven-plugin:1.18.20.0`

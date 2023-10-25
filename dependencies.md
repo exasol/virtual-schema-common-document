@@ -49,13 +49,12 @@
 | [Apache Maven Javadoc Plugin][50]                       | [Apache-2.0][29]                  |
 | [Nexus Staging Maven Plugin][51]                        | [Eclipse Public License][52]      |
 | [Apache Maven Dependency Plugin][53]                    | [Apache-2.0][29]                  |
-| [Lombok Maven Plugin][54]                               | [The MIT License][55]             |
-| [Apache Maven JAR Plugin][56]                           | [Apache License, Version 2.0][29] |
-| [Project keeper maven plugin][57]                       | [The MIT License][58]             |
-| [Maven Failsafe Plugin][59]                             | [Apache-2.0][29]                  |
-| [JaCoCo :: Maven Plugin][60]                            | [Eclipse Public License 2.0][36]  |
-| [error-code-crawler-maven-plugin][61]                   | [MIT License][62]                 |
-| [Reproducible Build Maven Plugin][63]                   | [Apache 2.0][5]                   |
+| [Apache Maven JAR Plugin][54]                           | [Apache License, Version 2.0][29] |
+| [Project keeper maven plugin][55]                       | [The MIT License][56]             |
+| [Maven Failsafe Plugin][57]                             | [Apache-2.0][29]                  |
+| [JaCoCo :: Maven Plugin][58]                            | [Eclipse Public License 2.0][36]  |
+| [error-code-crawler-maven-plugin][59]                   | [MIT License][60]                 |
+| [Reproducible Build Maven Plugin][61]                   | [Apache 2.0][5]                   |
 
 [0]: https://github.com/exasol/virtual-schema-common-java/
 [1]: https://github.com/exasol/virtual-schema-common-java/blob/main/LICENSE
@@ -111,13 +110,11 @@
 [51]: http://www.sonatype.com/public-parent/nexus-maven-plugins/nexus-staging/nexus-staging-maven-plugin/
 [52]: http://www.eclipse.org/legal/epl-v10.html
 [53]: https://maven.apache.org/plugins/maven-dependency-plugin/
-[54]: https://anthonywhitford.com/lombok.maven/lombok-maven-plugin/
-[55]: https://opensource.org/licenses/MIT
-[56]: https://maven.apache.org/plugins/maven-jar-plugin/
-[57]: https://github.com/exasol/project-keeper/
-[58]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[59]: https://maven.apache.org/surefire/maven-failsafe-plugin/
-[60]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
-[61]: https://github.com/exasol/error-code-crawler-maven-plugin/
-[62]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
-[63]: http://zlika.github.io/reproducible-build-maven-plugin
+[54]: https://maven.apache.org/plugins/maven-jar-plugin/
+[55]: https://github.com/exasol/project-keeper/
+[56]: https://github.com/exasol/project-keeper/blob/main/LICENSE
+[57]: https://maven.apache.org/surefire/maven-failsafe-plugin/
+[58]: https://www.jacoco.org/jacoco/trunk/doc/maven.html
+[59]: https://github.com/exasol/error-code-crawler-maven-plugin/
+[60]: https://github.com/exasol/error-code-crawler-maven-plugin/blob/main/LICENSE
+[61]: http://zlika.github.io/reproducible-build-maven-plugin
