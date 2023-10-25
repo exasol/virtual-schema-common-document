@@ -7,6 +7,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.jupiter.api.Test;
 
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 class SourceReferenceColumnMappingTest {
 
     private static final SourceReferenceColumnMapping TEST_OBJECT = new SourceReferenceColumnMapping();
@@ -45,5 +49,15 @@ class SourceReferenceColumnMappingTest {
     @Test
     void testDifferentByName() {
         assertSymmetricNotEqualWithHashAndEquals(TEST_OBJECT, TEST_OBJECT.withNewExasolName("my other name"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(SourceReferenceColumnMapping.class).verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(SourceReferenceColumnMapping.class).verify();
     }
 }

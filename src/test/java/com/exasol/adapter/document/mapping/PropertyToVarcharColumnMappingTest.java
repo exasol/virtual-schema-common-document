@@ -10,13 +10,16 @@ import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class PropertyToVarcharColumnMappingTest {
     private static final int STRING_LENGTH = 10;
     private static final PropertyToVarcharColumnMapping TEST_OBJECT = configureExampleMapping(
             PropertyToVarcharColumnMapping.builder())//
-                    .varcharColumnSize(STRING_LENGTH)//
-                    .overflowBehaviour(TRUNCATE).nonStringBehaviour(NULL).build();
+            .varcharColumnSize(STRING_LENGTH)//
+            .overflowBehaviour(TRUNCATE).nonStringBehaviour(NULL).build();
 
     @Test
     void testGetExasolDataType() {
@@ -31,5 +34,15 @@ class PropertyToVarcharColumnMappingTest {
     @Test
     void testNewWithDifferentExasolName() {
         assertThat(TEST_OBJECT.withNewExasolName("other").getExasolColumnName(), CoreMatchers.equalTo("other"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PropertyToVarcharColumnMapping.class).verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(PropertyToVarcharColumnMapping.class).verify();
     }
 }

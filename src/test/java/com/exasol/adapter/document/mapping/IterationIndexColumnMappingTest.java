@@ -10,6 +10,9 @@ import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class IterationIndexColumnMappingTest {
     private static final String EXASOL_COLUMN_NAME = "columnName";
@@ -66,5 +69,15 @@ class IterationIndexColumnMappingTest {
                 () -> assertThat(exasolDataType.getPrecision(), equalTo(9)),
                 () -> assertThat(exasolDataType.getScale(), equalTo(0))//
         );
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(IterationIndexColumnMapping.class).verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(IterationIndexColumnMapping.class).verify();
     }
 }

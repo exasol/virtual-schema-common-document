@@ -12,6 +12,12 @@ This release refactors the code to remove the dependency on Lombok.
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Added `com.jparams:to-string-verifier:1.4.8`
+* Added `nl.jqno.equalsverifier:equalsverifier:3.15.2`
+* Updated `org.jacoco:org.jacoco.agent:0.8.10` to `0.8.11`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:project-keeper-maven-plugin:2.9.13` to `2.9.14`

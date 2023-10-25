@@ -9,6 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class PropertyToJsonColumnMappingTest {
 
@@ -33,5 +36,15 @@ class PropertyToJsonColumnMappingTest {
     @Test
     void testNewWithDifferentExasolName() {
         assertThat(TEST_OBJECT.withNewExasolName("other").getExasolColumnName(), equalTo("other"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PropertyToJsonColumnMapping.class).verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(PropertyToJsonColumnMapping.class).verify();
     }
 }
