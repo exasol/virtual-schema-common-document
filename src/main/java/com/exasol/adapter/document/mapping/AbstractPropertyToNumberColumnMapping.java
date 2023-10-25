@@ -5,13 +5,11 @@ import java.util.Objects;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * Abstract base for {@link AbstractPropertyToColumnMapping}s that map to numeric Exasol columns.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public abstract class AbstractPropertyToNumberColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = -3412527315242611386L;
@@ -23,6 +21,14 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
      * @serial
      */
     private final ConvertableMappingErrorBehaviour notNumericBehaviour;
+
+    public MappingErrorBehaviour getOverflowBehaviour() {
+        return overflowBehaviour;
+    }
+
+    public ConvertableMappingErrorBehaviour getNotNumericBehaviour() {
+        return notNumericBehaviour;
+    }
 
     @Override
     public String toString() {

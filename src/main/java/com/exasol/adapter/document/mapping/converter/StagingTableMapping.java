@@ -9,14 +9,11 @@ import com.exasol.adapter.document.edml.KeyType;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
 
-import lombok.Data;
-
 /**
  * This data structure is an intermediate for the conversion from the {@link EdmlDefinition} to a {@link TableMapping}.
  * In contrast to the {@link TableMapping} it stores the tables still in a tree. That makes some transformation easier.
  * In addition, it also maintains the information which columns are key-columns.
  */
-@Data
 final class StagingTableMapping {
     private final String exasolName;
     private final String remoteName;
@@ -24,6 +21,41 @@ final class StagingTableMapping {
     private final List<ColumnWithKeyInfo> columns;
     private final DocumentPathExpression pathInRemoteTable;
     private final List<StagingTableMapping> nestedTables;
+
+    StagingTableMapping(final String exasolName, final String remoteName, final String additionalConfiguration,
+            final List<ColumnWithKeyInfo> columns, final DocumentPathExpression pathInRemoteTable,
+            final List<StagingTableMapping> nestedTables) {
+        this.exasolName = exasolName;
+        this.remoteName = remoteName;
+        this.additionalConfiguration = additionalConfiguration;
+        this.columns = columns;
+        this.pathInRemoteTable = pathInRemoteTable;
+        this.nestedTables = nestedTables;
+    }
+
+    public String getExasolName() {
+        return exasolName;
+    }
+
+    public String getRemoteName() {
+        return remoteName;
+    }
+
+    public String getAdditionalConfiguration() {
+        return additionalConfiguration;
+    }
+
+    public List<ColumnWithKeyInfo> getColumns() {
+        return columns;
+    }
+
+    public DocumentPathExpression getPathInRemoteTable() {
+        return pathInRemoteTable;
+    }
+
+    public List<StagingTableMapping> getNestedTables() {
+        return nestedTables;
+    }
 
     /**
      * Check if this table mapping has nested table mappings.

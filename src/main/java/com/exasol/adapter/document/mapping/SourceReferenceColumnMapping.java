@@ -2,7 +2,6 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
@@ -13,7 +12,6 @@ import lombok.experimental.SuperBuilder;
  * possible).
  * </p>
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     /** Constant for the default name of the SOURCE_REFERENCE column */

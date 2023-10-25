@@ -4,14 +4,12 @@ import java.util.Objects;
 
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a decimal number from the remote document and maps it to an Exasol
  * {@code DECIMAL} column.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumberColumnMapping {
     private static final long serialVersionUID = -8263709400720209080L;
@@ -19,6 +17,14 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
     private final int decimalPrecision;
     /** @serial */
     private final int decimalScale;
+
+    public int getDecimalScale() {
+        return decimalScale;
+    }
+
+    public int getDecimalPrecision() {
+        return decimalPrecision;
+    }
 
     @Override
     public void accept(final PropertyToColumnMappingVisitor visitor) {

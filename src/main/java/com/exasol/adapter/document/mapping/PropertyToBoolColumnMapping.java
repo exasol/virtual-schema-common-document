@@ -5,19 +5,21 @@ import java.util.Objects;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a boolean value from the remote document and maps it to an Exasol
  * {@code BOOLEAN} column.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 7665762375515945443L;
     /** @serial */
     private final ConvertableMappingErrorBehaviour notBooleanBehavior;
+
+    public ConvertableMappingErrorBehaviour getNotBooleanBehavior() {
+        return notBooleanBehavior;
+    }
 
     @Override
     public void accept(final PropertyToColumnMappingVisitor visitor) {

@@ -2,17 +2,20 @@ package com.exasol.adapter.document.mapping;
 
 import java.util.Objects;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class is an abstract basis for {@link ColumnMapping}s.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 abstract class AbstractColumnMapping implements ColumnMapping {
     private static final long serialVersionUID = -3284843747319182683L;
     private final String exasolColumnName;
+
+    @Override
+    public String getExasolColumnName() {
+        return exasolColumnName;
+    }
 
     @Override
     public String toString() {

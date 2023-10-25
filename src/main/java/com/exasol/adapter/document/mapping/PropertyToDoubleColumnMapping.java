@@ -2,14 +2,12 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a floating-point number from the remote document and maps it to an Exasol
  * {@code DOUBLE-PRECISION} column.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumberColumnMapping {
     private static final long serialVersionUID = 6021806680404016343L;

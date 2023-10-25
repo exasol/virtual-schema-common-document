@@ -5,19 +5,21 @@ import java.util.Objects;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * This class defines a mapping that extracts a date value from the remote document and maps it to an Exasol
  * {@code DATE} column.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 6169627871770637281L;
     /** @serial */
     private final ConvertableMappingErrorBehaviour notDateBehaviour;
+
+    public ConvertableMappingErrorBehaviour getNotDateBehaviour() {
+        return notDateBehaviour;
+    }
 
     @Override
     public void accept(final PropertyToColumnMappingVisitor visitor) {

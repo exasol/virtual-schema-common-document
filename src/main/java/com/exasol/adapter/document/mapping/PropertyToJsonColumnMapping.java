@@ -5,13 +5,11 @@ import java.util.Objects;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 /**
  * Maps a property of a DynamoDB table and all its descendants to a JSON string.
  */
-@Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = -6633690614095755071L;
@@ -19,6 +17,14 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
     private final int varcharColumnSize;
     /** @serial */
     private final MappingErrorBehaviour overflowBehaviour;
+
+    public int getVarcharColumnSize() {
+        return varcharColumnSize;
+    }
+
+    public MappingErrorBehaviour getOverflowBehaviour() {
+        return overflowBehaviour;
+    }
 
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
