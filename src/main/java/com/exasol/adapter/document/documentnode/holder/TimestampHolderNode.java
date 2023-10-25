@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class TimestampHolderNode implements DocumentTimestampValue {
+public final class TimestampHolderNode implements DocumentTimestampValue {
     private final Timestamp timestampValue;
 
     @Override

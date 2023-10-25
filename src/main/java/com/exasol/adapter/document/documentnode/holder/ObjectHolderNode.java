@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentObject} that simply holds the object properties as a map.
  */
 @EqualsAndHashCode
-public class ObjectHolderNode implements DocumentObject {
+public final class ObjectHolderNode implements DocumentObject {
     private final Map<String, DocumentNode> value;
 
     /**

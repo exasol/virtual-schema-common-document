@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentStringValue} that simply holds the string value in a variable.
  */
 @EqualsAndHashCode
-public class StringHolderNode implements DocumentStringValue {
+public final class StringHolderNode implements DocumentStringValue {
     private final String stringValue;
 
     /**

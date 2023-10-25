@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentBooleanValue} that simply holds the boolean value in a variable.
  */
 @EqualsAndHashCode
-public class BooleanHolderNode implements DocumentBooleanValue {
+public final class BooleanHolderNode implements DocumentBooleanValue {
     private final boolean booleanValue;
 
     /**

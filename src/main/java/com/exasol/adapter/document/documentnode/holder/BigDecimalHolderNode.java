@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentDecimalValue} that simply holds the big decimal value in a variable.
  */
 @EqualsAndHashCode
-public class BigDecimalHolderNode implements DocumentDecimalValue {
+public final class BigDecimalHolderNode implements DocumentDecimalValue {
     private final BigDecimal numberValue;
 
     /**

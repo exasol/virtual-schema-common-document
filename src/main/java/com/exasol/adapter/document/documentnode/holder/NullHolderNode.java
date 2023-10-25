@@ -8,6 +8,6 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentNullValue}.
  */
 @EqualsAndHashCode
-public class NullHolderNode implements DocumentNullValue {
+public final class NullHolderNode implements DocumentNullValue {
 
 }

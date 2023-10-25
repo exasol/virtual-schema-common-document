@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
  */
 @EqualsAndHashCode
 @RequiredArgsConstructor
-public class BinaryHolderNode implements DocumentBinaryValue {
+public final class BinaryHolderNode implements DocumentBinaryValue {
     private final byte[] data;
 
     @Override

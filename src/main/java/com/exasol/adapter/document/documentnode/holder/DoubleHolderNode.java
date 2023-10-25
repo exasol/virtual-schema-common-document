@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentFloatingPointValue} that simply holds the double value in a variable.
  */
 @EqualsAndHashCode
-public class DoubleHolderNode implements DocumentFloatingPointValue {
+public final class DoubleHolderNode implements DocumentFloatingPointValue {
     private final double value;
 
     /**

@@ -11,7 +11,7 @@ import lombok.EqualsAndHashCode;
  * Implementation of {@link DocumentArray} that simply holds the list elements as array.
  */
 @EqualsAndHashCode
-public class ArrayHolderNode implements DocumentArray {
+public final class ArrayHolderNode implements DocumentArray {
     private final List<DocumentNode> value;
 
     /**

@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
  */
 @RequiredArgsConstructor
 @EqualsAndHashCode
-public class DateHolderNode implements DocumentDateValue {
+public final class DateHolderNode implements DocumentDateValue {
     private final Date dateValue;
 
     @Override
