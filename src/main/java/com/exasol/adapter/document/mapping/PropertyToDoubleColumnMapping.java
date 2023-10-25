@@ -79,6 +79,7 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDoubleColumnMapping.PropertyToDoubleColumnMappingBuilderImpl();
     }

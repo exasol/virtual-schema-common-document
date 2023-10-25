@@ -113,6 +113,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> builder() {
         return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl();
     }

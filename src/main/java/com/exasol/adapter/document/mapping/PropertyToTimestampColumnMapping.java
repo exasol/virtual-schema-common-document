@@ -132,10 +132,12 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> builder() {
         return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl();
     }
 
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl().fillValuesFrom(this);
     }

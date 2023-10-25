@@ -89,6 +89,7 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
         return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl();
     }

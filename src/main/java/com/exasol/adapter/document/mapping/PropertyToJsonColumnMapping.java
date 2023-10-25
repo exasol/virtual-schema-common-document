@@ -131,6 +131,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> builder() {
         return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl();
     }

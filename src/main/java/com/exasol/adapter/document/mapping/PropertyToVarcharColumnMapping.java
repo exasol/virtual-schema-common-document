@@ -165,10 +165,12 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> builder() {
         return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl();
     }
 
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> toBuilder() {
         return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl().fillValuesFrom(this);
     }

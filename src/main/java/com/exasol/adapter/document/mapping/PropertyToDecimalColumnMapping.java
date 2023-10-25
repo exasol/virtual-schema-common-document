@@ -130,6 +130,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl();
     }

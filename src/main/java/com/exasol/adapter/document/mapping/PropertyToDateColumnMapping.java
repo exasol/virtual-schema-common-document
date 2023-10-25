@@ -113,6 +113,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> builder() {
         return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl();
     }

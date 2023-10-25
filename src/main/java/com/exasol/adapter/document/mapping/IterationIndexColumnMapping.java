@@ -134,6 +134,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
      * 
      * @return a new builder
      */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
     public static IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> builder() {
         return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl();
     }
