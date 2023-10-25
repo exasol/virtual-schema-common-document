@@ -3,7 +3,6 @@ package com.exasol.adapter.document.mapping;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -16,7 +15,6 @@ import lombok.experimental.SuperBuilder;
  * </p>
  */
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
@@ -49,5 +47,24 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     @Override
     public void accept(final ColumnMappingVisitor visitor) {
         visitor.visit(this);
+    }
+
+    @Override
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof SourceReferenceColumnMapping)) {
+            return false;
+        }
+        if (!(this instanceof SourceReferenceColumnMapping)) {
+            return false;
+        }
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

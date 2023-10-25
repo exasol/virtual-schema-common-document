@@ -3,7 +3,6 @@ package com.exasol.adapter.document.mapping;
 import com.exasol.adapter.metadata.DataType;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
@@ -12,7 +11,6 @@ import lombok.experimental.SuperBuilder;
  * {@code DOUBLE-PRECISION} column.
  */
 @ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
 @Data
 @SuperBuilder(toBuilder = true)
 public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumberColumnMapping {
@@ -31,5 +29,24 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
     @Override
     public ColumnMapping withNewExasolName(final String newExasolName) {
         return this.toBuilder().exasolColumnName(newExasolName).build();
+    }
+
+    @Override
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof PropertyToDoubleColumnMapping)) {
+            return false;
+        }
+        if (!(this instanceof PropertyToDoubleColumnMapping)) {
+            return false;
+        }
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }
