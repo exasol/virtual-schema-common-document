@@ -43,7 +43,7 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     }
 
     abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
-            extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
+            extends AbstractColumnMapping.Builder<C, B> {
 
         @Override
         protected abstract B self();

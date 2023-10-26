@@ -57,21 +57,20 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
     /**
      * Builder for {@link IterationIndexColumnMapping}.
      */
-    public abstract static class IterationIndexColumnMappingBuilder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<C, B>>
-            extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.Builder<C, B>>
+            extends AbstractColumnMapping.Builder<C, B> {
         private DocumentPathExpression tablesPath;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            IterationIndexColumnMapping.IterationIndexColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
-                    this);
+            IterationIndexColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final IterationIndexColumnMapping instance,
-                final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> b) {
-            b.tablesPath(instance.tablesPath);
+                final IterationIndexColumnMapping.Builder<?, ?> builder) {
+            builder.tablesPath(instance.tablesPath);
         }
 
         @Override
@@ -96,14 +95,14 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         }
     }
 
-    private static final class IterationIndexColumnMappingBuilderImpl extends
-            IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<IterationIndexColumnMapping, IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl> {
+    private static final class BuilderImpl extends
+            IterationIndexColumnMapping.Builder<IterationIndexColumnMapping, IterationIndexColumnMapping.BuilderImpl> {
 
-        private IterationIndexColumnMappingBuilderImpl() {
+        private BuilderImpl() {
         }
 
         @Override
-        protected IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl self() {
+        protected IterationIndexColumnMapping.BuilderImpl self() {
             return this;
         }
 
@@ -123,8 +122,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
      * 
      * @param builder builder
      */
-    protected IterationIndexColumnMapping(
-            final IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> builder) {
+    protected IterationIndexColumnMapping(final IterationIndexColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.tablesPath = builder.tablesPath;
     }
@@ -135,12 +133,12 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> builder() {
-        return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl();
+    public static IterationIndexColumnMapping.Builder<?, ?> builder() {
+        return new IterationIndexColumnMapping.BuilderImpl();
     }
 
-    private IterationIndexColumnMapping.IterationIndexColumnMappingBuilder<?, ?> toBuilder() {
-        return new IterationIndexColumnMapping.IterationIndexColumnMappingBuilderImpl().fillValuesFrom(this);
+    private IterationIndexColumnMapping.Builder<?, ?> toBuilder() {
+        return new IterationIndexColumnMapping.BuilderImpl().fillValuesFrom(this);
     }
 
     @Override

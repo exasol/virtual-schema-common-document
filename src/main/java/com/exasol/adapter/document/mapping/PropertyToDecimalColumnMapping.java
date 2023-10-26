@@ -41,23 +41,22 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
     /**
      * Builder for {@link PropertyToDecimalColumnMapping}.
      */
-    public abstract static class PropertyToDecimalColumnMappingBuilder<C extends PropertyToDecimalColumnMapping, B extends PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToNumberColumnMapping.AbstractPropertyToNumberColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends PropertyToDecimalColumnMapping, B extends PropertyToDecimalColumnMapping.Builder<C, B>>
+            extends AbstractPropertyToNumberColumnMapping.Builder<C, B> {
         private int decimalPrecision;
         private int decimalScale;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder
-                    .fillValuesFromInstanceIntoBuilder(instance, this);
+            PropertyToDecimalColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToDecimalColumnMapping instance,
-                final PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> b) {
-            b.decimalPrecision(instance.decimalPrecision);
-            b.decimalScale(instance.decimalScale);
+                final PropertyToDecimalColumnMapping.Builder<?, ?> builder) {
+            builder.decimalPrecision(instance.decimalPrecision);
+            builder.decimalScale(instance.decimalScale);
         }
 
         @Override
@@ -91,14 +90,14 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         }
     }
 
-    private static final class PropertyToDecimalColumnMappingBuilderImpl extends
-            PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<PropertyToDecimalColumnMapping, PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl> {
+    static final class BuilderImpl extends
+            PropertyToDecimalColumnMapping.Builder<PropertyToDecimalColumnMapping, PropertyToDecimalColumnMapping.BuilderImpl> {
 
-        private PropertyToDecimalColumnMappingBuilderImpl() {
+        private BuilderImpl() {
         }
 
         @Override
-        protected PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl self() {
+        protected PropertyToDecimalColumnMapping.BuilderImpl self() {
             return this;
         }
 
@@ -118,8 +117,7 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
      * 
      * @param builder builder
      */
-    protected PropertyToDecimalColumnMapping(
-            final PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> builder) {
+    protected PropertyToDecimalColumnMapping(final PropertyToDecimalColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.decimalPrecision = builder.decimalPrecision;
         this.decimalScale = builder.decimalScale;
@@ -131,12 +129,12 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> builder() {
-        return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl();
+    public static PropertyToDecimalColumnMapping.Builder<?, ?> builder() {
+        return new PropertyToDecimalColumnMapping.BuilderImpl();
     }
 
-    private PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToDecimalColumnMapping.PropertyToDecimalColumnMappingBuilderImpl().fillValuesFrom(this);
+    private PropertyToDecimalColumnMapping.Builder<?, ?> toBuilder() {
+        return new PropertyToDecimalColumnMapping.BuilderImpl().fillValuesFrom(this);
     }
 
     @Override

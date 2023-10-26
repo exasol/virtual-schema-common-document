@@ -42,23 +42,22 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     /**
      * Builder for {@link PropertyToTimestampColumnMapping}.
      */
-    public abstract static class PropertyToTimestampColumnMappingBuilder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.Builder<C, B>>
+            extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private ConvertableMappingErrorBehaviour notTimestampBehaviour;
         private boolean useTimestampWithLocalTimezoneType;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder
-                    .fillValuesFromInstanceIntoBuilder(instance, this);
+            PropertyToTimestampColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToTimestampColumnMapping instance,
-                final PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> b) {
-            b.notTimestampBehaviour(instance.notTimestampBehaviour);
-            b.useTimestampWithLocalTimezoneType(instance.useTimestampWithLocalTimezoneType);
+                final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
+            builder.notTimestampBehaviour(instance.notTimestampBehaviour);
+            builder.useTimestampWithLocalTimezoneType(instance.useTimestampWithLocalTimezoneType);
         }
 
         @Override
@@ -93,14 +92,14 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         }
     }
 
-    private static final class PropertyToTimestampColumnMappingBuilderImpl extends
-            PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<PropertyToTimestampColumnMapping, PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl> {
+    static final class BuilderImpl extends
+            PropertyToTimestampColumnMapping.Builder<PropertyToTimestampColumnMapping, PropertyToTimestampColumnMapping.BuilderImpl> {
 
-        private PropertyToTimestampColumnMappingBuilderImpl() {
+        private BuilderImpl() {
         }
 
         @Override
-        protected PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl self() {
+        protected PropertyToTimestampColumnMapping.BuilderImpl self() {
             return this;
         }
 
@@ -120,8 +119,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
      * 
      * @param builder builder
      */
-    protected PropertyToTimestampColumnMapping(
-            final PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> builder) {
+    protected PropertyToTimestampColumnMapping(final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.notTimestampBehaviour = builder.notTimestampBehaviour;
         this.useTimestampWithLocalTimezoneType = builder.useTimestampWithLocalTimezoneType;
@@ -133,13 +131,13 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> builder() {
-        return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl();
+    public static PropertyToTimestampColumnMapping.Builder<?, ?> builder() {
+        return new PropertyToTimestampColumnMapping.BuilderImpl();
     }
 
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilderImpl().fillValuesFrom(this);
+    PropertyToTimestampColumnMapping.Builder<?, ?> toBuilder() {
+        return new PropertyToTimestampColumnMapping.BuilderImpl().fillValuesFrom(this);
     }
 
     @Override

@@ -28,23 +28,22 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
         return true;
     }
 
-    public abstract static class AbstractPropertyToColumnMappingBuilder<C extends AbstractPropertyToColumnMapping, B extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B>>
-            extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends AbstractPropertyToColumnMapping, B extends AbstractPropertyToColumnMapping.Builder<C, B>>
+            extends AbstractColumnMapping.Builder<C, B> {
         private DocumentPathExpression pathToSourceProperty;
         private MappingErrorBehaviour lookupFailBehaviour;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder
-                    .fillValuesFromInstanceIntoBuilder(instance, this);
+            AbstractPropertyToColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final AbstractPropertyToColumnMapping instance,
-                final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> b) {
-            b.pathToSourceProperty(instance.pathToSourceProperty);
-            b.lookupFailBehaviour(instance.lookupFailBehaviour);
+                final AbstractPropertyToColumnMapping.Builder<?, ?> builder) {
+            builder.pathToSourceProperty(instance.pathToSourceProperty);
+            builder.lookupFailBehaviour(instance.lookupFailBehaviour);
         }
 
         @Override
@@ -82,8 +81,7 @@ abstract class AbstractPropertyToColumnMapping extends AbstractColumnMapping imp
      * 
      * @param builder builder
      */
-    protected AbstractPropertyToColumnMapping(
-            final AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<?, ?> builder) {
+    protected AbstractPropertyToColumnMapping(final AbstractPropertyToColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.pathToSourceProperty = builder.pathToSourceProperty;
         this.lookupFailBehaviour = builder.lookupFailBehaviour;

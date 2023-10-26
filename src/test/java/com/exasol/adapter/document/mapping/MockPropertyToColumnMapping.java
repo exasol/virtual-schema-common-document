@@ -34,7 +34,7 @@ public class MockPropertyToColumnMapping extends AbstractPropertyToColumnMapping
     }
 
     public abstract static class MockPropertyToColumnMappingBuilder<C extends MockPropertyToColumnMapping, B extends MockPropertyToColumnMapping.MockPropertyToColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+            extends AbstractPropertyToColumnMapping.Builder<C, B> {
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);

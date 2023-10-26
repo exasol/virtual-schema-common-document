@@ -41,23 +41,22 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
     /**
      * Builder for {@link PropertyToJsonColumnMapping}.
      */
-    public abstract static class PropertyToJsonColumnMappingBuilder<C extends PropertyToJsonColumnMapping, B extends PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends PropertyToJsonColumnMapping, B extends PropertyToJsonColumnMapping.Builder<C, B>>
+            extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private int varcharColumnSize;
         private MappingErrorBehaviour overflowBehaviour;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
-                    this);
+            PropertyToJsonColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToJsonColumnMapping instance,
-                final PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> b) {
-            b.varcharColumnSize(instance.varcharColumnSize);
-            b.overflowBehaviour(instance.overflowBehaviour);
+                final PropertyToJsonColumnMapping.Builder<?, ?> builder) {
+            builder.varcharColumnSize(instance.varcharColumnSize);
+            builder.overflowBehaviour(instance.overflowBehaviour);
         }
 
         @Override
@@ -93,7 +92,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
     }
 
     private static final class PropertyToJsonColumnMappingBuilderImpl extends
-            PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<PropertyToJsonColumnMapping, PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl> {
+            PropertyToJsonColumnMapping.Builder<PropertyToJsonColumnMapping, PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl> {
 
         private PropertyToJsonColumnMappingBuilderImpl() {
         }
@@ -119,8 +118,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
      * 
      * @param builder builder
      */
-    protected PropertyToJsonColumnMapping(
-            final PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> builder) {
+    protected PropertyToJsonColumnMapping(final PropertyToJsonColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.varcharColumnSize = builder.varcharColumnSize;
         this.overflowBehaviour = builder.overflowBehaviour;
@@ -132,11 +130,11 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> builder() {
+    public static PropertyToJsonColumnMapping.Builder<?, ?> builder() {
         return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl();
     }
 
-    private PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> toBuilder() {
+    private PropertyToJsonColumnMapping.Builder<?, ?> toBuilder() {
         return new PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilderImpl().fillValuesFrom(this);
     }
 

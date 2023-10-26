@@ -16,9 +16,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
@@ -28,7 +26,7 @@ import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
 class PropertyToVarcharColumnValueExtractorTest {
     private static final String TEST_STRING = "test";
 
-    private static PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> getDefaultMappingBuilder() {
+    private static PropertyToVarcharColumnMapping.Builder<?, ?> getDefaultMappingBuilder() {
         return configureExampleMapping(PropertyToVarcharColumnMapping.builder())//
                 .varcharColumnSize(TEST_STRING.length())//
                 .overflowBehaviour(TruncateableMappingErrorBehaviour.ABORT).nonStringBehaviour(CONVERT_OR_ABORT);

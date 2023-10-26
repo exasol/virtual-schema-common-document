@@ -36,21 +36,20 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
     /**
      * Builder for {@link PropertyToDateColumnMapping}.
      */
-    public abstract static class PropertyToDateColumnMappingBuilder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.Builder<C, B>>
+            extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private ConvertableMappingErrorBehaviour notDateBehaviour;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
-                    this);
+            PropertyToDateColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToDateColumnMapping instance,
-                final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> b) {
-            b.notDateBehaviour(instance.notDateBehaviour);
+                final PropertyToDateColumnMapping.Builder<?, ?> builder) {
+            builder.notDateBehaviour(instance.notDateBehaviour);
         }
 
         @Override
@@ -75,14 +74,14 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         }
     }
 
-    private static final class PropertyToDateColumnMappingBuilderImpl extends
-            PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<PropertyToDateColumnMapping, PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl> {
+    private static final class BuilderImpl extends
+            PropertyToDateColumnMapping.Builder<PropertyToDateColumnMapping, PropertyToDateColumnMapping.BuilderImpl> {
 
-        private PropertyToDateColumnMappingBuilderImpl() {
+        private BuilderImpl() {
         }
 
         @Override
-        protected PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl self() {
+        protected PropertyToDateColumnMapping.BuilderImpl self() {
             return this;
         }
 
@@ -102,8 +101,7 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
      * 
      * @param builder builder
      */
-    protected PropertyToDateColumnMapping(
-            final PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> builder) {
+    protected PropertyToDateColumnMapping(final PropertyToDateColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.notDateBehaviour = builder.notDateBehaviour;
     }
@@ -114,12 +112,12 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> builder() {
-        return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl();
+    public static PropertyToDateColumnMapping.Builder<?, ?> builder() {
+        return new PropertyToDateColumnMapping.BuilderImpl();
     }
 
-    private PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilderImpl().fillValuesFrom(this);
+    private PropertyToDateColumnMapping.Builder<?, ?> toBuilder() {
+        return new PropertyToDateColumnMapping.BuilderImpl().fillValuesFrom(this);
     }
 
     @Override

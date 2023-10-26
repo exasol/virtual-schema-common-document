@@ -17,7 +17,7 @@ abstract class AbstractColumnMapping implements ColumnMapping {
     /**
      * Abstract builder for {@link AbstractColumnMapping}.
      */
-    public abstract static class AbstractColumnMappingBuilder<C extends AbstractColumnMapping, B extends AbstractColumnMapping.AbstractColumnMappingBuilder<C, B>> {
+    public abstract static class Builder<C extends AbstractColumnMapping, B extends AbstractColumnMapping.Builder<C, B>> {
         private String exasolColumnName;
 
         /**
@@ -27,13 +27,13 @@ abstract class AbstractColumnMapping implements ColumnMapping {
          * @return {@code this}
          */
         protected B fillValuesFrom(final C instance) {
-            AbstractColumnMapping.AbstractColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance, this);
+            AbstractColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final AbstractColumnMapping instance,
-                final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> b) {
-            b.exasolColumnName(instance.exasolColumnName);
+                final AbstractColumnMapping.Builder<?, ?> builder) {
+            builder.exasolColumnName(instance.exasolColumnName);
         }
 
         /**
@@ -69,7 +69,7 @@ abstract class AbstractColumnMapping implements ColumnMapping {
      * 
      * @param builder builder
      */
-    protected AbstractColumnMapping(final AbstractColumnMapping.AbstractColumnMappingBuilder<?, ?> builder) {
+    protected AbstractColumnMapping(final AbstractColumnMapping.Builder<?, ?> builder) {
         this.exasolColumnName = builder.exasolColumnName;
     }
 

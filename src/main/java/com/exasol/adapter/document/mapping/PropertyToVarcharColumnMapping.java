@@ -63,8 +63,8 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
     /**
      * Builder for {@link PropertyToVarcharColumnMapping}.
      */
-    public abstract static class PropertyToVarcharColumnMappingBuilder<C extends PropertyToVarcharColumnMapping, B extends PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends PropertyToVarcharColumnMapping, B extends PropertyToVarcharColumnMapping.Builder<C, B>>
+            extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private int varcharColumnSize;
         private TruncateableMappingErrorBehaviour overflowBehaviour;
         private ConvertableMappingErrorBehaviour nonStringBehaviour;
@@ -72,16 +72,15 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder
-                    .fillValuesFromInstanceIntoBuilder(instance, this);
+            PropertyToVarcharColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToVarcharColumnMapping instance,
-                final PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> b) {
-            b.varcharColumnSize(instance.varcharColumnSize);
-            b.overflowBehaviour(instance.overflowBehaviour);
-            b.nonStringBehaviour(instance.nonStringBehaviour);
+                final PropertyToVarcharColumnMapping.Builder<?, ?> builder) {
+            builder.varcharColumnSize(instance.varcharColumnSize);
+            builder.overflowBehaviour(instance.overflowBehaviour);
+            builder.nonStringBehaviour(instance.nonStringBehaviour);
         }
 
         @Override
@@ -125,14 +124,14 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
     }
 
-    private static final class PropertyToVarcharColumnMappingBuilderImpl extends
-            PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<PropertyToVarcharColumnMapping, PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl> {
+    private static final class BuilderImpl extends
+            PropertyToVarcharColumnMapping.Builder<PropertyToVarcharColumnMapping, PropertyToVarcharColumnMapping.BuilderImpl> {
 
-        private PropertyToVarcharColumnMappingBuilderImpl() {
+        private BuilderImpl() {
         }
 
         @Override
-        protected PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl self() {
+        protected PropertyToVarcharColumnMapping.BuilderImpl self() {
             return this;
         }
 
@@ -152,8 +151,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
      * 
      * @param builder builder
      */
-    protected PropertyToVarcharColumnMapping(
-            final PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> builder) {
+    protected PropertyToVarcharColumnMapping(final PropertyToVarcharColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.varcharColumnSize = builder.varcharColumnSize;
         this.overflowBehaviour = builder.overflowBehaviour;
@@ -166,13 +164,13 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> builder() {
-        return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl();
+    public static PropertyToVarcharColumnMapping.Builder<?, ?> builder() {
+        return new PropertyToVarcharColumnMapping.BuilderImpl();
     }
 
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToVarcharColumnMapping.PropertyToVarcharColumnMappingBuilderImpl().fillValuesFrom(this);
+    PropertyToVarcharColumnMapping.Builder<?, ?> toBuilder() {
+        return new PropertyToVarcharColumnMapping.BuilderImpl().fillValuesFrom(this);
     }
 
     @Override

@@ -17,7 +17,7 @@ class PropertyToJsonColumnMappingTest {
 
     private static final PropertyToJsonColumnMapping TEST_OBJECT = getDefaultTestObjectBuilder().build();
 
-    private static PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> getDefaultTestObjectBuilder() {
+    private static PropertyToJsonColumnMapping.Builder<?, ?> getDefaultTestObjectBuilder() {
         return configureExampleMapping(PropertyToJsonColumnMapping.builder())//
                 .varcharColumnSize(10)//
                 .overflowBehaviour(MappingErrorBehaviour.ABORT);

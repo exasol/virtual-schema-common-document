@@ -36,21 +36,20 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
     /**
      * Builder for {@link PropertyToBoolColumnMapping}.
      */
-    public abstract static class PropertyToBoolColumnMappingBuilder<C extends PropertyToBoolColumnMapping, B extends PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<C, B>>
-            extends AbstractPropertyToColumnMapping.AbstractPropertyToColumnMappingBuilder<C, B> {
+    public abstract static class Builder<C extends PropertyToBoolColumnMapping, B extends PropertyToBoolColumnMapping.Builder<C, B>>
+            extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private ConvertableMappingErrorBehaviour notBooleanBehavior;
 
         @Override
         protected B fillValuesFrom(final C instance) {
             super.fillValuesFrom(instance);
-            PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder.fillValuesFromInstanceIntoBuilder(instance,
-                    this);
+            PropertyToBoolColumnMapping.Builder.fillValuesFromInstanceIntoBuilder(instance, this);
             return self();
         }
 
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToBoolColumnMapping instance,
-                final PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> b) {
-            b.notBooleanBehavior(instance.notBooleanBehavior);
+                final PropertyToBoolColumnMapping.Builder<?, ?> builder) {
+            builder.notBooleanBehavior(instance.notBooleanBehavior);
         }
 
         @Override
@@ -75,14 +74,14 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         }
     }
 
-    private static final class PropertyToBoolColumnMappingBuilderImpl extends
-            PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<PropertyToBoolColumnMapping, PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl> {
+    private static final class BuilderImpl extends
+            PropertyToBoolColumnMapping.Builder<PropertyToBoolColumnMapping, PropertyToBoolColumnMapping.BuilderImpl> {
 
-        private PropertyToBoolColumnMappingBuilderImpl() {
+        private BuilderImpl() {
         }
 
         @Override
-        protected PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl self() {
+        protected PropertyToBoolColumnMapping.BuilderImpl self() {
             return this;
         }
 
@@ -102,8 +101,7 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
      * 
      * @param builder builder
      */
-    protected PropertyToBoolColumnMapping(
-            final PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> builder) {
+    protected PropertyToBoolColumnMapping(final PropertyToBoolColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.notBooleanBehavior = builder.notBooleanBehavior;
     }
@@ -114,12 +112,12 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
      * @return a new builder
      */
     @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
-    public static PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> builder() {
-        return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl();
+    public static PropertyToBoolColumnMapping.Builder<?, ?> builder() {
+        return new PropertyToBoolColumnMapping.BuilderImpl();
     }
 
-    private PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilder<?, ?> toBuilder() {
-        return new PropertyToBoolColumnMapping.PropertyToBoolColumnMappingBuilderImpl().fillValuesFrom(this);
+    private PropertyToBoolColumnMapping.Builder<?, ?> toBuilder() {
+        return new PropertyToBoolColumnMapping.BuilderImpl().fillValuesFrom(this);
     }
 
     @Override
