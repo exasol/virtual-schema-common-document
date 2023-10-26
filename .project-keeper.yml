@@ -4,7 +4,6 @@ sources:
     modules:
       - integration_tests
       - maven_central
-      - lombok
       - udf_coverage
 linkReplacements:
   - http://www.gnu.org/licenses/lgpl.txt|https://www.gnu.org/licenses/lgpl-3.0.txt

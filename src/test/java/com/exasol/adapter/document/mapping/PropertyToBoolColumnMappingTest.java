@@ -8,12 +8,15 @@ import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class PropertyToBoolColumnMappingTest {
     private static final PropertyToBoolColumnMapping TEST_OBJECT = configureExampleMapping(
             PropertyToBoolColumnMapping.builder())//
-                    .notBooleanBehavior(ConvertableMappingErrorBehaviour.NULL)//
-                    .build();
+            .notBooleanBehavior(ConvertableMappingErrorBehaviour.NULL)//
+            .build();
 
     @Test
     void testGetExasolDataType() {
@@ -28,5 +31,15 @@ class PropertyToBoolColumnMappingTest {
     @Test
     void testNewWithDifferentExasolName() {
         assertThat(TEST_OBJECT.withNewExasolName("other").getExasolColumnName(), equalTo("other"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PropertyToBoolColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(PropertyToBoolColumnMapping.class).verify();
     }
 }

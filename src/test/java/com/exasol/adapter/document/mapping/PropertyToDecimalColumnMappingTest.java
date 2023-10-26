@@ -9,15 +9,18 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class PropertyToDecimalColumnMappingTest {
     private static final PropertyToDecimalColumnMapping TEST_OBJECT = configureExampleMapping(
             PropertyToDecimalColumnMapping.builder())//
-                    .decimalPrecision(12)//
-                    .decimalScale(1)//
-                    .overflowBehaviour(MappingErrorBehaviour.NULL)//
-                    .notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL)//
-                    .build();
+            .decimalPrecision(12)//
+            .decimalScale(1)//
+            .overflowBehaviour(MappingErrorBehaviour.NULL)//
+            .notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL)//
+            .build();
 
     @Test
     void testGetExasolDataType() {
@@ -32,5 +35,16 @@ class PropertyToDecimalColumnMappingTest {
     @Test
     void testNewWithDifferentExasolName() {
         assertThat(TEST_OBJECT.withNewExasolName("other").getExasolColumnName(), equalTo("other"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PropertyToDecimalColumnMapping.class).withRedefinedSuperclass().usingGetClass()
+                .verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(PropertyToDecimalColumnMapping.class).verify();
     }
 }

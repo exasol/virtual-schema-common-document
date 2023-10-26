@@ -2,11 +2,6 @@ package com.exasol.adapter.document.mapping;
 
 import com.exasol.adapter.metadata.DataType;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
-import lombok.experimental.SuperBuilder;
-
 /**
  * This class describes a column that maps the source reference. For example in the files-virtual-schemas the name of
  * the file that contained the document.
@@ -15,10 +10,6 @@ import lombok.experimental.SuperBuilder;
  * possible).
  * </p>
  */
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-@Data
-@SuperBuilder(toBuilder = true)
 public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     /** Constant for the default name of the SOURCE_REFERENCE column */
     public static final String DEFAULT_COLUMN_NAME = "SOURCE_REFERENCE";
@@ -49,5 +40,85 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
     @Override
     public void accept(final ColumnMappingVisitor visitor) {
         visitor.visit(this);
+    }
+
+    abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
+            extends AbstractColumnMapping.Builder<C, B> {
+
+        @Override
+        protected abstract B self();
+
+        @Override
+        public abstract C build();
+
+        @Override
+        public String toString() {
+            return "SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder(super=" + super.toString() + ")";
+        }
+    }
+
+    private static final class SourceReferenceColumnMappingBuilderImpl extends
+            SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<SourceReferenceColumnMapping, SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl> {
+
+        private SourceReferenceColumnMappingBuilderImpl() {
+        }
+
+        @Override
+        protected SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl self() {
+            return this;
+        }
+
+        /**
+         * Build a new instance.
+         * 
+         * @return new instance
+         */
+        @Override
+        public SourceReferenceColumnMapping build() {
+            return new SourceReferenceColumnMapping(this);
+        }
+    }
+
+    private SourceReferenceColumnMapping(
+            final SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder) {
+        super(builder);
+    }
+
+    /**
+     * Create a new builder for {@link SourceReferenceColumnMapping}.
+     * 
+     * @return a new builder
+     */
+    @SuppressWarnings("java:S1452") // Generic wildcard type is ok here
+    public static SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> builder() {
+        return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl();
+    }
+
+    private SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<?, ?> toBuilder() {
+        return new SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilderImpl().fillValuesFrom(this);
+    }
+
+    @Override
+    public String toString() {
+        return "SourceReferenceColumnMapping(super=" + super.toString() + ")";
+    }
+
+    @Override
+    public boolean equals(final java.lang.Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (!(o instanceof SourceReferenceColumnMapping)) {
+            return false;
+        }
+        if (!(this instanceof SourceReferenceColumnMapping)) {
+            return false;
+        }
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

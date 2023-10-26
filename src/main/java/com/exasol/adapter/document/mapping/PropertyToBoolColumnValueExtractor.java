@@ -9,9 +9,6 @@ import java.util.Set;
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * This class extracts {@code BOOL} values from document data. The extraction is defined using a
  * {@link PropertyToBoolColumnMapping}.
@@ -37,11 +34,17 @@ public class PropertyToBoolColumnValueExtractor extends AbstractPropertyToColumn
         return visitor.getResult();
     }
 
-    @RequiredArgsConstructor
     private static class ConvertVisitor implements DocumentNodeVisitor {
         private final PropertyToBoolColumnMapping column;
-        @Getter
         private Object result;
+
+        private ConvertVisitor(final PropertyToBoolColumnMapping column) {
+            this.column = column;
+        }
+
+        private Object getResult() {
+            return result;
+        }
 
         @Override
         public void visit(final DocumentArray array) {

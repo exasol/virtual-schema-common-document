@@ -4,17 +4,20 @@ import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.edml.KeyType;
 import com.exasol.adapter.document.mapping.SourceReferenceColumnMapping;
 
-import lombok.AllArgsConstructor;
-
 /**
  * This class adds the source reference columns to a schema mapping.
  */
-@AllArgsConstructor
 public class SourceRefColumnAdder implements StagingTableMapping.Transformer {
-    /**
-     * EDML definition of the class to transform
-     */
     private final EdmlDefinition edmlDefinition;
+
+    /**
+     * Create a new instance of {@link SourceRefColumnAdder}.
+     * 
+     * @param edmlDefinition EDML definition of the class to transform
+     */
+    public SourceRefColumnAdder(final EdmlDefinition edmlDefinition) {
+        this.edmlDefinition = edmlDefinition;
+    }
 
     @Override
     public StagingTableMapping apply(final StagingTableMapping stagingTableMapping) {

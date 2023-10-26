@@ -9,9 +9,6 @@ import java.util.Set;
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * This class extracts {@code DATE} values from document data. The extraction is defined using a
  * {@link PropertyToDateColumnMapping}.
@@ -36,11 +33,17 @@ public class PropertyToDateColumnValueExtractor extends AbstractPropertyToColumn
         return visitor.getResult();
     }
 
-    @RequiredArgsConstructor
     private static class ConvertVisitor implements DocumentNodeVisitor {
         private final PropertyToDateColumnMapping column;
-        @Getter
         private Object result;
+
+        public ConvertVisitor(final PropertyToDateColumnMapping column) {
+            this.column = column;
+        }
+
+        private Object getResult() {
+            return result;
+        }
 
         @Override
         public void visit(final DocumentArray array) {

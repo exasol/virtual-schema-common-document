@@ -14,16 +14,14 @@ import java.util.stream.Stream;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentnode.DocumentNode;
 import com.exasol.adapter.document.documentnode.holder.*;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 
 class PropertyToDateColumnValueExtractorTest {
-    private static PropertyToDateColumnMapping.PropertyToDateColumnMappingBuilder<?, ?> commonMappingBuilder() {
+    private static PropertyToDateColumnMapping.Builder<?, ?> commonMappingBuilder() {
         return configureExampleMapping(PropertyToDateColumnMapping.builder())//
                 .notDateBehaviour(ConvertableMappingErrorBehaviour.ABORT);
     }

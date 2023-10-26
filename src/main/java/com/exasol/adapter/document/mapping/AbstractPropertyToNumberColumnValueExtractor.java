@@ -9,9 +9,6 @@ import java.util.Set;
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * This class is an abstract base for classes that extract numeric values from documents.
  */
@@ -74,12 +71,21 @@ abstract class AbstractPropertyToNumberColumnValueExtractor extends AbstractProp
         public Object convertDecimal(final BigDecimal decimalValue);
     }
 
-    @RequiredArgsConstructor
     private static class ConversionVisitor implements DocumentNodeVisitor {
         private final AbstractPropertyToNumberColumnMapping column;
         private final NumberConverter numberConverter;
-        @Getter
+
+        private ConversionVisitor(final AbstractPropertyToNumberColumnMapping column,
+                final NumberConverter numberConverter) {
+            this.column = column;
+            this.numberConverter = numberConverter;
+        }
+
         private Object result;
+
+        private Object getResult() {
+            return result;
+        }
 
         @Override
         public void visit(final DocumentObject jsonObjectNode) {

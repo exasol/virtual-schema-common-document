@@ -5,14 +5,11 @@ import java.util.Iterator;
 
 import com.exasol.errorreporting.ExaError;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * Wrapper for iterators that adds a callback to close resources.
  * 
  * @param <T> type of the iterator
  */
-@RequiredArgsConstructor
 public class CloseableIteratorWrapper<T> implements CloseableIterator<T> {
     private final Iterator<T> source;
     private final Closeable closeFunction;
@@ -25,6 +22,17 @@ public class CloseableIteratorWrapper<T> implements CloseableIterator<T> {
     public CloseableIteratorWrapper(final Iterator<T> source) {
         this(source, () -> {
         });
+    }
+
+    /**
+     * Create a {@link CloseableIterator}.
+     * 
+     * @param source        source iterator
+     * @param closeFunction callback that is called when the iterator is closed
+     */
+    public CloseableIteratorWrapper(final Iterator<T> source, final Closeable closeFunction) {
+        this.source = source;
+        this.closeFunction = closeFunction;
     }
 
     @Override

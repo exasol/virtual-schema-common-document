@@ -12,9 +12,6 @@ import java.util.Set;
 import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-
 /**
  * ValueMapper for {@link PropertyToVarcharColumnMapping}
  */
@@ -64,11 +61,17 @@ public class PropertyToVarcharColumnValueExtractor extends AbstractPropertyToCol
         }
     }
 
-    @RequiredArgsConstructor
     private static class ToStringVisitor implements DocumentNodeVisitor {
         private final PropertyToVarcharColumnMapping column;
-        @Getter
         private String result;
+
+        private ToStringVisitor(final PropertyToVarcharColumnMapping column) {
+            this.column = column;
+        }
+
+        private String getResult() {
+            return result;
+        }
 
         @Override
         public void visit(final DocumentObject objectNode) {

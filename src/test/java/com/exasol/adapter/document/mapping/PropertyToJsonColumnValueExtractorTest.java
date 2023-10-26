@@ -24,7 +24,7 @@ import com.exasol.adapter.document.documentnode.holder.*;
 
 class PropertyToJsonColumnValueExtractorTest {
 
-    private static PropertyToJsonColumnMapping.PropertyToJsonColumnMappingBuilder<?, ?> getDefaultMappingBuilder() {
+    private static PropertyToJsonColumnMapping.Builder<?, ?> getDefaultMappingBuilder() {
         return configureExampleMapping(PropertyToJsonColumnMapping.builder())//
                 .varcharColumnSize(254)//
                 .overflowBehaviour(ABORT);

@@ -1,14 +1,13 @@
 package com.exasol.adapter.document.documentnode.holder;
 
-import com.exasol.adapter.document.documentnode.DocumentStringValue;
+import java.util.Objects;
 
-import lombok.EqualsAndHashCode;
+import com.exasol.adapter.document.documentnode.DocumentStringValue;
 
 /**
  * Implementation of {@link DocumentStringValue} that simply holds the string value in a variable.
  */
-@EqualsAndHashCode
-public class StringHolderNode implements DocumentStringValue {
+public final class StringHolderNode implements DocumentStringValue {
     private final String stringValue;
 
     /**
@@ -23,5 +22,25 @@ public class StringHolderNode implements DocumentStringValue {
     @Override
     public String getValue() {
         return this.stringValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stringValue);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final StringHolderNode other = (StringHolderNode) obj;
+        return Objects.equals(stringValue, other.stringValue);
     }
 }

@@ -1,14 +1,13 @@
 package com.exasol.adapter.document.documentnode.holder;
 
-import com.exasol.adapter.document.documentnode.DocumentBooleanValue;
+import java.util.Objects;
 
-import lombok.EqualsAndHashCode;
+import com.exasol.adapter.document.documentnode.DocumentBooleanValue;
 
 /**
  * Implementation of {@link DocumentBooleanValue} that simply holds the boolean value in a variable.
  */
-@EqualsAndHashCode
-public class BooleanHolderNode implements DocumentBooleanValue {
+public final class BooleanHolderNode implements DocumentBooleanValue {
     private final boolean booleanValue;
 
     /**
@@ -23,5 +22,25 @@ public class BooleanHolderNode implements DocumentBooleanValue {
     @Override
     public boolean getValue() {
         return this.booleanValue;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(booleanValue);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        BooleanHolderNode other = (BooleanHolderNode) obj;
+        return booleanValue == other.booleanValue;
     }
 }

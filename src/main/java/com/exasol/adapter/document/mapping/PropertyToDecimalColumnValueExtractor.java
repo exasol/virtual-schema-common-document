@@ -6,8 +6,6 @@ import java.math.RoundingMode;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.errorreporting.ExaError;
 
-import lombok.RequiredArgsConstructor;
-
 /**
  * This class extracts {@code DECIMAL} values from document data. The extraction is defined using a
  * {@link PropertyToDecimalColumnMapping}.
@@ -23,9 +21,12 @@ public class PropertyToDecimalColumnValueExtractor extends AbstractPropertyToNum
         super(column, new ToDecimalNumberConverter(column));
     }
 
-    @RequiredArgsConstructor
     private static class ToDecimalNumberConverter implements NumberConverter {
         private final PropertyToDecimalColumnMapping column;
+
+        private ToDecimalNumberConverter(final PropertyToDecimalColumnMapping column) {
+            this.column = column;
+        }
 
         @Override
         public Object convertString(final String stringValue) {

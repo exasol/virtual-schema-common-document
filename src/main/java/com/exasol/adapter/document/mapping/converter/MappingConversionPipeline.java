@@ -7,21 +7,26 @@ import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.TableMapping;
 import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 
-import lombok.AllArgsConstructor;
-
 /**
  * This class converts an EDML definition into a mapping definition (different class structure) that is more handy for
  * further processing.
  */
-@AllArgsConstructor
 public class MappingConversionPipeline {
 
-    /**
-     * Dependency injection of a {@link TableKeyFetcher}.
-     */
     private final TableKeyFetcher tableKeyFetcher;
 
     private final SchemaInferencer schemaInferencer;
+
+    /**
+     * Create a new instance of {@link MappingConversionPipeline}.
+     * 
+     * @param tableKeyFetcher  Dependency injection of a {@link TableKeyFetcher}
+     * @param schemaInferencer dependency injection of a {@link SchemaInferencer}
+     */
+    public MappingConversionPipeline(final TableKeyFetcher tableKeyFetcher, final SchemaInferencer schemaInferencer) {
+        this.tableKeyFetcher = tableKeyFetcher;
+        this.schemaInferencer = schemaInferencer;
+    }
 
     /**
      * Converts an EDML definition into a mapping definition

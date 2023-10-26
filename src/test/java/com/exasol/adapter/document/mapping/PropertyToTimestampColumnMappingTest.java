@@ -10,12 +10,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class PropertyToTimestampColumnMappingTest {
     private static final PropertyToTimestampColumnMapping TEST_OBJECT = configureExampleMapping(
             PropertyToTimestampColumnMapping.builder())//
-                    .notTimestampBehaviour(ConvertableMappingErrorBehaviour.NULL)//
-                    .build();
+            .notTimestampBehaviour(ConvertableMappingErrorBehaviour.NULL)//
+            .build();
 
     @ParameterizedTest
     @ValueSource(booleans = { true, false })
@@ -33,5 +36,16 @@ class PropertyToTimestampColumnMappingTest {
     @Test
     void testNewWithDifferentExasolName() {
         assertThat(TEST_OBJECT.withNewExasolName("other").getExasolColumnName(), equalTo("other"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PropertyToTimestampColumnMapping.class).withRedefinedSuperclass().usingGetClass()
+                .verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(PropertyToTimestampColumnMapping.class).verify();
     }
 }

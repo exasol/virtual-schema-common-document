@@ -9,13 +9,16 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
+import com.jparams.verifier.tostring.ToStringVerifier;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 class PropertyToDoubleColumnMappingTest {
     private static final PropertyToDoubleColumnMapping TEST_OBJECT = configureExampleMapping(
             PropertyToDoubleColumnMapping.builder())//
-                    .overflowBehaviour(MappingErrorBehaviour.NULL)//
-                    .notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL)//
-                    .build();
+            .overflowBehaviour(MappingErrorBehaviour.NULL)//
+            .notNumericBehaviour(ConvertableMappingErrorBehaviour.NULL)//
+            .build();
 
     @Test
     void testGetExasolDataType() {
@@ -30,5 +33,15 @@ class PropertyToDoubleColumnMappingTest {
     @Test
     void testNewWithDifferentExasolName() {
         assertThat(TEST_OBJECT.withNewExasolName("other").getExasolColumnName(), equalTo("other"));
+    }
+
+    @Test
+    void testEqualsContract() {
+        EqualsVerifier.forClass(PropertyToDoubleColumnMapping.class).withRedefinedSuperclass().usingGetClass().verify();
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(PropertyToDoubleColumnMapping.class).verify();
     }
 }
