@@ -75,7 +75,7 @@
 [16]: https://junit.org/junit5/
 [17]: https://www.eclipse.org/legal/epl-v20.html
 [18]: https://github.com/mockito/mockito
-[19]: https://github.com/mockito/mockito/blob/main/LICENSE
+[19]: https://opensource.org/licenses/MIT
 [20]: http://www.slf4j.org
 [21]: http://www.opensource.org/licenses/mit-license.php
 [22]: https://github.com/exasol/exasol-test-setup-abstraction-java/

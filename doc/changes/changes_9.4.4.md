@@ -12,13 +12,22 @@ This release refactors the code to remove the dependency on Lombok.
 
 ## Dependency Updates
 
+### Compile Dependency Updates
+
+* Updated `com.exasol:virtual-schema-common-java:17.0.0` to `17.0.1`
+
 ### Test Dependency Updates
 
+* Updated `com.exasol:exasol-test-setup-abstraction-java:2.0.4` to `2.1.0`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.6.1` to `1.6.2`
 * Added `com.jparams:to-string-verifier:1.4.8`
-* Added `nl.jqno.equalsverifier:equalsverifier:3.15.2`
+* Updated `commons-io:commons-io:2.14.0` to `2.15.0`
+* Added `nl.jqno.equalsverifier:equalsverifier:3.15.3`
 * Updated `org.jacoco:org.jacoco.agent:0.8.10` to `0.8.11`
+* Updated `org.junit.jupiter:junit-jupiter-params:5.10.0` to `5.10.1`
+* Updated `org.mockito:mockito-junit-jupiter:5.6.0` to `5.7.0`
 
 ### Plugin Dependency Updates
 
-* Updated `com.exasol:project-keeper-maven-plugin:2.9.13` to `2.9.14`
+* Updated `com.exasol:project-keeper-maven-plugin:2.9.13` to `2.9.16`
 * Removed `org.projectlombok:lombok-maven-plugin:1.18.20.0`
