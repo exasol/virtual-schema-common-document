@@ -2,6 +2,7 @@ package com.exasol.adapter.document;
 
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.exasol.*;
@@ -28,6 +29,7 @@ import com.exasol.errorreporting.ExaError;
  * This class is the basis for Virtual Schema adapter for document data.
  */
 public class DocumentAdapter implements VirtualSchemaAdapter {
+    private static final Logger LOG = Logger.getLogger(DocumentAdapter.class.getName());
     private static final Set<MainCapability> SUPPORTED_MAIN_CAPABILITIES = Set.of(MainCapability.SELECTLIST_PROJECTION,
             MainCapability.FILTER_EXPRESSIONS);
     private static final Set<PredicateCapability> SUPPORTED_PREDICATE_CAPABILITIES = Set.of(PredicateCapability.EQUAL,
@@ -124,6 +126,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         // the virtual schema)
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
+        LOG.fine(() -> "Generated pushdown SQL: " + responseStatement);
         return PushDownResponse.builder()//
                 .pushDownSql(responseStatement)//
                 .build();

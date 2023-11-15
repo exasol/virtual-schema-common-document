@@ -12,9 +12,7 @@ import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
  * further processing.
  */
 public class MappingConversionPipeline {
-
     private final TableKeyFetcher tableKeyFetcher;
-
     private final SchemaInferencer schemaInferencer;
 
     /**

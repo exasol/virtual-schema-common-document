@@ -5,6 +5,7 @@ import static com.exasol.utils.StringSerializer.serializeToString;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Logger;
 
 import com.exasol.adapter.metadata.*;
 import com.exasol.errorreporting.ExaError;
@@ -16,6 +17,7 @@ import com.exasol.utils.StringSerializer;
  * deserialized again.
  */
 public class SchemaMappingToSchemaMetadataConverter {
+    private static final Logger LOG = Logger.getLogger(SchemaMappingToSchemaMetadataConverter.class.getName());
 
     /**
      * Create a {@link SchemaMetadata} for a given {@link SchemaMapping}
@@ -45,6 +47,8 @@ public class SchemaMappingToSchemaMetadataConverter {
     }
 
     private TableMetadata convertTable(final TableMapping tableMapping) {
+        LOG.fine(() -> "Creating virtual table " + tableMapping.getExasolName() + " with remote name "
+                + tableMapping.getRemoteName() + " and " + tableMapping.getColumns().size() + " columns");
         final List<ColumnMetadata> columnDefinitions = new ArrayList<>();
         for (final ColumnMapping column : tableMapping.getColumns()) {
             columnDefinitions.add(convertColumn(column));
@@ -61,19 +65,23 @@ public class SchemaMappingToSchemaMetadataConverter {
      * @return {@link ColumnMetadata}
      */
     public ColumnMetadata convertColumn(final ColumnMapping columnMapping) {
-        final String serialized;
-        try {
-            serialized = serializeToString(columnMapping);
-        } catch (final IOException exception) {
-            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-26")
-                    .message("Failed to serialize ColumnMapping.").ticketMitigation().toString(), exception);
-        }
+        LOG.fine(() -> "  - Column " + columnMapping.getExasolColumnName() + ": " + columnMapping.getExasolDataType()
+                + ", " + (columnMapping.isExasolColumnNullable() ? "NULLABLE" : "NOT NULL"));
         return ColumnMetadata.builder()//
                 .name(columnMapping.getExasolColumnName())//
                 .type(columnMapping.getExasolDataType())//
                 .defaultValue("NULL")//
                 .nullable(columnMapping.isExasolColumnNullable())//
-                .adapterNotes(serialized).build();
+                .adapterNotes(serialize(columnMapping)).build();
+    }
+
+    private String serialize(final ColumnMapping columnMapping) {
+        try {
+            return serializeToString(columnMapping);
+        } catch (final IOException exception) {
+            throw new IllegalStateException(ExaError.messageBuilder("F-VSD-26")
+                    .message("Failed to serialize ColumnMapping.").ticketMitigation().toString(), exception);
+        }
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.exasol.adapter.document;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
@@ -13,6 +14,7 @@ import com.exasol.adapter.document.mapping.SchemaMappingRequest;
  * This class implements the data processing in the UDF.
  */
 public class DataProcessingPipeline {
+    private static final Logger LOG = Logger.getLogger(DataProcessingPipeline.class.getName());
     private final SchemaMapper schemaMapper;
 
     /**
@@ -33,11 +35,16 @@ public class DataProcessingPipeline {
      */
     public void run(final DocumentFetcher documentFetcher, final ConnectionPropertiesReader connectionInformation,
             final RowHandler rowHandler) {
+        LOG.info(() -> "Start processing using document fetcher " + documentFetcher.getClass().getName());
+        int rowCount = 0;
         try (final CloseableIterator<FetchedDocument> documentIterator = documentFetcher.run(connectionInformation)) {
             while (documentIterator.hasNext()) {
                 this.schemaMapper.mapRow(documentIterator.next(), rowHandler::acceptRow);
+                rowCount++;
             }
         }
+        final int finalRowCount = rowCount;
+        LOG.info(() -> "Read " + finalRowCount + " rows");
     }
 
     /**
