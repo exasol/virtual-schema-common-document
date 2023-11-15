@@ -94,7 +94,7 @@
 [35]: https://www.eclemma.org/jacoco/index.html
 [36]: https://www.eclipse.org/legal/epl-2.0/
 [37]: http://sonarsource.github.io/sonar-scanner-maven/
-[38]: https://www.gnu.org/licenses/lgpl-3.0.txt
+[38]: http://www.gnu.org/licenses/lgpl.txt
 [39]: https://maven.apache.org/plugins/maven-compiler-plugin/
 [40]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
 [41]: https://www.mojohaus.org/flatten-maven-plugin/
