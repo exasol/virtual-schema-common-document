@@ -1,10 +1,16 @@
 # Common Virtual Schema for Document Data 9.4.4, released 2023-??-??
 
-Code name: Internal refactoring
+Code name: Adapt to Exasol 8
 
 ## Summary
 
-This release refactors the code to remove the dependency on Lombok.
+This release adds support for Exasol 8.
+
+The release also refactors the code to remove the dependency on Lombok.
+
+## Features
+
+* #174: Adapted to Exasol 8
 
 ## Refactoring
 
@@ -14,7 +20,7 @@ This release refactors the code to remove the dependency on Lombok.
 
 ### Compile Dependency Updates
 
-* Updated `com.exasol:edml-java:1.2.0` to `1.2.2`
+* Updated `com.exasol:edml-java:1.2.0` to `1.2.1`
 * Updated `com.exasol:virtual-schema-common-java:17.0.0` to `17.0.1`
 
 ### Test Dependency Updates
