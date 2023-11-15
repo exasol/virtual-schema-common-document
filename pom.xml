@@ -7,7 +7,7 @@
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
-        <vscommon.version>17.0.1</vscommon.version>
+        <vscommon.version>17.0.0</vscommon.version>
     </properties>
     <profiles>
         <profile>

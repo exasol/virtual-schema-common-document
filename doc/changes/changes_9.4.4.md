@@ -21,7 +21,6 @@ The release also refactors the code to remove the dependency on Lombok.
 ### Compile Dependency Updates
 
 * Updated `com.exasol:edml-java:1.2.0` to `1.2.1`
-* Updated `com.exasol:virtual-schema-common-java:17.0.0` to `17.0.1`
 
 ### Test Dependency Updates
 
