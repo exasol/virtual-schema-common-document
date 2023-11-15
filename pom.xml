@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.2</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
