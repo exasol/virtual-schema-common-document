@@ -43,10 +43,10 @@ public class SchemaInferencer {
      */
     public EdmlDefinition inferSchema(final EdmlDefinition edmlDefinition) {
         if (edmlDefinition.getMapping() != null) {
-            LOG.finer("Mapping defined, no need to infer it.");
+            LOG.finest("Mapping defined, no need to infer it.");
             return edmlDefinition;
         }
-        LOG.finer(() -> "Mapping not defined, infer it from source " + edmlDefinition.getSource());
+        LOG.finest(() -> "Mapping not defined, infer it from source " + edmlDefinition.getSource());
         final Optional<InferredMappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource());
         if (detectedSchema.isEmpty()) {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-101")

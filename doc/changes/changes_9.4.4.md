@@ -4,7 +4,10 @@ Code name: Adapt to Exasol 8
 
 ## Summary
 
-This release adds support for Exasol 8.
+This release adds support for Exasol 8 and improves logging for easier debugging:
+* Log column types when creating a virtual table
+* Log column types when rendering the pushdown query
+* Log pushdown SQL query at log level `FINE`
 
 The release also refactors the code to remove the dependency on Lombok.
 
