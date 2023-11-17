@@ -8,6 +8,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -201,8 +203,8 @@ class DocumentAdapterIT {
 
     @ParameterizedTest
     @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
-    @Disabled("Will be fixed in https://github.com/exasol/virtual-schema-common-document/issues/174")
     void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
+        assumeExasolVersion7();
         final Fields mapping = Fields.builder()//
                 .mapField("my_timestamp",
                         ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
@@ -220,6 +222,7 @@ class DocumentAdapterIT {
 
     @Test
     void testToTimestampMappingWithLocalTimezoneFails() throws SQLException {
+        assumeExasolVersion8();
         final Fields mapping = Fields.builder()//
                 .mapField("my_timestamp",
                         ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
@@ -295,6 +298,27 @@ class DocumentAdapterIT {
             assertThat(resultSet, table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));
         } finally {
             virtualSchema.drop();
+        }
+    }
+
+    private void assumeExasolVersion8() {
+        final String version = getExasolMajorVersion();
+        assumeTrue("8".equals(version), "Expected Exasol version 8 but got '" + version + "'");
+    }
+
+    private void assumeExasolVersion7() {
+        final String version = getExasolMajorVersion();
+        assumeTrue("7".equals(version), "Expected Exasol version 7 but got '" + version + "'");
+    }
+
+    private String getExasolMajorVersion() {
+        try (Statement stmt = testSetup.createConnection().createStatement()) {
+            final ResultSet result = stmt
+                    .executeQuery("SELECT PARAM_VALUE FROM SYS.EXA_METADATA WHERE PARAM_NAME='databaseMajorVersion'");
+            assertTrue(result.next(), "no result");
+            return result.getString(1);
+        } catch (final SQLException exception) {
+            throw new IllegalStateException("Failed to query Exasol version: " + exception.getMessage(), exception);
         }
     }
 }
