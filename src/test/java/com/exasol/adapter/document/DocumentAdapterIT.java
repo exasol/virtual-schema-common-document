@@ -62,7 +62,8 @@ class DocumentAdapterIT {
                 ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         buildMockAdapter();
         final ExasolSchema adapterSchema = exasolObjectFactory.createSchema("ADAPTER");
-        testSetup.getDefaultBucket().uploadFile(Path.of("test-project/mock-project/target", MOCK_ADAPTER_JAR),
+        testSetup.getDefaultBucket().uploadFile(
+                Path.of("test-project/mock-project/target").resolve(MOCK_ADAPTER_JAR).toAbsolutePath(),
                 MOCK_ADAPTER_JAR);
         adapterScript = adapterSchema.createAdapterScriptBuilder("FILES_ADAPTER")
                 .bucketFsContent("com.exasol.adapter.RequestDispatcher",
@@ -92,8 +93,8 @@ class DocumentAdapterIT {
         writeCurrentVersionToMockProjectPom();
         Verifier mvnRunner = null;
         try {
-            mvnRunner = new Verifier(Path.of("test-project", "aggregator").toAbsolutePath().toString());
-            LOGGER.info("Building mock-project");
+            mvnRunner = new Verifier(Path.of("test-project/aggregator").toAbsolutePath().toString());
+            LOGGER.info(() -> "Building mock-project at " + Path.of("test-project/aggregator").toAbsolutePath());
             mvnRunner.setSystemProperty("skipTests", "true");
             mvnRunner.setSystemProperty("maven.test.skip", "true");
             mvnRunner.setSystemProperty("ossindex.skip", "true");
@@ -225,11 +226,13 @@ class DocumentAdapterIT {
     }
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) throws SQLException {
+            final Matcher<ResultSet> expectedResult, final Statement statement) {
         final VirtualSchema virtualSchema = createVirtualSchema(mapping);
-        try {
-            final ResultSet resultSet = statement.executeQuery(query);
+        try (final ResultSet resultSet = statement.executeQuery(query)) {
             assertThat(resultSet, expectedResult);
+        } catch (final SQLException exception) {
+            throw new IllegalStateException("Failed to execute query '" + query + "': " + exception.getMessage(),
+                    exception);
         } finally {
             virtualSchema.drop();
         }
