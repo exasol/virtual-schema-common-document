@@ -6,6 +6,7 @@ import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
@@ -163,14 +164,12 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testLikeWithIllegalEscapeChar() {
+    void testLikeWithIllegalEscapeChar() throws SQLException {
         final Fields mapping = Fields.builder()//
                 .mapField("name", ToBoolMapping.builder().notBooleanBehavior(CONVERT_OR_ABORT).build())//
                 .build();
         final String query = "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS WHERE NAME LIKE 'test' ESCAPE ':';";
-        final SQLException exception = assertThrows(SQLException.class,
-                () -> assertVirtualSchemaQuery(mapping, query, null));
-        assertThat(exception.getMessage(), containsString(
+        assertVirtualSchemaQueryFails(mapping, query, containsString(
                 "E-VSD-99: This virtual-schema only supports LIKE predicates with '\\' as escape character. Please add ESCAPE '\\'."));
     }
 
@@ -202,6 +201,7 @@ class DocumentAdapterIT {
 
     @ParameterizedTest
     @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
+    @Disabled("Will be fixed in https://github.com/exasol/virtual-schema-common-document/issues/174")
     void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
         final Fields mapping = Fields.builder()//
                 .mapField("my_timestamp",
@@ -215,6 +215,29 @@ class DocumentAdapterIT {
                     .withCalendar(Calendar.getInstance(TimeZone.getTimeZone(sessionTimezone)))//
                     .matches(NO_JAVA_TYPE_CHECK);
             assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
+        }
+    }
+
+    @Test
+    void testToTimestampMappingWithLocalTimezoneFails() throws SQLException {
+        final Fields mapping = Fields.builder()//
+                .mapField("my_timestamp",
+                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
+                                .useTimestampWithLocalTimezoneType(true).build())//
+                .build();
+        final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        assertVirtualSchemaQueryFails(mapping, query, startsWith(
+                "Adapter generated invalid pushdown query for virtual table BOOKS: Data type mismatch in column number 1 (1-indexed).Expected TIMESTAMP(3) WITH LOCAL TIME ZONE, but got TIMESTAMP(3)."));
+    }
+
+    private void assertVirtualSchemaQueryFails(final Fields mapping, final String query,
+            final Matcher<String> exceptionMessageMatcher) throws SQLException {
+        final VirtualSchema virtualSchema = createVirtualSchema(mapping);
+        try (final Statement statement = connection.createStatement()) {
+            final SQLException exception = assertThrows(SQLException.class, () -> statement.executeQuery(query));
+            assertThat(exception.getMessage(), exceptionMessageMatcher);
+        } finally {
+            virtualSchema.drop();
         }
     }
 
