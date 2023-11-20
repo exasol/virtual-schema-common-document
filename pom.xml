@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
@@ -67,13 +67,13 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.10.0</version>
+            <version>5.10.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.6.0</version>
+            <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -86,7 +86,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>2.0.4</version>
+            <version>2.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -111,13 +111,13 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.14.0</version>
+            <version>2.15.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -128,7 +128,7 @@
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
-            <version>3.15.2</version>
+            <version>3.15.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -160,7 +160,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.9.14</version>
+                <version>2.9.16</version>
                 <executions>
                     <execution>
                         <goals>

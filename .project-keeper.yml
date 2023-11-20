@@ -5,8 +5,9 @@ sources:
       - integration_tests
       - maven_central
       - udf_coverage
-linkReplacements:
-  - http://www.gnu.org/licenses/lgpl.txt|https://www.gnu.org/licenses/lgpl-3.0.txt
-excludes:
-  - "E-PK-CORE-18: Outdated content: '.github/workflows/ci-build.yml'"
-  - "E-PK-CORE-18: Outdated content: '.github/workflows/release_droid_prepare_original_checksum.yml'"
+build:
+  runnerOs: ubuntu-20.04
+  freeDiskSpace: false
+  exasolDbVersions:
+    - "7.1.24"
+    - "8.23.1"

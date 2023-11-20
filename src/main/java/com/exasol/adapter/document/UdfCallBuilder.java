@@ -7,19 +7,16 @@ import static com.exasol.utils.StringSerializer.serializeToString;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.exasol.adapter.document.documentfetcher.DocumentFetcher;
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.SchemaMappingRequest;
-import com.exasol.adapter.document.queryplan.EmptyQueryPlan;
-import com.exasol.adapter.document.queryplan.FetchQueryPlan;
-import com.exasol.adapter.document.queryplan.QueryPlan;
+import com.exasol.adapter.document.queryplan.*;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
-import com.exasol.adapter.document.querypredicate.InvolvedColumnCollector;
-import com.exasol.adapter.document.querypredicate.QueryPredicate;
-import com.exasol.adapter.document.querypredicate.QueryPredicateToBooleanExpressionConverter;
+import com.exasol.adapter.document.querypredicate.*;
 import com.exasol.adapter.metadata.DataType;
 import com.exasol.datatype.type.*;
 import com.exasol.datatype.type.Boolean;
@@ -31,6 +28,7 @@ import com.exasol.sql.expression.BooleanExpression;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.expression.literal.BooleanLiteral;
 import com.exasol.sql.expression.literal.NullLiteral;
+import com.exasol.sql.rendering.ColumnsDefinitionRenderer;
 import com.exasol.sql.rendering.StringRendererConfig;
 
 /**
@@ -50,6 +48,7 @@ import com.exasol.sql.rendering.StringRendererConfig;
  * </p>
  */
 public class UdfCallBuilder {
+    private static final Logger LOG = Logger.getLogger(UdfCallBuilder.class.getName());
     private static final String DATA_LOADER_COLUMN = "DATA_LOADER";
     private static final String FRAGMENT_ID_COLUMN = "FRAGMENT_ID";
     private final String connectionName;
@@ -83,8 +82,9 @@ public class UdfCallBuilder {
         if (queryPlan instanceof EmptyQueryPlan) {
             final Select select = StatementFactory.getInstance().select().all();
             final ValueTableRow.Builder valueTableRow = ValueTableRow.builder(select);
-            valueTableRow.add(selectList.stream().map(column -> CastExasolFunction.of(NullLiteral.nullLiteral(),
-                    convertDataType(column.getExasolDataType()))).collect(Collectors.toList()));
+            valueTableRow.add(selectList.stream() //
+                    .map(this::convertColumn) //
+                    .collect(Collectors.toList()));
             select.from().valueTable(new ValueTable(select).appendRow(valueTableRow.build()));
             select.where(BooleanLiteral.of(false));
             return renderStatement(select);
@@ -95,6 +95,13 @@ public class UdfCallBuilder {
                     fetchPlan.getPostSelection(), udfCallStatement);
             return renderStatement(pushDownSelect);
         }
+    }
+
+    private CastExasolFunction convertColumn(final ColumnMapping column) {
+        final com.exasol.datatype.type.DataType convertedType = convertDataType(column.getExasolDataType());
+        LOG.fine(() -> "Using CAST to " + renderDataType(convertedType) + " (" + convertedType + ") for column "
+                + column.getExasolColumnName() + "(" + column.getExasolDataType() + ")");
+        return CastExasolFunction.of(NullLiteral.nullLiteral(), convertedType);
     }
 
     /**
@@ -145,13 +152,25 @@ public class UdfCallBuilder {
     private List<ColumnMapping> getRequiredColumns(final RemoteTableQuery query, final FetchQueryPlan queryPlan) {
         final List<ColumnMapping> postSelectionsColumns = new InvolvedColumnCollector()
                 .collectInvolvedColumns(queryPlan.getPostSelection());
-        return Stream.concat(postSelectionsColumns.stream(), query.getSelectList().stream()).distinct()
-                .sorted(Comparator.comparing(ColumnMapping::getExasolColumnName)).collect(Collectors.toList());
+        return Stream.concat(postSelectionsColumns.stream(), query.getSelectList().stream()) //
+                .distinct() //
+                .sorted(Comparator.comparing(ColumnMapping::getExasolColumnName)) //
+                .collect(Collectors.toList());
     }
 
     private List<Column> buildColumnDefinitions(final List<ColumnMapping> requiredColumns, final Select udfCallSelect) {
-        return requiredColumns.stream().map(column -> new Column(udfCallSelect, column.getExasolColumnName(),
-                convertDataType(column.getExasolDataType()))).collect(Collectors.toList());
+        return requiredColumns.stream() //
+                .map(column -> createColumn(udfCallSelect, column)) //
+                .collect(Collectors.toList());
+    }
+
+    private Column createColumn(final Select udfCallSelect, final ColumnMapping column) {
+        final String columnName = column.getExasolColumnName();
+        final DataType type = column.getExasolDataType();
+        final com.exasol.datatype.type.DataType convertedType = convertDataType(type);
+        LOG.fine(() -> "Using type " + renderDataType(convertedType) + " (" + convertedType + ") for column "
+                + columnName + " (" + type + ") / " + column);
+        return new Column(udfCallSelect, columnName, convertedType);
     }
 
     private ValueTable buildValueTable(final List<DocumentFetcher> documentFetchers, final Select select) {
@@ -215,6 +234,12 @@ public class UdfCallBuilder {
         final StringRendererConfig config = StringRendererConfig.builder().quoteIdentifiers(true).build();
         final SelectRenderer renderer = new SelectRenderer(config);
         pushDownSelect.accept(renderer);
+        return renderer.render();
+    }
+
+    private String renderDataType(final com.exasol.datatype.type.DataType type) {
+        final ColumnsDefinitionRenderer renderer = new ColumnsDefinitionRenderer(StringRendererConfig.createDefault());
+        type.accept(renderer);
         return renderer.render();
     }
 }

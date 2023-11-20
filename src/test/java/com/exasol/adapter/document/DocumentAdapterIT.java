@@ -6,7 +6,10 @@ import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,7 +65,8 @@ class DocumentAdapterIT {
                 ExasolObjectConfiguration.builder().withJvmOptions(udfTestSetup.getJvmOptions()).build());
         buildMockAdapter();
         final ExasolSchema adapterSchema = exasolObjectFactory.createSchema("ADAPTER");
-        testSetup.getDefaultBucket().uploadFile(Path.of("test-project/mock-project/target", MOCK_ADAPTER_JAR),
+        testSetup.getDefaultBucket().uploadFile(
+                Path.of("test-project/mock-project/target").resolve(MOCK_ADAPTER_JAR).toAbsolutePath(),
                 MOCK_ADAPTER_JAR);
         adapterScript = adapterSchema.createAdapterScriptBuilder("FILES_ADAPTER")
                 .bucketFsContent("com.exasol.adapter.RequestDispatcher",
@@ -92,8 +96,8 @@ class DocumentAdapterIT {
         writeCurrentVersionToMockProjectPom();
         Verifier mvnRunner = null;
         try {
-            mvnRunner = new Verifier(Path.of("test-project", "aggregator").toAbsolutePath().toString());
-            LOGGER.info("Building mock-project");
+            mvnRunner = new Verifier(Path.of("test-project/aggregator").toAbsolutePath().toString());
+            LOGGER.info(() -> "Building mock-project at " + Path.of("test-project/aggregator").toAbsolutePath());
             mvnRunner.setSystemProperty("skipTests", "true");
             mvnRunner.setSystemProperty("maven.test.skip", "true");
             mvnRunner.setSystemProperty("ossindex.skip", "true");
@@ -162,14 +166,12 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testLikeWithIllegalEscapeChar() {
+    void testLikeWithIllegalEscapeChar() throws SQLException {
         final Fields mapping = Fields.builder()//
                 .mapField("name", ToBoolMapping.builder().notBooleanBehavior(CONVERT_OR_ABORT).build())//
                 .build();
         final String query = "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS WHERE NAME LIKE 'test' ESCAPE ':';";
-        final SQLException exception = assertThrows(SQLException.class,
-                () -> assertVirtualSchemaQuery(mapping, query, null));
-        assertThat(exception.getMessage(), containsString(
+        assertVirtualSchemaQueryFails(mapping, query, containsString(
                 "E-VSD-99: This virtual-schema only supports LIKE predicates with '\\' as escape character. Please add ESCAPE '\\'."));
     }
 
@@ -202,6 +204,7 @@ class DocumentAdapterIT {
     @ParameterizedTest
     @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
     void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
+        assumeExasolVersion7();
         final Fields mapping = Fields.builder()//
                 .mapField("my_timestamp",
                         ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
@@ -217,6 +220,30 @@ class DocumentAdapterIT {
         }
     }
 
+    @Test
+    void testToTimestampMappingWithLocalTimezoneFails() throws SQLException {
+        assumeExasolVersion8();
+        final Fields mapping = Fields.builder()//
+                .mapField("my_timestamp",
+                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
+                                .useTimestampWithLocalTimezoneType(true).build())//
+                .build();
+        final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        assertVirtualSchemaQueryFails(mapping, query, startsWith(
+                "Adapter generated invalid pushdown query for virtual table BOOKS: Data type mismatch in column number 1 (1-indexed).Expected TIMESTAMP(3) WITH LOCAL TIME ZONE, but got TIMESTAMP(3)."));
+    }
+
+    private void assertVirtualSchemaQueryFails(final Fields mapping, final String query,
+            final Matcher<String> exceptionMessageMatcher) throws SQLException {
+        final VirtualSchema virtualSchema = createVirtualSchema(mapping);
+        try (final Statement statement = connection.createStatement()) {
+            final SQLException exception = assertThrows(SQLException.class, () -> statement.executeQuery(query));
+            assertThat(exception.getMessage(), exceptionMessageMatcher);
+        } finally {
+            virtualSchema.drop();
+        }
+    }
+
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult) throws SQLException {
         try (final Statement statement = connection.createStatement()) {
@@ -225,11 +252,13 @@ class DocumentAdapterIT {
     }
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) throws SQLException {
+            final Matcher<ResultSet> expectedResult, final Statement statement) {
         final VirtualSchema virtualSchema = createVirtualSchema(mapping);
-        try {
-            final ResultSet resultSet = statement.executeQuery(query);
+        try (final ResultSet resultSet = statement.executeQuery(query)) {
             assertThat(resultSet, expectedResult);
+        } catch (final SQLException exception) {
+            throw new IllegalStateException("Failed to execute query '" + query + "': " + exception.getMessage(),
+                    exception);
         } finally {
             virtualSchema.drop();
         }
@@ -269,6 +298,27 @@ class DocumentAdapterIT {
             assertThat(resultSet, table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));
         } finally {
             virtualSchema.drop();
+        }
+    }
+
+    private void assumeExasolVersion8() {
+        final String version = getExasolMajorVersion();
+        assumeTrue("8".equals(version), "Expected Exasol version 8 but got '" + version + "'");
+    }
+
+    private void assumeExasolVersion7() {
+        final String version = getExasolMajorVersion();
+        assumeTrue("7".equals(version), "Expected Exasol version 7 but got '" + version + "'");
+    }
+
+    private String getExasolMajorVersion() {
+        try (Statement stmt = testSetup.createConnection().createStatement()) {
+            final ResultSet result = stmt
+                    .executeQuery("SELECT PARAM_VALUE FROM SYS.EXA_METADATA WHERE PARAM_NAME='databaseMajorVersion'");
+            assertTrue(result.next(), "no result");
+            return result.getString(1);
+        } catch (final SQLException exception) {
+            throw new IllegalStateException("Failed to query Exasol version: " + exception.getMessage(), exception);
         }
     }
 }

@@ -42,7 +42,10 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
         visitor.visit(this);
     }
 
-    abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
+    /**
+     * Builder class for {@link SourceReferenceColumnMapping}.
+     */
+    public abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.Builder<C, B> {
 
         @Override
