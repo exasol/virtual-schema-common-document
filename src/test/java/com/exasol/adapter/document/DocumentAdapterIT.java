@@ -205,6 +205,7 @@ class DocumentAdapterIT {
     @ParameterizedTest
     @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
     void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
+        assumeExasolVersion7();
         final Fields mapping = Fields.builder()//
                 .mapField("my_timestamp",
                         ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
