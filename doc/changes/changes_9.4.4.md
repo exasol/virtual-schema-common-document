@@ -4,7 +4,15 @@ Code name: Adapt to Exasol 8
 
 ## Summary
 
-This release adds support for Exasol 8 and improves logging for easier debugging:
+This release adds support for Exasol 8 by casting values to the correct type in pushdown queries. This is necessary because Exasol 8 enables stricter type checks which caused pushdown queries for document based virtual schemas to fail with the following error:
+
+```
+Data type mismatch in column number 5 (1-indexed).Expected TIMESTAMP(3) WITH LOCAL TIME ZONE, but got TIMESTAMP(3).
+```
+
+We fixed this error by always using `TIMESTAMP` as result type for the loader UDF and casting values to the correct type `TIMESTAMP WITH LOCAL TIME ZONE` if necessary.
+
+The release also improves logging for easier debugging:
 * Log column types when creating a virtual table
 * Log column types when rendering the pushdown query
 * Log pushdown SQL query at log level `FINE`
