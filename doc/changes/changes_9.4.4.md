@@ -24,11 +24,13 @@ The release also refactors the code to remove the dependency on Lombok.
 ### Compile Dependency Updates
 
 * Updated `com.exasol:edml-java:1.2.0` to `1.2.1`
+* Updated `com.exasol:virtual-schema-common-java:17.0.0` to `17.0.1`
 
 ### Test Dependency Updates
 
 * Updated `com.exasol:exasol-test-setup-abstraction-java:2.0.4` to `2.1.0`
-* Updated `com.exasol:hamcrest-resultset-matcher:1.6.1` to `1.6.2`
+* Updated `com.exasol:hamcrest-resultset-matcher:1.6.1` to `1.6.3`
+* Updated `com.exasol:test-db-builder-java:3.5.1` to `3.5.2`
 * Added `com.jparams:to-string-verifier:1.4.8`
 * Updated `commons-io:commons-io:2.14.0` to `2.15.0`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.15.3`
