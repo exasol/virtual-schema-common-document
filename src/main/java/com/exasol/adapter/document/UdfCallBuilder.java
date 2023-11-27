@@ -128,15 +128,18 @@ public class UdfCallBuilder {
         final Select select = StatementFactory.getInstance().select();
         for (final ColumnMapping columnMapping : selectList) {
             final String exasolColumnName = columnMapping.getExasolColumnName();
-            if (columnMapping.getExasolDataType().isWithLocalTimezone()) {
-                final com.exasol.datatype.type.DataType dataType = new TimestampWithLocalTimezone();
-                select.function(CastExasolFunction.of(ColumnReference.of(exasolColumnName), dataType),
-                        exasolColumnName);
+            if (isTimestampWithLocalTimeZone(columnMapping.getExasolDataType())) {
+                select.function(castToTimestampWithLocalTimeZone(exasolColumnName), exasolColumnName);
             } else {
                 select.field(exasolColumnName);
             }
         }
         return select;
+    }
+
+    private CastExasolFunction castToTimestampWithLocalTimeZone(final String exasolColumnName) {
+        final com.exasol.datatype.type.DataType dataType = new TimestampWithLocalTimezone();
+        return CastExasolFunction.of(ColumnReference.of(exasolColumnName), dataType);
     }
 
     /**
@@ -217,11 +220,15 @@ public class UdfCallBuilder {
     }
 
     private com.exasol.datatype.type.DataType convertDataTypeForCast(final DataType adapterDataType) {
-        if (adapterDataType.getExaDataType() == ExaDataType.TIMESTAMP && adapterDataType.isWithLocalTimezone()) {
+        if (isTimestampWithLocalTimeZone(adapterDataType)) {
             return new TimestampWithLocalTimezone();
         } else {
             return convertDataType(adapterDataType);
         }
+    }
+
+    private boolean isTimestampWithLocalTimeZone(final DataType type) {
+        return type.getExaDataType() == ExaDataType.TIMESTAMP && type.isWithLocalTimezone();
     }
 
     private com.exasol.datatype.type.DataType convertDataType(final DataType adapterDataType) {
@@ -237,8 +244,10 @@ public class UdfCallBuilder {
         case DATE:
             return new Date();
         case TIMESTAMP:
-            return new Timestamp(); // we ignore with local timezone here since UDF don't support it. That's ok as long
-                                    // as we return the date in UTC
+            // We ignore "WITH LOCAL TIME ZONE" here since UDFs don't support it. That's ok as long
+            // as we return the date in UTC. Method getSelectForColumns() will add a cast to
+            // "TIMESTAMP WITH LOCAL TIME ZONE" to return the correct type.
+            return new Timestamp();
         case BOOLEAN:
             return new Boolean();
         default:
