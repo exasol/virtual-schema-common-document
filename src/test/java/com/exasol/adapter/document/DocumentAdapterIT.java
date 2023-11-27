@@ -13,8 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -25,7 +24,8 @@ import org.apache.maven.it.Verifier;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.*;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
@@ -189,33 +189,13 @@ class DocumentAdapterIT {
     @Test
     void testToTimestampMapping() throws SQLException {
         final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp",
-                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
-                                .useTimestampWithLocalTimezoneType(false).build())//
+                .mapField("my_timestamp", ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT).build())//
                 .build();
         final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
         final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
                 .withUtcCalendar()//
                 .matches(NO_JAVA_TYPE_CHECK);
         assertVirtualSchemaQuery(mapping, query, expectedResult);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
-    void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
-        final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp",
-                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
-                                .useTimestampWithLocalTimezoneType(true).build())//
-                .build();
-        try (final Statement statement = connection.createStatement()) {
-            statement.executeUpdate("ALTER SESSION SET TIME_ZONE = '" + sessionTimezone + "';");
-            final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS";
-            final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
-                    .withCalendar(Calendar.getInstance(TimeZone.getTimeZone(sessionTimezone)))//
-                    .matches(NO_JAVA_TYPE_CHECK);
-            assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
-        }
     }
 
     @ParameterizedTest
@@ -231,11 +211,7 @@ class DocumentAdapterIT {
     }
 
     static Stream<Arguments> emptyQueryPlanTypes() {
-        return Stream.of(
-                fieldType("my_timestamp", ToTimestampMapping.builder().useTimestampWithLocalTimezoneType(true).build(),
-                        "TIMESTAMP"), //
-                fieldType("my_timestamp", ToTimestampMapping.builder().useTimestampWithLocalTimezoneType(false).build(),
-                        "TIMESTAMP"), //
+        return Stream.of(fieldType("my_timestamp", ToTimestampMapping.builder().build(), "TIMESTAMP"), //
                 fieldType("publication_date", ToDateMapping.builder().build(), "DATE"),
                 fieldType("isbn", ToDoubleMapping.builder().build(), "DOUBLE PRECISION"),
                 fieldType("name", ToBoolMapping.builder().build(), "BOOLEAN"),

@@ -10,8 +10,8 @@ import com.exasol.adapter.document.documentnode.*;
 import com.exasol.errorreporting.ExaError;
 
 /**
- * This class extracts {@code TIMESTAMP} or {@code TIMESTAMP WITH LOCAL TIMEZONE} values from document data. The
- * extraction is defined using a {@link PropertyToTimestampColumnMapping}.
+ * This class extracts {@code TIMESTAMP} values from document data. The extraction is defined using a
+ * {@link PropertyToTimestampColumnMapping}.
  */
 public class PropertyToTimestampColumnValueExtractor extends AbstractPropertyToColumnValueExtractor {
     private final PropertyToTimestampColumnMapping column;

@@ -3,7 +3,6 @@ package com.exasol.adapter.document;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesRegex;
-import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -46,10 +45,7 @@ class UdfCallBuilderTest {
     static Stream<Arguments> columnTypes() {
         final String colName = "TEST_COLUMN";
         return Stream.of(
-                Arguments.of(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName)
-                        .useTimestampWithLocalTimezoneType(true).build(), "TIMESTAMP WITH LOCAL TIME ZONE"),
-                Arguments.of(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName)
-                        .useTimestampWithLocalTimezoneType(false).build(), "TIMESTAMP"),
+                Arguments.of(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).build(), "TIMESTAMP"),
                 Arguments.of(PropertyToDateColumnMapping.builder().exasolColumnName(colName).build(), "DATE"),
                 Arguments.of(
                         PropertyToJsonColumnMapping.builder().exasolColumnName(colName).varcharColumnSize(5).build(),
@@ -78,8 +74,6 @@ class UdfCallBuilderTest {
     @ParameterizedTest
     @MethodSource("columnTypes")
     void testBasicSqlBuildingWithDataTypes(final ColumnMapping column, final String expectedUdfEmitType) {
-        // TIMESTAMP WITH LOCAL TIME ZONE is tested by testBasicSqlBuildingTimestampWithLocalTimeZone
-        assumeFalse(expectedUdfEmitType.equals("TIMESTAMP WITH LOCAL TIME ZONE"));
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn(column);
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
@@ -87,20 +81,6 @@ class UdfCallBuilderTest {
                 "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", '")
                 + "[^']+" + quoteRegex("', 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + expectedUdfEmitType
                         + ") FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
-    }
-
-    @Test
-    void testBasicSqlBuildingTimestampWithLocalTimeZone() {
-        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn(PropertyToTimestampColumnMapping
-                .builder().exasolColumnName("TEST_COLUMN").useTimestampWithLocalTimezoneType(true).build());
-        final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
-        final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql,
-                matchesRegex(quoteRegex("SELECT "
-                        + "CAST(\"TEST_COLUMN\" AS  TIMESTAMP WITH LOCAL TIME ZONE) TEST_COLUMN"
-                        + " FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", '") + "[^']+"
-                        + quoteRegex("', 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + "TIMESTAMP"
-                                + ") FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
     }
 
     /**
