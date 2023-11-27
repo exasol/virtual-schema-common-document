@@ -1,16 +1,16 @@
-# Common Virtual Schema for Document Data 9.4.4, released 2023-??-??
+# Common Virtual Schema for Document Data 10.0.0, released 2023-??-??
 
 Code name: Adapt to Exasol 8
 
 ## Summary
 
-This release adds support for Exasol 8 by casting values to the correct type in pushdown queries. This is necessary because Exasol 8 enables stricter type checks which caused pushdown queries for document based virtual schemas to fail with the following error:
+This release adds support for Exasol 8 by removing support for data type `TIMESTAMP WITH LOCAL TIME ZONE`. This type caused problems with the stricter type checks enabled by default in Exasol, causing pushdown queries for document based virtual schemas to fail with the following error:
 
 ```
 Data type mismatch in column number 5 (1-indexed).Expected TIMESTAMP(3) WITH LOCAL TIME ZONE, but got TIMESTAMP(3).
 ```
 
-We fixed this error by always using `TIMESTAMP` as result type for the loader UDF and casting values to the correct type `TIMESTAMP WITH LOCAL TIME ZONE` if necessary.
+We fixed this error by removing support `TIMESTAMP WITH LOCAL TIME ZONE` completely. This is a breaking change, so we updated the version to 10.0.0.
 
 The release also improves logging for easier debugging:
 * Log column types when creating a virtual table
@@ -21,7 +21,8 @@ The release also refactors the code to remove the dependency on Lombok.
 
 ## Features
 
-* #174: Adapted to Exasol 8
+* #178: Removed support for `TIMESTAMP WITH LOCAL TIME ZONE`
+* #174: Adapted to Exasol 8 by casting to `TIMESTAMP WITH LOCAL TIME ZONE` where necessary
 
 ## Refactoring
 
@@ -31,7 +32,7 @@ The release also refactors the code to remove the dependency on Lombok.
 
 ### Compile Dependency Updates
 
-* Updated `com.exasol:edml-java:1.2.0` to `1.2.1`
+* Updated `com.exasol:edml-java:1.2.0` to `2.0.0`
 * Updated `com.exasol:virtual-schema-common-java:17.0.0` to `17.0.1`
 
 ### Test Dependency Updates
