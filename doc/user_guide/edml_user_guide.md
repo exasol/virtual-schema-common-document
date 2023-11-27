@@ -345,6 +345,8 @@ All mappings pass through null values. That means, if the source value is a null
 
 ### ToTimestampMapping Conversions
 
+Please note that EDML only supports data type `TIMESTAMP`. `TIMESTAMP WITH LOCAL TIME ZONE` is not supported.
+
 * Nested object: Not convertible
 * Nested list: Not convertible
 * String: Not convertible
