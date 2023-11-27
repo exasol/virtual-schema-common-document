@@ -301,6 +301,38 @@ class DocumentAdapterIT {
         }
     }
 
+    @Test
+    void testSetProperty() throws SQLException {
+        final EdmlDefinition mapping1 = EdmlDefinition.builder().source("")//
+                .destinationTable("BOOKS")//
+                .mapping(Fields.builder()//
+                        .mapField("isbn", ToVarcharMapping.builder().build())//
+                        .build())
+                .build();
+
+        final EdmlDefinition mapping2 = EdmlDefinition.builder().source("")//
+                .destinationTable("BOOKS")//
+                .mapping(Fields.builder()//
+                        .mapField("isbn", ToVarcharMapping.builder().build())//
+                        .mapField("publication_date", ToDateMapping.builder().notDateBehavior(CONVERT_OR_ABORT).build())//
+                        .build())
+                .build();
+        final EdmlSerializer edmlSerializer = new EdmlSerializer();
+
+        try (final VirtualSchema virtualSchema = createVirtualSchema(edmlSerializer.serialize(mapping1));
+                final Statement statement = connection.createStatement()) {
+            try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS")) {
+                assertThat(resultSet, table("VARCHAR").row("123456789").matches());
+            }
+
+            statement.execute("ALTER VIRTUAL SCHEMA " + MY_VIRTUAL_SCHEMA + " SET MAPPING = '"
+                    + edmlSerializer.serialize(mapping2) + "'");
+            try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS")) {
+                assertThat(resultSet, table("VARCHAR", "DATE").row("123456789", "blah").matches());
+            }
+        }
+    }
+
     private void assumeExasolVersion8() {
         final String version = getExasolMajorVersion();
         assumeTrue("8".equals(version), "Expected Exasol version 8 but got '" + version + "'");
