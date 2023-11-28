@@ -5,8 +5,6 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour;
 import com.exasol.adapter.metadata.DataType;
@@ -20,12 +18,10 @@ class PropertyToTimestampColumnMappingTest {
             .notTimestampBehaviour(ConvertableMappingErrorBehaviour.NULL)//
             .build();
 
-    @ParameterizedTest
-    @ValueSource(booleans = { true, false })
-    void testGetExasolDataType(final boolean withLocalTimezone) {
-        final PropertyToTimestampColumnMapping mapping = TEST_OBJECT.toBuilder()
-                .useTimestampWithLocalTimezoneType(withLocalTimezone).build();
-        assertThat(mapping.getExasolDataType(), equalTo(DataType.createTimestamp(withLocalTimezone)));
+    @Test
+    void testGetExasolDataType() {
+        final PropertyToTimestampColumnMapping mapping = TEST_OBJECT.toBuilder().build();
+        assertThat(mapping.getExasolDataType(), equalTo(DataType.createTimestamp(false)));
     }
 
     @Test
