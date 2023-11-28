@@ -18,6 +18,7 @@ import com.exasol.adapter.document.queryplan.*;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.*;
 import com.exasol.adapter.metadata.DataType;
+import com.exasol.adapter.metadata.DataType.ExaDataType;
 import com.exasol.datatype.type.*;
 import com.exasol.datatype.type.Boolean;
 import com.exasol.errorreporting.ExaError;
@@ -25,6 +26,7 @@ import com.exasol.sql.*;
 import com.exasol.sql.dql.select.Select;
 import com.exasol.sql.dql.select.rendering.SelectRenderer;
 import com.exasol.sql.expression.BooleanExpression;
+import com.exasol.sql.expression.ColumnReference;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.expression.literal.BooleanLiteral;
 import com.exasol.sql.expression.literal.NullLiteral;
@@ -80,16 +82,18 @@ public class UdfCallBuilder {
     public String getUdfCallSql(final QueryPlan queryPlan, final RemoteTableQuery query) {
         final List<ColumnMapping> selectList = query.getSelectList();
         if (queryPlan instanceof EmptyQueryPlan) {
+            LOG.fine("Build pushdown query for empty query plan");
             final Select select = StatementFactory.getInstance().select().all();
             final ValueTableRow.Builder valueTableRow = ValueTableRow.builder(select);
             valueTableRow.add(selectList.stream() //
-                    .map(this::convertColumn) //
+                    .map(this::convertColumnForNullCast) //
                     .collect(Collectors.toList()));
             select.from().valueTable(new ValueTable(select).appendRow(valueTableRow.build()));
             select.where(BooleanLiteral.of(false));
             return renderStatement(select);
         } else {
             final FetchQueryPlan fetchPlan = (FetchQueryPlan) queryPlan;
+            LOG.fine("Build pushdown query for fetch query query plan");
             final Select udfCallStatement = buildUdfCallStatement(query, fetchPlan);
             final Select pushDownSelect = wrapStatementInStatementWithPostSelectionAndProjection(selectList,
                     fetchPlan.getPostSelection(), udfCallStatement);
@@ -97,9 +101,9 @@ public class UdfCallBuilder {
         }
     }
 
-    private CastExasolFunction convertColumn(final ColumnMapping column) {
-        final com.exasol.datatype.type.DataType convertedType = convertDataType(column.getExasolDataType());
-        LOG.fine(() -> "Using CAST to " + renderDataType(convertedType) + " (" + convertedType + ") for column "
+    private CastExasolFunction convertColumnForNullCast(final ColumnMapping column) {
+        final com.exasol.datatype.type.DataType convertedType = convertDataTypeForCast(column.getExasolDataType());
+        LOG.fine(() -> "Using NULL CAST to " + renderDataType(convertedType) + " (" + convertedType + ") for column "
                 + column.getExasolColumnName() + "(" + column.getExasolDataType() + ")");
         return CastExasolFunction.of(NullLiteral.nullLiteral(), convertedType);
     }
@@ -124,9 +128,18 @@ public class UdfCallBuilder {
         final Select select = StatementFactory.getInstance().select();
         for (final ColumnMapping columnMapping : selectList) {
             final String exasolColumnName = columnMapping.getExasolColumnName();
-            select.field(exasolColumnName);
+            if (isTimestampWithLocalTimeZone(columnMapping.getExasolDataType())) {
+                select.function(castToTimestampWithLocalTimeZone(exasolColumnName), exasolColumnName);
+            } else {
+                select.field(exasolColumnName);
+            }
         }
         return select;
+    }
+
+    private CastExasolFunction castToTimestampWithLocalTimeZone(final String exasolColumnName) {
+        final com.exasol.datatype.type.DataType dataType = new TimestampWithLocalTimezone();
+        return CastExasolFunction.of(ColumnReference.of(exasolColumnName), dataType);
     }
 
     /**
@@ -206,6 +219,18 @@ public class UdfCallBuilder {
         }
     }
 
+    private com.exasol.datatype.type.DataType convertDataTypeForCast(final DataType adapterDataType) {
+        if (isTimestampWithLocalTimeZone(adapterDataType)) {
+            return new TimestampWithLocalTimezone();
+        } else {
+            return convertDataType(adapterDataType);
+        }
+    }
+
+    private boolean isTimestampWithLocalTimeZone(final DataType type) {
+        return type.getExaDataType() == ExaDataType.TIMESTAMP && type.isWithLocalTimezone();
+    }
+
     private com.exasol.datatype.type.DataType convertDataType(final DataType adapterDataType) {
         switch (adapterDataType.getExaDataType()) {
         case DECIMAL:
@@ -219,8 +244,10 @@ public class UdfCallBuilder {
         case DATE:
             return new Date();
         case TIMESTAMP:
-            return new Timestamp(); // we ignore with local timezone here since UDF don't support it. That's ok as long
-                                    // as we return the date in UTC
+            // We ignore "WITH LOCAL TIME ZONE" here since UDFs don't support it. That's ok as long
+            // as we return the date in UTC. Method getSelectForColumns() will add a cast to
+            // "TIMESTAMP WITH LOCAL TIME ZONE" to return the correct type.
+            return new Timestamp();
         case BOOLEAN:
             return new Boolean();
         default:
