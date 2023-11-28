@@ -55,9 +55,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
             final CreateVirtualSchemaRequest request) {
-        // EDML-reading happening here
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, getPropertiesFromRequest(request));
-        // stores it as a list of table mappings
         return CreateVirtualSchemaResponse.builder().schemaMetadata(schemaMetadata).build();
     }
 
@@ -121,7 +119,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
             throws AdapterException {
         final SqlStatement sqlQuery = request.getSelect();
         final String adapterNotes = request.getSchemaMetadataInfo().getAdapterNotes();
-        // the adapter notes contain serialized table mappings (created from the edml definition when creating
+        // The adapter notes contain serialized table mappings (created from the edml definition when creating
         // the virtual schema)
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
@@ -149,7 +147,6 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
             throws AdapterException {
-        // EDML-reading happening here
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, getPropertiesFromRequest(refreshRequest));
         return RefreshResponse.builder().schemaMetadata(schemaMetadata).build();
     }
