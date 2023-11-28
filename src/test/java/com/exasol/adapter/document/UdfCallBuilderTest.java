@@ -5,6 +5,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesRegex;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -24,6 +25,7 @@ class UdfCallBuilderTest {
     private static final String CONNECTION = "MY_CONNECTION";
     private static final String ADAPTER_SCHEMA = "ADAPTERS";
     private static final String TEST_ADAPTER = "TEST_ADAPTER";
+    private static final String QUOTED_STRING_REGEX = "'[^']+'";
     private static final UdfCallBuilder UDF_CALL_BUILDER = new UdfCallBuilder(CONNECTION, ADAPTER_SCHEMA, TEST_ADAPTER);
 
     @Test
@@ -67,12 +69,15 @@ class UdfCallBuilderTest {
     @Test
     void testBasicSqlBuilding() {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn();
-        final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
+        final FetchQueryPlan queryPlan = new FetchQueryPlan(Collections.emptyList(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, matchesRegex(quoteRegex(
-                "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", '")
-                + "[^']+" + quoteRegex(
-                        "', 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" VARCHAR(123)) FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex(
+                        "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
+                        + QUOTED_STRING_REGEX
+                        + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" VARCHAR(123)) "
+                                + "FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") "
+                                + "GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
     }
 
     @ParameterizedTest
@@ -83,10 +88,13 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn(column);
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, matchesRegex(quoteRegex(
-                "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", '")
-                + "[^']+" + quoteRegex("', 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + expectedUdfEmitType
-                        + ") FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex(
+                        "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
+                        + QUOTED_STRING_REGEX
+                        + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + expectedUdfEmitType + ") "
+                                + "FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") "
+                                + "GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
     }
 
     @Test
@@ -95,12 +103,13 @@ class UdfCallBuilderTest {
                 .builder().exasolColumnName("TEST_COLUMN").useTimestampWithLocalTimezoneType(true).build());
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql,
-                matchesRegex(quoteRegex("SELECT "
-                        + "CAST(\"TEST_COLUMN\" AS  TIMESTAMP WITH LOCAL TIME ZONE) TEST_COLUMN"
-                        + " FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", '") + "[^']+"
-                        + quoteRegex("', 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + "TIMESTAMP"
-                                + ") FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex("SELECT CAST(\"TEST_COLUMN\" AS  TIMESTAMP WITH LOCAL TIME ZONE) TEST_COLUMN FROM (" //
+                        + "SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
+                        + QUOTED_STRING_REGEX
+                        + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" TIMESTAMP) "
+                                + "FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") "
+                                + "GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
     }
 
     /**
@@ -122,10 +131,15 @@ class UdfCallBuilderTest {
                 new SqlLiteralString("testValue"));
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), postSelection);
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, matchesRegex(quoteRegex(
-                "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", '")
-                + "[^']+" + quoteRegex(
-                        "', 'MY_CONNECTION') EMITS (\"SOURCE_REFERENCE\" VARCHAR(2000), \"TEST_COLUMN\" VARCHAR(123)) FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") GROUP BY \"FRAGMENT_ID\") WHERE \"SOURCE_REFERENCE\" = 'testValue'")));
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex(
+                        "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
+                        + QUOTED_STRING_REGEX
+                        + quoteRegex(
+                                ", 'MY_CONNECTION') EMITS (\"SOURCE_REFERENCE\" VARCHAR(2000), \"TEST_COLUMN\" VARCHAR(123)) "
+                                        + "FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\") "
+                                        + "GROUP BY \"FRAGMENT_ID\") " //
+                                        + "WHERE \"SOURCE_REFERENCE\" = 'testValue'")));
     }
 
     private RemoteTableQuery getRemoteTableQueryWithOneColumn() {
