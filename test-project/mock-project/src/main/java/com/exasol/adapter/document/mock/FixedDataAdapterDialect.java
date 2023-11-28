@@ -75,13 +75,13 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
         @Override
         public QueryPlan planQuery(final RemoteTableQuery remoteTableQuery, final int maxNumberOfParallelFetchers) {
             final String remoteName = remoteTableQuery.getFromTable().getRemoteName();
-            LOG.info(() -> "Plan query " + remoteTableQuery + " with " + maxNumberOfParallelFetchers
-                    + " max number of parallel fetchers and remote name " + remoteName);
+            LOG.info(() -> "Plan query '" + remoteTableQuery + "' with " + maxNumberOfParallelFetchers
+                    + " max number of parallel fetchers and remote name '" + remoteName + "'");
             if (remoteName.equals("EmptyQueryPlan")) {
                 LOG.info("Using empty query plan");
                 return new EmptyQueryPlan();
             } else {
-                LOG.info(() -> "Using static document fetcher for remote name " + remoteName);
+                LOG.info(() -> "Using static document fetcher for remote name '" + remoteName + "'");
                 return new FetchQueryPlan(List.of(new StaticDocumentFetcher()), new NoPredicate());
             }
         }
