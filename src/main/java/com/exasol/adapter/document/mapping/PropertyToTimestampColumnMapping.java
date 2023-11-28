@@ -7,21 +7,15 @@ import com.exasol.adapter.metadata.DataType;
 
 /**
  * This class defines a mapping that extracts a timestamp value from the remote document and maps it to an Exasol
- * {@code TIMESTAMP} or {@code TIMESTAMP WITH LOCAL TIMEZONE} column.
+ * {@code TIMESTAMP} column.
  */
 public final class PropertyToTimestampColumnMapping extends AbstractPropertyToColumnMapping {
-    private static final long serialVersionUID = 2336854835413425711L;
+    private static final long serialVersionUID = 2336854835413425712L;
     /** @serial */
     private final ConvertableMappingErrorBehaviour notTimestampBehaviour;
-    /** @serial */
-    private final boolean useTimestampWithLocalTimezoneType;
 
     ConvertableMappingErrorBehaviour getNotTimestampBehaviour() {
         return notTimestampBehaviour;
-    }
-
-    boolean isUseTimestampWithLocalTimezoneType() {
-        return useTimestampWithLocalTimezoneType;
     }
 
     @Override
@@ -31,7 +25,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
 
     @Override
     public DataType getExasolDataType() {
-        return DataType.createTimestamp(this.useTimestampWithLocalTimezoneType);
+        return DataType.createTimestamp(false);
     }
 
     @Override
@@ -45,7 +39,6 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     public abstract static class Builder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private ConvertableMappingErrorBehaviour notTimestampBehaviour;
-        private boolean useTimestampWithLocalTimezoneType;
 
         @Override
         protected B fillValuesFrom(final C instance) {
@@ -57,7 +50,6 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToTimestampColumnMapping instance,
                 final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
             builder.notTimestampBehaviour(instance.notTimestampBehaviour);
-            builder.useTimestampWithLocalTimezoneType(instance.useTimestampWithLocalTimezoneType);
         }
 
         @Override
@@ -75,20 +67,10 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
             return self();
         }
 
-        /**
-         * @param useTimestampWithLocalTimezoneType {@code true} if timestamps should use {@code LOCAL TIMEZONE}
-         * @return {@code this}.
-         */
-        public B useTimestampWithLocalTimezoneType(final boolean useTimestampWithLocalTimezoneType) {
-            this.useTimestampWithLocalTimezoneType = useTimestampWithLocalTimezoneType;
-            return self();
-        }
-
         @Override
         public String toString() {
             return "PropertyToTimestampColumnMapping.PropertyToTimestampColumnMappingBuilder(super=" + super.toString()
-                    + ", notTimestampBehaviour=" + this.notTimestampBehaviour + ", useTimestampWithLocalTimezoneType="
-                    + this.useTimestampWithLocalTimezoneType + ")";
+                    + ", notTimestampBehaviour=" + this.notTimestampBehaviour + ")";
         }
     }
 
@@ -122,7 +104,6 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     protected PropertyToTimestampColumnMapping(final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.notTimestampBehaviour = builder.notTimestampBehaviour;
-        this.useTimestampWithLocalTimezoneType = builder.useTimestampWithLocalTimezoneType;
     }
 
     /**
@@ -143,15 +124,14 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     @Override
     public String toString() {
         return "PropertyToTimestampColumnMapping(super=" + super.toString() + ", notTimestampBehaviour="
-                + this.getNotTimestampBehaviour() + ", useTimestampWithLocalTimezoneType="
-                + this.isUseTimestampWithLocalTimezoneType() + ")";
+                + this.getNotTimestampBehaviour() + ")";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + Objects.hash(notTimestampBehaviour, useTimestampWithLocalTimezoneType);
+        result = (prime * result) + Objects.hash(notTimestampBehaviour);
         return result;
     }
 
@@ -167,7 +147,6 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
             return false;
         }
         final PropertyToTimestampColumnMapping other = (PropertyToTimestampColumnMapping) obj;
-        return notTimestampBehaviour == other.notTimestampBehaviour
-                && useTimestampWithLocalTimezoneType == other.useTimestampWithLocalTimezoneType;
+        return notTimestampBehaviour == other.notTimestampBehaviour;
     }
 }

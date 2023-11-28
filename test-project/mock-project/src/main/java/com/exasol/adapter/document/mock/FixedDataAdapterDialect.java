@@ -3,6 +3,7 @@ package com.exasol.adapter.document.mock;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.logging.Logger;
 
 import com.exasol.adapter.AdapterProperties;
 import com.exasol.adapter.capabilities.*;
@@ -16,8 +17,7 @@ import com.exasol.adapter.document.iterators.CloseableIterator;
 import com.exasol.adapter.document.iterators.CloseableIteratorWrapper;
 import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.auto.SchemaFetcher;
-import com.exasol.adapter.document.queryplan.FetchQueryPlan;
-import com.exasol.adapter.document.queryplan.QueryPlan;
+import com.exasol.adapter.document.queryplan.*;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 
@@ -31,6 +31,7 @@ import com.exasol.adapter.document.querypredicate.NoPredicate;
  * </p>
  */
 public class FixedDataAdapterDialect implements DocumentAdapterDialect {
+    private static final Logger LOG = Logger.getLogger(FixedDataAdapterDialect.class.getName());
     static final String ADAPTER_NAME = "FIXED_DATA_ADAPTER";
     /** Link to the user guide */
     public static final String USER_GUIDE = "http://example.com/user-guide";
@@ -73,7 +74,16 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
 
         @Override
         public QueryPlan planQuery(final RemoteTableQuery remoteTableQuery, final int maxNumberOfParallelFetchers) {
-            return new FetchQueryPlan(List.of(new StaticDocumentFetcher()), new NoPredicate());
+            final String remoteName = remoteTableQuery.getFromTable().getRemoteName();
+            LOG.info(() -> "Plan query '" + remoteTableQuery + "' with " + maxNumberOfParallelFetchers
+                    + " max number of parallel fetchers and remote name '" + remoteName + "'");
+            if (remoteName.equals("EmptyQueryPlan")) {
+                LOG.info("Using empty query plan");
+                return new EmptyQueryPlan();
+            } else {
+                LOG.info(() -> "Using static document fetcher for remote name '" + remoteName + "'");
+                return new FetchQueryPlan(List.of(new StaticDocumentFetcher()), new NoPredicate());
+            }
         }
     }
 

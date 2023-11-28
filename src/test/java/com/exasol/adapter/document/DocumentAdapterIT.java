@@ -6,27 +6,26 @@ import static com.exasol.matcher.ResultSetStructureMatcher.table;
 import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.equalTo;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.sql.Date;
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
@@ -190,9 +189,7 @@ class DocumentAdapterIT {
     @Test
     void testToTimestampMapping() throws SQLException {
         final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp",
-                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
-                                .useTimestampWithLocalTimezoneType(false).build())//
+                .mapField("my_timestamp", ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT).build())//
                 .build();
         final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
         final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
@@ -202,40 +199,34 @@ class DocumentAdapterIT {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "UTC", "EUROPE/BERLIN" })
-    void testToTimestampMappingWithLocalTimezone(final String sessionTimezone) throws SQLException {
-        assumeExasolVersion7();
-        final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp",
-                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
-                                .useTimestampWithLocalTimezoneType(true).build())//
-                .build();
+    @MethodSource("emptyQueryPlanTypes")
+    void testEmptyQueryPlan(final Fields mapping, final String expectedColumnType) throws SQLException {
+        assertThat(mapping.getFieldsMap().size(), equalTo(1));
+        final String fieldName = mapping.getFieldsMap().keySet().iterator().next();
         try (final Statement statement = connection.createStatement()) {
-            statement.executeUpdate("ALTER SESSION SET TIME_ZONE = '" + sessionTimezone + "';");
-            final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
-            final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
-                    .withCalendar(Calendar.getInstance(TimeZone.getTimeZone(sessionTimezone)))//
-                    .matches(NO_JAVA_TYPE_CHECK);
-            assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
+            final String query = "SELECT " + fieldName + " FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS";
+            final Matcher<ResultSet> expectedResult = table(expectedColumnType).matches();
+            assertVirtualSchemaQueryWithEmptyQueryPlan(mapping, query, expectedResult, statement);
         }
     }
 
-    @Test
-    void testToTimestampMappingWithLocalTimezoneFails() throws SQLException {
-        assumeExasolVersion8();
-        final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp",
-                        ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT)
-                                .useTimestampWithLocalTimezoneType(true).build())//
-                .build();
-        final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
-        assertVirtualSchemaQueryFails(mapping, query, startsWith(
-                "Adapter generated invalid pushdown query for virtual table BOOKS: Data type mismatch in column number 1 (1-indexed).Expected TIMESTAMP(3) WITH LOCAL TIME ZONE, but got TIMESTAMP(3)."));
+    static Stream<Arguments> emptyQueryPlanTypes() {
+        return Stream.of(fieldType("my_timestamp", ToTimestampMapping.builder().build(), "TIMESTAMP"), //
+                fieldType("publication_date", ToDateMapping.builder().build(), "DATE"),
+                fieldType("isbn", ToDoubleMapping.builder().build(), "DOUBLE PRECISION"),
+                fieldType("name", ToBoolMapping.builder().build(), "BOOLEAN"),
+                fieldType("name", ToVarcharMapping.builder().build(), "VARCHAR"),
+                fieldType("isbn", ToDecimalMapping.builder().build(), "BIGINT"));
+    }
+
+    static Arguments fieldType(final String fieldName, final MappingDefinition mapping,
+            final String expectedColumnType) {
+        return Arguments.of(Fields.builder().mapField(fieldName, mapping).build(), expectedColumnType);
     }
 
     private void assertVirtualSchemaQueryFails(final Fields mapping, final String query,
             final Matcher<String> exceptionMessageMatcher) throws SQLException {
-        final VirtualSchema virtualSchema = createVirtualSchema(mapping);
+        final VirtualSchema virtualSchema = createVirtualSchema("", mapping);
         try (final Statement statement = connection.createStatement()) {
             final SQLException exception = assertThrows(SQLException.class, () -> statement.executeQuery(query));
             assertThat(exception.getMessage(), exceptionMessageMatcher);
@@ -253,7 +244,17 @@ class DocumentAdapterIT {
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult, final Statement statement) {
-        final VirtualSchema virtualSchema = createVirtualSchema(mapping);
+        assertVirtualSchemaQuery("", mapping, query, expectedResult, statement);
+    }
+
+    private void assertVirtualSchemaQueryWithEmptyQueryPlan(final MappingDefinition mapping, final String query,
+            final Matcher<ResultSet> expectedResult, final Statement statement) {
+        assertVirtualSchemaQuery("EmptyQueryPlan", mapping, query, expectedResult, statement);
+    }
+
+    private void assertVirtualSchemaQuery(final String source, final MappingDefinition mapping, final String query,
+            final Matcher<ResultSet> expectedResult, final Statement statement) {
+        final VirtualSchema virtualSchema = createVirtualSchema(source, mapping);
         try (final ResultSet resultSet = statement.executeQuery(query)) {
             assertThat(resultSet, expectedResult);
         } catch (final SQLException exception) {
@@ -264,8 +265,8 @@ class DocumentAdapterIT {
         }
     }
 
-    private VirtualSchema createVirtualSchema(final MappingDefinition mapping) {
-        final EdmlDefinition edml = EdmlDefinition.builder().source("")//
+    private VirtualSchema createVirtualSchema(final String source, final MappingDefinition mapping) {
+        final EdmlDefinition edml = EdmlDefinition.builder().source(source)//
                 .destinationTable("BOOKS")//
                 .mapping(mapping).build();
         final String edmlString = new EdmlSerializer().serialize(edml);
@@ -330,27 +331,6 @@ class DocumentAdapterIT {
             try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS")) {
                 assertThat(resultSet, table("VARCHAR", "DATE").row("123456789", "blah").matches());
             }
-        }
-    }
-
-    private void assumeExasolVersion8() {
-        final String version = getExasolMajorVersion();
-        assumeTrue("8".equals(version), "Expected Exasol version 8 but got '" + version + "'");
-    }
-
-    private void assumeExasolVersion7() {
-        final String version = getExasolMajorVersion();
-        assumeTrue("7".equals(version), "Expected Exasol version 7 but got '" + version + "'");
-    }
-
-    private String getExasolMajorVersion() {
-        try (Statement stmt = testSetup.createConnection().createStatement()) {
-            final ResultSet result = stmt
-                    .executeQuery("SELECT PARAM_VALUE FROM SYS.EXA_METADATA WHERE PARAM_NAME='databaseMajorVersion'");
-            assertTrue(result.next(), "no result");
-            return result.getString(1);
-        } catch (final SQLException exception) {
-            throw new IllegalStateException("Failed to query Exasol version: " + exception.getMessage(), exception);
         }
     }
 }
