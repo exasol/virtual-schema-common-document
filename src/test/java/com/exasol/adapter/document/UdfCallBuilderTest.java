@@ -23,6 +23,7 @@ class UdfCallBuilderTest {
     private static final String CONNECTION = "MY_CONNECTION";
     private static final String ADAPTER_SCHEMA = "ADAPTERS";
     private static final String TEST_ADAPTER = "TEST_ADAPTER";
+    private static final String QUOTED_STRING_REGEX = "'[^']+'";
     private static final UdfCallBuilder UDF_CALL_BUILDER = new UdfCallBuilder(CONNECTION, ADAPTER_SCHEMA, TEST_ADAPTER);
 
     @Test

@@ -18,6 +18,7 @@ import com.exasol.adapter.document.queryplan.*;
 import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.*;
 import com.exasol.adapter.metadata.DataType;
+import com.exasol.adapter.metadata.DataType.ExaDataType;
 import com.exasol.datatype.type.*;
 import com.exasol.datatype.type.Boolean;
 import com.exasol.errorreporting.ExaError;
@@ -25,6 +26,7 @@ import com.exasol.sql.*;
 import com.exasol.sql.dql.select.Select;
 import com.exasol.sql.dql.select.rendering.SelectRenderer;
 import com.exasol.sql.expression.BooleanExpression;
+import com.exasol.sql.expression.ColumnReference;
 import com.exasol.sql.expression.function.exasol.CastExasolFunction;
 import com.exasol.sql.expression.literal.BooleanLiteral;
 import com.exasol.sql.expression.literal.NullLiteral;
@@ -130,6 +132,11 @@ public class UdfCallBuilder {
         return select;
     }
 
+    private CastExasolFunction castToTimestampWithLocalTimeZone(final String exasolColumnName) {
+        final com.exasol.datatype.type.DataType dataType = new TimestampWithLocalTimezone();
+        return CastExasolFunction.of(ColumnReference.of(exasolColumnName), dataType);
+    }
+
     /**
      * Build the {@code SELECT} statement that contains the call to the UDF and distributes them using a GROUP BY
      * statement.
@@ -205,6 +212,18 @@ public class UdfCallBuilder {
                     .message("Internal error (Failed to serialize SchemaMappingRequest).").ticketMitigation()
                     .toString(), exception);
         }
+    }
+
+    private com.exasol.datatype.type.DataType convertDataTypeForCast(final DataType adapterDataType) {
+        if (isTimestampWithLocalTimeZone(adapterDataType)) {
+            return new TimestampWithLocalTimezone();
+        } else {
+            return convertDataType(adapterDataType);
+        }
+    }
+
+    private boolean isTimestampWithLocalTimeZone(final DataType type) {
+        return type.getExaDataType() == ExaDataType.TIMESTAMP && type.isWithLocalTimezone();
     }
 
     private com.exasol.datatype.type.DataType convertDataType(final DataType adapterDataType) {
