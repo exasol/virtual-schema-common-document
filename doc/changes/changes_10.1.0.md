@@ -1,12 +1,14 @@
-# Common Virtual Schema for Document Data 10.1.0, released 2023-??-??
+# Common Virtual Schema for Document Data 10.1.0, released 2023-11-28
 
-Code name:
+Code name: Support `ALTER VIRTUAL SCHEMA SET`
 
 ## Summary
 
+This release adds support for `ALTER VIRTUAL SCHEMA SET`. This will allow changing properties like `MAPPING` of document based virtual schemas without 
+
 ## Features
 
-* ISSUE_NUMBER: description
+* #52: Added support for `ALTER VIRTUAL SCHEMA SET`
 
 ## Dependency Updates
 
