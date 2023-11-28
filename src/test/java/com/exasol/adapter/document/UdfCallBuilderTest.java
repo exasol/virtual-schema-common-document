@@ -66,8 +66,8 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn();
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql,
-                matchesRegex(quoteRegex(
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex(
                         "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
                         + QUOTED_STRING_REGEX
                         + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" VARCHAR(123))"
@@ -81,8 +81,8 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn(column);
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql,
-                matchesRegex(quoteRegex(
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex(
                         "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
                         + QUOTED_STRING_REGEX
                         + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + expectedUdfEmitType
@@ -109,14 +109,15 @@ class UdfCallBuilderTest {
                 new SqlLiteralString("testValue"));
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), postSelection);
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, matchesRegex(quoteRegex(
-                "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
-                + QUOTED_STRING_REGEX
-                + quoteRegex(
-                        ", 'MY_CONNECTION') EMITS (\"SOURCE_REFERENCE\" VARCHAR(2000), \"TEST_COLUMN\" VARCHAR(123))"
-                                + " FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\")"
-                                + " GROUP BY \"FRAGMENT_ID\")" //
-                                + " WHERE \"SOURCE_REFERENCE\" = 'testValue'")));
+        assertThat(udfCallSql, matchesRegex( //
+                quoteRegex(
+                        "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
+                        + QUOTED_STRING_REGEX
+                        + quoteRegex(
+                                ", 'MY_CONNECTION') EMITS (\"SOURCE_REFERENCE\" VARCHAR(2000), \"TEST_COLUMN\" VARCHAR(123))"
+                                        + " FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\")"
+                                        + " GROUP BY \"FRAGMENT_ID\")" //
+                                        + " WHERE \"SOURCE_REFERENCE\" = 'testValue'")));
     }
 
     private RemoteTableQuery getRemoteTableQueryWithOneColumn() {
