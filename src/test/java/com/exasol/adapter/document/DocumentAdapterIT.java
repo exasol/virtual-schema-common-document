@@ -28,6 +28,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import com.exasol.adapter.document.edml.*;
+import com.exasol.adapter.document.edml.EdmlDefinition.EdmlDefinitionBuilder;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
 import com.exasol.adapter.document.mapping.reader.JsonSample;
 import com.exasol.bucketfs.BucketAccessException;
@@ -131,15 +132,12 @@ class DocumentAdapterIT {
     void testUseMappingFromFile() throws Exception {
         final String content = JsonSample.builder().basic().withFields(JsonSample.ADDITIONAL_FIELDS).build();
         testSetup.getDefaultBucket().uploadStringContent(content, "mapping.json");
-        final VirtualSchema virtualSchema = createVirtualSchema("/bfsdefault/default/mapping.json");
-        try {
+        try (final VirtualSchema virtualSchema = createVirtualSchema("/bfsdefault/default/mapping.json")) {
             final Statement statement = connection.createStatement();
             final ResultSet resultSet = statement
                     .executeQuery("SELECT ISBN, NAME FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;");
             assertThat(resultSet,
                     table("VARCHAR", "VARCHAR").row("123456789", "Tom Sawyer").matches(NO_JAVA_TYPE_CHECK));
-        } finally {
-            virtualSchema.drop();
         }
     }
 
@@ -226,12 +224,10 @@ class DocumentAdapterIT {
 
     private void assertVirtualSchemaQueryFails(final Fields mapping, final String query,
             final Matcher<String> exceptionMessageMatcher) throws SQLException {
-        final VirtualSchema virtualSchema = createVirtualSchema("", mapping);
-        try (final Statement statement = connection.createStatement()) {
+        try (final VirtualSchema virtualSchema = createVirtualSchema("", mapping);
+                final Statement statement = connection.createStatement()) {
             final SQLException exception = assertThrows(SQLException.class, () -> statement.executeQuery(query));
             assertThat(exception.getMessage(), exceptionMessageMatcher);
-        } finally {
-            virtualSchema.drop();
         }
     }
 
@@ -254,14 +250,8 @@ class DocumentAdapterIT {
 
     private void assertVirtualSchemaQuery(final String source, final MappingDefinition mapping, final String query,
             final Matcher<ResultSet> expectedResult, final Statement statement) {
-        final VirtualSchema virtualSchema = createVirtualSchema(source, mapping);
-        try (final ResultSet resultSet = statement.executeQuery(query)) {
-            assertThat(resultSet, expectedResult);
-        } catch (final SQLException exception) {
-            throw new IllegalStateException("Failed to execute query '" + query + "': " + exception.getMessage(),
-                    exception);
-        } finally {
-            virtualSchema.drop();
+        try (VirtualSchema virtualSchema = createVirtualSchema(source, mapping)) {
+            assertQueryResult(query, expectedResult);
         }
     }
 
@@ -292,45 +282,66 @@ class DocumentAdapterIT {
                 .mapping(mapping).build();
         final EdmlSerializer edmlSerializer = new EdmlSerializer();
         final String mappingString = "[" + edmlSerializer.serialize(t1) + ", " + edmlSerializer.serialize(t2) + "]";
-        final VirtualSchema virtualSchema = createVirtualSchema(mappingString);
-        try (final Statement statement = connection.createStatement()) {
-            final ResultSet resultSet = statement.executeQuery(
-                    "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1 UNION ALL SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T2");
-            assertThat(resultSet, table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));
-        } finally {
-            virtualSchema.drop();
+        try (final VirtualSchema virtualSchema = createVirtualSchema(mappingString)) {
+            assertQueryResult(
+                    "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1 UNION ALL SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T2",
+                    table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));
         }
     }
 
     @Test
     void testSetProperty() throws SQLException {
+        final EdmlDefinitionBuilder builder = EdmlDefinition.builder().source("")//
+                .destinationTable("BOOKS");
+        final EdmlDefinition mapping1 = builder.mapping(Fields.builder()//
+                .mapField("isbn", ToVarcharMapping.builder().build())//
+                .build()).build();
+        final EdmlDefinition mapping2 = builder.mapping(Fields.builder()//
+                .mapField("isbn", ToVarcharMapping.builder().build())//
+                .mapField("publication_date", ToDateMapping.builder().notDateBehavior(CONVERT_OR_ABORT).build())//
+                .build()).build();
+        final EdmlSerializer edmlSerializer = new EdmlSerializer();
+
+        try (final VirtualSchema virtualSchema = createVirtualSchema(edmlSerializer.serialize(mapping1));
+                final Statement statement = connection.createStatement()) {
+            assertQueryResult("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS",
+                    table("VARCHAR").row("123456789").matches());
+
+            statement.execute("ALTER VIRTUAL SCHEMA " + MY_VIRTUAL_SCHEMA + " SET MAPPING = '"
+                    + edmlSerializer.serialize(mapping2) + "'");
+
+            assertQueryResult("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS",
+                    table("VARCHAR", "DATE").row("123456789", Date.valueOf("2021-09-22")).matches());
+        }
+    }
+
+    @Test
+    void testRefresh() throws SQLException {
         final EdmlDefinition mapping1 = EdmlDefinition.builder().source("")//
                 .destinationTable("BOOKS")//
                 .mapping(Fields.builder()//
                         .mapField("isbn", ToVarcharMapping.builder().build())//
                         .build())
                 .build();
-
-        final EdmlDefinition mapping2 = EdmlDefinition.builder().source("")//
-                .destinationTable("BOOKS")//
-                .mapping(Fields.builder()//
-                        .mapField("isbn", ToVarcharMapping.builder().build())//
-                        .mapField("publication_date", ToDateMapping.builder().notDateBehavior(CONVERT_OR_ABORT).build())//
-                        .build())
-                .build();
         final EdmlSerializer edmlSerializer = new EdmlSerializer();
-
         try (final VirtualSchema virtualSchema = createVirtualSchema(edmlSerializer.serialize(mapping1));
                 final Statement statement = connection.createStatement()) {
-            try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS")) {
-                assertThat(resultSet, table("VARCHAR").row("123456789").matches());
-            }
+            assertQueryResult("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS",
+                    table("VARCHAR").row("123456789").matches());
 
-            statement.execute("ALTER VIRTUAL SCHEMA " + MY_VIRTUAL_SCHEMA + " SET MAPPING = '"
-                    + edmlSerializer.serialize(mapping2) + "'");
-            try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS")) {
-                assertThat(resultSet, table("VARCHAR", "DATE").row("123456789", Date.valueOf("2021-09-22")).matches());
-            }
+            statement.execute("ALTER VIRTUAL SCHEMA " + MY_VIRTUAL_SCHEMA + " REFRESH");
+
+            assertQueryResult("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS",
+                    table("VARCHAR").row("123456789").matches());
+        }
+    }
+
+    private void assertQueryResult(final String sql, final Matcher<ResultSet> matcher) {
+        try (final Statement statement = connection.createStatement();
+                final ResultSet resultSet = statement.executeQuery(sql)) {
+            assertThat(resultSet, matcher);
+        } catch (final SQLException exception) {
+            throw new IllegalStateException("Failed to run query '" + sql + "': " + exception.getMessage());
         }
     }
 }
