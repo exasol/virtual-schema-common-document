@@ -39,7 +39,7 @@ The release also refactors the code to remove the dependency on Lombok.
 
 * Updated `com.exasol:exasol-test-setup-abstraction-java:2.0.4` to `2.1.0`
 * Updated `com.exasol:hamcrest-resultset-matcher:1.6.1` to `1.6.3`
-* Updated `com.exasol:test-db-builder-java:3.5.1` to `3.5.2`
+* Updated `com.exasol:test-db-builder-java:3.5.1` to `3.5.3`
 * Added `com.jparams:to-string-verifier:1.4.8`
 * Updated `commons-io:commons-io:2.14.0` to `2.15.0`
 * Added `nl.jqno.equalsverifier:equalsverifier:3.15.3`
@@ -49,9 +49,10 @@ The release also refactors the code to remove the dependency on Lombok.
 
 ### Plugin Dependency Updates
 
-* Updated `com.exasol:project-keeper-maven-plugin:2.9.13` to `2.9.16`
+* Updated `com.exasol:project-keeper-maven-plugin:2.9.13` to `2.9.17`
 * Updated `org.apache.maven.plugins:maven-dependency-plugin:3.6.0` to `3.6.1`
 * Updated `org.apache.maven.plugins:maven-failsafe-plugin:3.1.2` to `3.2.2`
 * Updated `org.apache.maven.plugins:maven-javadoc-plugin:3.6.0` to `3.6.2`
 * Updated `org.apache.maven.plugins:maven-surefire-plugin:3.1.2` to `3.2.2`
+* Updated `org.codehaus.mojo:versions-maven-plugin:2.16.1` to `2.16.2`
 * Removed `org.projectlombok:lombok-maven-plugin:1.18.20.0`
