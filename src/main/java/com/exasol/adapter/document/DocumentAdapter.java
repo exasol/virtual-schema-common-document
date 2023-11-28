@@ -145,8 +145,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     }
 
     @Override
-    public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
-            throws AdapterException {
+    public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest) {
         final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, getPropertiesFromRequest(refreshRequest));
         return RefreshResponse.builder().schemaMetadata(schemaMetadata).build();
     }
