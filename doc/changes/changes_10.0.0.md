@@ -1,6 +1,6 @@
-# Common Virtual Schema for Document Data 10.0.0, released 2023-??-??
+# Common Virtual Schema for Document Data 10.0.0, released 2023-11-28
 
-Code name: Adapt to Exasol 8
+Code name: Remove support for `TIMESTAMP WITH LOCAL TIME ZONE`
 
 ## Summary
 
