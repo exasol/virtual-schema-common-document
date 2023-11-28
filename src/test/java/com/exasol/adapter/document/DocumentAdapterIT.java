@@ -329,7 +329,7 @@ class DocumentAdapterIT {
             statement.execute("ALTER VIRTUAL SCHEMA " + MY_VIRTUAL_SCHEMA + " SET MAPPING = '"
                     + edmlSerializer.serialize(mapping2) + "'");
             try (final ResultSet resultSet = statement.executeQuery("SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS")) {
-                assertThat(resultSet, table("VARCHAR", "DATE").row("123456789", "blah").matches());
+                assertThat(resultSet, table("VARCHAR", "DATE").row("123456789", Date.valueOf("2021-09-22")).matches());
             }
         }
     }

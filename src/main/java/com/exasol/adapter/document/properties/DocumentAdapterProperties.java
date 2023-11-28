@@ -48,9 +48,9 @@ public class DocumentAdapterProperties {
     }
 
     /**
-     * Get MAX_PARALLEL_UDFS property value.
+     * Get {@code MAX_PARALLEL_UDFS} property value.
      *
-     * @return configured maximum number of UDFs that are executed in parallel. default: -1
+     * @return configured maximum number of UDFs that are executed in parallel. default: {@code -1}
      */
     public int getMaxParallelUdfs() {
         final String propertyValue = this.properties.get(MAX_PARALLEL_UDFS_KEY);
