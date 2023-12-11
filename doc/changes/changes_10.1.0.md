@@ -18,3 +18,11 @@ ALTER VIRTUAL SCHEMA MY_VIRTUAL_SCHEMA SET LOG_LEVEL = 'INFO'
 ## Features
 
 * #52: Added support for `ALTER VIRTUAL SCHEMA SET`
+
+## Dependency Updates
+
+### Test Dependency Updates
+
+* Updated `commons-io:commons-io:2.15.0` to `2.15.1`
+* Updated `nl.jqno.equalsverifier:equalsverifier:3.15.3` to `3.15.4`
+* Updated `org.mockito:mockito-junit-jupiter:5.7.0` to `5.8.0`
