@@ -1,4 +1,4 @@
-@startuml
+@startuml Mapping to table
 class BOOKS {
     ISBN: VARCHAR(20)
     NAME: VARCHAR(100)

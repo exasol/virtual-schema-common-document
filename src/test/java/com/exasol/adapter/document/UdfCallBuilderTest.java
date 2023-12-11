@@ -66,8 +66,8 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn();
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, matchesRegex( //
-                quoteRegex(
+        assertThat(udfCallSql,
+                matchesRegex(quoteRegex(
                         "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
                         + QUOTED_STRING_REGEX
                         + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" VARCHAR(123))"
@@ -81,8 +81,8 @@ class UdfCallBuilderTest {
         final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn(column);
         final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
         final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
-        assertThat(udfCallSql, matchesRegex( //
-                quoteRegex(
+        assertThat(udfCallSql,
+                matchesRegex(quoteRegex(
                         "SELECT \"TEST_COLUMN\" FROM (SELECT \"ADAPTERS\".IMPORT_FROM_TEST_ADAPTER(\"DATA_LOADER\", ")
                         + QUOTED_STRING_REGEX
                         + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" " + expectedUdfEmitType

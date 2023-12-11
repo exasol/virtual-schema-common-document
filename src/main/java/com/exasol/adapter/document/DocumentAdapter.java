@@ -1,7 +1,6 @@
 package com.exasol.adapter.document;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -56,42 +55,40 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     @Override
     public final CreateVirtualSchemaResponse createVirtualSchema(final ExaMetadata exaMetadata,
             final CreateVirtualSchemaRequest request) {
-        // EDML-reading happening here
-        final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, request);
-        // stores it as a list of table mappings
+        final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, getPropertiesFromRequest(request));
         return CreateVirtualSchemaResponse.builder().schemaMetadata(schemaMetadata).build();
     }
 
-    private SchemaMetadata getSchemaMetadata(final ExaMetadata exaMetadata, final AdapterRequest request) {
-        final SchemaMapping schemaMapping = getSchemaMappingDefinition(exaMetadata, request);
+    private SchemaMetadata getSchemaMetadata(final ExaMetadata exaMetadata, final AdapterProperties adapterProperties) {
+        final SchemaMapping schemaMapping = getSchemaMappingDefinition(exaMetadata, adapterProperties);
         return new SchemaMappingToSchemaMetadataConverter().convert(schemaMapping);
     }
 
-    private SchemaMapping getSchemaMappingDefinition(final ExaMetadata exaMetadata, final AdapterRequest request) {
-        final JsonSchemaMappingReader mappingReader = createMappingReader(exaMetadata, request);
-        final List<EdmlInput> mappingDefinition = readMappingDefinition(request);
+    private SchemaMapping getSchemaMappingDefinition(final ExaMetadata exaMetadata,
+            final AdapterProperties adapterProperties) {
+        final JsonSchemaMappingReader mappingReader = createMappingReader(exaMetadata, adapterProperties);
+        final List<EdmlInput> mappingDefinition = readMappingDefinition(adapterProperties);
         return mappingReader.readSchemaMapping(mappingDefinition);
     }
 
-    private List<EdmlInput> readMappingDefinition(final AdapterRequest request) {
-        final AdapterProperties adapterProperties = new AdapterProperties(
-                request.getSchemaMetadataInfo().getProperties());
+    private List<EdmlInput> readMappingDefinition(final AdapterProperties adapterProperties) {
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         return documentAdapterProperties.getMappingDefinition();
     }
 
-    private JsonSchemaMappingReader createMappingReader(final ExaMetadata exaMetadata, final AdapterRequest request) {
-        final ConnectionPropertiesReader connectionInformation = getConnectionInformation(exaMetadata, request);
+    private JsonSchemaMappingReader createMappingReader(final ExaMetadata exaMetadata,
+            final AdapterProperties adapterProperties) {
+        final ConnectionPropertiesReader connectionInformation = getConnectionInformation(exaMetadata,
+                adapterProperties);
         final TableKeyFetcher tableKeyFetcher = this.dialect.getTableKeyFetcher(connectionInformation);
         final SchemaFetcher mappingFetcher = this.dialect.getSchemaFetcher(connectionInformation);
         return new JsonSchemaMappingReader(tableKeyFetcher, new SchemaInferencer(mappingFetcher));
     }
 
     private ConnectionPropertiesReader getConnectionInformation(final ExaMetadata exaMetadata,
-            final AdapterRequest request) {
+            final AdapterProperties properties) {
         try {
             final String userGuideUrl = this.dialect.getUserGuideUrl();
-            final AdapterProperties properties = getPropertiesFromRequest(request);
             final ExaConnectionInformation connection = exaMetadata.getConnection(properties.getConnectionName());
             final String connectionString = new ConnectionStringReader(userGuideUrl).read(connection);
             return new ConnectionPropertiesReader(connectionString, userGuideUrl);
@@ -122,7 +119,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
             throws AdapterException {
         final SqlStatement sqlQuery = request.getSelect();
         final String adapterNotes = request.getSchemaMetadataInfo().getAdapterNotes();
-        // the adapter notes contain serialized table mappings (created from the edml definition when creating
+        // The adapter notes contain serialized table mappings (created from the edml definition when creating
         // the virtual schema)
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
@@ -134,10 +131,9 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
 
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
             final RemoteTableQuery remoteTableQuery) {
-        final AdapterProperties adapterProperties = new AdapterProperties(
-                request.getSchemaMetadataInfo().getProperties());
-        final QueryPlanner queryPlanner = this.dialect.getQueryPlanner(getConnectionInformation(exaMetadata, request),
-                adapterProperties);
+        final AdapterProperties adapterProperties = getPropertiesFromRequest(request);
+        final QueryPlanner queryPlanner = this.dialect
+                .getQueryPlanner(getConnectionInformation(exaMetadata, adapterProperties), adapterProperties);
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
         final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
                 documentAdapterProperties, this.thisNodesCoreCount);
@@ -149,19 +145,41 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     }
 
     @Override
-    public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest)
-            throws AdapterException {
-        // EDML-reading happening here
-        final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, refreshRequest);
+    public final RefreshResponse refresh(final ExaMetadata exaMetadata, final RefreshRequest refreshRequest) {
+        final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, getPropertiesFromRequest(refreshRequest));
         return RefreshResponse.builder().schemaMetadata(schemaMetadata).build();
     }
 
     @Override
     public final SetPropertiesResponse setProperties(final ExaMetadata exaMetadata,
-            final SetPropertiesRequest setPropertiesRequest) {
-        throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-27")
-                .message("The current version of this Virtual Schema does not support SET PROPERTIES statement.")
-                .mitigation("Drop and recreate the virtual schema instead.").toString());
+            final SetPropertiesRequest request) {
+        final Map<String, String> requestRawProperties = request.getProperties();
+        final Map<String, String> mergedRawProperties = mergeProperties(request.getSchemaMetadataInfo().getProperties(),
+                requestRawProperties);
+        final AdapterProperties mergedProperties = new AdapterProperties(mergedRawProperties);
+        final SchemaMetadata schemaMetadata = getSchemaMetadata(exaMetadata, mergedProperties);
+        return SetPropertiesResponse.builder().schemaMetadata(schemaMetadata).build();
+    }
+
+    private Map<String, String> mergeProperties(final Map<String, String> previousRawProperties,
+            final Map<String, String> requestRawProperties) {
+        final Map<String, String> mergedRawProperties = new HashMap<>(previousRawProperties);
+        for (final Map.Entry<String, String> requestRawProperty : requestRawProperties.entrySet()) {
+            if (requestRawProperty.getValue() == null) {
+                mergedRawProperties.remove(requestRawProperty.getKey());
+            } else {
+                mergedRawProperties.put(requestRawProperty.getKey(), requestRawProperty.getValue());
+            }
+        }
+        LOG.info(() -> "Merged adapter properties:\n" //
+                + "  " + formatMap("Previous", previousRawProperties) + "\n" //
+                + "  " + formatMap("New", requestRawProperties) + "\n" //
+                + "  " + formatMap("Merged", mergedRawProperties));
+        return mergedRawProperties;
+    }
+
+    private String formatMap(final String name, final Map<String, String> map) {
+        return name + " (" + map.size() + "): " + new TreeMap<>(map);
     }
 
     @Override
