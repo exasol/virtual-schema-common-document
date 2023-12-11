@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 10.1.0, released 2023-11-29
+# Common Virtual Schema for Document Data 10.1.0, released 2023-12-11
 
 Code name: Support `ALTER VIRTUAL SCHEMA SET`
 
