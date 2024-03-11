@@ -47,12 +47,6 @@
             <version>1.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
             <version>2.0.0</version>
@@ -196,10 +190,6 @@
                              via com.exasol:exasol-test-setup-abstraction-java:jar.
                              CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0,
                              so this is a false positive. -->
-                        <exclude>CVE-2020-36641</exclude>
-                        <!-- Transitive dependency io.netty:netty-handler used by software.amazon.awssdk:*.
-                             We assume that the AWS SDK's usage of netty is not affected. -->
-                        <exclude>CVE-2023-4586</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
