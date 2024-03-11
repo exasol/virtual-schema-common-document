@@ -41,6 +41,8 @@ import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 import com.exasol.udfdebugging.UdfTestSetup;
 
 @Tag("integration")
+@SuppressWarnings("try") // auto-closeable resource virtualSchema is never referenced in body of corresponding try
+                         // statement
 class DocumentAdapterIT {
     private static final String MY_VIRTUAL_SCHEMA = "MY_VIRTUAL_SCHEMA";
     private static final String ADAPTER_NAME = "FIXED_DATA_ADAPTER";
