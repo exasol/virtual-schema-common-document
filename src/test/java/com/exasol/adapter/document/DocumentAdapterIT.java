@@ -13,7 +13,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
-import java.util.Map;
+import java.sql.Date;
+import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -41,6 +42,8 @@ import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 import com.exasol.udfdebugging.UdfTestSetup;
 
 @Tag("integration")
+@SuppressWarnings("try") // auto-closeable resource virtualSchema is never referenced in body of corresponding try
+                         // statement
 class DocumentAdapterIT {
     private static final String MY_VIRTUAL_SCHEMA = "MY_VIRTUAL_SCHEMA";
     private static final String ADAPTER_NAME = "FIXED_DATA_ADAPTER";
@@ -96,15 +99,18 @@ class DocumentAdapterIT {
         writeCurrentVersionToMockProjectPom();
         Verifier mvnRunner = null;
         try {
-            mvnRunner = new Verifier(Path.of("test-project/aggregator").toAbsolutePath().toString());
-            LOGGER.info(() -> "Building mock-project at " + Path.of("test-project/aggregator").toAbsolutePath());
+            final Path aggregatorProjectDir = Path.of("test-project/aggregator").toAbsolutePath();
+            mvnRunner = new Verifier(aggregatorProjectDir.toString());
+            final String java17JdkHome = getJava17JdkHome();
+            LOGGER.info(() -> "Building mock-project at " + aggregatorProjectDir + " using JDK " + java17JdkHome);
+            mvnRunner.setEnvironmentVariable("JAVA_HOME", java17JdkHome);
             mvnRunner.setSystemProperty("skipTests", "true");
             mvnRunner.setSystemProperty("maven.test.skip", "true");
             mvnRunner.setSystemProperty("ossindex.skip", "true");
             mvnRunner.setSystemProperty("maven.javadoc.skip", "true");
-            mvnRunner.setSystemProperty("lombok.delombok.skip", "true");
             mvnRunner.setSystemProperty("project-keeper.skip", "true");
             mvnRunner.addCliOption("-PalternateTargetDir");
+            mvnRunner.addCliOption("--batch-mode");
             mvnRunner.executeGoal("package");
             mvnRunner.verifyErrorFreeLog();
             LOGGER.info("Done building mock-project");
@@ -115,6 +121,33 @@ class DocumentAdapterIT {
             throw new IllegalStateException(ExaError.messageBuilder("E-VSD-76")
                     .message("Failed to build mock-project. The project is used for the integration testing.")
                     .toString(), exception);
+        }
+    }
+
+    /**
+     * Maven build of aggregator module must run with Java 17. This is a workaround this project is migrated to Java 17.
+     * <p>
+     * This tries to find the path using environment variables {@code JAVA17_HOME} or {@code JAVA_HOME_17_X64}.
+     * 
+     * @return path to JDK 17 home.
+     */
+    private static String getJava17JdkHome() {
+        final List<String> envVariables = List.of("JAVA17_HOME", "JAVA_HOME_17_X64");
+        return findEnvVariable(envVariables) //
+                .or(() -> currentJvm()) //
+                .orElseThrow(
+                        () -> new IllegalStateException("Failed to detect JDK 17 using env variables " + envVariables));
+    }
+
+    private static Optional<String> findEnvVariable(final List<String> envVariables) {
+        return envVariables.stream().map(System::getenv).filter(value -> value != null).findFirst();
+    }
+
+    private static Optional<String> currentJvm() {
+        if (Runtime.version().feature() == 17) {
+            return Optional.of(System.getProperty("java.home"));
+        } else {
+            return Optional.empty();
         }
     }
 

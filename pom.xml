@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>10.1.0</version>
+    <version>10.1.1</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
@@ -47,12 +47,6 @@
             <version>1.0.1</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
             <version>2.0.0</version>
@@ -67,19 +61,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
-            <version>5.10.1</version>
+            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.8.0</version>
+            <version>5.11.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.9</version>
+            <version>2.0.12</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
@@ -98,7 +92,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>udf-debugging-java</artifactId>
-            <version>0.6.11</version>
+            <version>0.6.12</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -117,7 +111,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>hamcrest-resultset-matcher</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -128,7 +122,7 @@
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
-            <version>3.15.4</version>
+            <version>3.15.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -160,7 +154,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>2.9.17</version>
+                <version>4.2.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -168,6 +162,16 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <compilerArgs>
+                        <arg>-Xlint:all,-path,-processing</arg>
+                        <arg>-Werror</arg>
+                    </compilerArgs>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -187,9 +191,6 @@
                              CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0,
                              so this is a false positive. -->
                         <exclude>CVE-2020-36641</exclude>
-                        <!-- Transitive dependency io.netty:netty-handler used by software.amazon.awssdk:*.
-                             We assume that the AWS SDK's usage of netty is not affected. -->
-                        <exclude>CVE-2023-4586</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
@@ -224,7 +225,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>10.1.0</version>
+        <version>10.1.1</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
