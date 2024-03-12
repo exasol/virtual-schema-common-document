@@ -47,3 +47,9 @@ If you specify a different escape character by setting `DEFAULT_LIKE_ESCAPE_CHAR
 ## Information for Developers
 
 You can use this repository as a basis for developing a custom Virtual Schema for document data.
+
+### Running Integration Tests
+
+Integration tests require a JDK 17 for building a mock adapter project. Please set one of the following environment variables pointing to a JDK 17 home:
+* `JAVA17_HOME`
+* `JAVA_HOME_17_X64`

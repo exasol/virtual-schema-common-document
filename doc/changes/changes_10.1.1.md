@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 10.1.1, released 2024-03-11
+# Common Virtual Schema for Document Data 10.1.1, released 2024-03-12
 
 Code name: Fix CVE-2024-25710 and CVE-2024-26308 in test dependency
 
