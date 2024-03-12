@@ -190,6 +190,7 @@
                              via com.exasol:exasol-test-setup-abstraction-java:jar.
                              CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0,
                              so this is a false positive. -->
+                        <exclude>CVE-2020-36641</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
