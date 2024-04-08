@@ -186,11 +186,10 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <!-- Ignore vulnerability in transitive dependency fr.turri:aXMLRPC
+                        <!-- Ignore vulnerability in transitive dependency xerces:xercesImpl
                              via com.exasol:exasol-test-setup-abstraction-java:jar.
-                             CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0,
-                             so this is a false positive. -->
-                        <exclude>CVE-2020-36641</exclude>
+                             This is only used for connecting to internal service ExaOperations during tests. -->
+                        <exclude>CVE-2017-10355</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>

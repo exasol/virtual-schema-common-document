@@ -1,12 +1,16 @@
-# Common Virtual Schema for Document Data 10.1.2, released 2024-??-??
+# Common Virtual Schema for Document Data 10.1.2, released 2024-04-08
 
-Code name:
+Code name: Fixed CVE-2024-29025 in io.netty:netty-codec-http:jar:4.1.100.Final:test
 
 ## Summary
 
-## Features
+This release fixes vulnerability CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.100.Final:test`.
 
-* ISSUE_NUMBER: description
+**Excluded vulnerabilities:** This release contains vulnerability CVE-2017-10355 in transitive compile dependency `xerces:xercesImpl`. This library is only used for connecting to internal service ExaOperations during tests.
+
+## Security
+
+* #175: Fixed CVE-2024-29025 in `io.netty:netty-codec-http:jar:4.1.100.Final:test`
 
 ## Dependency Updates
 
