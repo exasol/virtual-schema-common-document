@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>10.1.1</version>
+    <version>10.1.2</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
@@ -80,13 +80,13 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>2.1.0</version>
+            <version>2.1.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>3.5.3</version>
+            <version>3.5.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.15.1</version>
+            <version>2.16.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -122,7 +122,7 @@
         <dependency>
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
-            <version>3.15.8</version>
+            <version>3.16.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -154,7 +154,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.2.0</version>
+                <version>4.3.0</version>
                 <executions>
                     <execution>
                         <goals>
@@ -186,11 +186,10 @@
                 <artifactId>ossindex-maven-plugin</artifactId>
                 <configuration>
                     <excludeVulnerabilityIds>
-                        <!-- Ignore vulnerability in transitive dependency fr.turri:aXMLRPC
+                        <!-- Ignore vulnerability in transitive dependency xerces:xercesImpl
                              via com.exasol:exasol-test-setup-abstraction-java:jar.
-                             CVE-2020-36641 is reported to be fixed in aXMLRPC 1.12.1, while ETAJ uses version 1.13.0,
-                             so this is a false positive. -->
-                        <exclude>CVE-2020-36641</exclude>
+                             This is only used for connecting to internal service ExaOperations during tests. -->
+                        <exclude>CVE-2017-10355</exclude>
                     </excludeVulnerabilityIds>
                 </configuration>
             </plugin>
@@ -225,7 +224,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>10.1.1</version>
+        <version>10.1.2</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
