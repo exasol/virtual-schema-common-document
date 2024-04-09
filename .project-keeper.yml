@@ -11,3 +11,5 @@ build:
   exasolDbVersions:
     - "8.24.0"
     - "7.1.25"
+excludes:
+  - "E-PK-CORE-17: Missing required file: 'release_config.yml'"
