@@ -18,7 +18,7 @@ This release fixes vulnerability CVE-2024-29025 in `io.netty:netty-codec-http:ja
 
 * Updated `com.exasol:exasol-test-setup-abstraction-java:2.1.0` to `2.1.2`
 * Updated `com.exasol:test-db-builder-java:3.5.3` to `3.5.4`
-* Updated `commons-io:commons-io:2.15.1` to `2.16.0`
+* Updated `commons-io:commons-io:2.15.1` to `2.16.1`
 * Updated `nl.jqno.equalsverifier:equalsverifier:3.15.8` to `3.16.1`
 
 ### Plugin Dependency Updates
