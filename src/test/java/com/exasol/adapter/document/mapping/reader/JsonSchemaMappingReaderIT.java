@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -17,8 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.TableKeyFetcher.NoKeyFoundException;
-import com.exasol.adapter.document.mapping.auto.InferredMappingDefinition;
-import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
+import com.exasol.adapter.document.mapping.auto.*;
 import com.exasol.adapter.document.properties.EdmlInput;
 
 @Tag("integration")
@@ -54,13 +52,13 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testSourcePathColumn() throws IOException {
+    void testSourcePathColumn() {
         final TableMapping table = read(JsonSample.builder().basic().build()).get(0);
         assertThat(table.getColumns(), hasItem(new SourceReferenceColumnMapping()));
     }
 
     @Test
-    void testWithoutSourcePathColumn() throws IOException {
+    void testWithoutSourcePathColumn() {
         final List<TableMapping> tables = read(JsonSample.builder() //
                 .basic() //
                 .addSourceReferenceColumn("  'addSourceReferenceColumn': false,") //
@@ -112,7 +110,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testDifferentKeysException() throws IOException {
+    void testDifferentKeysException() {
         final String invalidString = JsonSample.builder() //
                 .isbn("global") //
                 .name("local") //
@@ -122,7 +120,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testLocalKeyAtRootLevelException() throws IOException {
+    void testLocalKeyAtRootLevelException() {
         final String invalidString = JsonSample.builder() //
                 .isbn("local") //
                 .name("") //
@@ -144,7 +142,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testNestedTableRootKeyGeneration() throws IOException {
+    void testNestedTableRootKeyGeneration() {
         final List<TableMapping> tables = read(JsonSample.builder() //
                 .isbn("") //
                 .name("") //
@@ -155,7 +153,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     @Test
-    void testNestedTableRootKeyGenerationException() throws IOException {
+    void testNestedTableRootKeyGenerationException() {
         final String mappingString = JsonSample.builder() //
                 .name("") //
                 .withFields(JsonSample.TOPICS_TABLE) //
@@ -260,7 +258,8 @@ class JsonSchemaMappingReaderIT {
         return key;
     }
 
-    private Optional<InferredMappingDefinition> mappingFetcherMock(final String source) {
+    private Optional<InferredMappingDefinition> mappingFetcherMock(final String source,
+            final ColumnNameConverter columnNameConverter) {
         throw new UnsupportedOperationException("unsupported");
     }
 

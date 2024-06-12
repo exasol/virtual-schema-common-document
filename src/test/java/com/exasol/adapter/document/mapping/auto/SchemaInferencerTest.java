@@ -4,6 +4,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -78,14 +80,13 @@ class SchemaInferencerTest {
     }
 
     private void simulatedDetectedSchema(final InferredMappingDefinition.Builder builder) {
-        when(this.schemaFetcherMock.fetchSchema(SOURCE))
-                .thenReturn(Optional.of(builder.build()));
+        when(this.schemaFetcherMock.fetchSchema(eq(SOURCE), any())).thenReturn(Optional.of(builder.build()));
     }
 
     @Test
     void mappingNotPresentSourceNotSupported() {
         final EdmlDefinition definition = createDefinition(null);
-        when(this.schemaFetcherMock.fetchSchema(SOURCE)).thenReturn(Optional.empty());
+        when(this.schemaFetcherMock.fetchSchema(eq(SOURCE), any())).thenReturn(Optional.empty());
         final Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> this.inferencer.inferSchema(definition));
         assertThat(exception.getMessage(), equalTo(
@@ -95,7 +96,7 @@ class SchemaInferencerTest {
     @Test
     void mappingNotPresentFetchingFails() {
         final EdmlDefinition definition = createDefinition(null);
-        when(this.schemaFetcherMock.fetchSchema(SOURCE)).thenThrow(new RuntimeException("expected"));
+        when(this.schemaFetcherMock.fetchSchema(eq(SOURCE), any())).thenThrow(new RuntimeException("expected"));
         final Exception exception = assertThrows(IllegalStateException.class,
                 () -> this.inferencer.inferSchema(definition));
         assertThat(exception.getMessage(),
