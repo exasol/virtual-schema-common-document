@@ -1,12 +1,14 @@
-# Common Virtual Schema for Document Data 11.0.0, released 2024-??-??
+# Common Virtual Schema for Document Data 11.0.0, released 2024-06-12
 
-Code name:
+Code name: Converter column names during automatic schema inference
 
 ## Summary
 
+This release allows configuring the mapping of column names for the automatic schema inference. Before, the virtual schema always converted source column names to `UPPER_SNAKE_CASE` to create the Exasol column names. This is now configurable with EDML configuration option `autoInferenceColumnNames`. See the [EDML user guide](../user_guide/edml_user_guide.md#column-name-conversion) for details.
+
 ## Features
 
-* ISSUE_NUMBER: description
+* #189: Added column name converter for automatic schema inference
 
 ## Dependency Updates
 
