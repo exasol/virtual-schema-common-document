@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -14,7 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -58,6 +61,20 @@ class SchemaInferencerTest {
                 () -> assertThat(result.getDestinationTable(), equalTo(DESTINATION)),
                 () -> assertThat(result.getDescription(), equalTo(DESCRIPTION)),
                 () -> assertThat(result.isAddSourceReferenceColumn(), is(true)));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "CONVERT_TO_UPPER_SNAKE_CASE, COL_NAME", "KEEP_SOURCE, colName" })
+    void autoInferenceUsesColumnConverter(final ColumnNameMapping nameMapping, final String expectedColumName) {
+        final EdmlDefinition definition = createDefinition().autoInferenceColumnNames(nameMapping).build();
+        final MappingDefinition mapping = createMapping();
+        simulatedDetectedSchema(InferredMappingDefinition.builder(mapping)
+                .additionalConfiguration("ignored additional config").description("ignored description"));
+        this.inferencer.inferSchema(definition);
+
+        final ArgumentCaptor<ColumnNameConverter> arg = ArgumentCaptor.forClass(ColumnNameConverter.class);
+        verify(schemaFetcherMock).fetchSchema(eq(SOURCE), arg.capture());
+        assertThat(arg.getValue().convertColumnName("colName"), equalTo(expectedColumName));
     }
 
     @ParameterizedTest
@@ -113,11 +130,15 @@ class SchemaInferencerTest {
     }
 
     private EdmlDefinition createDefinition(final MappingDefinition mapping) {
-        final EdmlDefinitionBuilder builder = EdmlDefinition.builder().source(SOURCE).destinationTable(DESTINATION)
-                .addSourceReferenceColumn(true).additionalConfiguration(ADDITIONAL_CONFIG).description(DESCRIPTION);
+        final EdmlDefinitionBuilder builder = createDefinition();
         if (mapping != null) {
             builder.mapping(mapping);
         }
         return builder.build();
+    }
+
+    private EdmlDefinitionBuilder createDefinition() {
+        return EdmlDefinition.builder().source(SOURCE).destinationTable(DESTINATION).addSourceReferenceColumn(true)
+                .additionalConfiguration(ADDITIONAL_CONFIG).description(DESCRIPTION);
     }
 }
