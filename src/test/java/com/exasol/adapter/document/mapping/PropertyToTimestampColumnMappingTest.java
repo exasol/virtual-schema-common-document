@@ -21,7 +21,7 @@ class PropertyToTimestampColumnMappingTest {
     @Test
     void testGetExasolDataType() {
         final PropertyToTimestampColumnMapping mapping = TEST_OBJECT.toBuilder().build();
-        assertThat(mapping.getExasolDataType(), equalTo(DataType.createTimestamp(false)));
+        assertThat(mapping.getExasolDataType(), equalTo(DataType.createTimestamp(false, 6)));
     }
 
     @Test

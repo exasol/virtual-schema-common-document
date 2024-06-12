@@ -61,7 +61,7 @@ class DocumentAdapterIT {
 
     @BeforeAll
     static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, IOException {
-        testSetup = new ExasolTestcontainerTestSetup();
+        testSetup = ExasolTestcontainerTestSetup.start();
         connection = testSetup.createConnection();
         udfTestSetup = new UdfTestSetup(testSetup, connection);
         exasolObjectFactory = new ExasolObjectFactory(connection,
@@ -80,7 +80,7 @@ class DocumentAdapterIT {
     }
 
     @AfterAll
-    static void afterAll() throws Exception {
+    static void afterAll() {
         udfTestSetup.close();
         testSetup.close();
     }
@@ -234,11 +234,9 @@ class DocumentAdapterIT {
     void testEmptyQueryPlan(final Fields mapping, final String expectedColumnType) throws SQLException {
         assertThat(mapping.getFieldsMap().size(), equalTo(1));
         final String fieldName = mapping.getFieldsMap().keySet().iterator().next();
-        try (final Statement statement = connection.createStatement()) {
-            final String query = "SELECT " + fieldName + " FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS";
-            final Matcher<ResultSet> expectedResult = table(expectedColumnType).matches();
-            assertVirtualSchemaQueryWithEmptyQueryPlan(mapping, query, expectedResult, statement);
-        }
+        final String query = "SELECT " + fieldName + " FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS";
+        final Matcher<ResultSet> expectedResult = table(expectedColumnType).matches();
+        assertVirtualSchemaQueryWithEmptyQueryPlan(mapping, query, expectedResult);
     }
 
     static Stream<Arguments> emptyQueryPlanTypes() {
@@ -265,24 +263,17 @@ class DocumentAdapterIT {
     }
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult) throws SQLException {
-        try (final Statement statement = connection.createStatement()) {
-            assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
-        }
-    }
-
-    private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) {
-        assertVirtualSchemaQuery("", mapping, query, expectedResult, statement);
+            final Matcher<ResultSet> expectedResult) {
+        assertVirtualSchemaQuery("", mapping, query, expectedResult);
     }
 
     private void assertVirtualSchemaQueryWithEmptyQueryPlan(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) {
-        assertVirtualSchemaQuery("EmptyQueryPlan", mapping, query, expectedResult, statement);
+            final Matcher<ResultSet> expectedResult) {
+        assertVirtualSchemaQuery("EmptyQueryPlan", mapping, query, expectedResult);
     }
 
     private void assertVirtualSchemaQuery(final String source, final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) {
+            final Matcher<ResultSet> expectedResult) {
         try (VirtualSchema virtualSchema = createVirtualSchema(source, mapping)) {
             assertQueryResult(query, expectedResult);
         }

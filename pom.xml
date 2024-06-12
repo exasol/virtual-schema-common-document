@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>10.1.2</version>
+    <version>11.0.0</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
-        <vscommon.version>17.0.1</vscommon.version>
+        <vscommon.version>17.1.0</vscommon.version>
     </properties>
     <profiles>
         <profile>
@@ -18,7 +18,7 @@
         </profile>
         <profile>
             <!-- When building from the nested build we use a different target directory,
-                        so that if the build is executed from the integration tests of this build there are no interferences. -->
+                 so that if the build is executed from the integration tests of this build there are no interferences. -->
             <id>alternateTargetDir</id>
             <build>
                 <directory>target/nestedBuild/</directory>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.4.1</version>
+            <version>2.5.0</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -49,7 +49,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>edml-java</artifactId>
-            <version>2.0.0</version>
+            <version>2.1.0</version>
         </dependency>
         <!-- test dependencies -->
         <dependency>
@@ -67,20 +67,20 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.11.0</version>
+            <version>5.12.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.12</version>
+            <version>2.0.13</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>exasol-test-setup-abstraction-java</artifactId>
-            <version>2.1.2</version>
+            <version>2.1.4</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>udf-debugging-java</artifactId>
-            <version>0.6.12</version>
+            <version>0.6.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -150,7 +150,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -167,7 +167,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>4.3.0</version>
+                <version>4.3.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -210,7 +210,6 @@
                 <!-- Required for running DocumentAdapterIT which uses Verifier.verifyErrorFreeLog() -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.4.1</version>
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
@@ -237,7 +236,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>10.1.2</version>
+        <version>11.0.0</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>

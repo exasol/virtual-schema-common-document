@@ -11,6 +11,7 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToTimestampColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 2336854835413425712L;
+    private static final int DEFAULT_TIMESTAMP_PRECISION = 6;
     /** @serial */
     private final ConvertableMappingErrorBehaviour notTimestampBehaviour;
 
@@ -25,7 +26,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
 
     @Override
     public DataType getExasolDataType() {
-        return DataType.createTimestamp(false);
+        return DataType.createTimestamp(false, DEFAULT_TIMESTAMP_PRECISION);
     }
 
     @Override
