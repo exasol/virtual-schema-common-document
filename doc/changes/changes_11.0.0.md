@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 11.0.0, released 2024-06-12
+# Common Virtual Schema for Document Data 11.0.0, released 2024-06-13
 
 Code name: Converter column names during automatic schema inference
 
