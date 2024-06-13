@@ -23,7 +23,7 @@ public interface ColumnNameConverter {
      * @return column name converter
      */
     public static ColumnNameConverter from(final ColumnNameMapping columnNameMapping) {
-        if (columnNameMapping == ColumnNameMapping.KEEP_SOURCE) {
+        if (columnNameMapping == ColumnNameMapping.KEEP_ORIGINAL_NAME) {
             return originalNameConverter();
         }
         return upperSnakeCaseConverter();

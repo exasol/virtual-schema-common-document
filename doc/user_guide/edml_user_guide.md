@@ -27,9 +27,108 @@ This guide explains how to define EDML mappings in general. For data source spec
 
 For mapping multiple document sets, you can create multiple files, upload them to a folder and BucketFS and reference this folder.
 
-The structure of the mapping follows the structure of the document data.
+## General Configuration
 
-## Simple Example
+This is an example for mapping a CSV file to an Exasol table:
+
+```json
+{
+  "$schema": "https://schemas.exasol.com/edml-2.1.0.json",
+  "source": "data/CsvWithHeaders.csv",
+  "destinationTable": "BOOKS",
+  "description": "Mapping for the BOOKS table"
+}
+```
+
+The following sections explain the properties:
+
+### Source
+
+The `source` property describes the source of the data. Its syntax and meaning depends on the virtual schemas for different data sources. For example the S3 virtual schema expects the S3 path for the object. Check the corresponding user guide of the virtual schema for details:
+
+* [AWS S3](https://github.com/exasol/s3-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md)
+* [Azure BLOB storage](https://github.com/exasol/azure-blob-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md)
+* [Azure Data Lake Storage Gen2](https://github.com/exasol/azure-data-lake-storage-gen2-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md)
+* [Google Cloud Storage](https://github.com/exasol/google-cloud-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md)
+
+### Destination Table
+
+The `destinationTable` property of a mapping defines the name of the virtual table to which the data is mapped. Please note that its value must be unique for all mapping entries. Creating a virtual schema with duplicate values for `destinationTable` will fail.
+
+#### Mapping Multiple Files to a Single Destination Table
+
+If you want to map multiple files with the same schema to the same table, please specify all files in the `source` property. See the following Virtual Schema specific user guides for details:
+
+* [AWS S3](https://github.com/exasol/s3-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+* [Azure BLOB storage](https://github.com/exasol/azure-blob-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+* [Azure Data Lake Storage Gen2](https://github.com/exasol/azure-data-lake-storage-gen2-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+* [Google Cloud Storage](https://github.com/exasol/google-cloud-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
+
+### Source Reference Column
+
+Some dialects support reading one table from multiple sources. For example the [files-virtual-schemas](https://github.com/exasol/virtual-schema-common-document-files) allow you to load each row from a different file. In that case you may want to add the filename as a column to the Exasol table. That allows you to query on it and by that only read the required files.
+
+To do so, set `"addSourceReferenceColumn": true` in the root object of your EDML definition. The adapter will then automatically add a column named `SOURCE_REFERENCE` to the end of the table:
+
+```json
+{
+  "$schema": "https://schemas.exasol.com/edml-2.1.0.json",
+  "source": "data/*.csv",
+  "destinationTable": "BOOKS",
+  "addSourceReferenceColumn": true
+}
+```
+
+You can use this property for all dialects. Typically, it will, however, only give you additional information, if you load data from multiple sources.
+
+The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. The adapter will throw an exception when a source reference exceeds this.
+
+## Define Mapping of Fields to Table Columns
+
+EDML allows you to specify custom mapping from fields in source files to Exasol table columns. Virtual schema support two options for the mapping:
+* [Automatic Mapping Inference](#automatic-mapping-inference)
+* [Explicit Mapping Definition](#explicit-mapping-definition)
+
+Automatic mapping inference is only supported for [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files) using Parquet and CSV files. All other virtual schemas and file formats require an explicit mapping definition.
+
+### Automatic Mapping Inference
+
+To use automatic mapping inference, just omit the `mapping` element from the EDML definition. The virtual schema will then infer the mapping from the schema of the source. Currently this is only supported for Parquet and CSV files.
+
+#### Notes
+
+* The files specified in the `source` must be available when creating the virtual schema. If the files are not available, the `CREATE VIRTUAL SCHEMA` command will fail.
+  * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
+* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
+* The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
+* Creating the virtual schema with auto-inference will take longer because the adapter needs to read files from the `source`.
+* Please see [below](#automatic-mapping-inference-for-csv-files) for details about auto-inference for CSV files.
+
+#### Column Name Conversion
+
+By default the virtual schema will convert source column names to `UPPER_SNAKE_CASE` for Exasol column names during automatic mapping inference. If you want to use the original name from the source file, you can add property `autoInferenceColumnNames` to the EDML definition. This property supports the following values:
+* `CONVERT_TO_UPPER_SNAKE_CASE`: Convert column names to `UPPER_SNAKE_CASE` (default).
+* `KEEP_ORIGINAL_NAME`: Do not convert column names, use column name from source.
+
+Example:
+
+```json
+{
+  "$schema": "https://schemas.exasol.com/edml-2.1.0.json",
+  "source": "data/CsvWithHeaders.csv",
+  "destinationTable": "BOOKS",
+  "autoInferenceColumnNames": "KEEP_ORIGINAL_NAME"
+}
+```
+
+Exasol identifiers like column names must conform to certain criteria, see the [SQL Identifier documentation](https://docs.exasol.com/db/latest/sql_references/basiclanguageelements.htm#SQLIdentifier) for details. If the column names in your source files are invalid Exasol SQL identifiers, the mapping or queries may fail. In this case we recommend using option `CONVERT_TO_UPPER_SNAKE_CASE`.
+
+### Explicit Mapping Definition
+
+If automatic mapping inference is not supported for the required file format (e.g. JSON) or does not work as expected, you can define the mapping manually. The structure of the mapping follows the structure of the document data.
+
+#### Examples
+##### Simple Example
 
 Given the following JSON document:
 
@@ -55,7 +154,7 @@ CREATE TABLE BOOKS (
 
 The nested property `author.name` is mapped to the column `AUTHOR_NAME`.
 
-In order to let this adapter create the described mapping we create the following mapping definition:
+In order to let the adapter create the described mapping we create the following definition in the `mapping` property:
 
 ```json
 {
@@ -96,10 +195,6 @@ In order to let this adapter create the described mapping we create the followin
 }
 ```
 
-The `source` property describes the source of the data. Its syntax and meaning is different for the different Virtual Schemas for different data sources.
-
-Check the corresponding user guide for details.
-
 Next we save this definition to a file, upload it to a bucket in BucketFS and reference it in the `CREATE VIRTUAL SCHEMA` call.
 
 After running [creating a virtual schema](../../README.md) (for example with the schema named `BOOKSHOP`) we can query the table using:
@@ -108,7 +203,7 @@ After running [creating a virtual schema](../../README.md) (for example with the
 SELECT * FROM BOOKSHOP.BOOKS;
 ```
 
-## Example of `toJsonMapping`
+##### Example of `toJsonMapping`
 
 Document data can contain nested lists. Consider for example the following document:
 
@@ -170,7 +265,7 @@ To achieve this we create the following mapping definition:
 
 The toJsonMapping will map the nested document `topics` to a JSON string in a `TOPICS` column.
 
-## Example of `toTableMapping`
+##### Example of `toTableMapping`
 
 We again want to map the document with a nested list. But this time we want to map the nested list to a second table that references the original one using a foreign key.
 
@@ -232,43 +327,21 @@ To achieve this we create the following mapping definition:
 
 The Virtual Schema adapter automatically adds a foreign key to the table. In the example above, it adds the column `BOOKS_ISBN` to the `BOOKS_TOPICS` table. It did pick the `ISBN` column, because we marked it as a key column.
 
-### Key Types
+#### Key Types
 
-There are two different key types: `global` and `local`. The difference only plays a role when mapping multi level nested lists.
+There are two different key types: `global` and `local`. The difference only plays a role when mapping multi-level nested lists.
 
 Consider the following example:
+
 A book contains multiple chapters and a chapter again can contain multiple figures. If in that example a chapter has a global key, that means, it is unique over all existing chapters (also across books). If it defines a local key, it is only unique over all chapters of that book.
 
-### Autogenerated Keys
+#### Autogenerated Keys
 
 If the data source supports it, the virtual schema adapter can also fetch the keys from the data source. In that case, the adapter will use a column as foreign key that is a unique key in the data source.
 
 If you did not mark any column as key and the adapter could not detects any key column, it will add an `INDEX` column. These columns contain the position of the element in the nested list. So in the example from above `DynamoDB` will receive the index 0 and `Exasol` the index 1.
 
-## Destination Table
-
-The `destinationTable` property of a mapping defines the name of the virtual table to which the data is mapped. Please note that its value must be unique for all mapping entries. Creating a virtual schema with duplicate values for `destinationTable` will fail.
-
-### Mapping Multiple Files to a Single Destination Table
-
-If you want to map multiple files with the same schema to the same table, please specify all files in the `source` property. See the following Virtual Schema specific user guides for details:
-
-* [AWS S3](https://github.com/exasol/s3-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
-* [Azure BLOB storage](https://github.com/exasol/azure-blob-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
-* [Azure Data Lake Storage Gen2](https://github.com/exasol/azure-data-lake-storage-gen2-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
-* [Google Cloud Storage](https://github.com/exasol/google-cloud-storage-document-files-virtual-schema/blob/main/doc/user_guide/user_guide.md#mapping-multiple-files)
-
-## Source Reference Column
-
-Some dialects support reading one table from multiple sources. For example the [files-virtual-schemas](https://github.com/exasol/virtual-schema-common-document-files) allow you to load each row from a different file. In that case you may want to add the filename as a column to the Exasol table. That allows you to query on it and by that only read the required files.
-
-To do so, set `"addSourceReferenceColumn": true` in the root object of your EDML definition. The adapter will then automatically add a column named `SOURCE_REFERENCE` to the end of the table.
-
-You can use this property for all dialects. Typically, it will, however, only give you additional information, if you load data from multiple sources.
-
-The `SOURCE_REFERENCE` column has a maximum size of 2000 characters. The adapter will throw an exception when a source reference exceeds this.
-
-## Supported Conversion
+#### Supported Conversion
 
 This adapter can convert input data to the requested column type. For example if the input is a number and the requested column is a string the adapter can convert the number to string.
 
@@ -283,7 +356,7 @@ That's, however, not always the best option. For that reason, you can configure 
 
 All mappings pass through null values. That means, if the source value is a null-value, the adapter converts it to `NULL`. The only exception is the `toJsonMapping` which converts null values to JSON null values.
 
-### ToVarcharMapping Conversions
+##### `toVarcharMapping` Conversions
 
 * Nested object: Not convertible
 * Nested list: Not convertible
@@ -295,7 +368,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Date: Date as string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
-### ToBoolMapping Conversions
+##### `toBoolMapping` Conversions
 
 * Nested object: Not convertible
 * Nested list: Not convertible
@@ -307,7 +380,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Date: Not convertible
 * Timestamp: Not convertible
 
-### ToDecimalMapping Conversions
+##### `toDecimalMapping` Conversions
 
 * Nested object: Not convertible
 * Nested list: Not convertible
@@ -319,7 +392,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Date: Date as UTC milliseconds time value
 * Timestamp: Timestamp as UTC timestamp in milliseconds (floored)
 
-### ToDoubleMapping Conversions
+##### `toDoubleMapping` Conversions
 
 * Nested object: Not convertible
 * Nested list: Not convertible
@@ -331,7 +404,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Date: Date as UTC milliseconds time value
 * Timestamp: Timestamp as UTC timestamp in milliseconds (floored)
 
-### ToDateMapping Conversions
+##### `toDateMapping` Conversions
 
 * Nested object: Not convertible
 * Nested list: Not convertible
@@ -343,7 +416,7 @@ All mappings pass through null values. That means, if the source value is a null
 * Date: No conversion needed
 * Timestamp: Converted to date (looses time information)
 
-### ToTimestampMapping Conversions
+##### `toTimestampMapping` Conversions
 
 Please note that EDML only supports data type `TIMESTAMP`. `TIMESTAMP WITH LOCAL TIME ZONE` is not supported.
 
@@ -357,7 +430,7 @@ Please note that EDML only supports data type `TIMESTAMP`. `TIMESTAMP WITH LOCAL
 * Date: Converted to timestamp
 * Timestamp: No conversion needed
 
-### ToJsonMapping Conversions
+##### `toJsonMapping` Conversions
 
 The `toJsonMapping` always converts the input value to a JSON string. For that reason there is no property like `nonStringBehaviour`.
 
@@ -371,45 +444,9 @@ The `toJsonMapping` always converts the input value to a JSON string. For that r
 * Date: Date as JSON string (e.g: `"2021-09-27"`)
 * Timestamp: Timestamp as UTC timestamp (e.g: `"2021-09-21T08:18:38Z"`)
 
-## Automatic Mapping Inference
+### CSV Support
 
-The adapter supports automatic mapping inference. This allows you to omit the `mapping` element from the EDML definition. The virtual schema will then infer the mapping from the schema of the source.
-
-Currently this is only supported for Parquet and CSV files using the [file based virtual schemas](https://github.com/exasol/virtual-schema-common-document-files).
-
-### Notes
-
-* The files specified in the `source` must be available when creating the virtual schema. If the files are not available, the `CREATE VIRTUAL SCHEMA` command will fail.
-  * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
-* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
-* The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
-* Creating the virtual schema with auto-inference will take longer because the adapter needs to read files from the `source`.
-* Please see [below](#automatic-mapping-inference-for-csv-files) for details about auto-inference for CSV files.
-
-### Column Name Conversion
-
-By default the virtual schema will convert source column names to `UPPER_SNAKE_CASE` for Exasol column names during automatic mapping inference. If you want to use the original name from the source file, you can add property `autoInferenceColumnNames` to the EDML definition. This property supports the following values:
-* `CONVERT_TO_UPPER_SNAKE_CASE`: Convert column names to `UPPER_SNAKE_CASE` (default).
-* `KEEP_SOURCE`: Do not convert column names, use column name from source.
-
-Example:
-
-```json
-{
-  "$schema": "https://schemas.exasol.com/edml-2.1.0.json",
-  "source": "data/CsvWithHeaders.csv",
-  "destinationTable": "BOOKS",
-  "autoInferenceColumnNames": "KEEP_SOURCE"
-}
-```
-
-#### Notes
-
-Exasol identifiers like column names must conform to certain criteria, see the [SQL Identifier documentation](https://docs.exasol.com/db/latest/sql_references/basiclanguageelements.htm#SQLIdentifier) for details. If the column names in your source files are invalid Exasol SQL identifiers, the mapping or queries may fail. In this case we recommend using option `CONVERT_TO_UPPER_SNAKE_CASE`.
-
-## CSV Support
-
-### CSV File Headers
+#### CSV File Headers
 
 For CSV files VSD provides the optional JSON object `additionalConfiguration`. In this object you can set `csv-headers` to `true` if the CSV files have a header. If the CSV files don't have a header you can omit this whole block or set `csv-headers` to `false`.
 
@@ -437,7 +474,7 @@ Example:
 }
 ```
 
-#### Mapping CSV Files With Header
+##### Mapping CSV Files With Header
 
 When you want to map CSV files with header you use the column name from the CSV header.
 
@@ -455,7 +492,7 @@ The following example maps CSV column with header "id" to database table column 
   }
 ```
 
-#### Mapping CSV Files Without Header
+##### Mapping CSV Files Without Header
 
 When you want to map CSV files without header then you use column index as field name. The index is zero-based, so start counting at 0.
 
@@ -548,8 +585,6 @@ VSD does not detect date or timestamp types as there are too many formats. Inste
 * For timestamps in a custom format use [`TO_TIMESTAMP`](https://docs.exasol.com/db/latest/sql_references/functions/alphabeticallistfunctions/to_timestamp.htm).
 
 See the [documentation of Exasol's format models](https://docs.exasol.com/db/latest/sql_references/formatmodels.htm#DateTimeFormat) about specifying custom formats for `TO_DATE` and `TO_TIMESTAMP`.
-
-#### Limitations of Automatic Mapping Inference for CSV Files
 
 ## Reference
 

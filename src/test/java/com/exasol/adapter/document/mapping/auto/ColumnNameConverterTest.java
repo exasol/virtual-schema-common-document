@@ -48,7 +48,7 @@ class ColumnNameConverterTest {
         case CONVERT_TO_UPPER_SNAKE_CASE:
             assertUpperSnakeCaseConverter(columnNameConverter);
             break;
-        case KEEP_SOURCE:
+        case KEEP_ORIGINAL_NAME:
             assertOriginalNameConverter(columnNameConverter);
             break;
         }

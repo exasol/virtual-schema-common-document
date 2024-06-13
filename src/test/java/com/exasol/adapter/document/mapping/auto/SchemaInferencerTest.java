@@ -64,7 +64,7 @@ class SchemaInferencerTest {
     }
 
     @ParameterizedTest(name = "Column name mapping {0} generates column name {1}")
-    @CsvSource({ "CONVERT_TO_UPPER_SNAKE_CASE, COL_NAME", "KEEP_SOURCE, colName" })
+    @CsvSource({ "CONVERT_TO_UPPER_SNAKE_CASE, COL_NAME", "KEEP_ORIGINAL_NAME, colName" })
     void autoInferenceUsesColumnConverter(final ColumnNameMapping nameMapping, final String expectedColumName) {
         simulatedDetectedSchema(InferredMappingDefinition.builder(createMapping())
                 .additionalConfiguration("ignored additional config").description("ignored description"));
