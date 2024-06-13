@@ -29,6 +29,11 @@ class ColumnNameConverterTest {
             "my_table, MY_TABLE", //
             "MY_TABLE, MY_TABLE", //
             "my column, MY_COLUMN", //
+            "a b, A_B", //
+            "a  b, A__B", //
+            "aB, A_B", //
+            "AB, AB", //
+            "aBc, A_BC", //
             "1 leading number, 1_LEADING_NUMBER" })
     void upperSnakeCaseConverter(final String input, final String expected) {
         assertThat(ColumnNameConverter.upperSnakeCaseConverter().convertColumnName(input), equalTo(expected));

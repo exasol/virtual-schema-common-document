@@ -32,7 +32,7 @@ public interface DocumentAdapterDialect {
      * @return database specific {@link SchemaFetcher}
      */
     public default SchemaFetcher getSchemaFetcher(final ConnectionPropertiesReader connectionInformation) {
-        return (source, mapping) -> Optional.empty();
+        return SchemaFetcher.empty();
     }
 
     /**
