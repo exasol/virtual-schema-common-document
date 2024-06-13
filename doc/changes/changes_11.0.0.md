@@ -1,14 +1,23 @@
 # Common Virtual Schema for Document Data 11.0.0, released 2024-06-13
 
-Code name: Converter column names during automatic schema inference
+Code name: Configure column names conversion during automatic mapping inference
 
 ## Summary
 
-This release allows configuring the mapping of column names for the automatic schema inference. Before, the virtual schema always converted source column names to `UPPER_SNAKE_CASE` to create the Exasol column names. This is now configurable with EDML configuration option `autoInferenceColumnNames`. See the [EDML user guide](../user_guide/edml_user_guide.md#column-name-conversion) for details.
+This release allows configuring the mapping of column names for the automatic mapping inference. Before, the virtual schema always converted source column names to `UPPER_SNAKE_CASE` to create the Exasol column names. This is now configurable with EDML configuration option `autoInferenceColumnNames`. See the [EDML user guide](../user_guide/edml_user_guide.md#column-name-conversion) for details.
+
+**Breaking Change:** Method `fetchSchema()` of interface `com.exasol.adapter.document.mapping.auto.SchemaFetcher` now has the column name converter as additional argument:
+
+```diff
+- Optional<InferredMappingDefinition> fetchSchema(String source);
++ Optional<InferredMappingDefinition> fetchSchema(String source, ColumnNameConverter columnNameConverter);
+```
+
+Implementors of this interface must declare the new argument.
 
 ## Features
 
-* #189: Added column name converter for automatic schema inference
+* #189: Added column name converter for automatic mapping inference
 
 ## Dependency Updates
 

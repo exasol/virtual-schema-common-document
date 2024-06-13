@@ -388,7 +388,7 @@ Currently this is only supported for Parquet and CSV files using the [file based
 
 ### Column Name Conversion
 
-By default the virtual schema will convert source column names to `UPPER_SNAKE_CASE` for Exasol column names during automatic mapping inference. If you want to use the original name from the source file, you can add property `autoInferenceColumnNames` to the EDML definition. This supports the following values:
+By default the virtual schema will convert source column names to `UPPER_SNAKE_CASE` for Exasol column names during automatic mapping inference. If you want to use the original name from the source file, you can add property `autoInferenceColumnNames` to the EDML definition. This property supports the following values:
 * `CONVERT_TO_UPPER_SNAKE_CASE`: Convert column names to `UPPER_SNAKE_CASE` (default).
 * `KEEP_SOURCE`: Do not convert column names, use column name from source.
 
@@ -405,7 +405,7 @@ Example:
 
 #### Notes
 
-Exasol identifiers like column names must conform to certain criteria, see the [SQL Identifier documentation](https://docs.exasol.com/db/latest/sql_references/basiclanguageelements.htm#SQLIdentifier) for details. If the column names in your source files are invalid Exasol SQL identifiers, the mapping may fail. In this case we recommend using option `CONVERT_TO_UPPER_SNAKE_CASE`.
+Exasol identifiers like column names must conform to certain criteria, see the [SQL Identifier documentation](https://docs.exasol.com/db/latest/sql_references/basiclanguageelements.htm#SQLIdentifier) for details. If the column names in your source files are invalid Exasol SQL identifiers, the mapping or queries may fail. In this case we recommend using option `CONVERT_TO_UPPER_SNAKE_CASE`.
 
 ## CSV Support
 

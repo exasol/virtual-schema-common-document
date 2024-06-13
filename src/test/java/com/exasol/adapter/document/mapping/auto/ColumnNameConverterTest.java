@@ -16,7 +16,11 @@ class ColumnNameConverterTest {
     @CsvSource({ //
             "'',''", //
             "' ','_'", //
+            "' test', _TEST", //
+            "'test ', TEST_", //
             "test, TEST", //
+            "test1, TEST1", //
+            "myTable1, MY_TABLE1", //
             "myTable, MY_TABLE", //
             "mytable, MYTABLE", //
             "MyTable, MY_TABLE", //
@@ -24,7 +28,8 @@ class ColumnNameConverterTest {
             "MyCSV, MY_CSV", //
             "my_table, MY_TABLE", //
             "MY_TABLE, MY_TABLE", //
-            "my column, MY_COLUMN" })
+            "my column, MY_COLUMN", //
+            "1 leading number, 1_LEADING_NUMBER" })
     void upperSnakeCaseConverter(final String input, final String expected) {
         assertThat(ColumnNameConverter.upperSnakeCaseConverter().convertColumnName(input), equalTo(expected));
     }

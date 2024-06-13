@@ -3,7 +3,7 @@ package com.exasol.adapter.document.mapping.auto;
 import com.exasol.adapter.document.edml.ColumnNameMapping;
 
 /**
- * This interface allows customizing the mapping of column names when using automatic schema inference. It converts
+ * This interface allows customizing the mapping of column names when using automatic mapping inference. It converts
  * column names from the source (e.g. Parquet, CSV) to Exasol column names.
  */
 @FunctionalInterface

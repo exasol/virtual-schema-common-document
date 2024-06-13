@@ -63,18 +63,20 @@ class SchemaInferencerTest {
                 () -> assertThat(result.isAddSourceReferenceColumn(), is(true)));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Column name mapping {0} generates column name {1}")
     @CsvSource({ "CONVERT_TO_UPPER_SNAKE_CASE, COL_NAME", "KEEP_SOURCE, colName" })
     void autoInferenceUsesColumnConverter(final ColumnNameMapping nameMapping, final String expectedColumName) {
-        final EdmlDefinition definition = createDefinition().autoInferenceColumnNames(nameMapping).build();
-        final MappingDefinition mapping = createMapping();
-        simulatedDetectedSchema(InferredMappingDefinition.builder(mapping)
+        simulatedDetectedSchema(InferredMappingDefinition.builder(createMapping())
                 .additionalConfiguration("ignored additional config").description("ignored description"));
-        this.inferencer.inferSchema(definition);
+        this.inferencer.inferSchema(createDefinition().autoInferenceColumnNames(nameMapping).build());
 
+        assertThat(getConverterFromMock().convertColumnName("colName"), equalTo(expectedColumName));
+    }
+
+    private ColumnNameConverter getConverterFromMock() {
         final ArgumentCaptor<ColumnNameConverter> arg = ArgumentCaptor.forClass(ColumnNameConverter.class);
         verify(schemaFetcherMock).fetchSchema(eq(SOURCE), arg.capture());
-        assertThat(arg.getValue().convertColumnName("colName"), equalTo(expectedColumName));
+        return arg.getValue();
     }
 
     @ParameterizedTest
