@@ -158,6 +158,7 @@ class EdmlToStagingTableMappingConverter {
                     .pathToSourceProperty(this.path.build())//
                     .exasolColumnName(source.getDestinationName())//
                     .notTimestampBehaviour(source.getNotTimestampBehavior())//
+                    .secondsPrecision(source.getSecondsPrecision())
                     .lookupFailBehaviour(convertRequired(source.isRequired()))//
                     .build();
             this.columns.add(new ColumnWithKeyInfo(column, source.getKey()));
