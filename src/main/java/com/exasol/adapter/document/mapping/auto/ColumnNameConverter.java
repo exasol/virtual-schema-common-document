@@ -29,6 +29,11 @@ public interface ColumnNameConverter {
         return upperSnakeCaseConverter();
     }
 
+    /**
+     * Create a column name converter that converts column names to {@code UPPER_SNAKE_CASE}.
+     * 
+     * @return column name converter
+     */
     static ColumnNameConverter upperSnakeCaseConverter() {
         return name -> {
             boolean isPreviousUpperOrUnderscore = false;
@@ -54,6 +59,11 @@ public interface ColumnNameConverter {
         };
     }
 
+    /**
+     * Create a column name converter that keeps the original column names.
+     * 
+     * @return column name converter
+     */
     static ColumnNameConverter originalNameConverter() {
         return name -> name;
     }
