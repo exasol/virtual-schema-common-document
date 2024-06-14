@@ -13,14 +13,18 @@ You can also upload multiple mapping definitions into one folder and point to th
 
 For testing and automated creation of Virtual Schemas it's also possible to inline the EDML definition into the `MAPPING` property. Our tip: Don't use this if you're manipulating the EDML definitions by hand. Instead, use a proper editor with JSON-Schema support and upload the files. Editing inlined files is just too confusing. To inline the definitions you simply provide the mapping definition instead of the BucketFS path:
 
-```
-MAPPING = '{ "$schema": ... }'
+```sql
+CREATE VIRTUAL SCHEMA FILES_VS_TEST USING ADAPTER.S3_FILES_ADAPTER WITH
+    CONNECTION_NAME = 'S3_CONNECTION'
+    MAPPING         = '{ "$schema": ... }'
 ```
 
 If you want to provide multiple mapping definitions inline you can use a JSON array:
 
-```
-MAPPING = '[{ "$schema": ... }, { "$schema": ... }]'
+```sql
+CREATE VIRTUAL SCHEMA FILES_VS_TEST USING ADAPTER.S3_FILES_ADAPTER WITH
+    CONNECTION_NAME = 'S3_CONNECTION'
+    MAPPING         = '[{ "$schema": ... }, { "$schema": ... }]'
 ```
 
 This guide explains how to define EDML mappings in general. For data source specifics, check the corresponding virtual schema. Different data sources use different data formats. In this guide we use JSON.
@@ -53,7 +57,7 @@ Property `source` describes where the data comes from. Syntax and meaning of the
 
 ### Destination Table
 
-Property `destinationTable` defines the name of the virtual table enabling to access the data in Exasol SQL statements. Please note that its value must be unique for all mapping entries. Creating a virtual schema with duplicate values for `destinationTable` will fail.
+Property `destinationTable` defines the name of the virtual table enabling to access the data in Exasol SQL statements. Please note that its value must be unique for all EDML mapping definitions in a virtual schema. Creating a virtual schema with duplicate values for `destinationTable` will fail.
 
 #### Mapping Multiple Files to a Single Destination Table
 
@@ -99,7 +103,7 @@ To use automatic mapping inference, just omit the `mapping` element from the EDM
 
 * When specifying an explicit mapping in property `mapping` then statement `CREATE VIRTUAL SCHEMA` will even be successful if files referenced by property `source` are missing,
 * However, when using automatic mapping inference and files referenced by property `source` are missing, then statement `CREATE VIRTUAL SCHEMA` will fail.
-* The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
+* If property `source` matches multiple files, the adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
 * The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
 * Creating the virtual schema with auto-inference will take longer because the adapter needs to read files from the `source` in order to infer the mapping.
 * Please see [below](#automatic-mapping-inference-for-csv-files) for details about auto-inference for CSV files.
