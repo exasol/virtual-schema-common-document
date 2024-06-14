@@ -97,8 +97,8 @@ To use automatic mapping inference, just omit the `mapping` element from the EDM
 
 #### Notes
 
-* The files specified in the `source` must be available when creating the virtual schema. If the files are not available, the `CREATE VIRTUAL SCHEMA` command will fail.
-  * When you don't use automatic mapping inference (i.e. you specify the `mapping` element) you can still create the virtual schema as before without `source` files being available.
+* When specifying an explicit mapping in property `mapping` then statement `CREATE VIRTUAL SCHEMA` will even be successful if files referenced by property `source` are missing,
+* However, when using automatic mapping inference and files referenced by property `source` are missing, then statement `CREATE VIRTUAL SCHEMA` will fail.
 * The adapter will detect the mapping based on the schema of the first file. Please make sure that all files specified as `source` are using the same schema, else the mapping may be wrong.
 * The adapter will detect the mapping when the virtual schema is created. If the schema of the `source` files changes, please drop and re-create the virtual schema to run the auto-inference again.
 * Creating the virtual schema with auto-inference will take longer because the adapter needs to read files from the `source` in order to infer the mapping.
