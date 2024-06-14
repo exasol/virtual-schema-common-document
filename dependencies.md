@@ -28,15 +28,15 @@
 | [Matcher for SQL Result Sets][29]          | [MIT License][30]                 |
 | [EqualsVerifier \| release normal jar][31] | [Apache License, Version 2.0][27] |
 | [to-string-verifier][32]                   | [MIT License][19]                 |
-| [JaCoCo :: Agent][33]                      | [Eclipse Public License 2.0][34]  |
+| [JaCoCo :: Agent][33]                      | [EPL-2.0][34]                     |
 
 ## Plugin Dependencies
 
 | Dependency                                              | License                           |
 | ------------------------------------------------------- | --------------------------------- |
 | [SonarQube Scanner for Maven][35]                       | [GNU LGPL 3][36]                  |
-| [Apache Maven Toolchains Plugin][37]                    | [Apache License, Version 2.0][27] |
-| [Apache Maven JAR Plugin][38]                           | [Apache License, Version 2.0][27] |
+| [Apache Maven Toolchains Plugin][37]                    | [Apache-2.0][27]                  |
+| [Apache Maven JAR Plugin][38]                           | [Apache-2.0][27]                  |
 | [Project Keeper Maven plugin][39]                       | [The MIT License][40]             |
 | [Apache Maven Compiler Plugin][41]                      | [Apache-2.0][27]                  |
 | [Apache Maven Enforcer Plugin][42]                      | [Apache-2.0][27]                  |

@@ -17,8 +17,20 @@ public interface SchemaFetcher {
     /**
      * Infer the schema for the given source.
      *
-     * @param source the source reference, i.e. the table name, file path or resource identifier
+     * @param source              the source reference, i.e. the table name, file path or resource identifier
+     * @param columnNameConverter defines how source column names are mapped to Exasol columns
      * @return the detected schema if the given source is supported or else an empty {@link Optional}
      */
-    Optional<InferredMappingDefinition> fetchSchema(String source);
+    Optional<InferredMappingDefinition> fetchSchema(String source, ColumnNameConverter columnNameConverter);
+
+    /**
+     * Create a {@link SchemaFetcher} that always returns an empty {@link Optional}.
+     * <p>
+     * Use this method if the dialect does not support automatic schema inference.
+     *
+     * @return empty schema fetcher
+     */
+    public static SchemaFetcher empty() {
+        return (source, columnNameConverter) -> Optional.empty();
+    }
 }

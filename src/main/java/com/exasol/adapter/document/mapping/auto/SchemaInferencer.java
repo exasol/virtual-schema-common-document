@@ -3,6 +3,7 @@ package com.exasol.adapter.document.mapping.auto;
 import java.util.Optional;
 import java.util.logging.Logger;
 
+import com.exasol.adapter.document.edml.ColumnNameMapping;
 import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.errorreporting.ExaError;
 
@@ -47,7 +48,8 @@ public class SchemaInferencer {
             return edmlDefinition;
         }
         LOG.finest(() -> "Mapping not defined, infer it from source " + edmlDefinition.getSource());
-        final Optional<InferredMappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource());
+        final Optional<InferredMappingDefinition> detectedSchema = fetchSchema(edmlDefinition.getSource(),
+                edmlDefinition.getAutoInferenceColumnNames());
         if (detectedSchema.isEmpty()) {
             throw new IllegalArgumentException(ExaError.messageBuilder("E-VSD-101")
                     .message("This virtual schema does not support auto inference for source {{source|q}}.")
@@ -61,9 +63,10 @@ public class SchemaInferencer {
         return updatedMapping;
     }
 
-    private Optional<InferredMappingDefinition> fetchSchema(final String source) {
+    private Optional<InferredMappingDefinition> fetchSchema(final String source,
+            final ColumnNameMapping columnNameMapping) {
         try {
-            return this.schemaFetcher.fetchSchema(source);
+            return this.schemaFetcher.fetchSchema(source, ColumnNameConverter.from(columnNameMapping));
         } catch (final RuntimeException exception) {
             throw new IllegalStateException(ExaError.messageBuilder("E-VSD-102")
                     .message("Schema auto inference for source {{source|q}} failed.")

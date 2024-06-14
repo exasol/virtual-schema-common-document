@@ -14,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.sql.Date;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeoutException;
 import java.util.logging.Logger;
@@ -61,7 +63,7 @@ class DocumentAdapterIT {
 
     @BeforeAll
     static void beforeAll() throws SQLException, BucketAccessException, TimeoutException, IOException {
-        testSetup = new ExasolTestcontainerTestSetup();
+        testSetup = ExasolTestcontainerTestSetup.start();
         connection = testSetup.createConnection();
         udfTestSetup = new UdfTestSetup(testSetup, connection);
         exasolObjectFactory = new ExasolObjectFactory(connection,
@@ -80,7 +82,7 @@ class DocumentAdapterIT {
     }
 
     @AfterAll
-    static void afterAll() throws Exception {
+    static void afterAll() {
         udfTestSetup.close();
         testSetup.close();
     }
@@ -103,6 +105,7 @@ class DocumentAdapterIT {
             mvnRunner = new Verifier(aggregatorProjectDir.toString());
             final String java17JdkHome = getJava17JdkHome();
             LOGGER.info(() -> "Building mock-project at " + aggregatorProjectDir + " using JDK " + java17JdkHome);
+            final Instant start = Instant.now();
             mvnRunner.setEnvironmentVariable("JAVA_HOME", java17JdkHome);
             mvnRunner.setSystemProperty("skipTests", "true");
             mvnRunner.setSystemProperty("maven.test.skip", "true");
@@ -113,7 +116,7 @@ class DocumentAdapterIT {
             mvnRunner.addCliOption("--batch-mode");
             mvnRunner.executeGoal("package");
             mvnRunner.verifyErrorFreeLog();
-            LOGGER.info("Done building mock-project");
+            LOGGER.info("Done building mock-project in " + Duration.between(start, Instant.now()));
         } catch (final VerificationException exception) {
             if (mvnRunner != null) {
                 mvnRunner.displayStreamBuffers();
@@ -175,7 +178,7 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testToDoubleMapping() throws SQLException {
+    void testToDoubleMapping() {
         final Fields mapping = Fields.builder()//
                 .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
                 .build();
@@ -186,7 +189,7 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testToBoolMapping() throws SQLException {
+    void testToBoolMapping() {
         final Fields mapping = Fields.builder()//
                 .mapField("name", ToBoolMapping.builder().notBooleanBehavior(CONVERT_OR_ABORT).build())//
                 .build();
@@ -206,7 +209,7 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testToDateMapping() throws SQLException {
+    void testToDateMapping() {
         final Fields mapping = Fields.builder()//
                 .mapField("publication_date", ToDateMapping.builder().notDateBehavior(CONVERT_OR_ABORT).build())//
                 .build();
@@ -218,7 +221,7 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testToTimestampMapping() throws SQLException {
+    void testToTimestampMapping() {
         final Fields mapping = Fields.builder()//
                 .mapField("my_timestamp", ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT).build())//
                 .build();
@@ -231,14 +234,12 @@ class DocumentAdapterIT {
 
     @ParameterizedTest
     @MethodSource("emptyQueryPlanTypes")
-    void testEmptyQueryPlan(final Fields mapping, final String expectedColumnType) throws SQLException {
+    void testEmptyQueryPlan(final Fields mapping, final String expectedColumnType) {
         assertThat(mapping.getFieldsMap().size(), equalTo(1));
         final String fieldName = mapping.getFieldsMap().keySet().iterator().next();
-        try (final Statement statement = connection.createStatement()) {
-            final String query = "SELECT " + fieldName + " FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS";
-            final Matcher<ResultSet> expectedResult = table(expectedColumnType).matches();
-            assertVirtualSchemaQueryWithEmptyQueryPlan(mapping, query, expectedResult, statement);
-        }
+        final String query = "SELECT " + fieldName + " FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS";
+        final Matcher<ResultSet> expectedResult = table(expectedColumnType).matches();
+        assertVirtualSchemaQueryWithEmptyQueryPlan(mapping, query, expectedResult);
     }
 
     static Stream<Arguments> emptyQueryPlanTypes() {
@@ -265,24 +266,17 @@ class DocumentAdapterIT {
     }
 
     private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult) throws SQLException {
-        try (final Statement statement = connection.createStatement()) {
-            assertVirtualSchemaQuery(mapping, query, expectedResult, statement);
-        }
-    }
-
-    private void assertVirtualSchemaQuery(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) {
-        assertVirtualSchemaQuery("", mapping, query, expectedResult, statement);
+            final Matcher<ResultSet> expectedResult) {
+        assertVirtualSchemaQuery("", mapping, query, expectedResult);
     }
 
     private void assertVirtualSchemaQueryWithEmptyQueryPlan(final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) {
-        assertVirtualSchemaQuery("EmptyQueryPlan", mapping, query, expectedResult, statement);
+            final Matcher<ResultSet> expectedResult) {
+        assertVirtualSchemaQuery("EmptyQueryPlan", mapping, query, expectedResult);
     }
 
     private void assertVirtualSchemaQuery(final String source, final MappingDefinition mapping, final String query,
-            final Matcher<ResultSet> expectedResult, final Statement statement) {
+            final Matcher<ResultSet> expectedResult) {
         try (VirtualSchema virtualSchema = createVirtualSchema(source, mapping)) {
             assertQueryResult(query, expectedResult);
         }
@@ -303,7 +297,7 @@ class DocumentAdapterIT {
     }
 
     @Test
-    void testInlineMappingArray() throws SQLException {
+    void testInlineMappingArray() {
         final Fields mapping = Fields.builder()//
                 .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
                 .build();

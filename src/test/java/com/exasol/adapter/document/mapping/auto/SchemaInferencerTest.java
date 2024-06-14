@@ -4,6 +4,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -12,7 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -58,6 +63,22 @@ class SchemaInferencerTest {
                 () -> assertThat(result.isAddSourceReferenceColumn(), is(true)));
     }
 
+    @ParameterizedTest(name = "Column name mapping {0} generates column name {1}")
+    @CsvSource({ "CONVERT_TO_UPPER_SNAKE_CASE, COL_NAME", "KEEP_ORIGINAL_NAME, colName" })
+    void autoInferenceUsesColumnConverter(final ColumnNameMapping nameMapping, final String expectedColumName) {
+        simulatedDetectedSchema(InferredMappingDefinition.builder(createMapping())
+                .additionalConfiguration("ignored additional config").description("ignored description"));
+        this.inferencer.inferSchema(createDefinition().autoInferenceColumnNames(nameMapping).build());
+
+        assertThat(getConverterFromMock().convertColumnName("colName"), equalTo(expectedColumName));
+    }
+
+    private ColumnNameConverter getConverterFromMock() {
+        final ArgumentCaptor<ColumnNameConverter> arg = ArgumentCaptor.forClass(ColumnNameConverter.class);
+        verify(schemaFetcherMock).fetchSchema(eq(SOURCE), arg.capture());
+        return arg.getValue();
+    }
+
     @ParameterizedTest
     @NullAndEmptySource
     void additionalConfigurationDetected(final String existingConfiguration) {
@@ -78,14 +99,13 @@ class SchemaInferencerTest {
     }
 
     private void simulatedDetectedSchema(final InferredMappingDefinition.Builder builder) {
-        when(this.schemaFetcherMock.fetchSchema(SOURCE))
-                .thenReturn(Optional.of(builder.build()));
+        when(this.schemaFetcherMock.fetchSchema(eq(SOURCE), any())).thenReturn(Optional.of(builder.build()));
     }
 
     @Test
     void mappingNotPresentSourceNotSupported() {
         final EdmlDefinition definition = createDefinition(null);
-        when(this.schemaFetcherMock.fetchSchema(SOURCE)).thenReturn(Optional.empty());
+        when(this.schemaFetcherMock.fetchSchema(eq(SOURCE), any())).thenReturn(Optional.empty());
         final Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> this.inferencer.inferSchema(definition));
         assertThat(exception.getMessage(), equalTo(
@@ -95,7 +115,7 @@ class SchemaInferencerTest {
     @Test
     void mappingNotPresentFetchingFails() {
         final EdmlDefinition definition = createDefinition(null);
-        when(this.schemaFetcherMock.fetchSchema(SOURCE)).thenThrow(new RuntimeException("expected"));
+        when(this.schemaFetcherMock.fetchSchema(eq(SOURCE), any())).thenThrow(new RuntimeException("expected"));
         final Exception exception = assertThrows(IllegalStateException.class,
                 () -> this.inferencer.inferSchema(definition));
         assertThat(exception.getMessage(),
@@ -112,11 +132,15 @@ class SchemaInferencerTest {
     }
 
     private EdmlDefinition createDefinition(final MappingDefinition mapping) {
-        final EdmlDefinitionBuilder builder = EdmlDefinition.builder().source(SOURCE).destinationTable(DESTINATION)
-                .addSourceReferenceColumn(true).additionalConfiguration(ADDITIONAL_CONFIG).description(DESCRIPTION);
+        final EdmlDefinitionBuilder builder = createDefinition();
         if (mapping != null) {
             builder.mapping(mapping);
         }
         return builder.build();
+    }
+
+    private EdmlDefinitionBuilder createDefinition() {
+        return EdmlDefinition.builder().source(SOURCE).destinationTable(DESTINATION).addSourceReferenceColumn(true)
+                .additionalConfiguration(ADDITIONAL_CONFIG).description(DESCRIPTION);
     }
 }

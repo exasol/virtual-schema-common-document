@@ -11,11 +11,18 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToTimestampColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 2336854835413425712L;
+    private static final int DEFAULT_TIMESTAMP_PRECISION = 6;
     /** @serial */
     private final ConvertableMappingErrorBehaviour notTimestampBehaviour;
+    /** @serial */
+    private final int secondsPrecision;
 
     ConvertableMappingErrorBehaviour getNotTimestampBehaviour() {
         return notTimestampBehaviour;
+    }
+
+    int getSecondsPrecision() {
+        return secondsPrecision;
     }
 
     @Override
@@ -25,7 +32,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
 
     @Override
     public DataType getExasolDataType() {
-        return DataType.createTimestamp(false);
+        return DataType.createTimestamp(false, this.secondsPrecision);
     }
 
     @Override
@@ -39,6 +46,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     public abstract static class Builder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
         private ConvertableMappingErrorBehaviour notTimestampBehaviour;
+        private int secondsPrecision = DEFAULT_TIMESTAMP_PRECISION;
 
         @Override
         protected B fillValuesFrom(final C instance) {
@@ -50,6 +58,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         private static void fillValuesFromInstanceIntoBuilder(final PropertyToTimestampColumnMapping instance,
                 final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
             builder.notTimestampBehaviour(instance.notTimestampBehaviour);
+            builder.secondsPrecision(instance.secondsPrecision);
         }
 
         @Override
@@ -64,6 +73,15 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
          */
         public B notTimestampBehaviour(final ConvertableMappingErrorBehaviour notTimestampBehaviour) {
             this.notTimestampBehaviour = notTimestampBehaviour;
+            return self();
+        }
+
+        /**
+         * @param secondsPrecision precision of the seconds part of the timestamp
+         * @return {@code this}.
+         */
+        public B secondsPrecision(final int secondsPrecision) {
+            this.secondsPrecision = secondsPrecision;
             return self();
         }
 
@@ -104,6 +122,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     protected PropertyToTimestampColumnMapping(final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.notTimestampBehaviour = builder.notTimestampBehaviour;
+        this.secondsPrecision = builder.secondsPrecision;
     }
 
     /**
@@ -124,14 +143,14 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
     @Override
     public String toString() {
         return "PropertyToTimestampColumnMapping(super=" + super.toString() + ", notTimestampBehaviour="
-                + this.getNotTimestampBehaviour() + ")";
+                + this.getNotTimestampBehaviour() + ",secondsPrecision=" + this.getSecondsPrecision() + ")";
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = (prime * result) + Objects.hash(notTimestampBehaviour);
+        result = prime * result + Objects.hash(notTimestampBehaviour, secondsPrecision);
         return result;
     }
 
@@ -147,6 +166,6 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
             return false;
         }
         final PropertyToTimestampColumnMapping other = (PropertyToTimestampColumnMapping) obj;
-        return notTimestampBehaviour == other.notTimestampBehaviour;
+        return notTimestampBehaviour == other.notTimestampBehaviour && secondsPrecision == other.secondsPrecision;
     }
 }
