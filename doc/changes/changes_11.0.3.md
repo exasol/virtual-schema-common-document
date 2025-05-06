@@ -10,6 +10,15 @@ Code name:
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Updated `com.exasol:udf-debugging-java:0.6.14` to `0.6.15`
+* Updated `commons-io:commons-io:2.18.0` to `2.19.0`
+* Updated `nl.jqno.equalsverifier:equalsverifier:3.19` to `3.19.4`
+* Updated `org.junit.jupiter:junit-jupiter-params:5.11.4` to `5.12.2`
+* Updated `org.mockito:mockito-junit-jupiter:5.15.2` to `5.17.0`
+* Updated `org.slf4j:slf4j-jdk14:2.0.16` to `2.0.17`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:project-keeper-maven-plugin:4.5.0` to `5.0.1`
