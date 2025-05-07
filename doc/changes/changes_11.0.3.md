@@ -10,6 +10,10 @@ Code name:
 
 ## Dependency Updates
 
+### Compile Dependency Updates
+
+* Updated `com.exasol:sql-statement-builder:4.5.3` to `4.6.0`
+
 ### Test Dependency Updates
 
 * Updated `com.exasol:udf-debugging-java:0.6.14` to `0.6.15`
