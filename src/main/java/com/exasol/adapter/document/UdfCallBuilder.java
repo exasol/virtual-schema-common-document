@@ -221,7 +221,7 @@ public class UdfCallBuilder {
             return new Date();
         case TIMESTAMP:
             // We ignore "WITH LOCAL TIME ZONE" here since UDFs don't support it and we don't need to support it.
-            return new Timestamp();
+            return new Timestamp(adapterDataType.getPrecision());
         case BOOLEAN:
             return new Boolean();
         default:

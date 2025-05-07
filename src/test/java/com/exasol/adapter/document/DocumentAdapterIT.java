@@ -42,6 +42,7 @@ import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.testcontainers.ExasolTestcontainerTestSetup;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 import com.exasol.udfdebugging.UdfTestSetup;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @Tag("integration")
 @SuppressWarnings("try") // auto-closeable resource virtualSchema is never referenced in body of corresponding try
@@ -143,7 +144,7 @@ class DocumentAdapterIT {
     }
 
     private static Optional<String> findEnvVariable(final List<String> envVariables) {
-        return envVariables.stream().map(System::getenv).filter(value -> value != null).findFirst();
+        return envVariables.stream().map(System::getenv).filter(Objects::nonNull).findFirst();
     }
 
     private static Optional<String> currentJvm() {
@@ -220,10 +221,11 @@ class DocumentAdapterIT {
         assertVirtualSchemaQuery(mapping, query, expectedResult);
     }
 
-    @Test
-    void testToTimestampMapping() {
+    @ParameterizedTest
+    @ValueSource(ints = {3, 6, 9})
+    void testToTimestampMapping(final int precision) {
         final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp", ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT).build())//
+                .mapField("my_timestamp", ToTimestampMapping.builder().secondsPrecision(precision).notTimestampBehavior(CONVERT_OR_ABORT).build())//
                 .build();
         final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
         final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
@@ -368,7 +370,7 @@ class DocumentAdapterIT {
                 final ResultSet resultSet = statement.executeQuery(sql)) {
             assertThat(resultSet, matcher);
         } catch (final SQLException exception) {
-            throw new IllegalStateException("Failed to run query '" + sql + "': " + exception.getMessage());
+            throw new IllegalStateException("Failed to run query '" + sql + "': " + exception.getMessage(), exception);
         }
     }
 }

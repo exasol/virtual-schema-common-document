@@ -46,7 +46,8 @@ class UdfCallBuilderTest {
     static Stream<Arguments> columnTypes() {
         final String colName = "TEST_COLUMN";
         return Stream.of(
-                Arguments.of(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).build(), "TIMESTAMP"),
+                Arguments.of(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName)
+                        .secondsPrecision(6).build(), "TIMESTAMP(6)"),
                 Arguments.of(PropertyToDateColumnMapping.builder().exasolColumnName(colName).build(), "DATE"),
                 Arguments.of(
                         PropertyToJsonColumnMapping.builder().exasolColumnName(colName).varcharColumnSize(5).build(),
