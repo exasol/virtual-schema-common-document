@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 
@@ -139,6 +141,26 @@ public class TableMapping implements Serializable {
      */
     public boolean isRootTable() {
         return this.pathInRemoteTable.size() == 0;
+    }
+
+    /**
+     * Returns a string representation of the {@link TableMapping} instance.
+     * <p>
+     * This includes the Exasol table name, remote source name, column mappings,
+     * path to the nested table (if any), and any additional configuration.
+     *
+     * @return a human-readable string describing the table mapping
+     */
+    @Override
+    public String toString() {
+        return String.format(
+                "TableMapping{exasolName='%s', remoteName='%s', columns=%s, pathInRemoteTable=%s, additionalConfiguration='%s'}",
+                exasolName,
+                remoteName,
+                columns,
+                pathInRemoteTable,
+                additionalConfiguration
+        );
     }
 
     /**

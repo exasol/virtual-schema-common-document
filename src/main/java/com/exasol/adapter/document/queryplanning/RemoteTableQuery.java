@@ -54,4 +54,20 @@ public class RemoteTableQuery {
     public QueryPredicate getSelection() {
         return this.selection;
     }
+
+    /**
+     * Returns a compact string representation of this {@link RemoteTableQuery} instance.
+     * <p>
+     * The returned string includes the source table mapping, the list of selected columns,
+     * and any applied selection predicates in a single-line format, suitable for logging or debugging.
+     *
+     * @return a concise string representation of the query
+     */
+    @Override
+    public String toString() {
+        return String.format(
+                "RemoteTableQuery{fromTable=%s, selectList=%s, selection=%s}",
+                fromTable, selectList, selection
+        );
+    }
 }

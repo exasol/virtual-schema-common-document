@@ -13,6 +13,7 @@ import com.exasol.adapter.document.mapping.MockPropertyToColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
+import com.jparams.verifier.tostring.ToStringVerifier;
 
 class RemoteTableQueryTest {
     @Test
@@ -28,5 +29,10 @@ class RemoteTableQueryTest {
                 () -> assertThat(remoteTableQuery.getFromTable(), equalTo(tableDefinition)),
                 () -> assertThat(remoteTableQuery.getSelection(), equalTo(selection))//
         );
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(RemoteTableQuery.class).verify();
     }
 }

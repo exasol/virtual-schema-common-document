@@ -6,6 +6,7 @@ import static org.hamcrest.Matchers.equalTo;
 import org.junit.jupiter.api.Test;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
+import com.jparams.verifier.tostring.ToStringVerifier;
 
 class TableMappingTest {
     @Test
@@ -21,5 +22,10 @@ class TableMappingTest {
         final TableMapping table = TableMapping
                 .nestedTableBuilder("", "", DocumentPathExpression.builder().build(), testValue).build();
         assertThat(table.getAdditionalConfiguration(), equalTo(testValue));
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(TableMapping.class).verify();
     }
 }
