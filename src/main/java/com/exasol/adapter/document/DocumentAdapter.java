@@ -175,7 +175,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
      */
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
                             final RemoteTableQuery remoteTableQuery) {
-        logFine(logger,"Starting to plan query | Remote table query: %s", remoteTableQuery.toString());
+        logFine(logger, "Starting to plan query | Remote table query: %s", remoteTableQuery.toString());
 
         final AdapterProperties adapterProperties = getPropertiesFromRequest(request);
         final QueryPlanner queryPlanner = this.dialect
@@ -190,7 +190,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         final String connectionName = adapterProperties.getConnectionName();
         final String scriptSchema = exaMetadata.getScriptSchema();
 
-        logFine(logger,"Planned query with %d cluster cores | Script schema: '%s' | Plan type: '%s' | Adapter: '%s' | Connection: '%s'",
+        logFine(logger, "Planned query with %d cluster cores | Script schema: '%s' | Plan type: '%s' | Adapter: '%s' | Connection: '%s'",
                 availableClusterCores,
                 scriptSchema,
                 queryPlan.getClass().getSimpleName(),
