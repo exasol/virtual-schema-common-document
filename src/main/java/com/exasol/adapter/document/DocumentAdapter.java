@@ -152,28 +152,29 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     }
 
     /**
-     * Plans a query for a remote table and generates the corresponding UDF (User-Defined Function) call SQL string.
+     * Plans a query for a remote table and generates the corresponding SQL string
+     * that calls a UDF (User-Defined Function) to execute the query.
      * <p>
-     * This method performs the following steps:
+     * This method follows these steps:
      * <ul>
-     *     <li>Logs the start of the planning process for the given remote table query.</li>
+     *     <li>Logs the beginning of the planning process for the given remote table query.</li>
      *     <li>Extracts adapter and connection properties from the request.</li>
      *     <li>Obtains a {@link QueryPlanner} from the dialect using the connection information.</li>
      *     <li>Calculates the number of cluster cores available for parallel execution.</li>
-     *     <li>Builds a {@link QueryPlan} for the given remote table query.</li>
+     *     <li>Builds a {@link QueryPlan} for the remote table query.</li>
      *     <li>Logs a summary of the generated plan and execution configuration.</li>
-     *     <li>Generates a SQL call to the corresponding UDF that will execute the planned query.</li>
-     *     <li>Logs the generated UDF call information.</li>
+     *     <li>Generates the SQL statement that calls the UDF to execute the planned query.</li>
+     *     <li>Logs the generated UDF call.</li>
      * </ul>
      *
      * @param exaMetadata       metadata provided by the Exasol UDF framework
-     * @param request           the pushdown request containing query and adapter context
-     * @param remoteTableQuery  the query targeting the remote table
-     * @return SQL string that calls the generated UDF with the planned query
+     * @param request           the pushdown request containing the query and adapter context
+     * @param remoteTableQuery  the query that targets the remote table
+     * @return SQL string that calls the UDF to execute the planned query
      */
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
                             final RemoteTableQuery remoteTableQuery) {
-        logFine("Starting to plan query | Remote table: %s", remoteTableQuery.toString());
+        logFine("Starting to plan query | Remote table query: %s", remoteTableQuery.toString());
 
         final AdapterProperties adapterProperties = getPropertiesFromRequest(request);
         final QueryPlanner queryPlanner = this.dialect
@@ -199,7 +200,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         final String udfCall = new UdfCallBuilder(connectionName, scriptSchema, this.dialect.getAdapterName())
                 .getUdfCallSql(queryPlan, remoteTableQuery);
 
-        logFine("Generated UDF call | Remote table: %s", remoteTableQuery.toString());
+        logFine("Generated UDF call: %s | Remote table query: %s", udfCall, remoteTableQuery.toString());
 
         return udfCall;
     }
