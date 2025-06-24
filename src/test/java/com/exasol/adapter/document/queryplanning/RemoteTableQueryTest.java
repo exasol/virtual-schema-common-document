@@ -13,6 +13,7 @@ import com.exasol.adapter.document.mapping.MockPropertyToColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 import com.exasol.adapter.document.querypredicate.QueryPredicate;
+import com.jparams.verifier.tostring.ToStringVerifier;
 
 class RemoteTableQueryTest {
     @Test
@@ -23,12 +24,15 @@ class RemoteTableQueryTest {
         final QueryPredicate selection = new NoPredicate();
         final RemoteTableQuery remoteTableQuery = new RemoteTableQuery(tableDefinition, List.of(columnDefinition),
                 selection);
-        final String expectedToString = "RemoteTableQuery {\n  fromTable: TableMapping{exasolName='', remoteName='', columns=[MockPropertyToColumnMapping(super=AbstractPropertyToColumnMapping(super=AbstractColumnMapping(exasolColumnName=), pathToSourceProperty=null, lookupFailBehaviour=null))], pathInRemoteTable=/, additionalConfiguration='null'}\n  selectList:\n    - MockPropertyToColumnMapping(super=AbstractPropertyToColumnMapping(super=AbstractColumnMapping(exasolColumnName=), pathToSourceProperty=null, lookupFailBehaviour=null))\n  selection: NoPredicate\n}";
         assertAll(//
                 () -> assertThat(remoteTableQuery.getSelectList(), containsInAnyOrder(columnDefinition)),
                 () -> assertThat(remoteTableQuery.getFromTable(), equalTo(tableDefinition)),
-                () -> assertThat(remoteTableQuery.getSelection(), equalTo(selection)),
-                () -> assertThat(remoteTableQuery.toString(), equalTo(expectedToString))//
+                () -> assertThat(remoteTableQuery.getSelection(), equalTo(selection))//
         );
+    }
+
+    @Test
+    void testToString() {
+        ToStringVerifier.forClass(RemoteTableQuery.class).verify();
     }
 }

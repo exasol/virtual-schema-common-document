@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.queryplanning;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import com.exasol.adapter.document.mapping.ColumnMapping;
 import com.exasol.adapter.document.mapping.TableMapping;
@@ -57,28 +56,18 @@ public class RemoteTableQuery {
     }
 
     /**
-     * Returns a human-readable string representation of the {@link RemoteTableQuery}.
+     * Returns a compact string representation of this {@link RemoteTableQuery} instance.
      * <p>
-     * This includes the mapped source table, a list of selected columns (formatted line by line),
-     * and any applied selection predicates.
+     * The returned string includes the source table mapping, the list of selected columns,
+     * and any applied selection predicates in a single-line format, suitable for logging or debugging.
      *
-     * @return a formatted string representation of the query
+     * @return a concise string representation of the query
      */
     @Override
     public String toString() {
-        String formattedSelectList = selectList.stream()
-                .map(column -> "    - " + column.toString().replace("\n", "\n      "))
-                .collect(Collectors.joining("\n"));
-
         return String.format(
-                "RemoteTableQuery {\n" +
-                        "  fromTable: %s\n" +
-                        "  selectList:\n%s\n" +
-                        "  selection: %s\n" +
-                        "}",
-                fromTable,
-                formattedSelectList,
-                selection
+                "RemoteTableQuery{fromTable=%s, selectList=%s, selection=%s}",
+                fromTable, selectList, selection
         );
     }
 }

@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 

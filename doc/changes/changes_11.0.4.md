@@ -1,10 +1,10 @@
 # Common Virtual Schema for Document Data 11.0.4, released 2025-06-24
 
-Code name: Add more logging around the paths that lead to the creation of the query plan.
+Code name: Improve query plan logging
 
 ## Summary
 
-This release adds more logging around the paths that lead to the creation of the query plan.
+This release implements `toString()` for classes `TableMapping` and `RemoteTableQuery`. This allows improving logging around the paths that lead to the creation of the query plan.
 
 ## Features
 
