@@ -9,6 +9,12 @@ import java.util.logging.Logger;
 public class LogHelper {
 
     /**
+     * Private constructor to prevent instantiation.
+     */
+    private LogHelper() {
+    }
+
+    /**
      * Logs a formatted message at {@link Level#FINE} if fine-level logging is enabled.
      * <p>
      * This helper method avoids unnecessary string construction (e.g., {@code String.format(...)})
