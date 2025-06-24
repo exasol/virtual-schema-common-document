@@ -1,7 +1,8 @@
 package com.exasol.adapter.document;
 
+import static com.exasol.utils.LogHelper.logFine;
+
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -174,7 +175,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
      */
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
                             final RemoteTableQuery remoteTableQuery) {
-        logFine("Starting to plan query | Remote table query: %s", remoteTableQuery.toString());
+        logFine(logger,"Starting to plan query | Remote table query: %s", remoteTableQuery.toString());
 
         final AdapterProperties adapterProperties = getPropertiesFromRequest(request);
         final QueryPlanner queryPlanner = this.dialect
@@ -189,7 +190,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         final String connectionName = adapterProperties.getConnectionName();
         final String scriptSchema = exaMetadata.getScriptSchema();
 
-        logFine("Planned query with %d cluster cores | Script schema: '%s' | Plan type: '%s' | Adapter: '%s' | Connection: '%s'",
+        logFine(logger,"Planned query with %d cluster cores | Script schema: '%s' | Plan type: '%s' | Adapter: '%s' | Connection: '%s'",
                 availableClusterCores,
                 scriptSchema,
                 queryPlan.getClass().getSimpleName(),
@@ -200,24 +201,9 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         final String udfCall = new UdfCallBuilder(connectionName, scriptSchema, this.dialect.getAdapterName())
                 .getUdfCallSql(queryPlan, remoteTableQuery);
 
-        logFine("Generated UDF call: %s | Remote table query: %s", udfCall, remoteTableQuery.toString());
+        logFine(logger, "Generated UDF call: %s | Remote table query: %s", udfCall, remoteTableQuery.toString());
 
         return udfCall;
-    }
-
-    /**
-     * Logs a formatted message at {@link Level#FINE} if fine-level logging is enabled.
-     * <p>
-     * This helper method avoids unnecessary string construction (such as {@code String.format(...)})
-     * when fine-level logging is not enabled. This improves performance and prevents static analysis
-     * warnings related to inefficient logging.
-     * </p>
-     *
-     * @param stringPattern the format string, as used by {@link String#format(String, Object...)}
-     * @param args          the arguments referenced by the format specifiers in the format string
-     */
-    private void logFine(final String stringPattern, final Object... args) {
-        logger.fine(() -> args.length == 0 ? stringPattern : String.format(stringPattern, args));
     }
 
     @Override
