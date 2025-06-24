@@ -1,15 +1,22 @@
 package com.exasol.adapter.document;
 
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.exasol.*;
-import com.exasol.adapter.*;
+import com.exasol.ExaConnectionAccessException;
+import com.exasol.ExaConnectionInformation;
+import com.exasol.ExaMetadata;
+import com.exasol.adapter.AdapterException;
+import com.exasol.adapter.AdapterProperties;
+import com.exasol.adapter.VirtualSchemaAdapter;
 import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.connection.ConnectionStringReader;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.SchemaMapping;
+import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
+import com.exasol.adapter.document.mapping.TableKeyFetcher;
 import com.exasol.adapter.document.mapping.auto.SchemaFetcher;
 import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
@@ -28,7 +35,6 @@ import com.exasol.errorreporting.ExaError;
  * This class is the basis for Virtual Schema adapter for document data.
  */
 public class DocumentAdapter implements VirtualSchemaAdapter {
-    private static final Logger LOG = Logger.getLogger(DocumentAdapter.class.getName());
     private static final Set<MainCapability> SUPPORTED_MAIN_CAPABILITIES = Set.of(MainCapability.SELECTLIST_PROJECTION,
             MainCapability.FILTER_EXPRESSIONS);
     private static final Set<PredicateCapability> SUPPORTED_PREDICATE_CAPABILITIES = Set.of(PredicateCapability.EQUAL,
@@ -42,14 +48,30 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
     private final int thisNodesCoreCount;
     private final DocumentAdapterDialect dialect;
 
+    private final Logger logger;
+
     /**
      * Create a new instance of {@link DocumentAdapter}.
      *
      * @param dialect dialect implementation
      */
     public DocumentAdapter(final DocumentAdapterDialect dialect) {
+        this(dialect, Logger.getLogger(DocumentAdapter.class.getName()));
+    }
+
+    /**
+     * Create a new instance of {@link DocumentAdapter} with a custom logger.
+     * <p>
+     * This constructor is primarily intended for testing or advanced logging configuration.
+     * </p>
+     *
+     * @param dialect dialect implementation
+     * @param logger  the logger to use for internal logging
+     */
+    public DocumentAdapter(final DocumentAdapterDialect dialect, final Logger logger) {
         this.dialect = dialect;
         this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
+        this.logger = logger;
     }
 
     @Override
@@ -100,7 +122,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         }
     }
 
-    private AdapterProperties getPropertiesFromRequest(final AdapterRequest request) {
+    AdapterProperties getPropertiesFromRequest(final AdapterRequest request) {
         return new AdapterProperties(request.getSchemaMetadataInfo().getProperties());
     }
 
@@ -123,25 +145,78 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         // the virtual schema)
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
-        LOG.fine(() -> "Generated pushdown SQL: " + responseStatement);
+        logger.fine(() -> "Generated pushdown SQL: " + responseStatement);
         return PushDownResponse.builder()//
                 .pushDownSql(responseStatement)//
                 .build();
     }
 
+    /**
+     * Plans a query for a remote table and generates the corresponding UDF (User-Defined Function) call SQL string.
+     * <p>
+     * This method performs the following steps:
+     * <ul>
+     *     <li>Logs the start of the planning process for the given remote table query.</li>
+     *     <li>Extracts adapter and connection properties from the request.</li>
+     *     <li>Obtains a {@link QueryPlanner} from the dialect using the connection information.</li>
+     *     <li>Calculates the number of cluster cores available for parallel execution.</li>
+     *     <li>Builds a {@link QueryPlan} for the given remote table query.</li>
+     *     <li>Logs a summary of the generated plan and execution configuration.</li>
+     *     <li>Generates a SQL call to the corresponding UDF that will execute the planned query.</li>
+     *     <li>Logs the generated UDF call information.</li>
+     * </ul>
+     *
+     * @param exaMetadata       metadata provided by the Exasol UDF framework
+     * @param request           the pushdown request containing query and adapter context
+     * @param remoteTableQuery  the query targeting the remote table
+     * @return SQL string that calls the generated UDF with the planned query
+     */
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
-            final RemoteTableQuery remoteTableQuery) {
+                            final RemoteTableQuery remoteTableQuery) {
+        logFine("Starting to plan query | Remote table: %s", remoteTableQuery.toString());
+
         final AdapterProperties adapterProperties = getPropertiesFromRequest(request);
         final QueryPlanner queryPlanner = this.dialect
                 .getQueryPlanner(getConnectionInformation(exaMetadata, adapterProperties), adapterProperties);
+
         final DocumentAdapterProperties documentAdapterProperties = new DocumentAdapterProperties(adapterProperties);
-        final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(exaMetadata,
-                documentAdapterProperties, this.thisNodesCoreCount);
+        final int availableClusterCores = new UdfCountCalculator().calculateMaxUdfInstanceCount(
+                exaMetadata, documentAdapterProperties, this.thisNodesCoreCount);
 
         final QueryPlan queryPlan = queryPlanner.planQuery(remoteTableQuery, availableClusterCores);
-        final String connectionName = getPropertiesFromRequest(request).getConnectionName();
-        return new UdfCallBuilder(connectionName, exaMetadata.getScriptSchema(), this.dialect.getAdapterName())
+
+        final String connectionName = adapterProperties.getConnectionName();
+        final String scriptSchema = exaMetadata.getScriptSchema();
+
+        logFine("Planned query with %d cluster cores | Script schema: '%s' | Plan type: '%s' | Adapter: '%s' | Connection: '%s'",
+                availableClusterCores,
+                scriptSchema,
+                queryPlan.getClass().getSimpleName(),
+                this.dialect.getAdapterName(),
+                connectionName
+        );
+
+        final String udfCall = new UdfCallBuilder(connectionName, scriptSchema, this.dialect.getAdapterName())
                 .getUdfCallSql(queryPlan, remoteTableQuery);
+
+        logFine("Generated UDF call | Remote table: %s", remoteTableQuery.toString());
+
+        return udfCall;
+    }
+
+    /**
+     * Logs a formatted message at {@link Level#FINE} if fine-level logging is enabled.
+     * <p>
+     * This helper method avoids unnecessary string construction (such as {@code String.format(...)})
+     * when fine-level logging is not enabled. This improves performance and prevents static analysis
+     * warnings related to inefficient logging.
+     * </p>
+     *
+     * @param stringPattern the format string, as used by {@link String#format(String, Object...)}
+     * @param args          the arguments referenced by the format specifiers in the format string
+     */
+    private void logFine(final String stringPattern, final Object... args) {
+        logger.fine(() -> args.length == 0 ? stringPattern : String.format(stringPattern, args));
     }
 
     @Override
@@ -171,7 +246,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
                 mergedRawProperties.put(requestRawProperty.getKey(), requestRawProperty.getValue());
             }
         }
-        LOG.info(() -> "Merged adapter properties:\n" //
+        logger.info(() -> "Merged adapter properties:\n" //
                 + "  " + formatMap("Previous", previousRawProperties) + "\n" //
                 + "  " + formatMap("New", requestRawProperties) + "\n" //
                 + "  " + formatMap("Merged", mergedRawProperties));
