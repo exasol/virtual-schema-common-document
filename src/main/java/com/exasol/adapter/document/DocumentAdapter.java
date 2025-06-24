@@ -69,7 +69,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
      * @param dialect dialect implementation
      * @param logger  the logger to use for internal logging
      */
-    public DocumentAdapter(final DocumentAdapterDialect dialect, final Logger logger) {
+    DocumentAdapter(final DocumentAdapterDialect dialect, final Logger logger) {
         this.dialect = dialect;
         this.thisNodesCoreCount = Runtime.getRuntime().availableProcessors();
         this.logger = logger;
