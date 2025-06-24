@@ -23,10 +23,12 @@ class RemoteTableQueryTest {
         final QueryPredicate selection = new NoPredicate();
         final RemoteTableQuery remoteTableQuery = new RemoteTableQuery(tableDefinition, List.of(columnDefinition),
                 selection);
+        final String expectedToString = "RemoteTableQuery {\n  fromTable: TableMapping{exasolName='', remoteName='', columns=[MockPropertyToColumnMapping(super=AbstractPropertyToColumnMapping(super=AbstractColumnMapping(exasolColumnName=), pathToSourceProperty=null, lookupFailBehaviour=null))], pathInRemoteTable=/, additionalConfiguration='null'}\n  selectList:\n    - MockPropertyToColumnMapping(super=AbstractPropertyToColumnMapping(super=AbstractColumnMapping(exasolColumnName=), pathToSourceProperty=null, lookupFailBehaviour=null))\n  selection: NoPredicate\n}";
         assertAll(//
                 () -> assertThat(remoteTableQuery.getSelectList(), containsInAnyOrder(columnDefinition)),
                 () -> assertThat(remoteTableQuery.getFromTable(), equalTo(tableDefinition)),
-                () -> assertThat(remoteTableQuery.getSelection(), equalTo(selection))//
+                () -> assertThat(remoteTableQuery.getSelection(), equalTo(selection)),
+                () -> assertThat(remoteTableQuery.toString(), equalTo(expectedToString))//
         );
     }
 }

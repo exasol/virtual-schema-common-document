@@ -1,7 +1,9 @@
 package com.exasol.adapter.document.mapping;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,5 +23,10 @@ class TableMappingTest {
         final TableMapping table = TableMapping
                 .nestedTableBuilder("", "", DocumentPathExpression.builder().build(), testValue).build();
         assertThat(table.getAdditionalConfiguration(), equalTo(testValue));
+        final String expectedToString = "TableMapping{exasolName='', remoteName='', columns=[], pathInRemoteTable=/, additionalConfiguration='testAdditionalConfig'}";
+        assertAll(//
+                () -> assertThat(table.getAdditionalConfiguration(), equalTo(testValue)),
+                () -> assertThat(table.toString(), equalTo(expectedToString))//
+        );
     }
 }
