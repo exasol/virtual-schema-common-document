@@ -1,7 +1,8 @@
 package com.exasol.adapter.document;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -91,16 +92,15 @@ class DocumentAdapterLoggingTest {
         verify(mockLogger, atLeastOnce()).fine(captor.capture());
 
         String allLogs = captor.getAllValues().stream().map(Supplier::get).reduce("", (a, b) -> a + "\n" + b);
-        System.out.println("Captured logs:\n" + allLogs);
 
         assertAll(
-                () -> assertTrue(allLogs.contains("Starting to plan query | Remote table query: TABLE_QUERY")),
-                () -> assertTrue(allLogs.contains("Planned query with")),
-                () -> assertTrue(allLogs.contains("Script schema: 'MY_SCHEMA'")),
-                () -> assertTrue(allLogs.contains("Plan type: 'EmptyQueryPlan'")),
-                () -> assertTrue(allLogs.contains("Adapter: 'my_adapter'")),
-                () -> assertTrue(allLogs.contains("Connection: 'my_connection'")),
-                () -> assertTrue(allLogs.contains("Generated UDF call: SELECT * FROM (VALUES ()) WHERE FALSE | Remote table query: TABLE_QUERY"))
+                () -> assertThat(allLogs, containsString("Starting to plan query | Remote table query: TABLE_QUERY")),
+                () -> assertThat(allLogs, containsString("Planned query with")),
+                () -> assertThat(allLogs, containsString("Script schema: 'MY_SCHEMA'")),
+                () -> assertThat(allLogs, containsString("Plan type: 'EmptyQueryPlan'")),
+                () -> assertThat(allLogs, containsString("Adapter: 'my_adapter'")),
+                () -> assertThat(allLogs, containsString("Connection: 'my_connection'")),
+                () -> assertThat(allLogs, containsString("Generated UDF call: SELECT * FROM (VALUES ()) WHERE FALSE | Remote table query: TABLE_QUERY"))
         );
     }
 }

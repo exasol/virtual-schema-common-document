@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 11.0.5, released 2025-06-24
+# Common Virtual Schema for Document Data 11.0.5, released 2025-06-25
 
 Code name: Improve query plan logging
 
