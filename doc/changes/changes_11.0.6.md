@@ -32,6 +32,10 @@ CWE: CWE-674
 
 ## Dependency Updates
 
+### Test Dependency Updates
+
+* Updated `com.exasol:udf-debugging-java:0.6.16` to `0.6.17`
+
 ### Plugin Dependency Updates
 
 * Updated `com.exasol:error-code-crawler-maven-plugin:2.0.3` to `2.0.4`
