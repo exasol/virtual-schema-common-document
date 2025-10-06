@@ -85,7 +85,9 @@ public class QueryPredicateToBooleanExpressionConverter {
             case NOT_LIKE:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-5").message(
                         "For efficiency reasons virtual schemas support operators LIKE and NOT LIKE only for column SOURCE_REFERENCE.")
-                        .mitigation("Please change your query and wrap it in an outer SELECT statement that can use operator LIKE for other columns as well.")
+                        .mitigation("Please change your query and wrap it in an outer SELECT statement that can use the operator LIKE for other columns as well."
+                                   + " Add a high limit (e.g., LIMIT 1E15) to the outer SELECT to prevent the optimizer from pushing the filter down."
+                                   + " See also: https://github.com/exasol/virtual-schemas/blob/main/doc/user_guide/faq.md")
                         .toString());
             default:
                 throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-4")
