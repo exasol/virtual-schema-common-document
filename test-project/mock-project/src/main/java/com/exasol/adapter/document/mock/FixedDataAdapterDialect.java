@@ -66,7 +66,6 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
     }
 
     @Override
-    @Override
     public String getUserGuideUrl() {
         return USER_GUIDE;
     }
