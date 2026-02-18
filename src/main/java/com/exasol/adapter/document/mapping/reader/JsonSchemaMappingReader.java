@@ -1,19 +1,25 @@
 package com.exasol.adapter.document.mapping.reader;
 
-import static java.util.stream.Collectors.*;
-
-import java.util.*;
-import java.util.Map.Entry;
-
 import com.exasol.adapter.document.edml.EdmlDefinition;
 import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
 import com.exasol.adapter.document.edml.deserializer.EdmlDeserializer;
 import com.exasol.adapter.document.edml.validator.EdmlSchemaValidator;
-import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.SchemaMapping;
+import com.exasol.adapter.document.mapping.TableKeyFetcher;
+import com.exasol.adapter.document.mapping.TableMapping;
 import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.mapping.converter.MappingConversionPipeline;
 import com.exasol.adapter.document.properties.EdmlInput;
 import com.exasol.errorreporting.ExaError;
+import jakarta.json.*;
+
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * EDML: This class reads a {@link SchemaMapping} from JSON files.
@@ -23,8 +29,10 @@ import com.exasol.errorreporting.ExaError;
  * </p>
  */
 public class JsonSchemaMappingReader {
-    private final TableKeyFetcher tableKeyFetcher;
-    private final SchemaInferencer schemaInferencer;
+
+    private final MappingConversionPipeline mappingConversionPipeline;
+    private final EdmlSchemaValidator edmlSchemaValidator;
+    private final EdmlDeserializer edmlDeserializer;
 
     /**
      * Create an instance of {@link JsonSchemaMappingReader}.
@@ -34,8 +42,9 @@ public class JsonSchemaMappingReader {
      * @throws ExasolDocumentMappingLanguageException if schema mapping invalid
      */
     public JsonSchemaMappingReader(final TableKeyFetcher tableKeyFetcher, final SchemaInferencer schemaInferencer) {
-        this.tableKeyFetcher = tableKeyFetcher;
-        this.schemaInferencer = schemaInferencer;
+        this.mappingConversionPipeline = new MappingConversionPipeline(tableKeyFetcher, schemaInferencer);
+        this.edmlSchemaValidator = new EdmlSchemaValidator();
+        this.edmlDeserializer = new EdmlDeserializer();
     }
 
     /**
@@ -45,18 +54,17 @@ public class JsonSchemaMappingReader {
      * @return read schema mappings
      */
     public SchemaMapping readSchemaMapping(final List<EdmlInput> edmlInputs) {
-        final EdmlSchemaValidator jsonSchemaMappingValidator = new EdmlSchemaValidator();
         final List<TableMapping> tables = new ArrayList<>();
-        // validate the schema for all the edml inputs
+        // validate and parse schema definitions for all the edml inputs
         for (final EdmlInput edmlInput : edmlInputs) {
-            jsonSchemaMappingValidator.validate(edmlInput.getEdmlString());
             try {
-                tables.addAll(parseDefinition(edmlInput.getEdmlString()));
+                tables.addAll(validateAndParseDefinition(edmlInput));
             } catch (final ExasolDocumentMappingLanguageException exception) {
                 throw getParseFailedException(edmlInput.getSource(), exception);
             }
         }
-        validate(tables);
+
+        validateTableMappings(tables);
         return new SchemaMapping(tables);
     }
 
@@ -67,13 +75,40 @@ public class JsonSchemaMappingReader {
                 exception);
     }
 
-    /** Make a list of table mappings from the EDML string */
-    private List<TableMapping> parseDefinition(final String edmlString) {
-        final EdmlDefinition edmlDefinition = new EdmlDeserializer().deserialize(edmlString);
-        return new MappingConversionPipeline(this.tableKeyFetcher, this.schemaInferencer).convert(edmlDefinition);
+    /** Make a list of table mappings from the EDML input */
+    private List<TableMapping> validateAndParseDefinition(final EdmlInput edmlInput) {
+        final String edmlString = edmlInput.getEdmlString();
+        try (final StringReader reader = new StringReader(edmlString);
+                final JsonReader jsonReader = Json.createReader(reader)) {
+            final var jsonStructure = jsonReader.read();
+            if (isArray(jsonStructure)) {
+                return validateAndParseJsonArray(jsonStructure.asJsonArray());
+            } else {
+                return validateAndParseJsonObject(jsonStructure.asJsonObject());
+            }
+        }
     }
 
-    private void validate(final List<TableMapping> tables) {
+    private boolean isArray(JsonStructure jsonStructure) {
+        return jsonStructure.getValueType() == jakarta.json.JsonValue.ValueType.ARRAY;
+    }
+
+    private List<TableMapping> validateAndParseJsonArray(final JsonArray jsonArray) {
+        final List<TableMapping> result = new ArrayList<>();
+        for (final var jsonValue : jsonArray) {
+            result.addAll(validateAndParseJsonObject(jsonValue));
+        }
+        return result;
+    }
+
+    private List<TableMapping> validateAndParseJsonObject(final JsonValue jsonObject) {
+        final String edmlString = jsonObject.toString();
+        edmlSchemaValidator.validate(edmlString);
+        final EdmlDefinition definition = edmlDeserializer.deserialize(edmlString);
+        return mappingConversionPipeline.convert(definition);
+    }
+
+    private void validateTableMappings(final List<TableMapping> tables) {
         final Set<String> duplicateDestinationTableNames = tables.stream()
                 .collect(groupingBy(TableMapping::getExasolName, counting())) //
                 .entrySet().stream() //

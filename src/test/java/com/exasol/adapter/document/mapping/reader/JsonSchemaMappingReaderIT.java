@@ -1,23 +1,29 @@
 package com.exasol.adapter.document.mapping.reader;
 
-import static java.util.Arrays.asList;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.exasol.adapter.document.edml.ExasolDocumentMappingLanguageException;
+import com.exasol.adapter.document.edml.MappingErrorBehaviour;
+import com.exasol.adapter.document.edml.TruncateableMappingErrorBehaviour;
+import com.exasol.adapter.document.mapping.*;
+import com.exasol.adapter.document.mapping.TableKeyFetcher.NoKeyFoundException;
+import com.exasol.adapter.document.mapping.auto.ColumnNameConverter;
+import com.exasol.adapter.document.mapping.auto.InferredMappingDefinition;
+import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
+import com.exasol.adapter.document.properties.EdmlInput;
 import org.hamcrest.Matcher;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
-import com.exasol.adapter.document.edml.*;
-import com.exasol.adapter.document.mapping.*;
-import com.exasol.adapter.document.mapping.TableKeyFetcher.NoKeyFoundException;
-import com.exasol.adapter.document.mapping.auto.*;
-import com.exasol.adapter.document.properties.EdmlInput;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("integration")
 @Tag("quick")
@@ -82,7 +88,7 @@ class JsonSchemaMappingReaderIT {
     }
 
     private List<String> getColumnNames(final List<ColumnMapping> columns) {
-        return columns.stream().map(ColumnMapping::getExasolColumnName).collect(Collectors.toList());
+        return columns.stream().map(ColumnMapping::getExasolColumnName).collect(toList());
     }
 
     private Map<String, String> getColumnNamesWithType(final List<ColumnMapping> columns) {
@@ -235,6 +241,67 @@ class JsonSchemaMappingReaderIT {
                 "E-VSD-104: Found duplicate destination table names ['dest']. Ensure that each mapping uses a unique value for 'destinationTable'."));
     }
 
+    @Test
+    void testArrayWithTwoDefinitionsProducesTwoTables() {
+        final String edmlArray = "[" +
+                JsonSample.builder()
+                        .destinationTable("BOOKS_A")
+                        .isbn("global")
+                        .name("none")
+                        .build()
+                + "," +
+                JsonSample.builder()
+                        .destinationTable("BOOKS_B")
+                        .isbn("global")
+                        .name("none")
+                        .build()
+                + "]";
+
+        final List<TableMapping> tables = read(edmlArray);
+
+        assertThat(tables, hasSize(2));
+        assertThat(
+                tables.stream().map(TableMapping::getExasolName).collect(toList()),
+                containsInAnyOrder("BOOKS_A", "BOOKS_B")
+        );
+    }
+
+    @Test
+    void testSingleObjectProducesSingleTable() {
+        final String edml = JsonSample.builder()
+                .destinationTable("ONLY_TABLE")
+                .isbn("global")
+                .name("none")
+                .build();
+
+        final List<TableMapping> tables = read(edml);
+
+        assertThat(tables, hasSize(1));
+        assertThat(tables.get(0).getExasolName(), equalTo("ONLY_TABLE"));
+    }
+
+    @Test
+    void testInvalidDefinitionInsideArrayFailsValidation() {
+        final String valid = JsonSample.builder()
+                .destinationTable("VALID")
+                .isbn("global")
+                .name("none")
+                .build();
+
+        // Invalid because key value is wrong
+        final String invalid = JsonSample.builder()
+                .destinationTable("INVALID")
+                .isbn("WRONG")   // invalid key
+                .name("none")
+                .build();
+
+        final String edmlArray = "[" + valid + "," + invalid + "]";
+
+        assertThrows(ExasolDocumentMappingLanguageException.class,
+                () -> read(edmlArray));
+    }
+
+
     private ColumnMapping getColumnByExasolName(final TableMapping table, final String exasolName) {
         return table.getColumns().stream().filter(each -> each.getExasolColumnName().equals(exasolName)).findAny()
                 .orElseThrow();
@@ -251,9 +318,9 @@ class JsonSchemaMappingReaderIT {
 
     private List<ColumnMapping> tableKeyFetcherMock(final String tableName, final List<ColumnMapping> mappedColumns)
             throws NoKeyFoundException {
-        final List<ColumnMapping> key = mappedColumns.stream().filter(this::isIsbnColumn).collect(Collectors.toList());
+        final List<ColumnMapping> key = mappedColumns.stream().filter(this::isIsbnColumn).collect(toList());
         if (key.isEmpty()) {
-            throw new TableKeyFetcher.NoKeyFoundException();
+            throw new NoKeyFoundException();
         }
         return key;
     }
