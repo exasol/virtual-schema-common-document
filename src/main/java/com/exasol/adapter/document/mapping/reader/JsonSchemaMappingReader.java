@@ -80,7 +80,7 @@ public class JsonSchemaMappingReader {
         final String edmlString = edmlInput.getEdmlString();
         try (final StringReader reader = new StringReader(edmlString);
                 final JsonReader jsonReader = Json.createReader(reader)) {
-            final var jsonStructure = jsonReader.read();
+            final JsonStructure jsonStructure = jsonReader.read();
             if (isArray(jsonStructure)) {
                 return validateAndParseJsonArray(jsonStructure.asJsonArray());
             } else {
@@ -95,7 +95,7 @@ public class JsonSchemaMappingReader {
 
     private List<TableMapping> validateAndParseJsonArray(final JsonArray jsonArray) {
         final List<TableMapping> result = new ArrayList<>();
-        for (final var jsonValue : jsonArray) {
+        for (final JsonValue jsonValue : jsonArray) {
             result.addAll(validateAndParseJsonObject(jsonValue));
         }
         return result;
