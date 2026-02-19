@@ -1,35 +1,5 @@
 package com.exasol.adapter.document;
 
-import static com.exasol.adapter.document.GenericUdfCallHandler.*;
-import static com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
-import static com.exasol.matcher.ResultSetStructureMatcher.table;
-import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.*;
-import java.sql.Date;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.*;
-import java.util.concurrent.TimeoutException;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-import java.util.stream.Stream;
-
-import org.apache.maven.it.VerificationException;
-import org.apache.maven.it.Verifier;
-import org.hamcrest.Matcher;
-import org.junit.jupiter.api.*;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-
 import com.exasol.adapter.document.edml.*;
 import com.exasol.adapter.document.edml.EdmlDefinition.EdmlDefinitionBuilder;
 import com.exasol.adapter.document.edml.serializer.EdmlSerializer;
@@ -42,6 +12,38 @@ import com.exasol.exasoltestsetup.ExasolTestSetup;
 import com.exasol.exasoltestsetup.testcontainers.ExasolTestcontainerTestSetup;
 import com.exasol.mavenprojectversiongetter.MavenProjectVersionGetter;
 import com.exasol.udfdebugging.UdfTestSetup;
+import org.apache.maven.it.VerificationException;
+import org.apache.maven.it.Verifier;
+import org.hamcrest.Matcher;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.sql.*;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.TimeoutException;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import static com.exasol.adapter.document.GenericUdfCallHandler.*;
+import static com.exasol.adapter.document.edml.ConvertableMappingErrorBehaviour.CONVERT_OR_ABORT;
+import static com.exasol.matcher.ResultSetStructureMatcher.table;
+import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Tag("integration")
 @SuppressWarnings("try") // auto-closeable resource virtualSchema is never referenced in body of corresponding try
@@ -223,8 +225,9 @@ class DocumentAdapterIT {
     @Test
     void testToTimestampMapping() {
         final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp", ToTimestampMapping.builder().notTimestampBehavior(CONVERT_OR_ABORT).build())//
-                .build();
+                .mapField("my_timestamp", ToTimestampMapping.builder()
+                        .secondsPrecision(3).notTimestampBehavior(CONVERT_OR_ABORT).build())//
+                        .build();
         final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
         final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
                 .withUtcCalendar()//
@@ -243,7 +246,8 @@ class DocumentAdapterIT {
     }
 
     static Stream<Arguments> emptyQueryPlanTypes() {
-        return Stream.of(fieldType("my_timestamp", ToTimestampMapping.builder().build(), "TIMESTAMP"), //
+        return Stream.of(
+                fieldType("my_timestamp", ToTimestampMapping.builder().secondsPrecision(3).build(), "TIMESTAMP"), //
                 fieldType("publication_date", ToDateMapping.builder().build(), "DATE"),
                 fieldType("isbn", ToDoubleMapping.builder().build(), "DOUBLE PRECISION"),
                 fieldType("name", ToBoolMapping.builder().build(), "BOOLEAN"),
@@ -297,6 +301,31 @@ class DocumentAdapterIT {
     }
 
     @Test
+    void testInlineMappingSingleObject() {
+        final Fields mapping = Fields.builder()
+                .mapField("isbn", ToDoubleMapping.builder()
+                        .notNumericBehaviour(CONVERT_OR_ABORT)
+                        .build())
+                .build();
+
+        final EdmlDefinition t1 = EdmlDefinition.builder()
+                .source("")
+                .destinationTable("T1")
+                .mapping(mapping)
+                .build();
+
+        final EdmlSerializer edmlSerializer = new EdmlSerializer();
+        final String mappingString = edmlSerializer.serialize(t1); // single object
+
+        try (final VirtualSchema virtualSchema = createVirtualSchema(mappingString)) {
+            assertThat(virtualSchema, notNullValue());
+            assertQueryResult(
+                    "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1",
+                    table().row("123456789").matches(NO_JAVA_TYPE_CHECK));
+        }
+    }
+
+    @Test
     void testInlineMappingArray() {
         final Fields mapping = Fields.builder()//
                 .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
@@ -310,9 +339,71 @@ class DocumentAdapterIT {
         final EdmlSerializer edmlSerializer = new EdmlSerializer();
         final String mappingString = "[" + edmlSerializer.serialize(t1) + ", " + edmlSerializer.serialize(t2) + "]";
         try (final VirtualSchema virtualSchema = createVirtualSchema(mappingString)) {
+            assertThat(virtualSchema, notNullValue());
             assertQueryResult(
                     "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1 UNION ALL SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T2",
                     table().row("123456789").row("123456789").matches(NO_JAVA_TYPE_CHECK));
+        }
+    }
+
+    @Test
+    void testFileMappingSingleObject() throws Exception {
+        final Fields mapping = Fields.builder()
+                .mapField("isbn", ToDoubleMapping.builder()
+                        .notNumericBehaviour(CONVERT_OR_ABORT)
+                        .build())
+                .build();
+
+        final EdmlDefinition t1 = EdmlDefinition.builder()
+                .source("")
+                .destinationTable("T1")
+                .mapping(mapping)
+                .build();
+
+        final EdmlSerializer edmlSerializer = new EdmlSerializer();
+        final String mappingString = edmlSerializer.serialize(t1); // single object
+
+        testSetup.getDefaultBucket()
+                .uploadStringContent(mappingString, "mapping_single.json");
+
+        try (final VirtualSchema virtualSchema =
+                     createVirtualSchema("/bfsdefault/default/mapping_single.json")) {
+            assertThat(virtualSchema, notNullValue());
+            assertQueryResult(
+                    "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1",
+                    table().row("123456789").matches(NO_JAVA_TYPE_CHECK));
+        }
+    }
+
+    @Test
+    void testFileMappingArray() throws Exception {
+        final Fields mapping = Fields.builder()//
+                .mapField("isbn", ToDoubleMapping.builder().notNumericBehaviour(CONVERT_OR_ABORT).build())//
+                .build();
+
+        final EdmlDefinition t1 = EdmlDefinition.builder().source("")//
+                .destinationTable("T1")//
+                .mapping(mapping).build();
+
+        final EdmlDefinition t2 = EdmlDefinition.builder().source("")//
+                .destinationTable("T2")//
+                .mapping(mapping).build();
+
+        final EdmlSerializer edmlSerializer = new EdmlSerializer();
+        final String mappingString =
+                "[" + edmlSerializer.serialize(t1) + ", " + edmlSerializer.serialize(t2) + "]";
+
+        testSetup.getDefaultBucket()
+                .uploadStringContent(mappingString, "mapping_array.json");
+
+        try (final VirtualSchema virtualSchema =
+                     createVirtualSchema("/bfsdefault/default/mapping_array.json")) {
+            assertThat(virtualSchema, notNullValue());
+            assertQueryResult(
+                    "SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T1 " +
+                            "UNION ALL SELECT * FROM " + MY_VIRTUAL_SCHEMA + ".T2",
+                    table().row("123456789").row("123456789")
+                            .matches(NO_JAVA_TYPE_CHECK));
         }
     }
 
