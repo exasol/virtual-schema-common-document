@@ -14,14 +14,14 @@ import org.junit.jupiter.api.Test;
 
 class FlatMapIteratorTest {
     @Test
-    @SuppressWarnings("resource") // Iterator not closed in test
     void testFlatMap() {
         final List<Integer> result = new ArrayList<>();
-        final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
+        try (final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
                 new CloseableIteratorWrapper<>(List.of(1, 3).iterator()),
-                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()));
-        iterator.forEachRemaining(result::add);
-        assertThat(result, Matchers.contains(1, 2, 3, 4));
+                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()))) {
+            iterator.forEachRemaining(result::add);
+            assertThat(result, Matchers.contains(1, 2, 3, 4));
+        }
     }
 
     @Test
@@ -44,11 +44,11 @@ class FlatMapIteratorTest {
     }
 
     @Test
-    @SuppressWarnings("resource") // Iterator not closed in test
     void testEmpty() {
-        final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
+        try (final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
                 new CloseableIteratorWrapper<>(Collections.emptyIterator()),
-                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()));
-        assertFalse(iterator.hasNext());
+                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()))) {
+            assertFalse(iterator.hasNext());
+        }
     }
 }

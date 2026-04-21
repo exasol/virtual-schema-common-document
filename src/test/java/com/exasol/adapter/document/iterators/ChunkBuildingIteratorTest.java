@@ -13,21 +13,21 @@ import org.junit.jupiter.api.Test;
 class ChunkBuildingIteratorTest {
 
     @Test
-    @SuppressWarnings("resource") // Iterator not closed in test
     void testBuildChunk() {
-        final ChunkBuildingIterator<Integer> iterator = new ChunkBuildingIterator<>(
-                new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), 2);
-        final List<List<Integer>> chunks = new ArrayList<>();
-        iterator.forEachRemaining(chunks::add);
-        assertThat(chunks, Matchers.contains(List.of(1, 2), List.of(3)));
+        try (final ChunkBuildingIterator<Integer> iterator = new ChunkBuildingIterator<>(
+                new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), 2)) {
+            final List<List<Integer>> chunks = new ArrayList<>();
+            iterator.forEachRemaining(chunks::add);
+            assertThat(chunks, Matchers.contains(List.of(1, 2), List.of(3)));
+        }
     }
 
     @Test
-    @SuppressWarnings("resource") // Iterator not closed in test
     void testNoSuchElementException() {
-        final ChunkBuildingIterator<Object> iterator = new ChunkBuildingIterator<>(
-                new CloseableIteratorWrapper<>(Collections.emptyIterator()), 2);
-        assertThrows(NoSuchElementException.class, iterator::next);
+        try (final ChunkBuildingIterator<Object> iterator = new ChunkBuildingIterator<>(
+                new CloseableIteratorWrapper<>(Collections.emptyIterator()), 2)) {
+            assertThrows(NoSuchElementException.class, iterator::next);
+        }
     }
 
     @Test
