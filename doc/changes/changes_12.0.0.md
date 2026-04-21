@@ -1,12 +1,14 @@
-# Common Virtual Schema for Document Data 12.0.0, released 2026-??-??
+# Common Virtual Schema for Document Data 12.0.0, released 2026-04-21
 
-Code name:
+Code name: Anonymous feature tracking
 
 ## Summary
 
+This release adds anonymous feature tracking using the [telemetry-java](https://github.com/exasol/telemetry-java) library. When you integrate this new version into another product, please observe the [required user documentation](https://github.com/exasol/telemetry-java/blob/main/doc/integration-guide.md#required-documentation).
+
 ## Features
 
-* ISSUE_NUMBER: description
+* #210: Add anonymous feature tracking
 
 ## Dependency Updates
 
