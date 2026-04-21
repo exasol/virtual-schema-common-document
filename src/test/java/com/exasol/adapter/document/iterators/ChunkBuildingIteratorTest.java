@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -16,6 +13,7 @@ import org.junit.jupiter.api.Test;
 class ChunkBuildingIteratorTest {
 
     @Test
+    @SuppressWarnings("resource") // Iterator not closed in test
     void testBuildChunk() {
         final ChunkBuildingIterator<Integer> iterator = new ChunkBuildingIterator<>(
                 new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), 2);
@@ -25,6 +23,7 @@ class ChunkBuildingIteratorTest {
     }
 
     @Test
+    @SuppressWarnings("resource") // Iterator not closed in test
     void testNoSuchElementException() {
         final ChunkBuildingIterator<Object> iterator = new ChunkBuildingIterator<>(
                 new CloseableIteratorWrapper<>(Collections.emptyIterator()), 2);

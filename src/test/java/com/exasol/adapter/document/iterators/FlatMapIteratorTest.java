@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.hamcrest.Matchers;
@@ -16,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class FlatMapIteratorTest {
     @Test
+    @SuppressWarnings("resource") // Iterator not closed in test
     void testFlatMap() {
         final List<Integer> result = new ArrayList<>();
         final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
@@ -45,6 +44,7 @@ class FlatMapIteratorTest {
     }
 
     @Test
+    @SuppressWarnings("resource") // Iterator not closed in test
     void testEmpty() {
         final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
                 new CloseableIteratorWrapper<>(Collections.emptyIterator()),
