@@ -6,9 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.hamcrest.Matchers;
@@ -18,11 +16,12 @@ class FlatMapIteratorTest {
     @Test
     void testFlatMap() {
         final List<Integer> result = new ArrayList<>();
-        final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
+        try (final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
                 new CloseableIteratorWrapper<>(List.of(1, 3).iterator()),
-                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()));
-        iterator.forEachRemaining(result::add);
-        assertThat(result, Matchers.contains(1, 2, 3, 4));
+                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()))) {
+            iterator.forEachRemaining(result::add);
+            assertThat(result, Matchers.contains(1, 2, 3, 4));
+        }
     }
 
     @Test
@@ -46,9 +45,10 @@ class FlatMapIteratorTest {
 
     @Test
     void testEmpty() {
-        final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
+        try (final FlatMapIterator<Integer, Integer> iterator = new FlatMapIterator<>(
                 new CloseableIteratorWrapper<>(Collections.emptyIterator()),
-                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()));
-        assertFalse(iterator.hasNext());
+                x -> new CloseableIteratorWrapper<>(List.of(x, x + 1).iterator()))) {
+            assertFalse(iterator.hasNext());
+        }
     }
 }

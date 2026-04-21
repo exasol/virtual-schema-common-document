@@ -5,10 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -17,18 +14,20 @@ class ChunkBuildingIteratorTest {
 
     @Test
     void testBuildChunk() {
-        final ChunkBuildingIterator<Integer> iterator = new ChunkBuildingIterator<>(
-                new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), 2);
-        final List<List<Integer>> chunks = new ArrayList<>();
-        iterator.forEachRemaining(chunks::add);
-        assertThat(chunks, Matchers.contains(List.of(1, 2), List.of(3)));
+        try (final ChunkBuildingIterator<Integer> iterator = new ChunkBuildingIterator<>(
+                new CloseableIteratorWrapper<>(List.of(1, 2, 3).iterator()), 2)) {
+            final List<List<Integer>> chunks = new ArrayList<>();
+            iterator.forEachRemaining(chunks::add);
+            assertThat(chunks, Matchers.contains(List.of(1, 2), List.of(3)));
+        }
     }
 
     @Test
     void testNoSuchElementException() {
-        final ChunkBuildingIterator<Object> iterator = new ChunkBuildingIterator<>(
-                new CloseableIteratorWrapper<>(Collections.emptyIterator()), 2);
-        assertThrows(NoSuchElementException.class, iterator::next);
+        try (final ChunkBuildingIterator<Object> iterator = new ChunkBuildingIterator<>(
+                new CloseableIteratorWrapper<>(Collections.emptyIterator()), 2)) {
+            assertThrows(NoSuchElementException.class, iterator::next);
+        }
     }
 
     @Test

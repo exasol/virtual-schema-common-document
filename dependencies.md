@@ -76,7 +76,7 @@
 [11]: https://github.com/exasol/maven-project-version-getter/blob/main/LICENSE
 [12]: http://hamcrest.org/JavaHamcrest/
 [13]: https://raw.githubusercontent.com/hamcrest/JavaHamcrest/master/LICENSE
-[14]: https://junit.org/junit5/
+[14]: https://junit.org/
 [15]: https://www.eclipse.org/legal/epl-v20.html
 [16]: https://github.com/mockito/mockito
 [17]: https://opensource.org/licenses/MIT
