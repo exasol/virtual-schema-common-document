@@ -1,7 +1,6 @@
 package com.exasol.adapter.document.mock;
 
-import com.exasol.adapter.AdapterFactory;
-import com.exasol.adapter.VirtualSchemaAdapter;
+import com.exasol.adapter.*;
 import com.exasol.adapter.document.DocumentAdapter;
 import com.exasol.logging.VersionCollector;
 
@@ -10,7 +9,7 @@ import com.exasol.logging.VersionCollector;
  */
 public class FixedDataAdapterFactory implements AdapterFactory {
     @Override
-    public VirtualSchemaAdapter createAdapter() {
+    public VirtualSchemaAdapter createAdapter(AdapterContext context) {
         return new DocumentAdapter(new FixedDataAdapterDialect());
     }
 
@@ -24,5 +23,11 @@ public class FixedDataAdapterFactory implements AdapterFactory {
     @Override
     public String getAdapterName() {
         return FixedDataAdapterDialect.ADAPTER_NAME;
+    }
+
+
+    @Override
+    public String getAdapterProjectShortTag() {
+        return "VSFIXEDDATA";
     }
 }
