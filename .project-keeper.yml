@@ -10,6 +10,7 @@ build:
   freeDiskSpace: false
   exasolDbVersions:
     - "2025.2.1"
+    - "2025.1.10"
     - "7.1.30"
 
   workflows:
