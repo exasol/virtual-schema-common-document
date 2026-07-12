@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <artifactId>virtual-schema-common-document</artifactId>
-    <version>12.0.2</version>
+    <version>12.0.3</version>
     <name>Common Virtual Schema for document data</name>
     <description>Common module of Exasol Virtual Schema Adapters for Document Data Sources.</description>
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
-        <vscommon.version>18.0.1</vscommon.version>
+        <vscommon.version>18.0.3</vscommon.version>
     </properties>
     <profiles>
         <profile>
@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.logicng</groupId>
             <artifactId>logicng</artifactId>
-            <version>2.6.0</version>
+            <version>2.6.2</version>
         </dependency>
         <dependency>
             <groupId>com.exasol</groupId>
@@ -62,7 +62,7 @@
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-params</artifactId>
             <!-- Version 6 requires Java 17 -->
-            <version>5.14.4</version>
+            <version>6.1.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jdk14</artifactId>
-            <version>2.0.17</version>
+            <version>2.0.18</version>
             <scope>test</scope>
         </dependency>
         <!-- integration test dependencies -->
@@ -100,7 +100,7 @@
         <dependency>
             <groupId>com.exasol</groupId>
             <artifactId>test-db-builder-java</artifactId>
-            <version>4.0.0</version>
+            <version>4.0.1</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -137,7 +137,7 @@
             <groupId>nl.jqno.equalsverifier</groupId>
             <artifactId>equalsverifier</artifactId>
             <!-- Version 4 requires Java 17 -->
-            <version>3.19.4</version>
+            <version>4.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -169,7 +169,7 @@
             <plugin>
                 <groupId>com.exasol</groupId>
                 <artifactId>project-keeper-maven-plugin</artifactId>
-                <version>5.6.2</version>
+                <version>5.7.3</version>
                 <executions>
                     <execution>
                         <goals>
@@ -236,7 +236,7 @@
     <parent>
         <artifactId>virtual-schema-common-document-generated-parent</artifactId>
         <groupId>com.exasol</groupId>
-        <version>12.0.2</version>
+        <version>12.0.3</version>
         <relativePath>pk_generated_parent.pom</relativePath>
     </parent>
 </project>
