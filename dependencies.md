@@ -36,9 +36,9 @@
 | ------------------------------------------------------- | ---------------------------------------------- |
 | [SonarQube Scanner for Maven][35]                       | [GNU LGPL 3][36]                               |
 | [Apache Maven Toolchains Plugin][37]                    | [Apache-2.0][5]                                |
-| [Apache Maven JAR Plugin][38]                           | [Apache-2.0][5]                                |
-| [Project Keeper Maven plugin][39]                       | [The MIT License][40]                          |
-| [Apache Maven Compiler Plugin][41]                      | [Apache-2.0][5]                                |
+| [Apache Maven Compiler Plugin][38]                      | [Apache-2.0][5]                                |
+| [Apache Maven JAR Plugin][39]                           | [Apache-2.0][5]                                |
+| [Project Keeper Maven plugin][40]                       | [The MIT License][41]                          |
 | [Apache Maven Enforcer Plugin][42]                      | [Apache-2.0][5]                                |
 | [Maven Flatten Plugin][43]                              | [Apache Software License][5]                   |
 | [org.sonatype.ossindex.maven:ossindex-maven-plugin][44] | [ASL2][45]                                     |
@@ -101,10 +101,10 @@
 [35]: https://docs.sonarsource.com/sonarqube-server/latest/extension-guide/developing-a-plugin/plugin-basics/sonar-scanner-maven/sonar-maven-plugin/
 [36]: http://www.gnu.org/licenses/lgpl.txt
 [37]: https://maven.apache.org/plugins/maven-toolchains-plugin/
-[38]: https://maven.apache.org/plugins/maven-jar-plugin/
-[39]: https://github.com/exasol/project-keeper/
-[40]: https://github.com/exasol/project-keeper/blob/main/LICENSE
-[41]: https://maven.apache.org/plugins/maven-compiler-plugin/
+[38]: https://maven.apache.org/plugins/maven-compiler-plugin/
+[39]: https://maven.apache.org/plugins/maven-jar-plugin/
+[40]: https://github.com/exasol/project-keeper/
+[41]: https://github.com/exasol/project-keeper/blob/main/LICENSE
 [42]: https://maven.apache.org/enforcer/maven-enforcer-plugin/
 [43]: https://www.mojohaus.org/flatten-maven-plugin/
 [44]: https://sonatype.github.io/ossindex-maven/maven-plugin/
