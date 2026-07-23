@@ -102,10 +102,10 @@ class DocumentAdapterIT {
         try {
             final Path aggregatorProjectDir = Path.of("test-project/aggregator").toAbsolutePath();
             mvnRunner = new Verifier(aggregatorProjectDir.toString());
-            final String java17JdkHome = getJava17JdkHome();
-            LOGGER.info(() -> "Building mock-project at " + aggregatorProjectDir + " using JDK " + java17JdkHome);
+            final String javaJdkHome = getJava21JdkHome();
+            LOGGER.info(() -> "Building mock-project at " + aggregatorProjectDir + " using JDK " + javaJdkHome);
             final Instant start = Instant.now();
-            mvnRunner.setEnvironmentVariable("JAVA_HOME", java17JdkHome);
+            mvnRunner.setEnvironmentVariable("JAVA_HOME", javaJdkHome);
             mvnRunner.setSystemProperty("skipTests", "true");
             mvnRunner.setSystemProperty("maven.test.skip", "true");
             mvnRunner.setSystemProperty("ossindex.skip", "true");
@@ -127,18 +127,19 @@ class DocumentAdapterIT {
     }
 
     /**
-     * Maven build of aggregator module must run with Java 17. This is a workaround this project is migrated to Java 17.
+     * Maven build of aggregator module {@code test-project/aggregator/pom.xml} must run with Java 21.
+     * The mock project {@code test-project/mock-project/pom.xml} included by the aggregator uses {@code maven-toolchains-plugin} to select JDK 11 for
+     * compilation.
      * <p>
-     * This tries to find the path using environment variables {@code JAVA17_HOME} or {@code JAVA_HOME_17_X64}.
-     * 
-     * @return path to JDK 17 home.
+     * This tries to find the path using environment variables {@code JAVA21_HOME} or {@code JAVA_HOME_21_X64}.
+     *
+     * @return path to JDK 21 home.
      */
-    private static String getJava17JdkHome() {
-        final List<String> envVariables = List.of("JAVA17_HOME", "JAVA_HOME_17_X64");
-        return findEnvVariable(envVariables) //
-                .or(() -> currentJvm()) //
-                .orElseThrow(
-                        () -> new IllegalStateException("Failed to detect JDK 17 using env variables " + envVariables));
+    private static String getJava21JdkHome() {
+        final List<String> envVariables = List.of("JAVA21_HOME", "JAVA_HOME_21_X64");
+        return findEnvVariable(envVariables)
+                .or(() -> currentJvm())
+                .orElseThrow(() -> new IllegalStateException("Failed to find JDK 21 using env variables " + envVariables));
     }
 
     private static Optional<String> findEnvVariable(final List<String> envVariables) {
@@ -146,7 +147,7 @@ class DocumentAdapterIT {
     }
 
     private static Optional<String> currentJvm() {
-        if (Runtime.version().feature() == 17) {
+        if (Runtime.version().feature() == 21) {
             return Optional.of(System.getProperty("java.home"));
         } else {
             return Optional.empty();
