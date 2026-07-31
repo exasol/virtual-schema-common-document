@@ -222,14 +222,18 @@ class DocumentAdapterIT {
 
     @Test
     void testToTimestampMapping() {
-        final Fields mapping = Fields.builder()//
-                .mapField("my_timestamp", ToTimestampMapping.builder()
-                        .secondsPrecision(3).notTimestampBehavior(CONVERT_OR_ABORT).build())//
+        final Fields mapping = Fields.builder()
+                .mapField("my_timestamp", ToTimestampMapping.builder().secondsPrecision(3).notTimestampBehavior(CONVERT_OR_ABORT).build())
+                .mapField("my_timestamp_micros", ToTimestampMapping.builder().secondsPrecision(6).notTimestampBehavior(CONVERT_OR_ABORT).build())
+                .mapField("my_timestamp_nanos", ToTimestampMapping.builder().secondsPrecision(9).notTimestampBehavior(CONVERT_OR_ABORT).build())
                 .build();
-        final String query = "SELECT MY_TIMESTAMP FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
-        final Matcher<ResultSet> expectedResult = table("TIMESTAMP").row(new Timestamp(1632297287000L))
-                .withUtcCalendar()//
-                .matches(NO_JAVA_TYPE_CHECK);
+        final String query = "SELECT MY_TIMESTAMP, MY_TIMESTAMP_MICROS, MY_TIMESTAMP_NANOS FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        final Matcher<ResultSet> expectedResult = table("TIMESTAMP", "TIMESTAMP", "TIMESTAMP")
+                .row(new Timestamp(1632297287123L),
+                        Timestamp.from(Instant.parse("2021-09-22T10:34:47.123456Z")),
+                        Timestamp.from(Instant.parse("2021-09-22T10:34:47.123456789Z")))
+                .withUtcCalendar()
+                .matches();
         assertVirtualSchemaQuery(mapping, query, expectedResult);
     }
 
