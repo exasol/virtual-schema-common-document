@@ -33,19 +33,18 @@ import com.exasol.sql.rendering.StringRendererConfig;
 
 /**
  * This class builds push down SQL statement with a UDF call to {@link GenericUdfCallHandler}.
- *
  * <p>
  * The push down statement consists of three cascaded statements.
  *
  * Consider the following example:
  *
- *
+ * <pre>
  * SELECT COL1 FROM (
- *
- * SELECT UDF(PARAMS) EMITS (COL1, COL2) FROM VALUES ((v1, 1), (v2, 2), (v3, 3)) AS P1, C GROUP BY C
- *
+ *   SELECT UDF(PARAMS) EMITS (COL1, COL2)
+ *   FROM VALUES ((v1, 1), (v2, 2), (v3, 3)) AS P1, C
+ *   GROUP BY C
  * ) WHERE COL2 = X
- * </p>
+ * </pre>
  */
 public class UdfCallBuilder {
     private static final Logger LOG = Logger.getLogger(UdfCallBuilder.class.getName());
