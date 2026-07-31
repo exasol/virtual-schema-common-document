@@ -7,6 +7,7 @@ import static com.exasol.matcher.TypeMatchMode.NO_JAVA_TYPE_CHECK;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -222,6 +223,7 @@ class DocumentAdapterIT {
 
     @Test
     void testToTimestampMapping() {
+        assumeTimestampPrecisionSupported();
         final Fields mapping = Fields.builder()
                 .mapField("my_timestamp", ToTimestampMapping.builder().secondsPrecision(3).notTimestampBehavior(CONVERT_OR_ABORT).build())
                 .mapField("my_timestamp_micros", ToTimestampMapping.builder().secondsPrecision(6).notTimestampBehavior(CONVERT_OR_ABORT).build())
@@ -232,6 +234,25 @@ class DocumentAdapterIT {
                 .row(new Timestamp(1632297287123L),
                         Timestamp.from(Instant.parse("2021-09-22T10:34:47.123456Z")),
                         Timestamp.from(Instant.parse("2021-09-22T10:34:47.123456789Z")))
+                .withUtcCalendar()
+                .matches();
+        assertVirtualSchemaQuery(mapping, query, expectedResult);
+    }
+
+    /**
+     * Exasol v8 only supports {@code TIMESTAMP(3)} and {@code TIMESTAMP(6)}. It maps {@code TIMESTAMP(6)} to precision 3. All other timestamp precisions are
+     * rejected with error message {@code Feature not supported: TIMESTAMP(p) - timestamp with custom precision}.
+     */
+    @Test
+    void testToTimestampMappingTimestampPrecisionNotSupported() {
+        assumeTimestampPrecisionNotSupported();
+        final Fields mapping = Fields.builder()
+                .mapField("my_timestamp", ToTimestampMapping.builder().secondsPrecision(3).notTimestampBehavior(CONVERT_OR_ABORT).build())
+                .mapField("my_timestamp_micros", ToTimestampMapping.builder().secondsPrecision(6).notTimestampBehavior(CONVERT_OR_ABORT).build())
+                .build();
+        final String query = "SELECT MY_TIMESTAMP, MY_TIMESTAMP_MICROS FROM " + MY_VIRTUAL_SCHEMA + ".BOOKS;";
+        final Matcher<ResultSet> expectedResult = table("TIMESTAMP", "TIMESTAMP")
+                .row(new Timestamp(1632297287123L), Timestamp.from(Instant.parse("2021-09-22T10:34:47.123Z")))
                 .withUtcCalendar()
                 .matches();
         assertVirtualSchemaQuery(mapping, query, expectedResult);
@@ -462,6 +483,29 @@ class DocumentAdapterIT {
             assertThat(resultSet, matcher);
         } catch (final SQLException exception) {
             throw new IllegalStateException("Failed to run query '" + sql + "': " + exception.getMessage());
+        }
+    }
+
+    private void assumeTimestampPrecisionSupported() {
+        final int majorVersion = getExasolDatabaseMajorVersion();
+        assumeTrue(majorVersion > 8, "Timestamp precision is not supported in Exasol version " + majorVersion);
+    }
+
+    private void assumeTimestampPrecisionNotSupported() {
+        final int majorVersion = getExasolDatabaseMajorVersion();
+        assumeTrue(majorVersion <= 8, "Timestamp precision is supported in Exasol version " + majorVersion);
+    }
+
+    private int getExasolDatabaseMajorVersion() {
+        try (Statement stmt = connection.createStatement();
+                final ResultSet result = stmt.executeQuery("select \"VALUE\" from SYS.DB_METADATA where name = 'databaseMajorVersion'")) {
+            if (result.next()) {
+                return result.getInt(1);
+            } else {
+                throw new IllegalStateException("Failed to get Exasol database version.");
+            }
+        } catch (final SQLException exception) {
+            throw new IllegalStateException("Failed to get Exasol database version: " + exception.getMessage(), exception);
         }
     }
 }
