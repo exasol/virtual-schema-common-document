@@ -33,17 +33,17 @@ import com.exasol.sql.rendering.StringRendererConfig;
 
 /**
  * This class builds push down SQL statement with a UDF call to {@link GenericUdfCallHandler}.
- * 
+ *
  * <p>
  * The push down statement consists of three cascaded statements.
- * 
+ *
  * Consider the following example:
  *
- * 
+ *
  * SELECT COL1 FROM (
- * 
+ *
  * SELECT UDF(PARAMS) EMITS (COL1, COL2) FROM VALUES ((v1, 1), (v2, 2), (v3, 3)) AS P1, C GROUP BY C
- * 
+ *
  * ) WHERE COL2 = X
  * </p>
  */
@@ -72,7 +72,7 @@ public class UdfCallBuilder {
      * Build push down SQL statement with a UDF call to {@link GenericUdfCallHandler}. Each document fetcher gets a row
      * that is passed to a UDF. Since it is not possible to pass data to all UDF calls also the query is added to each
      * row, even though it is the same for all rows.
-     * 
+     *
      * @param queryPlan plan for the query
      * @param query     document query that is passed to the UDF
      * @return built SQL statement
@@ -91,7 +91,7 @@ public class UdfCallBuilder {
             return renderStatement(select);
         } else {
             final FetchQueryPlan fetchPlan = (FetchQueryPlan) queryPlan;
-            LOG.fine("Build pushdown query for fetch query query plan");
+            LOG.fine("Build pushdown query for fetch-query plan");
             final Select udfCallStatement = buildUdfCallStatement(query, fetchPlan);
             final Select pushDownSelect = wrapStatementInStatementWithPostSelectionAndProjection(selectList,
                     fetchPlan.getPostSelection(), udfCallStatement);
@@ -160,8 +160,8 @@ public class UdfCallBuilder {
     }
 
     private List<Column> buildColumnDefinitions(final List<ColumnMapping> requiredColumns, final Select udfCallSelect) {
-        return requiredColumns.stream() //
-                .map(column -> createColumn(udfCallSelect, column)) //
+        return requiredColumns.stream()
+                .map(column -> createColumn(udfCallSelect, column))
                 .collect(Collectors.toList());
     }
 
@@ -209,25 +209,25 @@ public class UdfCallBuilder {
 
     private com.exasol.datatype.type.DataType convertDataType(final DataType adapterDataType) {
         switch (adapterDataType.getExaDataType()) {
-        case DECIMAL:
-            return new Decimal(adapterDataType.getPrecision(), adapterDataType.getScale());
-        case DOUBLE:
-            return new DoublePrecision();
-        case VARCHAR:
-            return new Varchar(adapterDataType.getSize());
-        case CHAR:
-            return new Char(adapterDataType.getSize());
-        case DATE:
-            return new Date();
-        case TIMESTAMP:
-            // We ignore "WITH LOCAL TIME ZONE" here since UDFs don't support it and we don't need to support it.
-            return new Timestamp();
-        case BOOLEAN:
-            return new Boolean();
-        default:
-            throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-69")
-                    .message("Unimplemented conversion of type {{TYPE}}.")
-                    .parameter("TYPE", adapterDataType.getExaDataType().toString()).ticketMitigation().toString());
+            case DECIMAL:
+                return new Decimal(adapterDataType.getPrecision(), adapterDataType.getScale());
+            case DOUBLE:
+                return new DoublePrecision();
+            case VARCHAR:
+                return new Varchar(adapterDataType.getSize());
+            case CHAR:
+                return new Char(adapterDataType.getSize());
+            case DATE:
+                return new Date();
+            case TIMESTAMP:
+                // We ignore "WITH LOCAL TIME ZONE" here since UDFs don't support it and we don't need to support it.
+                return new Timestamp(adapterDataType.getPrecision());
+            case BOOLEAN:
+                return new Boolean();
+            default:
+                throw new UnsupportedOperationException(ExaError.messageBuilder("F-VSD-69")
+                        .message("Unimplemented conversion of type {{TYPE}}.")
+                        .parameter("TYPE", adapterDataType.getExaDataType().toString()).ticketMitigation().toString());
         }
     }
 
