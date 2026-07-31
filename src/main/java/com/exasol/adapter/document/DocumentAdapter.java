@@ -6,18 +6,12 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import com.exasol.ExaConnectionAccessException;
-import com.exasol.ExaConnectionInformation;
-import com.exasol.ExaMetadata;
-import com.exasol.adapter.AdapterException;
-import com.exasol.adapter.AdapterProperties;
-import com.exasol.adapter.VirtualSchemaAdapter;
+import com.exasol.*;
+import com.exasol.adapter.*;
 import com.exasol.adapter.capabilities.*;
 import com.exasol.adapter.document.connection.ConnectionPropertiesReader;
 import com.exasol.adapter.document.connection.ConnectionStringReader;
-import com.exasol.adapter.document.mapping.SchemaMapping;
-import com.exasol.adapter.document.mapping.SchemaMappingToSchemaMetadataConverter;
-import com.exasol.adapter.document.mapping.TableKeyFetcher;
+import com.exasol.adapter.document.mapping.*;
 import com.exasol.adapter.document.mapping.auto.SchemaFetcher;
 import com.exasol.adapter.document.mapping.auto.SchemaInferencer;
 import com.exasol.adapter.document.mapping.reader.JsonSchemaMappingReader;
@@ -146,9 +140,9 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
         // the virtual schema)
         final RemoteTableQuery remoteTableQuery = new RemoteTableQueryFactory().build(sqlQuery, adapterNotes);
         final String responseStatement = runQuery(exaMetadata, request, remoteTableQuery);
-        logger.fine(() -> "Generated pushdown SQL: " + responseStatement);
-        return PushDownResponse.builder()//
-                .pushDownSql(responseStatement)//
+        logger.fine(() -> "Generated pushdown SQL: '" + responseStatement + "'");
+        return PushDownResponse.builder()
+                .pushDownSql(responseStatement)
                 .build();
     }
 
@@ -158,23 +152,23 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
      * <p>
      * This method follows these steps:
      * <ul>
-     *     <li>Logs the beginning of the planning process for the given remote table query.</li>
-     *     <li>Extracts adapter and connection properties from the request.</li>
-     *     <li>Obtains a {@link QueryPlanner} from the dialect using the connection information.</li>
-     *     <li>Calculates the number of cluster cores available for parallel execution.</li>
-     *     <li>Builds a {@link QueryPlan} for the remote table query.</li>
-     *     <li>Logs a summary of the generated plan and execution configuration.</li>
-     *     <li>Generates the SQL statement that calls the UDF to execute the planned query.</li>
-     *     <li>Logs the generated UDF call.</li>
+     * <li>Logs the beginning of the planning process for the given remote table query.</li>
+     * <li>Extracts adapter and connection properties from the request.</li>
+     * <li>Obtains a {@link QueryPlanner} from the dialect using the connection information.</li>
+     * <li>Calculates the number of cluster cores available for parallel execution.</li>
+     * <li>Builds a {@link QueryPlan} for the remote table query.</li>
+     * <li>Logs a summary of the generated plan and execution configuration.</li>
+     * <li>Generates the SQL statement that calls the UDF to execute the planned query.</li>
+     * <li>Logs the generated UDF call.</li>
      * </ul>
      *
-     * @param exaMetadata       metadata provided by the Exasol UDF framework
-     * @param request           the pushdown request containing the query and adapter context
-     * @param remoteTableQuery  the query that targets the remote table
+     * @param exaMetadata      metadata provided by the Exasol UDF framework
+     * @param request          the pushdown request containing the query and adapter context
+     * @param remoteTableQuery the query that targets the remote table
      * @return SQL string that calls the UDF to execute the planned query
      */
     private String runQuery(final ExaMetadata exaMetadata, final PushDownRequest request,
-                            final RemoteTableQuery remoteTableQuery) {
+            final RemoteTableQuery remoteTableQuery) {
         logFine(logger, "Starting to plan query | Remote table query: %s", remoteTableQuery.toString());
 
         final AdapterProperties adapterProperties = getPropertiesFromRequest(request);
@@ -195,8 +189,7 @@ public class DocumentAdapter implements VirtualSchemaAdapter {
                 scriptSchema,
                 queryPlan.getClass().getSimpleName(),
                 this.dialect.getAdapterName(),
-                connectionName
-        );
+                connectionName);
 
         final String udfCall = new UdfCallBuilder(connectionName, scriptSchema, this.dialect.getAdapterName())
                 .getUdfCallSql(queryPlan, remoteTableQuery);

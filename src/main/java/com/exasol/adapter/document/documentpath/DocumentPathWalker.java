@@ -3,9 +3,7 @@ package com.exasol.adapter.document.documentpath;
 import java.util.Optional;
 import java.util.function.BiFunction;
 
-import com.exasol.adapter.document.documentnode.DocumentArray;
-import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.DocumentObject;
+import com.exasol.adapter.document.documentnode.*;
 
 /**
  * This class walks a given path defined in {@link DocumentPathExpression} through a {@link DocumentNode} structure.
@@ -17,7 +15,7 @@ public class DocumentPathWalker {
 
     /**
      * Create an instance of {@link DocumentPathWalker}.
-     * 
+     *
      * @param pathExpression         path to walk
      * @param iterationStateProvider iteration state for {@link ArrayAllPathSegment}s in the path
      */
@@ -29,7 +27,7 @@ public class DocumentPathWalker {
 
     /**
      * Walks the path defined in constructor through the given document.
-     * 
+     *
      * @param rootNode document to walk through
      * @return document's attribute described in {@link DocumentPathExpression} or an empty {@link Optional} if the
      *         defined path does not exist in the given document
@@ -67,7 +65,8 @@ public class DocumentPathWalker {
     }
 
     private class WalkVisitor implements PathSegmentVisitor {
-        BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper;
+        // TODO: define a proper interface for this instead of using BiFunction
+        private BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper;
 
         @Override
         public void visit(final ObjectLookupPathSegment objectLookupPathSegment) {
