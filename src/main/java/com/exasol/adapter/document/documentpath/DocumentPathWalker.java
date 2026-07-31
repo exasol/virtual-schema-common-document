@@ -39,14 +39,11 @@ public class DocumentPathWalker {
         if (this.pathExpression.size() <= position) {
             return Optional.of(thisNode);
         }
-        final Stepper stepper = getStepperFor(
-                this.pathExpression.getSegments().get(position));
+        final Stepper stepper = getStepperFor(this.pathExpression.getSegments().get(position));
         return runTraverseStepper(stepper, thisNode, position);
     }
 
-    private Optional<DocumentNode> runTraverseStepper(
-            final Stepper traverseStepper,
-            final DocumentNode thisNode, final int position) {
+    private Optional<DocumentNode> runTraverseStepper(final Stepper traverseStepper, final DocumentNode thisNode, final int position) {
         final Optional<DocumentNode> nextNode = traverseStepper.nextNode(thisNode, this.pathExpression.getSubPath(0, position + 1));
         if (nextNode.isEmpty()) {
             return Optional.empty();
