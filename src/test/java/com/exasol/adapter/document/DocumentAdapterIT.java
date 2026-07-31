@@ -240,8 +240,12 @@ class DocumentAdapterIT {
     }
 
     /**
-     * Exasol v8 only supports {@code TIMESTAMP(3)} and {@code TIMESTAMP(6)}. It maps {@code TIMESTAMP(6)} to precision 3. All other timestamp precisions are
-     * rejected with error message {@code Feature not supported: TIMESTAMP(p) - timestamp with custom precision}.
+     * Exasol v8 only supports {@code TIMESTAMP(3)} and {@code TIMESTAMP(6)}.
+     * <p>
+     * It maps {@code TIMESTAMP(6)} to precision 3. All other timestamp precision
+     * variants are rejected with the following error message:
+     * {@code Feature not supported: TIMESTAMP(p) - timestamp with custom precision}
+     * </p>
      */
     @Test
     void testToTimestampMappingTimestampPrecisionNotSupported() {

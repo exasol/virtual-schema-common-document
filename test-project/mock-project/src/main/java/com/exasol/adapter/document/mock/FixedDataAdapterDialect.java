@@ -23,9 +23,9 @@ import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 
 /**
- * This class is a mock implementation of the interface that the virtual-schema-common-document defines.
+ * This class is a stub implementation of the interface that the virtual-schema-common-document defines.
  * <p>
- * We need this mock for testing the virtual-schema-common-document implementation.
+ * We need this stub for testing the virtual-schema-common-document implementation.
  * </p>
  * <p>
  * This adapter always returns the same hardcoded data.

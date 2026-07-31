@@ -83,7 +83,7 @@ class UdfCallBuilderTest {
 
     @ParameterizedTest
     @CsvSource({ "0,TIMESTAMP(0)", "1,TIMESTAMP(1)", "2,TIMESTAMP(2)",
-            "3,TIMESTAMP", // Precision 3 is the default
+            "3,TIMESTAMP", // Precision 3 is the default in the Exasol database
             "4,TIMESTAMP(4)", "5,TIMESTAMP(5)", "6,TIMESTAMP(6)", "7,TIMESTAMP(7)", "8,TIMESTAMP(8)", "9,TIMESTAMP(9)" })
     void testBasicSqlBuildingWithTimestampPrecisions(final int precision, final String expectedUdfEmitType) {
         final ColumnMapping column = PropertyToTimestampColumnMapping.builder().exasolColumnName("TEST_COLUMN").secondsPrecision(precision).build();
