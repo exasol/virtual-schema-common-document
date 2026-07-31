@@ -2,6 +2,7 @@ package com.exasol.adapter.document.mock;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -22,9 +23,9 @@ import com.exasol.adapter.document.queryplanning.RemoteTableQuery;
 import com.exasol.adapter.document.querypredicate.NoPredicate;
 
 /**
- * This class is a mock implementation of the interface that the virtual-schema-common-document defines.
+ * This class is a stub implementation of the interface that the virtual-schema-common-document defines.
  * <p>
- * We need this mock for testing the virtual-schema-common-document implementation.
+ * We need this stub for testing the virtual-schema-common-document implementation.
  * </p>
  * <p>
  * This adapter always returns the same hardcoded data.
@@ -90,10 +91,12 @@ public class FixedDataAdapterDialect implements DocumentAdapterDialect {
     private static class StaticDocumentFetcher implements DocumentFetcher {
         private static final long serialVersionUID = -5714529636662210400L;
         private static final ObjectHolderNode STATIC_VALUE = new ObjectHolderNode(
-                Map.of("isbn", new StringHolderNode("123456789"), //
-                        "name", new StringHolderNode("Tom Sawyer"), //
-                        "publication_date", new DateHolderNode(new Date(1632297287000L)), //
-                        "my_timestamp", new TimestampHolderNode(new Timestamp(1632297287000L))));
+                Map.of("isbn", new StringHolderNode("123456789"),
+                        "name", new StringHolderNode("Tom Sawyer"),
+                        "publication_date", new DateHolderNode(new Date(1632297287000L)),
+                        "my_timestamp", new TimestampHolderNode(new Timestamp(1632297287123L)),
+                        "my_timestamp_micros", new TimestampHolderNode(Timestamp.from(Instant.parse("2021-09-22T10:34:47.123456Z"))),
+                        "my_timestamp_nanos", new TimestampHolderNode(Timestamp.from(Instant.parse("2021-09-22T10:34:47.123456789Z")))));
 
         @Override
         public CloseableIterator<FetchedDocument> run(final ConnectionPropertiesReader connectionInformation) {

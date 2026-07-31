@@ -2,6 +2,7 @@ package com.exasol.adapter.document;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.matchesRegex;
 
 import java.util.List;
@@ -9,8 +10,7 @@ import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.*;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
 import com.exasol.adapter.document.mapping.*;
@@ -43,21 +43,27 @@ class UdfCallBuilderTest {
         assertThat(udfCallSql, equalTo("SELECT * FROM (VALUES (CAST(NULL AS  " + expectedCastType + "))) WHERE FALSE"));
     }
 
+    private static Arguments colType(final ColumnMapping column, final String expectedCastType) {
+        return Arguments.of(column, expectedCastType);
+    }
+
     static Stream<Arguments> columnTypes() {
         final String colName = "TEST_COLUMN";
         return Stream.of(
-                Arguments.of(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).build(), "TIMESTAMP"),
-                Arguments.of(PropertyToDateColumnMapping.builder().exasolColumnName(colName).build(), "DATE"),
-                Arguments.of(
-                        PropertyToJsonColumnMapping.builder().exasolColumnName(colName).varcharColumnSize(5).build(),
+                // Default precision for TIMESTAMP in edml-java is currently 6, this should be changed to 3 in https://github.com/exasol/edml-java/issues/31
+                colType(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).build(), "TIMESTAMP(6)"),
+                colType(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).secondsPrecision(3).build(), "TIMESTAMP"),
+                colType(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).secondsPrecision(6).build(), "TIMESTAMP(6)"),
+                colType(PropertyToTimestampColumnMapping.builder().exasolColumnName(colName).secondsPrecision(9).build(), "TIMESTAMP(9)"),
+                colType(PropertyToDateColumnMapping.builder().exasolColumnName(colName).build(), "DATE"),
+                colType(PropertyToJsonColumnMapping.builder().exasolColumnName(colName).varcharColumnSize(5).build(),
                         "VARCHAR(5)"),
-                Arguments.of(PropertyToBoolColumnMapping.builder().exasolColumnName(colName).build(), "BOOLEAN"),
-                Arguments.of(PropertyToDecimalColumnMapping.builder().exasolColumnName(colName).decimalPrecision(5)
+                colType(PropertyToBoolColumnMapping.builder().exasolColumnName(colName).build(), "BOOLEAN"),
+                colType(PropertyToDecimalColumnMapping.builder().exasolColumnName(colName).decimalPrecision(5)
                         .decimalScale(3).build(), "DECIMAL(5,3)"),
-                Arguments.of(PropertyToDoubleColumnMapping.builder().exasolColumnName(colName).build(),
+                colType(PropertyToDoubleColumnMapping.builder().exasolColumnName(colName).build(),
                         "DOUBLE PRECISION"),
-                Arguments.of(
-                        PropertyToVarcharColumnMapping.builder().exasolColumnName(colName).varcharColumnSize(5).build(),
+                colType(PropertyToVarcharColumnMapping.builder().exasolColumnName(colName).varcharColumnSize(5).build(),
                         "VARCHAR(5)"));
     }
 
@@ -73,6 +79,19 @@ class UdfCallBuilderTest {
                         + quoteRegex(", 'MY_CONNECTION') EMITS (\"TEST_COLUMN\" VARCHAR(123))"
                                 + " FROM (VALUES ) AS \"T\"(\"DATA_LOADER\", \"FRAGMENT_ID\")"
                                 + " GROUP BY \"FRAGMENT_ID\") WHERE TRUE")));
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "0,TIMESTAMP(0)", "1,TIMESTAMP(1)", "2,TIMESTAMP(2)",
+            "3,TIMESTAMP", // Precision 3 is the default in the Exasol database
+            "4,TIMESTAMP(4)", "5,TIMESTAMP(5)", "6,TIMESTAMP(6)", "7,TIMESTAMP(7)", "8,TIMESTAMP(8)", "9,TIMESTAMP(9)" })
+    void testBasicSqlBuildingWithTimestampPrecisions(final int precision, final String expectedUdfEmitType) {
+        final ColumnMapping column = PropertyToTimestampColumnMapping.builder().exasolColumnName("TEST_COLUMN").secondsPrecision(precision).build();
+        final RemoteTableQuery remoteTableQuery = getRemoteTableQueryWithOneColumn(column);
+        final FetchQueryPlan queryPlan = new FetchQueryPlan(List.of(), new NoPredicate());
+        final String udfCallSql = UDF_CALL_BUILDER.getUdfCallSql(queryPlan, remoteTableQuery);
+        assertThat(udfCallSql,
+                containsString("EMITS (\"TEST_COLUMN\" " + expectedUdfEmitType + ")"));
     }
 
     @ParameterizedTest
@@ -93,7 +112,7 @@ class UdfCallBuilderTest {
     /**
      * Quote the given regular expression pattern by enclosing it in {@code \Q...\E}, so that you don't need to quote
      * all special characters like {@code ()}.
-     * 
+     *
      * @param pattern the pattern to quote
      * @return the quoted pattern
      */

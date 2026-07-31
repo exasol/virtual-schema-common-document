@@ -1,11 +1,8 @@
 package com.exasol.adapter.document.documentpath;
 
 import java.util.Optional;
-import java.util.function.BiFunction;
 
-import com.exasol.adapter.document.documentnode.DocumentArray;
-import com.exasol.adapter.document.documentnode.DocumentNode;
-import com.exasol.adapter.document.documentnode.DocumentObject;
+import com.exasol.adapter.document.documentnode.*;
 
 /**
  * This class walks a given path defined in {@link DocumentPathExpression} through a {@link DocumentNode} structure.
@@ -17,7 +14,7 @@ public class DocumentPathWalker {
 
     /**
      * Create an instance of {@link DocumentPathWalker}.
-     * 
+     *
      * @param pathExpression         path to walk
      * @param iterationStateProvider iteration state for {@link ArrayAllPathSegment}s in the path
      */
@@ -29,7 +26,7 @@ public class DocumentPathWalker {
 
     /**
      * Walks the path defined in constructor through the given document.
-     * 
+     *
      * @param rootNode document to walk through
      * @return document's attribute described in {@link DocumentPathExpression} or an empty {@link Optional} if the
      *         defined path does not exist in the given document
@@ -42,16 +39,12 @@ public class DocumentPathWalker {
         if (this.pathExpression.size() <= position) {
             return Optional.of(thisNode);
         }
-        final BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper = getStepperFor(
-                this.pathExpression.getSegments().get(position));
+        final Stepper stepper = getStepperFor(this.pathExpression.getSegments().get(position));
         return runTraverseStepper(stepper, thisNode, position);
     }
 
-    private Optional<DocumentNode> runTraverseStepper(
-            final BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> traverseStepper,
-            final DocumentNode thisNode, final int position) {
-        final Optional<DocumentNode> nextNode = traverseStepper.apply(thisNode,
-                this.pathExpression.getSubPath(0, position + 1));
+    private Optional<DocumentNode> runTraverseStepper(final Stepper traverseStepper, final DocumentNode thisNode, final int position) {
+        final Optional<DocumentNode> nextNode = traverseStepper.nextNode(thisNode, this.pathExpression.getSubPath(0, position + 1));
         if (nextNode.isEmpty()) {
             return Optional.empty();
         } else {
@@ -59,15 +52,14 @@ public class DocumentPathWalker {
         }
     }
 
-    private BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> getStepperFor(
-            final PathSegment pathSegment) {
+    private Stepper getStepperFor(final PathSegment pathSegment) {
         final WalkVisitor visitor = new WalkVisitor();
         pathSegment.accept(visitor);
         return visitor.getStepper();
     }
 
     private class WalkVisitor implements PathSegmentVisitor {
-        BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> stepper;
+        private Stepper stepper;
 
         @Override
         public void visit(final ObjectLookupPathSegment objectLookupPathSegment) {
@@ -110,8 +102,13 @@ public class DocumentPathWalker {
             };
         }
 
-        public BiFunction<DocumentNode, DocumentPathExpression, Optional<DocumentNode>> getStepper() {
+        public Stepper getStepper() {
             return this.stepper;
         }
+    }
+
+    @FunctionalInterface
+    private interface Stepper {
+        Optional<DocumentNode> nextNode(final DocumentNode thisNode, final DocumentPathExpression pathToThisNode);
     }
 }
