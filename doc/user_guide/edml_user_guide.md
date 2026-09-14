@@ -44,7 +44,7 @@ This is an example for mapping a CSV file to an Exasol table:
 }
 ```
 
-The following sections explain the available mapping options. Each mapping option is represented by a dedicated property in the JSON mapping, e.g. `source` and `destinationTable` already shown in the simple example above. 
+The following sections explain the available mapping options. Each mapping option is represented by a dedicated property in the JSON mapping, e.g. `source` and `destinationTable` already shown in the simple example above.
 
 ### Source
 
@@ -424,6 +424,27 @@ All mappings pass through null values. That means, if the source value is a null
 
 Please note that EDML only supports data type `TIMESTAMP`. `TIMESTAMP WITH LOCAL TIME ZONE` is not supported.
 
+You can set `secondsPrecision` to define the precision of the seconds part of the `TIMESTAMP` column. Supported values range from `0` to `9`. If omitted, EDML uses a precision of `6`, resulting in a `TIMESTAMP(6)` column.
+
+Exasol version 8 supports only precisions `3` and `6`. Custom timestamp precisions are supported starting with Exasol version 2025.
+
+For example, the following mapping creates a `TIMESTAMP(9)` column named `CREATED_AT`:
+
+```json
+{
+  "mapping": {
+    "fields": {
+      "createdAt": {
+        "toTimestampMapping": {
+          "destinationName": "CREATED_AT",
+          "secondsPrecision": 9
+        }
+      }
+    }
+  }
+}
+```
+
 * Nested object: Not convertible
 * Nested list: Not convertible
 * String: Not convertible
@@ -553,7 +574,7 @@ Null and empty values are currently not supported in CSV files. If your CSV file
 
 See the section [above](#automatic-mapping-inference) for general information about auto-inference.
 
-When the `mapping` element is missing in the EDML definition, VSD will automatically detect 
+When the `mapping` element is missing in the EDML definition, VSD will automatically detect
 * whether the CSV file contains a header
 * and the data types of the columns
 

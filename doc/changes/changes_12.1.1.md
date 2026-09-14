@@ -19,6 +19,10 @@ A security flaw has been discovered in mwiede jsch up to 2.28.5. Affected is the
 
 * #220: Fixed vulnerability CVE-2026-86231 in dependency `com.github.mwiede:jsch:jar:2.28.4:test`
 
+## Documentation
+
+* #222: Documented configuration of precision for `toTimestampMapping`
+
 ## Dependency Updates
 
 ### Compile Dependency Updates
