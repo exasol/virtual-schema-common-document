@@ -1,4 +1,4 @@
-# Common Virtual Schema for Document Data 12.1.1, released 2026-??-??
+# Common Virtual Schema for Document Data 12.1.1, released 2026-09-14
 
 Code name: Fixed vulnerability CVE-2026-86231 in com.github.mwiede:jsch:jar:2.28.4:test
 
