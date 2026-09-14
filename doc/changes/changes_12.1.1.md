@@ -32,6 +32,7 @@ A security flaw has been discovered in mwiede jsch up to 2.28.5. Affected is the
 
 ### Test Dependency Updates
 
+* Updated `com.exasol:exasol-test-setup-abstraction-java:3.0.0` to `3.0.1`
 * Updated `org.slf4j:slf4j-jdk14:2.0.18` to `2.0.19`
 
 ### Plugin Dependency Updates
