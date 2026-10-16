@@ -1,12 +1,16 @@
-# Common Virtual Schema for Document Data 12.1.2, released 2026-??-??
+# Common Virtual Schema for Document Data 12.1.2, released 2026-10-16
 
-Code name:
+Code name: Update udf-debugging-java to 0.6.21
 
 ## Summary
 
+This release updates udf-debugging-java to 0.6.21 to fix vulnerabilities in transitive dependencies. Since this is a test dependency, users do not need to apply this update it only affects building and testing.
+
+For more details, please see https://github.com/exasol/udf-debugging-java/releases/tag/0.6.21
+
 ## Features
 
-* ISSUE_NUMBER: description
+* Update udf-debugging-java to 0.6.21 (PR# 223)
 
 ## Dependency Updates
 
