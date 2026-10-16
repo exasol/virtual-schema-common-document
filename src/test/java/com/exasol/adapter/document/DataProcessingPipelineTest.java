@@ -28,7 +28,7 @@ class DataProcessingPipelineTest {
     private static final int TEST_SIZE = 100000;
 
     @Test
-    void testResultIsCorrect() throws InterruptedException {
+    void testResultIsCorrect() {
         final DataProcessingPipeline pipeline = getPipeline();
         final ArrayList<List<Object>> result = new ArrayList<>();
         pipeline.run(new HelperDocumentFetcher(() -> {
@@ -38,14 +38,14 @@ class DataProcessingPipelineTest {
     }
 
     @Test
-    void testAsyncProcessing() throws InterruptedException {
+    void testAsyncProcessing() {
         final List<EVENT> events = new ArrayList<>(TEST_SIZE * 2);
         final DataProcessingPipeline pipeline = getPipeline();
         pipeline.run(new HelperDocumentFetcher(() -> events.add(EVENT.GENERATE)), null, row -> {
             events.add(EVENT.EMIT);
         });
         assertThat("First emit was too late.", events.indexOf(EVENT.EMIT), lessThan(TEST_SIZE / 4));
-    };
+    }
 
     private DataProcessingPipeline getPipeline() {
         final PropertyToColumnMapping columnMapping = PropertyToDecimalColumnMapping.builder().exasolColumnName("TEST")
@@ -86,7 +86,7 @@ class DataProcessingPipelineTest {
 
     private static class HelperDocumentFetcher implements DocumentFetcher {
         private static final long serialVersionUID = 3777440484106526521L;
-        private final Runnable onNext;
+        private final transient Runnable onNext;
 
         private HelperDocumentFetcher(final Runnable onNext) {
             this.onNext = onNext;
