@@ -11,9 +11,17 @@ import com.exasol.adapter.document.documentpath.DocumentPathExpression;
  */
 public class SchemaMappingRequest implements Serializable {
     private static final long serialVersionUID = -1681839026887057101L;
-    /** @serial */
+    /**
+     * Path to the root document to extract.
+     *
+     * @serial
+     */
     private final DocumentPathExpression pathInRemoteTable;
-    /** @serial */
+    /**
+     * Column mappings to apply.
+     *
+     * @serial
+     */
     private final ArrayList<ColumnMapping> columns; // ArrayList is guaranteed serializable (unlike List).
 
     /**

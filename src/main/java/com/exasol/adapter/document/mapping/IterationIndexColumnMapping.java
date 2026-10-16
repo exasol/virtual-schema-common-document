@@ -12,7 +12,11 @@ import com.exasol.adapter.metadata.DataType;
 
 public final class IterationIndexColumnMapping extends AbstractColumnMapping {
     private static final long serialVersionUID = -5720702055496015560L;
-    /** @serial */
+    /**
+     * Path to the array whose index is mapped.
+     *
+     * @serial
+     */
     private final DocumentPathExpression tablesPath;
 
     /**
@@ -56,9 +60,16 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
 
     /**
      * Builder for {@link IterationIndexColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends IterationIndexColumnMapping, B extends IterationIndexColumnMapping.Builder<C, B>>
             extends AbstractColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private DocumentPathExpression tablesPath;
 
         @Override
@@ -80,6 +91,8 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
         public abstract C build();
 
         /**
+         * Sets the path to the table array.
+         *
          * @param tablesPath table path
          * @return {@code this}.
          */
@@ -122,7 +135,7 @@ public final class IterationIndexColumnMapping extends AbstractColumnMapping {
      * 
      * @param builder builder
      */
-    protected IterationIndexColumnMapping(final IterationIndexColumnMapping.Builder<?, ?> builder) {
+    private IterationIndexColumnMapping(final IterationIndexColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.tablesPath = builder.tablesPath;
     }

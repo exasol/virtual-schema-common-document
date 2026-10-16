@@ -11,6 +11,11 @@ import com.exasol.errorreporting.ExaError;
 public class StaticDocumentPathIterator implements Iterator<PathIterationStateProvider>, PathIterationStateProvider {
     private boolean called = false;
 
+    /** Creates an iterator that yields exactly one path state. */
+    public StaticDocumentPathIterator() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     @Override
     public boolean hasNext() {
         return !this.called;

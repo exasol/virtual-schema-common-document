@@ -11,7 +11,11 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 6169627871770637281L;
-    /** @serial */
+    /**
+     * Behaviour to apply when a value is not a date.
+     *
+     * @serial
+     */
     private final ConvertableMappingErrorBehaviour notDateBehaviour;
 
     ConvertableMappingErrorBehaviour getNotDateBehaviour() {
@@ -35,9 +39,16 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
 
     /**
      * Builder for {@link PropertyToDateColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToDateColumnMapping, B extends PropertyToDateColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private ConvertableMappingErrorBehaviour notDateBehaviour;
 
         @Override
@@ -59,6 +70,8 @@ public final class PropertyToDateColumnMapping extends AbstractPropertyToColumnM
         public abstract C build();
 
         /**
+         * Sets the behaviour to apply when a value is not a date.
+         *
          * @param notDateBehaviour behaviour in case value is not a date
          * @return {@code this}.
          */

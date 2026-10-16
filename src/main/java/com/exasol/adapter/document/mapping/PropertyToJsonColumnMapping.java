@@ -10,9 +10,17 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = -6633690614095755071L;
-    /** @serial */
+    /**
+     * Maximum size of the JSON column.
+     *
+     * @serial
+     */
     private final int varcharColumnSize;
-    /** @serial */
+    /**
+     * Behaviour to apply when the JSON value overflows.
+     *
+     * @serial
+     */
     private final MappingErrorBehaviour overflowBehaviour;
 
     int getVarcharColumnSize() {
@@ -40,9 +48,16 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
 
     /**
      * Builder for {@link PropertyToJsonColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToJsonColumnMapping, B extends PropertyToJsonColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private int varcharColumnSize;
         private MappingErrorBehaviour overflowBehaviour;
 
@@ -66,6 +81,8 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         public abstract C build();
 
         /**
+         * Sets the maximum size of the JSON column.
+         *
          * @param varcharColumnSize varchar column size
          * @return {@code this}.
          */
@@ -75,6 +92,8 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
         }
 
         /**
+         * Sets the behaviour to apply when the JSON value overflows.
+         *
          * @param overflowBehaviour overflow behaviour
          * @return {@code this}.
          */
@@ -118,7 +137,7 @@ public final class PropertyToJsonColumnMapping extends AbstractPropertyToColumnM
      * 
      * @param builder builder
      */
-    protected PropertyToJsonColumnMapping(final PropertyToJsonColumnMapping.Builder<?, ?> builder) {
+    private PropertyToJsonColumnMapping(final PropertyToJsonColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.varcharColumnSize = builder.varcharColumnSize;
         this.overflowBehaviour = builder.overflowBehaviour;

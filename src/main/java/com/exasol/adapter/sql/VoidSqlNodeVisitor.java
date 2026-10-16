@@ -9,6 +9,10 @@ import com.exasol.errorreporting.ExaError;
  * used for keeping {@link RemoteTableQueryFactory} short and readable.
  */
 public abstract class VoidSqlNodeVisitor implements SqlNodeVisitor<Void> {
+    /** Creates a visitor that rejects unsupported SQL nodes. */
+    protected VoidSqlNodeVisitor() {
+        // Intentionally empty to enable Javadoc.
+    }
 
     @Override
     public Void visit(final SqlStatementSelect select) throws AdapterException {

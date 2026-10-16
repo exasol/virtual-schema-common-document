@@ -95,8 +95,10 @@ public class JsonSample {
     private final List<String> fields = new ArrayList<>();
 
     /**
-     * @param key: "", "global" or "local"
-     * @return
+     * Adds an ISBN field mapping.
+     *
+     * @param key key scope: {@code ""}, {@code "global"}, or {@code "local"}
+     * @return this sample
      */
     public JsonSample isbn(final String key) {
         return withFields(lines( //

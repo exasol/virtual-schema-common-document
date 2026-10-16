@@ -26,9 +26,16 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
 
     /**
      * Builder for {@link PropertyToDoubleColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToDoubleColumnMapping, B extends PropertyToDoubleColumnMapping.Builder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.Builder<C, B> {
+
+        /** Creates a builder. */
+        protected Builder() {
+        }
 
         @Override
         protected abstract B self();
@@ -69,7 +76,7 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
      * 
      * @param builder builder
      */
-    protected PropertyToDoubleColumnMapping(final PropertyToDoubleColumnMapping.Builder<?, ?> builder) {
+    private PropertyToDoubleColumnMapping(final PropertyToDoubleColumnMapping.Builder<?, ?> builder) {
         super(builder);
     }
 
@@ -98,9 +105,6 @@ public final class PropertyToDoubleColumnMapping extends AbstractPropertyToNumbe
             return true;
         }
         if (!(o instanceof PropertyToDoubleColumnMapping)) {
-            return false;
-        }
-        if (!(this instanceof PropertyToDoubleColumnMapping)) {
             return false;
         }
         return super.equals(o);

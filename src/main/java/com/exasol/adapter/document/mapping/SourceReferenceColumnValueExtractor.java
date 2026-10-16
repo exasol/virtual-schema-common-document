@@ -8,6 +8,10 @@ import com.exasol.adapter.document.documentpath.PathIterationStateProvider;
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public class SourceReferenceColumnValueExtractor implements ColumnValueExtractor {
+    /** Creates an extractor for source-reference columns. */
+    public SourceReferenceColumnValueExtractor() {
+        // Intentionally empty to enable Javadoc.
+    }
 
     @Override
     public Object extractColumnValue(final FetchedDocument document,

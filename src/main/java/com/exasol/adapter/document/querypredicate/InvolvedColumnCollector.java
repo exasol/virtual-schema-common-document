@@ -11,6 +11,11 @@ import com.exasol.adapter.document.mapping.ColumnMapping;
  */
 public class InvolvedColumnCollector {
 
+    /** Creates a collector for columns involved in predicates. */
+    public InvolvedColumnCollector() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     /**
      * Collects all columns that are involved in comparisons in a QueryPredicate structure.
      * 

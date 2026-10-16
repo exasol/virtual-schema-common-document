@@ -11,10 +11,14 @@ import com.exasol.adapter.document.edml.MappingErrorBehaviour;
 public abstract class AbstractPropertyToNumberColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = -3412527315242611386L;
     /**
+     * Behavior to apply when a value overflows.
+     *
      * @serial
      */
     private final MappingErrorBehaviour overflowBehaviour;
     /**
+     * Behavior to apply when a value is not numeric.
+     *
      * @serial
      */
     private final ConvertableMappingErrorBehaviour notNumericBehaviour;
@@ -29,9 +33,16 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
 
     /**
      * Abstract builder for {@link AbstractPropertyToNumberColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends AbstractPropertyToNumberColumnMapping, B extends AbstractPropertyToNumberColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private MappingErrorBehaviour overflowBehaviour;
         private ConvertableMappingErrorBehaviour notNumericBehaviour;
 
@@ -55,6 +66,8 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         public abstract C build();
 
         /**
+         * Sets the behaviour to apply when a value overflows.
+         *
          * @param overflowBehaviour behaviour in case of overflow
          * @return {@code this}.
          */
@@ -64,6 +77,8 @@ public abstract class AbstractPropertyToNumberColumnMapping extends AbstractProp
         }
 
         /**
+         * Sets the behaviour to apply when a value is not numeric.
+         *
          * @param notNumericBehaviour behaviour in case the value is not numeric
          * @return {@code this}.
          */

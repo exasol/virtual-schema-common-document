@@ -5,7 +5,10 @@ package com.exasol.adapter.document.mapping;
  */
 public class ColumnValueExtractorException extends SchemaMappingException {
     private static final long serialVersionUID = 5190776040871980095L;
-    /** @serial */
+    /** Column mapping that caused the failure.
+     *
+     * @serial
+     */
     private final ColumnMapping causingColumn;
 
     /**

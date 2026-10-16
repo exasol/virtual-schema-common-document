@@ -17,6 +17,10 @@ import com.exasol.sql.expression.literal.BooleanLiteral;
  * sql-statement-builder.
  */
 public class QueryPredicateToBooleanExpressionConverter {
+    /** Creates a query-predicate converter. */
+    public QueryPredicateToBooleanExpressionConverter() {
+        // Intentionally empty to enable Javadoc.
+    }
 
     /**
      * Convert a {@link QueryPredicate} to a {@link BooleanExpression}.

@@ -44,9 +44,16 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
 
     /**
      * Builder class for {@link SourceReferenceColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class SourceReferenceColumnMappingBuilder<C extends SourceReferenceColumnMapping, B extends SourceReferenceColumnMapping.SourceReferenceColumnMappingBuilder<C, B>>
             extends AbstractColumnMapping.Builder<C, B> {
+
+        /** Creates a builder. */
+        protected SourceReferenceColumnMappingBuilder() {
+        }
 
         @Override
         protected abstract B self();
@@ -112,9 +119,6 @@ public final class SourceReferenceColumnMapping extends AbstractColumnMapping {
             return true;
         }
         if (!(o instanceof SourceReferenceColumnMapping)) {
-            return false;
-        }
-        if (!(this instanceof SourceReferenceColumnMapping)) {
             return false;
         }
         return super.equals(o);

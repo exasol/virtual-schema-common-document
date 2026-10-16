@@ -19,6 +19,11 @@ import com.exasol.utils.StringSerializer;
 public class SchemaMappingToSchemaMetadataConverter {
     private static final Logger LOG = Logger.getLogger(SchemaMappingToSchemaMetadataConverter.class.getName());
 
+    /** Creates a schema-mapping metadata converter. */
+    public SchemaMappingToSchemaMetadataConverter() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     /**
      * Create a {@link SchemaMetadata} for a given {@link SchemaMapping}
      *

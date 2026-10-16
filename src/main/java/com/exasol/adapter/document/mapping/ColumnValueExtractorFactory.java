@@ -5,6 +5,11 @@ package com.exasol.adapter.document.mapping;
  */
 @java.lang.SuppressWarnings("squid:S119") // DocumentVisitorType does not fit naming conventions.
 public class ColumnValueExtractorFactory {
+    /** Creates a column-value-extractor factory. */
+    public ColumnValueExtractorFactory() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     /**
      * Builds a {@link ColumnValueExtractor} for a given {@link ColumnMapping}.
      * 

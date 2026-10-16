@@ -5,4 +5,9 @@ package com.exasol.adapter.document.literalconverter;
  */
 public class NotLiteralException extends Exception {
     private static final long serialVersionUID = 1L;
+
+    /** Creates an exception indicating that a SQL node is not a literal. */
+    public NotLiteralException() {
+        // Intentionally empty to enable Javadoc.
+    }
 }
