@@ -14,21 +14,21 @@
 
 ## Test Dependencies
 
-| Dependency                                 | License                           |
-| ------------------------------------------ | --------------------------------- |
-| [Hamcrest][12]                             | [BSD-3-Clause][13]                |
-| [JUnit Jupiter Params][14]                 | [Eclipse Public License v2.0][15] |
-| [mockito-junit-jupiter][16]                | [MIT][17]                         |
-| [SLF4J JDK14 Provider][18]                 | [MIT][19]                         |
-| [exasol-test-setup-abstraction-java][20]   | [MIT License][21]                 |
-| [Test Database Builder for Java][22]       | [MIT License][23]                 |
-| [udf-debugging-java][24]                   | [MIT License][25]                 |
-| [Apache Maven Verifier Component][26]      | [Apache License, Version 2.0][5]  |
-| [Apache Commons IO][27]                    | [Apache-2.0][5]                   |
-| [Matcher for SQL Result Sets][28]          | [MIT License][29]                 |
-| [EqualsVerifier \| release normal jar][30] | [Apache License, Version 2.0][5]  |
-| [to-string-verifier][31]                   | [MIT License][32]                 |
-| [JaCoCo :: Agent][33]                      | [EPL-2.0][34]                     |
+| Dependency                                      | License                           |
+| ----------------------------------------------- | --------------------------------- |
+| [Hamcrest][12]                                  | [BSD-3-Clause][13]                |
+| [JUnit Jupiter Params][14]                      | [Eclipse Public License v2.0][15] |
+| [mockito-junit-jupiter][16]                     | [MIT][17]                         |
+| [SLF4J JDK14 Provider][18]                      | [MIT][19]                         |
+| [exasol-test-setup-abstraction-java][20]        | [MIT License][21]                 |
+| [Test Database Builder for Java][22]            | [MIT License][23]                 |
+| [udf-debugging-java][24]                        | [MIT License][25]                 |
+| [Apache Maven Verifier Component (RETIRED)][26] | [Apache-2.0][5]                   |
+| [Apache Commons IO][27]                         | [Apache-2.0][5]                   |
+| [Matcher for SQL Result Sets][28]               | [MIT License][29]                 |
+| [EqualsVerifier \| release normal jar][30]      | [Apache License, Version 2.0][5]  |
+| [to-string-verifier][31]                        | [MIT License][32]                 |
+| [JaCoCo :: Agent][33]                           | [EPL-2.0][34]                     |
 
 ## Plugin Dependencies
 
