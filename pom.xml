@@ -8,7 +8,7 @@
     <url>https://github.com/exasol/virtual-schema-common-document/</url>
     <properties>
         <java.version>17</java.version>
-        <vscommon.version>18.0.4</vscommon.version>
+        <vscommon.version>18.1.0</vscommon.version>
     </properties>
     <profiles>
         <profile>
