@@ -14,6 +14,10 @@ For more details, please see https://github.com/exasol/udf-debugging-java/releas
 
 ## Dependency Updates
 
+### Compile Dependency Updates
+
+* Updated `com.exasol:virtual-schema-common-java:18.0.4` to `18.1.0`
+
 ### Test Dependency Updates
 
 * Updated `com.exasol:hamcrest-resultset-matcher:1.7.3` to `1.7.4`
