@@ -53,3 +53,7 @@ You can use this repository as a basis for developing a custom Virtual Schema fo
 Integration tests require a JDK 17 for building a mock adapter project. Please set one of the following environment variables pointing to a JDK 17 home:
 * `JAVA17_HOME`
 * `JAVA_HOME_17_X64`
+
+### Maintaining the Mock Test Project
+
+The integration tests build [`test-project/mock-project/pom.xml`](test-project/mock-project/pom.xml) as a consumer of this library. Maintain this POM whenever the main [`pom.xml`](pom.xml) changes: update relevant dependency and plugin versions, and keep its `java.version` aligned with the main project. The integration test updates `vs-common-document-version` automatically to the version currently under test.
