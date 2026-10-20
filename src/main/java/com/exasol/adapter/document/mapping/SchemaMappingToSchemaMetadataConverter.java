@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import com.exasol.adapter.metadata.*;
 import com.exasol.errorreporting.ExaError;
@@ -54,10 +55,10 @@ public class SchemaMappingToSchemaMetadataConverter {
     private TableMetadata convertTable(final TableMapping tableMapping) {
         LOG.fine(() -> "Creating virtual table " + tableMapping.getExasolName() + " with remote name "
                 + tableMapping.getRemoteName() + " and " + tableMapping.getColumns().size() + " columns");
-        final List<ColumnMetadata> columnDefinitions = new ArrayList<>();
-        for (final ColumnMapping column : tableMapping.getColumns()) {
-            columnDefinitions.add(convertColumn(column));
-        }
+        final List<ColumnMetadata> columnDefinitions = tableMapping.getColumns()
+                .stream()
+                .map(this::convertColumn)
+                .collect(Collectors.toList());
         final String adapterNotes = "";// Due to a bug in exasol core adapter notes are not stored for tables -> this
                                        // got fixed!
         return new TableMetadata(tableMapping.getExasolName(), adapterNotes, columnDefinitions, "");
@@ -121,10 +122,10 @@ public class SchemaMappingToSchemaMetadataConverter {
          * As the columns are transient in TableMappingDefinition, they must be deserialized from the ColumnMetadata and
          * added separately.
          */
-        final List<ColumnMapping> columns = new ArrayList<>(tableMetadata.getColumns().size());
-        for (final ColumnMetadata columnMetadata : tableMetadata.getColumns()) {
-            columns.add(convertBackColumn(columnMetadata));
-        }
+        final List<ColumnMapping> columns = tableMetadata.getColumns()
+                .stream()
+                .map(this::convertBackColumn)
+                .collect(Collectors.toList());
         return new TableMapping(preliminaryTable, columns);
     }
 
