@@ -22,7 +22,7 @@ For more details, please see https://github.com/exasol/udf-debugging-java/releas
 
 * Updated `com.exasol:hamcrest-resultset-matcher:1.7.3` to `1.7.4`
 * Updated `com.exasol:test-db-builder-java:4.0.2` to `4.0.3`
-* Updated `com.exasol:udf-debugging-java:0.6.20` to `0.6.21`
+* Updated `com.exasol:udf-debugging-java:0.6.20` to `0.6.22`
 * Updated `nl.jqno.equalsverifier:equalsverifier:3.19.4` to `4.5.2`
 * Updated `org.mockito:mockito-junit-jupiter:5.23.0` to `5.24.0`
 * Updated `org.slf4j:slf4j-jdk14:2.0.19` to `2.0.20`
