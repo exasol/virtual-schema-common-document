@@ -95,7 +95,7 @@ public class SchemaMappingToSchemaMetadataConverter {
      *
      * <p>
      * We use the adapter notes of the schema here since in the past there was a bug (SPOT-9952) that did not allow us
-     * to store the metadata with the table. However we did not change it now since in the future it might make sense to
+     * to store the metadata with the table. However, we did not change it now since in the future it might make sense to
      * move also the Column metadata into the Schema metadata. By that we would have all persistent information in one
      * place. That makes testing this part a lot easier. Another reason is that it has no downside to do it that way and
      * for that reason is not worth a refactoring.
@@ -158,8 +158,9 @@ public class SchemaMappingToSchemaMetadataConverter {
 
     /**
      * This class is used as a fix for the bug because of which {@link TableMetadata} can't store adapter notes. See:
-     * https://github.com/exasol/dynamodb-virtual-schema/issues/25. It gets serialized in the {@link SchemaMetadata} and
-     * stores a map that gives the {@link TableMapping} for its Exasol table name.
+     * <a href="https://github.com/exasol/dynamodb-virtual-schema/issues/25">dynamodb-virtual-schema#25</a>.
+     * It gets serialized in the {@link SchemaMetadata} and stores a map that gives the {@link TableMapping} for its
+     * Exasol table name.
      */
     private static class TableMappings implements Serializable {
         private static final long serialVersionUID = 5951740683817686929L;
