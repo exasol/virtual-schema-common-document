@@ -8,6 +8,7 @@
     <name>mock project</name>
     <properties>
         <java.version>17</java.version>
+        <java.release>11</java.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- this property is automatically updated by the DocumentAdapterIT -->
@@ -46,7 +47,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.16.0</version>
                 <configuration>
-                    <release>${java.version}</release>
+                    <release>${java.release}</release>
                     <compilerArgs>
                         <arg>-Xlint:all,-path,-processing</arg>
                         <arg>-Werror</arg>
