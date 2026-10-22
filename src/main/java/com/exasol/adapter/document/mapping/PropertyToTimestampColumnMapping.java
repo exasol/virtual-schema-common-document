@@ -12,9 +12,17 @@ import com.exasol.adapter.metadata.DataType;
 public final class PropertyToTimestampColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 2336854835413425712L;
     private static final int DEFAULT_TIMESTAMP_PRECISION = 6;
-    /** @serial */
+    /**
+     *Behaviour to apply when a value is not a timestamp.
+     *
+     * @serial
+     */
     private final ConvertableMappingErrorBehaviour notTimestampBehaviour;
-    /** @serial */
+    /**
+     * Fractional-seconds precision.
+     *
+     * @serial
+     */
     private final int secondsPrecision;
 
     ConvertableMappingErrorBehaviour getNotTimestampBehaviour() {
@@ -42,9 +50,16 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
 
     /**
      * Builder for {@link PropertyToTimestampColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToTimestampColumnMapping, B extends PropertyToTimestampColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private ConvertableMappingErrorBehaviour notTimestampBehaviour;
         private int secondsPrecision = DEFAULT_TIMESTAMP_PRECISION;
 
@@ -68,6 +83,8 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         public abstract C build();
 
         /**
+         * Sets the behaviour to apply when a value is not a timestamp.
+         *
          * @param notTimestampBehaviour behaviour in case a value is not a timestamp
          * @return {@code this}.
          */
@@ -77,6 +94,8 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
         }
 
         /**
+         * Sets the fractional-seconds precision.
+         *
          * @param secondsPrecision precision of the seconds part of the timestamp
          * @return {@code this}.
          */
@@ -119,7 +138,7 @@ public final class PropertyToTimestampColumnMapping extends AbstractPropertyToCo
      * 
      * @param builder builder
      */
-    protected PropertyToTimestampColumnMapping(final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
+    private PropertyToTimestampColumnMapping(final PropertyToTimestampColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.notTimestampBehaviour = builder.notTimestampBehaviour;
         this.secondsPrecision = builder.secondsPrecision;

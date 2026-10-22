@@ -129,7 +129,7 @@ class DocumentAdapterIT {
 
     /**
      * Maven build of aggregator module {@code test-project/aggregator/pom.xml} must run with Java 21.
-     * The mock project {@code test-project/mock-project/pom.xml} included by the aggregator uses {@code maven-toolchains-plugin} to select JDK 11 for
+     * The mock project {@code test-project/mock-project/pom.xml} included by the aggregator uses {@code maven-toolchains-plugin} to select JDK 17 for
      * compilation.
      * <p>
      * This tries to find the path using environment variables {@code JAVA21_HOME} or {@code JAVA_HOME_21_X64}.
@@ -139,12 +139,12 @@ class DocumentAdapterIT {
     private static String getJava21JdkHome() {
         final List<String> envVariables = List.of("JAVA21_HOME", "JAVA_HOME_21_X64");
         return findEnvVariable(envVariables)
-                .or(() -> currentJvm())
+                .or(DocumentAdapterIT::currentJvm)
                 .orElseThrow(() -> new IllegalStateException("Failed to find JDK 21 using env variables " + envVariables));
     }
 
     private static Optional<String> findEnvVariable(final List<String> envVariables) {
-        return envVariables.stream().map(System::getenv).filter(value -> value != null).findFirst();
+        return envVariables.stream().map(System::getenv).filter(Objects::nonNull).findFirst();
     }
 
     private static Optional<String> currentJvm() {

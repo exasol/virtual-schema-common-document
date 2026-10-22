@@ -11,7 +11,11 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 7665762375515945443L;
-    /** @serial */
+    /**
+     * Behaviour to apply when a value is not boolean.
+     *
+     *  @serial
+     */
     private final ConvertableMappingErrorBehaviour notBooleanBehavior;
 
     ConvertableMappingErrorBehaviour getNotBooleanBehavior() {
@@ -35,9 +39,16 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
 
     /**
      * Builder for {@link PropertyToBoolColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToBoolColumnMapping, B extends PropertyToBoolColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private ConvertableMappingErrorBehaviour notBooleanBehavior;
 
         @Override
@@ -59,6 +70,8 @@ public final class PropertyToBoolColumnMapping extends AbstractPropertyToColumnM
         public abstract C build();
 
         /**
+         * Sets the behaviour to apply when a value is not boolean.
+         *
          * @param notBooleanBehavior behaviour in case value is not a boolean
          * @return {@code this}.
          */

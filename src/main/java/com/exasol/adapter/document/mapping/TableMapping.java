@@ -14,15 +14,31 @@ import com.exasol.adapter.document.documentpath.DocumentPathExpression;
  */
 public class TableMapping implements Serializable {
     private static final long serialVersionUID = -8647175683915939405L;
-    /** @serial */
+    /**
+     * Exasol table name.
+     *
+     * @serial
+     */
     private final String exasolName;
-    /** @serial */
+    /**
+     * Remote table name.
+     *
+     * @serial
+     */
     private final String remoteName;
     private final transient List<ColumnMapping> columns; // The columns are serialized separately in
                                                          // {@link ColumnMetadata}.
-    /** @serial */
+    /**
+     * Path in the remote table.
+     *
+     * @serial
+     */
     private final DocumentPathExpression pathInRemoteTable;
-    /** @serial */
+    /**
+     * Additional table configuration.
+     *
+     * @serial
+     */
     private final String additionalConfiguration;
 
     /**

@@ -5,7 +5,11 @@ package com.exasol.adapter.document.documentpath;
  */
 public class ObjectLookupPathSegment implements PathSegment {
     private static final long serialVersionUID = -753364340469270540L;
-    /** @serial */
+    /**
+     * Object key to look up.
+     *
+     * @serial
+     */
     private final String lookupKey;
 
     /**

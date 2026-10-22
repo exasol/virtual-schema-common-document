@@ -7,6 +7,11 @@ import java.util.List;
  */
 public class DocumentPathToStringConverter {
 
+    /** Creates a document-path string converter. */
+    public DocumentPathToStringConverter() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     /**
      * Convert a {@link DocumentPathExpression} to string like {@code "/books/topics[1]"}.
      * 

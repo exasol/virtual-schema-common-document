@@ -6,6 +6,11 @@ package com.exasol.adapter.document.documentpath;
 public class ArrayAllPathSegment implements PathSegment {
     private static final long serialVersionUID = 1742087357300081487L;
 
+    /** Creates an array-all path segment. */
+    public ArrayAllPathSegment() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     @Override
     public void accept(final PathSegmentVisitor visitor) {
         visitor.visit(this);

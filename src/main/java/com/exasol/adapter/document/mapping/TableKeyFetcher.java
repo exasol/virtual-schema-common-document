@@ -21,7 +21,13 @@ public interface TableKeyFetcher {
     /**
      * {@link TableKeyFetcher}s throw this exception if they did not find a fitting key.
      */
-    class NoKeyFoundException extends Exception {
+    @SuppressWarnings("java:S9398") // This nested public type is part of the API (see issue #233).
+    final class NoKeyFoundException extends Exception {
         private static final long serialVersionUID = 7924854713502228769L;
+
+        /** Creates an exception indicating that no fitting key was found. */
+        public NoKeyFoundException() {
+            // Intentionally empty to enable Javadoc.
+        }
     }
 }

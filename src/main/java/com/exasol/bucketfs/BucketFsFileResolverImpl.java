@@ -13,6 +13,11 @@ public class BucketFsFileResolverImpl implements BucketFsFileResolver {
     @SuppressWarnings("java:S1075") // this is not a configurable path
     private static final Path BUCKETFS_BASIC_PATH = Path.of("/buckets");
 
+    /** Creates a BucketFS file resolver. */
+    public BucketFsFileResolverImpl() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     @Override
     public Path openFile(final String path) {
         final Path selectedFile = BUCKETFS_BASIC_PATH.resolve(removeTrailingSlash(path));

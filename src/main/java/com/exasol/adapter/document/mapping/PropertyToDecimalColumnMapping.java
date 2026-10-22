@@ -10,9 +10,17 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumberColumnMapping {
     private static final long serialVersionUID = -8263709400720209080L;
-    /** @serial */
+    /**
+     * Decimal precision.
+     *
+     * @serial
+     */
     private final int decimalPrecision;
-    /** @serial */
+    /**
+     * Decimal scale.
+     *
+     * @serial
+     */
     private final int decimalScale;
 
     int getDecimalScale() {
@@ -40,9 +48,16 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
 
     /**
      * Builder for {@link PropertyToDecimalColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToDecimalColumnMapping, B extends PropertyToDecimalColumnMapping.Builder<C, B>>
             extends AbstractPropertyToNumberColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private int decimalPrecision;
         private int decimalScale;
 
@@ -66,6 +81,8 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         public abstract C build();
 
         /**
+         * Sets the decimal precision.
+         *
          * @param decimalPrecision decimal precision
          * @return {@code this}.
          */
@@ -75,6 +92,8 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         }
 
         /**
+         * Sets the decimal scale.
+         *
          * @param decimalScale decimal scale
          * @return {@code this}.
          */
@@ -165,5 +184,4 @@ public final class PropertyToDecimalColumnMapping extends AbstractPropertyToNumb
         final PropertyToDecimalColumnMapping other = (PropertyToDecimalColumnMapping) obj;
         return decimalPrecision == other.decimalPrecision && decimalScale == other.decimalScale;
     }
-
 }

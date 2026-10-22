@@ -12,6 +12,11 @@ public class ColumnMappingDefinitionKeyTypeReader {
     private static final String KEY_LOCAL = "local";
     private static final String KEY_GLOBAL = "global";
 
+    /** Creates a column-mapping key-type reader. */
+    public ColumnMappingDefinitionKeyTypeReader() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     /**
      * Reads the {@link KeyType} of a column mapping definition.
      *

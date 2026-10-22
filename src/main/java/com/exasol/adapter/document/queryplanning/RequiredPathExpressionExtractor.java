@@ -13,6 +13,10 @@ import com.exasol.adapter.document.mapping.*;
  * solving the given query.
  */
 public class RequiredPathExpressionExtractor {
+    /** Creates an extractor for required document paths. */
+    public RequiredPathExpressionExtractor() {
+        // Intentionally empty to enable Javadoc.
+    }
 
     /**
      * Get a set of properties that must be fetched from the remote database.

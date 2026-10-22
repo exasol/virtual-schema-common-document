@@ -89,18 +89,16 @@ public class JsonSample {
         return isbn("global").name("");
     }
 
-    private String addSourceReferenceColumn;
+    private String addSourceReferenceColumn = "  'addSourceReferenceColumn': true,";
     private String source = "MY_BOOKS";
     private String destinationTable = "BOOKS";
     private final List<String> fields = new ArrayList<>();
 
-    public JsonSample() {
-        addSourceReferenceColumn("  'addSourceReferenceColumn': true,");
-    }
-
     /**
-     * @param key: "", "global" or "local"
-     * @return
+     * Adds an ISBN field mapping.
+     *
+     * @param key key scope: {@code ""}, {@code "global"}, or {@code "local"}
+     * @return this sample
      */
     public JsonSample isbn(final String key) {
         return withFields(lines( //
@@ -128,7 +126,7 @@ public class JsonSample {
     }
 
     private String keyString(final String key) {
-        return key.isEmpty() ? "" : String.format(",\n          'key': '%s'", key);
+        return key.isEmpty() ? "" : String.format(",%n          'key': '%s'", key);
     }
 
     public JsonSample addSourceReferenceColumn(final String addSourceReferenceColumn) {

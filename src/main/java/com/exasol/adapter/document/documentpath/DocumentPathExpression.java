@@ -11,7 +11,10 @@ import java.util.List;
 public class DocumentPathExpression implements Serializable {
     private static final DocumentPathExpression EMPTY_PATH = new DocumentPathExpression(Collections.emptyList());
     private static final long serialVersionUID = -4163932011858280354L;//
-    /** @serial */
+    /**
+     * Segments in this path.
+     * @serial
+     */
     private final ArrayList<PathSegment> segments;
 
     private DocumentPathExpression(final List<PathSegment> segments) {

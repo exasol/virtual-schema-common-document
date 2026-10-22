@@ -1,6 +1,7 @@
 package com.exasol.adapter.document.mapping;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.exasol.adapter.document.documentpath.DocumentPathExpression;
@@ -10,10 +11,18 @@ import com.exasol.adapter.document.documentpath.DocumentPathExpression;
  */
 public class SchemaMappingRequest implements Serializable {
     private static final long serialVersionUID = -1681839026887057101L;
-    /** @serial */
+    /**
+     * Path to the root document to extract.
+     *
+     * @serial
+     */
     private final DocumentPathExpression pathInRemoteTable;
-    /** @serial */
-    private final List<ColumnMapping> columns;
+    /**
+     * Column mappings to apply.
+     *
+     * @serial
+     */
+    private final ArrayList<ColumnMapping> columns; // ArrayList is guaranteed serializable (unlike List).
 
     /**
      * Create a new instance of {@link SchemaMappingRequest}.
@@ -23,7 +32,7 @@ public class SchemaMappingRequest implements Serializable {
      */
     public SchemaMappingRequest(final DocumentPathExpression pathInRemoteTable, final List<ColumnMapping> columns) {
         this.pathInRemoteTable = pathInRemoteTable;
-        this.columns = columns;
+        this.columns = new ArrayList<>(columns);
     }
 
     /**

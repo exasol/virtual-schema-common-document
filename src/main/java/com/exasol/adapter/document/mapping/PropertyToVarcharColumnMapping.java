@@ -11,11 +11,23 @@ import com.exasol.adapter.metadata.DataType;
  */
 public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColumnMapping {
     private static final long serialVersionUID = 331013763747038031L;
-    /** @serial */
+    /**
+     * Maximum size of the VARCHAR column.
+     *
+     *  @serial
+     */
     private final int varcharColumnSize;
-    /** @serial */
+    /**
+     * Behaviour to apply when the value overflows.
+     *
+     *  @serial
+     */
     private final TruncateableMappingErrorBehaviour overflowBehaviour;
-    /** @serial */
+    /**
+     * Behaviour to apply when the value is not a string.
+     *
+     * @serial
+     */
     private final ConvertableMappingErrorBehaviour nonStringBehaviour;
 
     /**
@@ -62,9 +74,16 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
 
     /**
      * Builder for {@link PropertyToVarcharColumnMapping}.
+     *
+     * @param <C> type of the mapping built by this builder
+     * @param <B> concrete builder type
      */
     public abstract static class Builder<C extends PropertyToVarcharColumnMapping, B extends PropertyToVarcharColumnMapping.Builder<C, B>>
             extends AbstractPropertyToColumnMapping.Builder<C, B> {
+        /** Creates a builder. */
+        protected Builder() {
+        }
+
         private int varcharColumnSize;
         private TruncateableMappingErrorBehaviour overflowBehaviour;
         private ConvertableMappingErrorBehaviour nonStringBehaviour;
@@ -90,6 +109,8 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         public abstract C build();
 
         /**
+         * Sets the maximum size of the VARCHAR column.
+         *
          * @param varcharColumnSize varchar column size
          * @return {@code this}.
          */
@@ -99,6 +120,8 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         /**
+         * Sets the behaviour to apply when the value overflows.
+         *
          * @param overflowBehaviour overflow behaviour
          * @return {@code this}.
          */
@@ -108,6 +131,8 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
         }
 
         /**
+         * Sets the behaviour to apply when the value is not a string.
+         *
          * @param nonStringBehaviour non-string behaviour
          * @return {@code this}.
          */
@@ -151,7 +176,7 @@ public final class PropertyToVarcharColumnMapping extends AbstractPropertyToColu
      * 
      * @param builder builder
      */
-    protected PropertyToVarcharColumnMapping(final PropertyToVarcharColumnMapping.Builder<?, ?> builder) {
+    private PropertyToVarcharColumnMapping(final PropertyToVarcharColumnMapping.Builder<?, ?> builder) {
         super(builder);
         this.varcharColumnSize = builder.varcharColumnSize;
         this.overflowBehaviour = builder.overflowBehaviour;

@@ -19,6 +19,10 @@ import com.exasol.errorreporting.ExaError;
  * Visitor for {@link com.exasol.adapter.sql.SqlStatementSelect} building a {@link RemoteTableQuery}
  */
 public class RemoteTableQueryFactory {
+    /** Creates a remote-table query factory. */
+    public RemoteTableQueryFactory() {
+        // Intentionally empty to enable Javadoc.
+    }
 
     /**
      * Builds the {@link RemoteTableQuery} from an {@link SqlStatementSelect}

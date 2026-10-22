@@ -4,6 +4,11 @@ package com.exasol.adapter.document.querypredicate;
  * This class represents the absence of a selection predicate.
  */
 public final class NoPredicate implements QueryPredicate {
+    /** Creates a predicate that imposes no filtering condition. */
+    public NoPredicate() {
+        // Intentionally empty to enable Javadoc.
+    }
+
     @Override
     public void accept(final QueryPredicateVisitor visitor) {
         visitor.visit(this);
